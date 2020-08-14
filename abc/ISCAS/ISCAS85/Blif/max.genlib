@@ -1,0 +1,20 @@
+# 180 nm Generic Library
+# Download from http://crete.cadence.com
+# Copyright 2003, Cadence Design Systems - All Rights Reserved
+# (Single-output logic gates converted to GENLIB by Alan Mishchenko.)
+GATE INV	1  Y=!A;			PIN * INV 1 999 1 0 1 0
+GATE NOR2	1  Y=!(A+B);			PIN * INV 1 999 1 0 1 0
+GATE NOR3	1  Y=!(A+B+C);			PIN * INV 1 999 1 0 1 0
+GATE NOR4	1  Y=!(A+B+C+D);		PIN * INV 1 999 1 0 1 0
+GATE NAND2	1  Y=!(A*B);			PIN * INV 1 999 1 0 1 0
+GATE NAND3	1  Y=!(A*B*C);			PIN * INV 1 999 1 0 1 0
+GATE NAND4	1  Y=!(A*B*C*D);		PIN * INV 1 999 1 0 1 0
+GATE OAI21	1  Y=!((A0+A1)*B0);		PIN * INV 1 999 1 0 1 0
+GATE OAI22	1  Y=!((A0+A1)*(B0+B1));	PIN * INV 1 999 1 0 1 0
+GATE OAI33	1  Y=!((A0+A1+A2)*(B0+B1+B2));	PIN * INV 1 999 1 0 1 0
+GATE AOI21	1  Y=!(A0*A1+B0);		PIN * INV 1 999 1 0 1 0
+GATE AOI22	1  Y=!(A0*A1+B0*B1);		PIN * INV 1 999 1 0 1 0
+GATE AOI33	1  Y=!((A0*A1*A2)+(B0*B1*B2));	PIN * INV 1 999 1 0 1 0
+GATE MX2	1  Y=(A*B)+(S0*B)+(!S0*A);	PIN * UNKNOWN 1 999 1 0 1 0
+GATE XOR2	1  Y=(A*!B)+(!A*B);		PIN * UNKNOWN 1 999 1 0 1 0
+
