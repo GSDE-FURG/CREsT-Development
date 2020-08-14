@@ -1,0 +1,8 @@
+# 180 nm Generic Library
+# Download from http://crete.cadence.com
+# Copyright 2003, Cadence Design Systems - All Rights Reserved
+# (Single-output logic gates converted to GENLIB by Alan Mishchenko.)
+GATE INV	1  Y=!A;			PIN * INV 1 999 1 0 1 0
+GATE NOR2	1  Y=!(A+B);			PIN * INV 1 999 1 0 1 0
+GATE NAND2	1  Y=!(A*B);			PIN * INV 1 999 1 0 1 0
+

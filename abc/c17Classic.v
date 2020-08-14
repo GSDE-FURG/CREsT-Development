@@ -1,18 +1,18 @@
-module C17V3_Fritz (
-    G1gat, G2gat, G3gat, G4gat, G5gat, G6gat, G7gat );
-  input  G1gat, G2gat, G3gat, G4gat, G5gat;
-  output G6gat, G7gat ;
+module C17V3_Classic (
+    I1, I2, I3, I4, I5, O1, O2 );
+  input  I1, I2, I3, I4, I5;
+  output O1, O2;
   wire w1, w2, w3, w4;
 
   
-  NAND2X1   G000(.A(G5gat), .B(G2gat), .Y(w1));
-  NAND2X1   G001(.A(G1gat), .B(G5gat), .Y(w2));
+  NAND2X1   G1(.A(I1), .B(I3), .Y(w1));
+  NAND2X1   G2(.A(I3), .B(I4), .Y(w2));
   
-  NAND2X1   G002(.A(G4gat), .B(w1), .Y(w3));
-  NAND2X1   G003(.A(w1), .B(G3gat), .Y(w4));
+  NAND2X1   G3(.A(I2), .B(w2), .Y(w3));
+  NAND2X1   G4(.A(w2), .B(I5), .Y(w4));
 
-  NAND2X1   G004(.A(w2), .B(w3), .Y(G6gat));
-  NAND2X1   G005(.A(w3), .B(w4), .Y(G7gat));
+  NAND2X1   G5(.A(w1), .B(w3), .Y(O1));
+  NAND2X1   G6(.A(w3), .B(w4), .Y(O2));
 
 endmodule
 

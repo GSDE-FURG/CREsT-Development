@@ -1,0 +1,33 @@
+//Converted to Combinational , Module name: b01 , Timestamp: 2018-11-12T14:25:24.720587 
+module b01 ( clock, LINE1, LINE2, STATO_REG_2_, STATO_REG_1_, STATO_REG_0_, OUTP_REG, OVERFLW_REG, n13, n18, n23 );
+input clock, LINE1, LINE2, STATO_REG_2_, STATO_REG_1_, STATO_REG_0_;
+output OUTP_REG, OVERFLW_REG, n13, n18, n23;
+wire n19, n20, n22, n23_1, n24, n25, n27, n28_1, n29, n30, n31, n32, n33, n34, n36, n37, n38, n39, n40, n41, n42, n44, OUTP_REG_1;
+INVX1    g00(.A(STATO_REG_1_), .Y(n19));
+INVX1    g01(.A(STATO_REG_0_), .Y(n20));
+NOR3X1   g02(.A(n20), .B(n19), .C(STATO_REG_2_), .Y(OVERFLW_REG));
+NOR3X1   g03(.A(STATO_REG_0_), .B(LINE2), .C(LINE1), .Y(n22));
+NAND2X1  g04(.A(n19), .B(STATO_REG_2_), .Y(n23_1));
+AND2X1   g05(.A(LINE2), .B(LINE1), .Y(n24));
+AOI21X1  g06(.A0(n20), .A1(STATO_REG_1_), .B0(n24), .Y(n25));
+OAI22X1  g07(.A0(n23_1), .A1(n22), .B0(STATO_REG_2_), .B1(n25), .Y(n13));
+NOR2X1   g08(.A(LINE2), .B(LINE1), .Y(n27));
+INVX1    g09(.A(STATO_REG_2_), .Y(OUTP_REG_1));
+AOI21X1  g10(.A0(n27), .A1(STATO_REG_1_), .B0(OUTP_REG_1), .Y(n29));
+OAI21X1  g11(.A0(n27), .A1(STATO_REG_0_), .B0(n29), .Y(n30));
+NOR2X1   g12(.A(STATO_REG_0_), .B(n19), .Y(n31));
+OAI21X1  g13(.A0(n24), .A1(OUTP_REG_1), .B0(n31), .Y(n32));
+NAND2X1  g14(.A(LINE2), .B(LINE1), .Y(n33));
+NAND3X1  g15(.A(n33), .B(STATO_REG_0_), .C(n19), .Y(n34));
+NAND3X1  g16(.A(n34), .B(n32), .C(n30), .Y(n18));
+OR2X1    g17(.A(STATO_REG_1_), .B(STATO_REG_2_), .Y(n36));
+AOI21X1  g18(.A0(n33), .A1(STATO_REG_0_), .B0(n36), .Y(n37));
+OAI21X1  g19(.A0(n33), .A1(STATO_REG_0_), .B0(n37), .Y(n38));
+NAND4X1  g20(.A(STATO_REG_0_), .B(STATO_REG_1_), .C(OUTP_REG_1), .D(n33), .Y(n39));
+OR2X1    g21(.A(LINE2), .B(LINE1), .Y(n40));
+AOI21X1  g22(.A0(n20), .A1(STATO_REG_1_), .B0(OUTP_REG_1), .Y(n41));
+AOI22X1  g23(.A0(n31), .A1(n24), .B0(n40), .B1(n41), .Y(n42));
+NAND3X1  g24(.A(n42), .B(n39), .C(n38), .Y(n23));
+XOR2X1   g25(.A(LINE2), .B(LINE1), .Y(n44));
+XOR2X1   g26(.A(n44), .B(n41), .Y(OUTP_REG));
+endmodule
