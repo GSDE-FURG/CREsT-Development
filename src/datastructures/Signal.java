@@ -16,10 +16,6 @@ public class Signal {
     private String id;
     private Gate origin;
     private ArrayList<Gate> destiny = new ArrayList<>();
-    //valor lógico esperado
-    private boolean logicValue;
-    //valor lógico incorreto
-    private boolean fol;
     
     /**
      * Simple Signal constructor.
@@ -49,22 +45,6 @@ public class Signal {
         this.id = id;
         this.origin = origin;
         this.destiny = destiny;
-    }
-    
-    public boolean getLogicValue() {
-        return logicValue;
-    }
-
-    public void setLogicValue(boolean logicValue) {
-        this.logicValue = logicValue;
-    }
-
-    public boolean getFol() {
-        return fol;
-    }
-
-    public void setFol(boolean fol) {
-        this.fol = fol;
     }
     
     /**

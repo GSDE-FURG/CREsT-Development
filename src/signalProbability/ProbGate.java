@@ -24,6 +24,9 @@ public class ProbGate extends Gate {
     private float[][] reliabilityMatrix2;
     private BigDecimal gateReliability;
     private int depth;
+    public int currentIn = 0;
+    public boolean visited = false;
+    
     
     public ProbGate(String id, Cell type, ArrayList<ProbSignal> inputs, ArrayList<ProbSignal> outputs) {
         super(id, type);
@@ -148,7 +151,10 @@ public class ProbGate extends Gate {
         this.reliabilityMatrix2 = reliabilityMatrix2;
     }
     
-    
+    public void clearGateReliabilityMatrix() {
+        this.reliabilityMatrix = null;
+        this.reliabilityMatrix2 = null;
+    }
 
     public int getDepth() {
         return depth;

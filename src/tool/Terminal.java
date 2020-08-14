@@ -34,12 +34,13 @@ class TestTerminal {
     public static void main(String[] args) throws ScriptException, AWTException {   
         if(args.length > 0) {
             
+            CommandLine cmdLine = new CommandLine(args);
             //<genlib_file> <verilog_file> <reliability (ex:0.9)>
             
-            Terminal term = Terminal.getInstance();
-            term.executeCommand("read_genlib " + args[0]);
-            term.executeCommand("read_verilog " + args[1]);
-            term.executeCommand("spr_float " + args[2]);
+           // Terminal term = Terminal.getInstance();
+            //term.executeCommand("read_genlib " + args[0]);
+            //term.executeCommand("read_verilog " + args[1]);
+            //term.executeCommand("spr_float " + args[2]);
             
             
         } else {
@@ -49,16 +50,15 @@ class TestTerminal {
             // FOR DEV
             Robot r = new Robot();
             term.executeCommand("read_genlib cadence.genlib");
-            
-            
-            /* ADICIONANDO COMENTARIO NO REPOSITORIO */
+            /*Commite antes da reunião */
+            //term.executeCommand("read_genlib cadence_schiv.genlib");
             //term.executeCommand("read_genlib 22-1.genlib");
             //term.executeCommand("read_verilog c17_cadence.v");
             //term.executeCommand("read_verilog c17v3_fritz.v");
             //term.executeCommand("read_verilog c432_cadence.v");
             //term.executeCommand("read_verilog c20_cadence.v");
             //term.executeCommand("read_verilog c6288_cadence.v");
-            //term.executeCommand("read_verilog randomCircuit.v");
+            term.executeCommand("read_verilog twoInvOneAnd.v");
             //term.executeCommand("init_level");
 
             term.executeCommand("clear");
@@ -175,7 +175,7 @@ public class Terminal {
     public void initProbCircuit() {
         if(this.circuit != null) {
             LevelCircuit lCircuit = Terminal.getInstance().getLevelCircuit();
-            this.probCircuit = ProbCircuit.create(lCircuit.getName(), lCircuit.getSignals(), lCircuit.getGates(), lCircuit.getGateLevels());
+            this.probCircuit = new ProbCircuit(Terminal.getInstance().getCircuit());
             
         } else {
             Terminal.getInstance().terminalOutput("Circuit is null!!");

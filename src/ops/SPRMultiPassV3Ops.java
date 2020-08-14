@@ -5,7 +5,6 @@
  */
 package ops;
 
-import com.sun.xml.internal.bind.v2.TODO;
 import datastructures.CellLibrary;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -423,4 +422,15 @@ public class SPRMultiPassV3Ops {
         
         return passes;
     }
+    
+    public static String getSPRMPPerState(ProbCircuit pCircuit) {
+        
+        pCircuit.getFanouts().get(0).setCurrentState(2);
+        System.out.println("--> " + pCircuit.getFanouts().get(0).getCurrentState());
+        
+        System.out.println(getSPRReliability(pCircuit, pCircuit.getFanouts()));
+        return "";
+    }
+    
+    //private ArrayList<ProbSignal> 
 }

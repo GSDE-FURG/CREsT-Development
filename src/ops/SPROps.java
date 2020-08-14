@@ -96,20 +96,28 @@ public class SPROps {
                 if(pGateLevel.getGates().get(j) instanceof ProbGate) {
 
                     ProbGate pGate = (ProbGate)pGateLevel.getGates().get(j);
+                    
+                    BigDecimal[][] matrix;
 
-                    BigDecimal[][] matrix = pGate.getpInputs().get(0).getProbMatrix();
-                
-                    if(pGate.getpInputs().size() > 1) { 
-                        
-                        for (int k = 1; k < pGate.getpInputs().size(); k++) {                            
-                            matrix = getKronecker(matrix, pGate.getpInputs().get(k).getProbMatrix());                           
+                    if(pGate.getpInputs().isEmpty()) {
+                        BigDecimal[][] ptmMatrix = pGate.getReliabilityMatrix();
+                        matrix = new BigDecimal[2][2];
+                        matrix[0][0] = ptmMatrix[0][0];
+                        matrix[1][1] = ptmMatrix[0][1];
+                        matrix[0][1] = BigDecimal.ZERO;
+                        matrix[1][0] = BigDecimal.ZERO;
+                    } else {                    
+                        matrix = pGate.getpInputs().get(0).getProbMatrix();
+                        if(pGate.getpInputs().size() > 1) { 
+                            for (int k = 1; k < pGate.getpInputs().size(); k++) {
+                                matrix = getKronecker(matrix, pGate.getpInputs().get(k).getProbMatrix());                           
+                            }
                         }
+                        matrix = getMultipliedMatrix(matrix, pGate.getReliabilityMatrix());
+
+                        matrix = getSignalMatrix(matrix, pGate.getType().getItm());
                     }
-
-                    matrix = getMultipliedMatrix(matrix, pGate.getReliabilityMatrix());
-                                     
-                    matrix = getSignalMatrix(matrix, pGate.getType().getItm());
-
+                    
                     pGate.getpOutputs().get(0).setProbMatrix(matrix);
 
                     //matrixPrint(pGate.getpOutputs().get(0).getProbMatrix());

@@ -123,12 +123,25 @@ public class GenlibReader {
         ArrayList<String> inputs = new ArrayList<>();
         String[] teste = getCellInputs(function);
         
-        for (int i = 0; i < teste.length; i++) {
-            inputs.add(teste[i]);
+        if(teste[0].contains("CONST0") || teste[0].contains("CONST1")) {
+            
+            Cell noInputsCell = new Cell(name, inputs, outputs, area, functions);
+            
+            if(teste[0].contains("CONST0")) {
+                noInputsCell.setTruthTable("0");
+            } else {
+                noInputsCell.setTruthTable("1");
+            }
+            
+            return noInputsCell;
+            
+        } else {            
+            for (int i = 0; i < teste.length; i++) {
+                inputs.add(teste[i]);
+            }
+
+            inputs = removeDuplicates(inputs);
         }
-        
-        inputs = removeDuplicates(inputs);
-        
         return new Cell(name, inputs, outputs, area, functions);    
     }        
 

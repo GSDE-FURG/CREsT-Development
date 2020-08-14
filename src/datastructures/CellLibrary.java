@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.script.ScriptEngine;
@@ -122,55 +123,57 @@ public class CellLibrary {
         ScriptEngineManager mgr = new ScriptEngineManager();
         ScriptEngine engine = mgr.getEngineByName("JavaScript");
         
-        for (int i = 0; i < cells.size(); i++) {
+        for (int i = 0; i < cells.size(); i++) {            
             Cell auxCell = cells.get(i);
-            String function = auxCell.getFunctions().get(0);
-            int x = PowInt(2, auxCell.getInputs().size());
-            int y = PowInt(2, auxCell.getOutputs().size());
-       
-            int[] itm = new int[x+1];
             
-            // Set the array's column size
-            itm[0] = y;
+            if(!auxCell.getInputs().isEmpty()) {
+                String function = auxCell.getFunctions().get(0);
+                int x = PowInt(2, auxCell.getInputs().size());
+                int y = PowInt(2, auxCell.getOutputs().size());
 
-        
-            function = function.split("=")[1];
-            function = function.replaceAll("\\Q*\\E", "&&");
-            function = function.replaceAll("\\Q+\\E", "||");            
-            
-            for (int j = 0; j < x; j++) {
-                BigInteger teste = new BigInteger("" + j);                
-                //System.out.println(teste);
-                String binary = String.format("%0" + auxCell.getInputs().size() + "d", Integer.valueOf(Integer.toBinaryString(j)));
-                
-                
-                
+                int[] itm = new int[x+1];
 
-                try {
-                    for (int p = 0; p < auxCell.getInputs().size(); p++) {
-                        int bit = Character.getNumericValue(binary.charAt(p));
-                        String formula = "var " + auxCell.getInputs().get(p) + "=" + Boolean.toString(bit != 0) + ";";
-                        
-                        engine.eval(formula);         
-                    }                                     
-                    
-                    boolean result = (boolean)engine.eval(function + ";");
-                                       
-                    if(result) {
-                        
-                        itm[j+1] = 1;
-                                                                                                
-                    } else {
-                        itm[j+1] = 0;
+                // Set the array's column size
+                itm[0] = y;
+
+
+                function = function.split("=")[1];
+                function = function.replaceAll("\\Q*\\E", "&&");
+                function = function.replaceAll("\\Q+\\E", "||");            
+
+                for (int j = 0; j < x; j++) {
+                    BigInteger teste = new BigInteger("" + j);                
+                    //System.out.println(teste);
+                    String binary = String.format("%0" + auxCell.getInputs().size() + "d", Integer.valueOf(Integer.toBinaryString(j)));
+
+
+
+
+                    try {
+                        for (int p = 0; p < auxCell.getInputs().size(); p++) {
+                            int bit = Character.getNumericValue(binary.charAt(p));
+                            String formula = "var " + auxCell.getInputs().get(p) + "=" + Boolean.toString(bit != 0) + ";";
+
+                            engine.eval(formula);         
+                        }                                     
+
+                        boolean result = (boolean)engine.eval(function + ";");
+
+                        if(result) {
+
+                            itm[j+1] = 1;
+
+                        } else {
+                            itm[j+1] = 0;
+                        }
+
+                    } catch (ScriptException ex) {
+                        Logger.getLogger(PTMOps.class.getName()).log(Level.SEVERE, null, ex);
                     }
-
-                } catch (ScriptException ex) {
-                    Logger.getLogger(PTMOps.class.getName()).log(Level.SEVERE, null, ex);
                 }
+
+                auxCell.setItm(itm);
             }
-            
-            auxCell.setItm(itm);
-            
         }
     }
     
@@ -179,55 +182,66 @@ public class CellLibrary {
         
         ScriptEngineManager mgr = new ScriptEngineManager();
         ScriptEngine engine = mgr.getEngineByName("JavaScript");
+        BigDecimal[][] ptm;
+        BigDecimal[][] itm2;
         
         for (int i = 0; i < cells.size(); i++) {
             Cell auxCell = cells.get(i);
-            String function = auxCell.getFunctions().get(0);
-            int x = PowInt(2, auxCell.getInputs().size());
-            int y = PowInt(2, auxCell.getOutputs().size());
             
-            BigDecimal[][] ptm = new BigDecimal[x][y];
-            BigDecimal[][] itm2 = new BigDecimal[x][y];
+            if(auxCell.getInputs().isEmpty()) {            
+                ptm = new BigDecimal[1][2];
+                ptm[0][0] = reliability;
+                ptm[0][1] = BigDecimal.ONE.subtract(reliability);
+                itm2 = new BigDecimal[1][2];
+                itm2[0][0] = BigDecimal.ONE;
+                itm2[0][1] = BigDecimal.ZERO;                
+            } else {            
+                String function = auxCell.getFunctions().get(0);
+                int x = PowInt(2, auxCell.getInputs().size());
+                int y = PowInt(2, auxCell.getOutputs().size());
 
-        
-            function = function.split("=")[1];
-            function = function.replaceAll("\\Q*\\E", "&&");
-            function = function.replaceAll("\\Q+\\E", "||");            
-        
-            for (int j = 0; j < x; j++) {
-            
-                String binary = String.format("%0" + auxCell.getInputs().size() + "d", Integer.valueOf(Integer.toBinaryString(j)));
-                
+                ptm = new BigDecimal[x][y];
+                itm2 = new BigDecimal[x][y];
 
-                try {
-                    for (int p = 0; p < auxCell.getInputs().size(); p++) {
-                        int bit = Character.getNumericValue(binary.charAt(p));
-                        String formula = "var " + auxCell.getInputs().get(p) + "=" + Boolean.toString(bit != 0) + ";";
-                        
-                        engine.eval(formula);         
+
+                function = function.split("=")[1];
+                function = function.replaceAll("\\Q*\\E", "&&");
+                function = function.replaceAll("\\Q+\\E", "||");            
+
+                for (int j = 0; j < x; j++) {
+
+                    String binary = String.format("%0" + auxCell.getInputs().size() + "d", Integer.valueOf(Integer.toBinaryString(j)));
+
+
+                    try {
+                        for (int p = 0; p < auxCell.getInputs().size(); p++) {
+                            int bit = Character.getNumericValue(binary.charAt(p));
+                            String formula = "var " + auxCell.getInputs().get(p) + "=" + Boolean.toString(bit != 0) + ";";
+
+                            engine.eval(formula);         
+                        }
+
+                        boolean result = (boolean)engine.eval(function + ";");                                        
+
+                        if(result) {
+
+                            ptm[j][1] = reliability;
+                            ptm[j][0] = BigDecimal.ONE.subtract(reliability);
+
+                            itm2[j][1] = BigDecimal.ONE;
+                            itm2[j][0] = BigDecimal.ZERO;
+
+                        } else {
+                            ptm[j][1] = BigDecimal.ONE.subtract(reliability);
+                            ptm[j][0] = reliability;
+
+                            itm2[j][1] = BigDecimal.ZERO;
+                            itm2[j][0] = BigDecimal.ONE;
+                        }                                        
+
+                    } catch (ScriptException ex) {
+                        Logger.getLogger(PTMOps.class.getName()).log(Level.SEVERE, null, ex);
                     }
-                                        
-                    
-                    boolean result = (boolean)engine.eval(function + ";");
-                                       
-                    if(result) {
-                        
-                        ptm[j][1] = reliability;
-                        ptm[j][0] = BigDecimal.ONE.subtract(reliability);
-                        
-                        itm2[j][1] = BigDecimal.ONE;
-                        itm2[j][0] = BigDecimal.ZERO;
-                                                                                                
-                    } else {
-                        ptm[j][1] = BigDecimal.ONE.subtract(reliability);
-                        ptm[j][0] = reliability;
-                        
-                        itm2[j][1] = BigDecimal.ZERO;
-                        itm2[j][0] = BigDecimal.ONE;
-                    }
-
-                } catch (ScriptException ex) {
-                    Logger.getLogger(PTMOps.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
             
@@ -255,10 +269,11 @@ public class CellLibrary {
             function = function.replaceAll("\\Q+\\E", "||");            
         
             for (int j = 0; j < x; j++) {
-            
+                
+                System.out.println("papai x = " + x);
                 String binary = String.format("%0" + auxCell.getInputs().size() + "d", Integer.valueOf(Integer.toBinaryString(j)));
                 
-
+                
                 try {
                     for (int p = 0; p < auxCell.getInputs().size(); p++) {
                         int bit = Character.getNumericValue(binary.charAt(p));

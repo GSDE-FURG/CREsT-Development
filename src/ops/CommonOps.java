@@ -9,6 +9,7 @@ import java.io.File;
 import java.lang.Math.*;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -16,6 +17,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import signalProbability.ProbCircuit;
 import signalProbability.ProbSignal;
 
@@ -27,8 +30,14 @@ import static ops.LogarithmOps.lnBig;
  */
 public class CommonOps {
     
-    public static String getTrueCurrentPath(Object obj) {
-        return obj.getClass().getProtectionDomain().getCodeSource().getLocation().getPath();
+    public static String getTrueCurrentPath(Object obj) {        
+        try {
+            //return obj.getClass().getProtectionDomain().getCodeSource().getLocation().getPath();
+            return new File(obj.getClass().getProtectionDomain().getCodeSource().getLocation().toURI()).getPath();
+        } catch (URISyntaxException ex) {
+            Logger.getLogger(CommonOps.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        }
     }
     
     public static String getFileName(String path) {
