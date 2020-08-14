@@ -1,4 +1,4 @@
-# This version is for development 
+# Stable Version (Avaliable only for download)
     
 ## GSDE-Circuit-Development
 
