@@ -1,6 +1,6 @@
 # GSDE-Circuit-Development (latest version, must be used for development)
 
-## All codes, scripts, commits and changes will by aplied's directly on this development ("Dev") branch
+## All codes, scripts, commits and changes will by aplied's directly on this development branch ("Dev")
     
 ### Branchs:  
 - **master:** Is the **stable** version of this tools
