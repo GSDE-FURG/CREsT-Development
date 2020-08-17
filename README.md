@@ -1,7 +1,7 @@
-# All codes, scripts, commits and changes will by aplied's directly on this development ("Dev") branch
-    
-## GSDE-Circuit-Development
+# GSDE-Circuit-Development (latest version, must be used for development)
 
+## All codes, scripts, commits and changes will by aplied's directly on this development ("Dev") branch
+    
 ### Branchs:  
 - **master:** Is the **stable** version of this tools
     - Don't commit directly in "master" branch, follow the [**GSDE guidelines**](https://github.com/GSDE-FURG/Bem-vindo-ao-GSDE) 
