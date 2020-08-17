@@ -1,4 +1,4 @@
-# Stable Version (Avaliable only for download)
+# Stable Version (Must be used only for download)
     
 ## GSDE-Circuit-Development
 
