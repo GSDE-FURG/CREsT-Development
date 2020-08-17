@@ -1,4 +1,4 @@
-# All codes, scripts, commits and changes will by aplied's on this development ("Dev") branch
+# All codes, scripts, commits and changes will by aplied's directly on this development ("Dev") branch
     
 ## GSDE-Circuit-Development
 
