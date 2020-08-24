@@ -143,6 +143,8 @@ public class Commands {
         helpTree.put("quit", "Exit tool!!!");
         helpTree.put("read_genlib", "Read a genlib file");
         helpTree.put("read_verilog", "Read circuit based in a verilog");
+        helpTree.put("spr_big_decimal", "Output the reliability by Signal Probability Relaibility using Java's BigDecimal datatype");
+        helpTree.put("spr_float", "Output the reliability by Signal Probability Relaibility using float datatype");
         helpTree.put("write_genlib", "Export de current genlib to a file");
         helpTree.put("write_verilog", "Export de current circuit to a file");
         
@@ -441,13 +443,16 @@ public class Commands {
         LevelCircuit lcirc = Terminal.getInstance().getLevelCircuit();        
         CellLibrary cellLib = Terminal.getInstance().getCellLibrary();
         ProbCircuit pCircuit = Terminal.getInstance().getProbCircuit();
+        
+        // Tá dando erro aqui!!!
         cellLib.setPTMCells2(Float.valueOf(reliability));
         cellLib.setPTMCells(new BigDecimal(reliability));
+        cellLib.teste();
         pCircuit.setPTMReliabilityMatrix();
         
         switch(type) {
             
-            case "big_decimal":        
+            case "big_decimal":                
                 result = "Reliability PTM (in BigDecimal) of " + pCircuit.getName() + " CIRCUIT is " + PTMOps2.getCircuitReliabilityByPTM(pCircuit);
                 break;
             
@@ -476,7 +481,7 @@ public class Commands {
         CellLibrary cellLib = Terminal.getInstance().getCellLibrary();
         ProbCircuit pCircuit = Terminal.getInstance().getProbCircuit();         
         cellLib.setPTMCells2(Float.valueOf(reliability));
-        cellLib.setPTMCells(new BigDecimal(reliability));
+        cellLib.setPTMCells(new BigDecimal(reliability));                
         pCircuit.setPTMReliabilityMatrix();
         pCircuit.setDefaultProbSourceSignalMatrix();
         

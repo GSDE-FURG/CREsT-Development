@@ -1,7 +1,5 @@
 
 package tool;
-//teste
-
 
 import datastructures.CellLibrary;
 import datastructures.Circuit;

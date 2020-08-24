@@ -16,6 +16,7 @@ import java.util.logging.Logger;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
+import ops.CommonOps;
 import ops.PTMOps;
 import static ops.PTMOps.PowInt;
 import org.ejml.simple.SimpleMatrix;
@@ -208,7 +209,7 @@ public class CellLibrary {
                 function = function.replaceAll("\\Q*\\E", "&&");
                 function = function.replaceAll("\\Q+\\E", "||");            
 
-                for (int j = 0; j < x; j++) {
+                for (int j = 0; j < x; j++) {                                                 
 
                     String binary = String.format("%0" + auxCell.getInputs().size() + "d", Integer.valueOf(Integer.toBinaryString(j)));
 
@@ -253,10 +254,11 @@ public class CellLibrary {
     
     public void setPTMCells2(float reliability) {
         
+        System.out.println("PAPAI ===> " + reliability);
         ScriptEngineManager mgr = new ScriptEngineManager();
         ScriptEngine engine = mgr.getEngineByName("JavaScript");
         
-        for (int i = 0; i < cells.size(); i++) {
+        for (int i = 0; i < cells.size(); i++) {            
             Cell auxCell = cells.get(i);
             String function = auxCell.getFunctions().get(0);
             int x = PowInt(2, auxCell.getInputs().size());
@@ -270,40 +272,41 @@ public class CellLibrary {
         
             for (int j = 0; j < x; j++) {
                 
-                System.out.println("papai x = " + x);
-                String binary = String.format("%0" + auxCell.getInputs().size() + "d", Integer.valueOf(Integer.toBinaryString(j)));
-                
-                
-                try {
-                    for (int p = 0; p < auxCell.getInputs().size(); p++) {
-                        int bit = Character.getNumericValue(binary.charAt(p));
-                        String formula = "var " + auxCell.getInputs().get(p) + "=" + Boolean.toString(bit != 0) + ";";
-                        
-                        engine.eval(formula);         
-                    }
-                                        
-                    
-                    boolean result = (boolean)engine.eval(function + ";");
-                                       
-                    if(result) {
-                        
-                        ptm[j][1] = reliability;
-                        ptm[j][0] = 1 - reliability;
-                                                                                                
-                    } else {
-                        ptm[j][1] = 1 - reliability;
-                        ptm[j][0] = reliability;
+                if(!("ZERO".equals(auxCell.getName()) || "ONE".equals(auxCell.getName()))) {
 
-                    }
+                    String binary = String.format("%0" + auxCell.getInputs().size() + "d", Integer.valueOf(Integer.toBinaryString(j)));
 
-                } catch (ScriptException ex) {
-                    Logger.getLogger(PTMOps.class.getName()).log(Level.SEVERE, null, ex);
+
+                    try {
+                        for (int p = 0; p < auxCell.getInputs().size(); p++) {
+                            int bit = Character.getNumericValue(binary.charAt(p));
+                            String formula = "var " + auxCell.getInputs().get(p) + "=" + Boolean.toString(bit != 0) + ";";
+
+                            engine.eval(formula);         
+                        }
+
+
+                        boolean result = (boolean)engine.eval(function + ";");
+
+                        if(result) {
+
+                            ptm[j][1] = reliability;
+                            ptm[j][0] = 1 - reliability;
+
+                        } else {
+                            ptm[j][1] = 1 - reliability;
+                            ptm[j][0] = reliability;
+
+                        }
+
+                    } catch (ScriptException ex) {
+                        Logger.getLogger(PTMOps.class.getName()).log(Level.SEVERE, null, ex);
+                    }
                 }
             }
             
-            auxCell.setPtm2(ptm);
-            
-        }
+            auxCell.setPtm2(ptm);                        
+        }        
     }
     
     public void setPTMSonfCell(BigDecimal reliability) {
@@ -339,4 +342,16 @@ public class CellLibrary {
         }        
         
     }
+    
+    public void teste(){
+        System.out.println("MAMAE");
+        
+        for (int i = 0; i < cells.size(); i++) {
+            System.out.println(cells.get(i).getName());
+            System.out.println("### float ####");
+            CommonOps.matrixPrint(cells.get(i).getPtm2());
+            System.out.println("### big_decimal ####");
+            CommonOps.matrixPrint(cells.get(i).getPTM());
+        }
+    } 
 }
