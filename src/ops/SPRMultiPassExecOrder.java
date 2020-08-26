@@ -23,7 +23,7 @@ class main_SPRMP_Exec {
         System.out.println("\n\nHello world, working");
         String circuitPath = "c17_cadence.v";
         String reliability = "0.999";
-        String mode = "SPRMP";
+        String mode = "big_decimal";
         String library = "cadence.genlib";
 
         final SPRMultiPassExecOrder objeto = new SPRMultiPassExecOrder(reliability, mode, circuitPath, library);
@@ -75,9 +75,9 @@ public class SPRMultiPassExecOrder {
 
         
         cmd.PrintCircuitGates();
-        cmd.getReliabilitySPR(reliability, "big_decimal");
+        //cmd.getReliabilitySPR(reliability, "big_decimal");
 
-       
+            cmd.getReliability_SPRMP(this.reliability, this.mode);
 
     }
 }

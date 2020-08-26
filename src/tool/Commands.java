@@ -509,7 +509,7 @@ public class Commands {
     /*
         @claytonfariasEC
     */
-    public void getReliabilitySPRMP(String reliability, String type) {
+    public void getReliability_SPRMP(String reliability, String type) {
         
         final long startTime = System.currentTimeMillis();
         
@@ -524,7 +524,8 @@ public class Commands {
         switch(type) {
             
             case "big_decimal":        
-                result = "Reliability SPR (in BigDecimal) of " + pCircuit.getName() + " CIRCUIT is " + SPROps.getSPRReliability(pCircuit);
+                //result = "Reliability SPR (in BigDecimal) of " + pCircuit.getName() + " CIRCUIT is " + SPROps.getSPRReliability(pCircuit);
+                result = "Reliability SPR (in BigDecimal) of " + pCircuit.getName() + " CIRCUIT is " + SPRMultiPassV3Ops.getSPRMultiPassReliaiblity(pCircuit);
                 break;
             
             case "float":                                          
