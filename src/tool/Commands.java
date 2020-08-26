@@ -505,6 +505,43 @@ public class Commands {
         Terminal.getInstance().terminalOutput(timeConsup);               
     }
     
+
+    /*
+        @claytonfariasEC
+    */
+    public void getReliabilitySPRMP(String reliability, String type) {
+        
+        final long startTime = System.currentTimeMillis();
+        
+        String result = "";     
+        CellLibrary cellLib = Terminal.getInstance().getCellLibrary();
+        ProbCircuit pCircuit = Terminal.getInstance().getProbCircuit();         
+        cellLib.setPTMCells2(Float.valueOf(reliability));
+        cellLib.setPTMCells(new BigDecimal(reliability));                
+        pCircuit.setPTMReliabilityMatrix();
+        pCircuit.setDefaultProbSourceSignalMatrix();
+        
+        switch(type) {
+            
+            case "big_decimal":        
+                result = "Reliability SPR (in BigDecimal) of " + pCircuit.getName() + " CIRCUIT is " + SPROps.getSPRReliability(pCircuit);
+                break;
+            
+            case "float":                                          
+                result = "Reliability SPR (in float) of " + pCircuit.getName() + " CIRCUIT is " + SPROpsFloat.getSPRReliability(pCircuit);
+                break;
+                        
+        }               
+        
+        Terminal.getInstance().terminalOutput(result);
+        System.out.println(result);
+        
+        final long endTime = System.currentTimeMillis();
+        String timeConsup = "## TIME CONSUPTION ## ==> " + Long.toString((endTime - startTime)) + " ms";
+        Terminal.getInstance().terminalOutput(timeConsup);               
+    }
+    
+
     public void getReliabilitySONF(String reliability) {
         
         final long startTime = System.currentTimeMillis();

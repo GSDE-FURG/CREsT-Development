@@ -63,7 +63,7 @@ public class SPRMultiPassExecOrder {
         Terminal term = Terminal.getInstance();        
         term.open(0, 0, 700, 700);
 
-        term.close();
+        //term.close();
         
         final long startTime = System.currentTimeMillis();
         
@@ -73,7 +73,9 @@ public class SPRMultiPassExecOrder {
         cmd.ReadGenlib(this.genlib);
         cmd.ReadVerilog(this.circuitFilePath);
 
+        
         cmd.PrintCircuitGates();
+        cmd.getReliabilitySPR(reliability, "big_decimal");
 
        
 
