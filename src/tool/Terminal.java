@@ -49,6 +49,8 @@ class TestTerminal {
             Robot r = new Robot();
             term.executeCommand("read_genlib cadence.genlib");
             /*Commite antes da reunião */
+
+            
             //term.executeCommand("read_genlib cadence_schiv.genlib");
             //term.executeCommand("read_genlib 22-1.genlib");
             //term.executeCommand("read_verilog c17_cadence.v");
