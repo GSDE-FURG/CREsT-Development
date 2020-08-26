@@ -58,10 +58,10 @@ class TestTerminal {
             //term.executeCommand("read_verilog c432_cadence.v");
             //term.executeCommand("read_verilog c20_cadence.v");
             //term.executeCommand("read_verilog c6288_cadence.v");
-            term.executeCommand("read_verilog twoInvOneAnd.v");
+            //term.executeCommand("read_verilog twoInvOneAnd.v");
             //term.executeCommand("init_level");
 
-            term.executeCommand("clear");
+            //term.executeCommand("clear");
             r.keyPress(KeyEvent.VK_ENTER);
             r.keyRelease(KeyEvent.VK_ENTER);
             // ##########
