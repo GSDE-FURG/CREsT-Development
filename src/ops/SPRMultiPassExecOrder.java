@@ -7,7 +7,9 @@ import java.math.BigDecimal;
 import javax.script.ScriptException;
 
 import datastructures.CellLibrary;
-//import jdk.internal.jline.Terminal;
+
+import tool.Terminal;
+
 import signalProbability.ProbCircuit;
 import tool.Commands;
 
@@ -17,13 +19,14 @@ import tool.Commands;
  */
 class main_SPRMP_Exec {
 
-    public static void main(final String[] args) throws IOException, ScriptException {
+    public static void main(final String[] args) throws Exception {
         System.out.println("\n\nHello world, working");
         String circuitPath = "c17_cadence.v";
         String reliability = "0.999";
         String mode = "SPRMP";
+        String library = "cadence.genlib";
 
-        final SPRMultiPassExecOrder objeto = new SPRMultiPassExecOrder(reliability, mode, circuitPath, "cadence.genlib");
+        final SPRMultiPassExecOrder objeto = new SPRMultiPassExecOrder(reliability, mode, circuitPath, library);
 
         objeto.getReliabilitySPR_MP();
 
@@ -56,6 +59,11 @@ public class SPRMultiPassExecOrder {
             throws Exception {
 
         System.out.println("SPRMP Development : " + this.circuitFilePath + "   -   "  + this.reliability);
+
+        Terminal term = Terminal.getInstance();        
+        term.open(0, 0, 700, 700);
+
+        term.close();
         
         final long startTime = System.currentTimeMillis();
         
@@ -63,8 +71,11 @@ public class SPRMultiPassExecOrder {
 
         //Reading library and verilog file (extension .v)
         cmd.ReadGenlib(this.genlib);
-
         cmd.ReadVerilog(this.circuitFilePath);
+
+        cmd.PrintCircuitGates();
+
+       
 
     }
 }
