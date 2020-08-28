@@ -511,25 +511,27 @@ public class Commands {
     */
     public void getReliability_SPRMP(String reliability, String type) {
         
+          
         final long startTime = System.currentTimeMillis();
         
-        String result = "";     
+        String result = "";
         CellLibrary cellLib = Terminal.getInstance().getCellLibrary();
         ProbCircuit pCircuit = Terminal.getInstance().getProbCircuit();         
+        pCircuit.clearProbSignalsMatrix();
         cellLib.setPTMCells2(Float.valueOf(reliability));
-        cellLib.setPTMCells(new BigDecimal(reliability));                
+        cellLib.setPTMCells(new BigDecimal(reliability));
         pCircuit.setPTMReliabilityMatrix();
-        pCircuit.setDefaultProbSourceSignalMatrix();
+        pCircuit.setProbSignalStates(false);
         
         switch(type) {
             
             case "big_decimal":        
-                //result = "Reliability SPR (in BigDecimal) of " + pCircuit.getName() + " CIRCUIT is " + SPROps.getSPRReliability(pCircuit);
-                result = "Reliability SPR (in BigDecimal) of " + pCircuit.getName() + " CIRCUIT is " + SPRMultiPassV3Ops.getSPRMultiPassReliaiblity(pCircuit);
+                result = "Reliability SPR_MP (in BigDecimal) of " + pCircuit.getName() + " CIRCUIT is " + SPRMultiPassV3Ops.getTotalPasses(pCircuit);
+                //result = "Reliability SPR_MP (in BigDecimal) of " + pCircuit.getName() + " CIRCUIT is " + SPRMultiPassV3Ops.getTotalPasses(pCircuit);
                 break;
             
             case "float":                                          
-                result = "Reliability SPR (in float) of " + pCircuit.getName() + " CIRCUIT is " + SPROpsFloat.getSPRReliability(pCircuit);
+                result = "Reliability SPR (in float) of "; //+ pCircuit.getName() + " CIRCUIT is " + SPROpsFloat.getSPRReliability(pCircuit);
                 break;
                         
         }               
@@ -538,8 +540,8 @@ public class Commands {
         System.out.println(result);
         
         final long endTime = System.currentTimeMillis();
-        String timeConsup = "## TIME CONSUPTION ## ==> " + Long.toString((endTime - startTime)) + " ms";
-        Terminal.getInstance().terminalOutput(timeConsup);               
+        String timeConsup = "## MODE - TIME CONSUPTION ## ==> " + Long.toString((endTime - startTime)) + " ms";
+        Terminal.getInstance().terminalOutput(timeConsup);     
     }
     
 

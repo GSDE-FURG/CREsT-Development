@@ -242,6 +242,8 @@ public class SPRMultiPassV3Ops {
         ArrayList<ProbSignal> newFanouts = new ArrayList<>();
         
         for (int i = 0; i < (fanouts.size()); i++) {
+            System.out.println("Fanout : "+ i + "   -   " + fanouts.get(i));
+            
             newFanouts.add(fanouts.get(i));            
         }
                 
@@ -301,7 +303,7 @@ public class SPRMultiPassV3Ops {
     
     
     /**
-     * 
+     * Try this one
      * This method pre-process the SPR-MP, takes fanouts from pCircuit and
      * starts the recursive process    
      * @param pCircuit Circuits that will be processed
