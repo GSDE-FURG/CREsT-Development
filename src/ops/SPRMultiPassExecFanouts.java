@@ -48,12 +48,12 @@ class main_SPRMP_Exec {
 
     public static void main(final String[] args) throws Exception {
         System.out.println("\n\nHello world, working");
-        String circuitPath = "c17_cadence.v";
+        String circuitPath = "c17v3_fritz.v";
         String reliability = "0.999";
         String mode = "big_decimal";
         String library = "cadence.genlib";
 
-        final SPRMultiPassExecOrder objeto = new SPRMultiPassExecOrder(reliability, mode, circuitPath, library);
+        final SPRMultiPassExecFanouts objeto = new SPRMultiPassExecFanouts(reliability, mode, circuitPath, library);
 
         objeto.getReliabilitySPR_MP();
 
@@ -65,7 +65,7 @@ class main_SPRMP_Exec {
  *
  * @author Clayton
  */
-public class SPRMultiPassExecOrder {
+public class SPRMultiPassExecFanouts {
 
     private String reliability;
     private String mode;
@@ -73,7 +73,7 @@ public class SPRMultiPassExecOrder {
     private String genlib;
 
 
-    public SPRMultiPassExecOrder(String reliabilty, String mode, String circuitFilePath, String genlib) {
+    public SPRMultiPassExecFanouts(String reliabilty, String mode, String circuitFilePath, String genlib) {
 
         this.reliability = reliabilty;
         this.circuitFilePath = circuitFilePath;
@@ -94,9 +94,6 @@ public class SPRMultiPassExecOrder {
         Terminal term = Terminal.getInstance();        
         term.open(0, 0, 700, 700);
 
-        
-        //term.close();
-        
         final Commands cmd = new Commands();
 
         //Reading library and verilog file (extension .v)
@@ -197,10 +194,13 @@ class SPRMP_CLASS_DEV_MODE {
 
                 System.out.println("    ------ Gate Atual : " + pGate );
                 
+                
                 /**
                  * Pega o primeiro sinal de entrada da Gate
                  */
                 ProbSignal aSignal = pGate.getpInputs().get(0); 
+
+                System.out.println("        ------ Sinal A : " +  pGate.getpInputs().get(0) + "    Sinal B : "+ pGate.getpInputs().get(1));
 
                 BigDecimal[][] matrix = aSignal.getProbMatrix();               
 
@@ -212,7 +212,7 @@ class SPRMP_CLASS_DEV_MODE {
                  * State = 4 quer dizer que o sinal NÃO é fanout
                  */
                 if(aState == 4) {
-                    
+                    System.out.println("     ++Sinal normal : "+ aState);
                     /**
                      * Se não é um inversor ou buffer ou...
                      */
@@ -251,12 +251,18 @@ class SPRMP_CLASS_DEV_MODE {
                      * aSignal É fanout...
                      */
                 } else {
-                    
+
+                    System.out.println("     ++Sinal fanout : "+ index);
+
                     indexes = index[aState];                        
                     a = indexes[0];
                     b = indexes[1];
-                                 
-                    probState = aSignal.getProbMatrix()[a][b];
+                    
+                    System.out.println("Erro bem aqui matriz de sinal : " + aSignal.getId());
+
+                    System.out.println(aSignal.getProbMatrix());
+                
+                    probState = aSignal.getProbMatrix()[a][b]; //AQUI
 
                     if(probState.compareTo(BigDecimal.ZERO) == 0) {
                         return new BigDecimal(fanouts.indexOf(aSignal)).negate();
