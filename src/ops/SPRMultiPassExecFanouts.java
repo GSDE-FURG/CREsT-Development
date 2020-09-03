@@ -19,6 +19,8 @@ import tool.Commands;
 //package ops;
 
 import datastructures.CellLibrary;
+import datastructures.Circuit;
+import java.io.File;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
@@ -29,9 +31,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Locale;
+import levelDatastructures.LevelCircuit;
 
 import static ops.CommonOps.getKronecker;
 import static ops.CommonOps.getMultipliedMatrix;
+import readers.MappedVerilogReader;
 
 import signalProbability.ProbCircuit;
 import signalProbability.ProbGate;
@@ -51,6 +55,9 @@ class main_SPRMP_Exec {
         String circuitPath = "c17v3_fritz.v";
         String reliability = "0.999";
         String mode = "big_decimal";
+        CommonOps commonOps = new CommonOps();
+        //String library = CommonOps.getWorkPath(this) + "abc" + File.separator + 
+        //"cadence.genlib";
         String library = "cadence.genlib";
 
         final SPRMultiPassExecFanouts objeto = new SPRMultiPassExecFanouts(reliability, mode, circuitPath, library);
@@ -71,38 +78,76 @@ public class SPRMultiPassExecFanouts {
     private String mode;
     private String circuitFilePath;
     private String genlib;
+    private String genlibPATH;
+    
+    private CellLibrary cellLibrary;
+    private Circuit circuit;
+    private LevelCircuit levelCircuit;
+    private ProbCircuit probCircuit;
 
 
     public SPRMultiPassExecFanouts(String reliabilty, String mode, String circuitFilePath, String genlib) {
 
         this.reliability = reliabilty;
-        this.circuitFilePath = circuitFilePath;
+        this.circuitFilePath = "abc\\" + circuitFilePath;
         this.mode = mode;
         this.genlib = genlib;
+        this.genlibPATH = "abc\\" + this.genlib;
+        
 
+    }
+    
+    public void initLevelCircuit(){    
+        if(this.circuit != null) {
+            this.levelCircuit = new LevelCircuit(circuit);      
+        }
+        else
+        {
+            System.out.println("Circuit is null!!");
+        }
+    }
+    
+    public void setCircuit(Circuit circuit) {
+        this.circuit = circuit;
     }
 
     public void getReliabilitySPR_MP()
             throws Exception {
 
         System.out.println("SPRMP Development : " + this.circuitFilePath + "   -   "  + this.reliability);
-
         final long startTime = System.currentTimeMillis();
         
+ 
+        /*CellLibrary*/
+        CellLibrary cellLib = new CellLibrary();
+        cellLib.initLibrary(this.genlibPATH);
+        /*new*/
+        
+         /*Read Verilog*/
+        MappedVerilogReader verilog_circuit = new MappedVerilogReader(this.circuitFilePath, cellLib);
+        System.out.println("Circuito : "+ verilog_circuit.getCircuit());
+        
+        
+        /*Circuit linked to verilog_circuit*/
+         this.circuit = verilog_circuit.getCircuit();
+         System.out.println(this.circuit.getGates());
        
-
-        Terminal term = Terminal.getInstance();        
-        term.open(0, 0, 700, 700);
-
-        final Commands cmd = new Commands();
-
-        //Reading library and verilog file (extension .v)
-        cmd.ReadGenlib(this.genlib);
-        cmd.ReadVerilog(this.circuitFilePath);
-
+        
+        //Circuit circuit = new Circuit();
+        //ProbCircuit pCircuit = new ProbCircuit(circuit);
+        /*Circuit*/
+            
         String result = "";
-        CellLibrary cellLib = Terminal.getInstance().getCellLibrary();
-        ProbCircuit pCircuit = Terminal.getInstance().getProbCircuit();         
+        
+        
+        
+        
+        
+        /*
+        //CellLibrary cellLib = Terminal.getInstance().getCellLibrary();
+        //ProbCircuit pCircuit = Terminal.getInstance().getProbCircuit();        
+        
+        
         pCircuit.clearProbSignalsMatrix();
         cellLib.setPTMCells2(Float.valueOf(reliability));
         cellLib.setPTMCells(new BigDecimal(reliability));
@@ -123,7 +168,7 @@ public class SPRMultiPassExecFanouts {
            final SPRMP_CLASS_DEV_MODE teste = new SPRMP_CLASS_DEV_MODE();
 
            teste.getSPRMultiPassReliaiblity_mode(pCircuit);
-
+            */
           
     }
 }
@@ -202,11 +247,15 @@ class SPRMP_CLASS_DEV_MODE {
 
                 System.out.println("        ------ Sinal A : " +  pGate.getpInputs().get(0) + "    Sinal B : "+ pGate.getpInputs().get(1));
 
-                BigDecimal[][] matrix = aSignal.getProbMatrix();               
-
+                BigDecimal[][] matrix = aSignal.getProbMatrix();  
+                    
+               
                 BigDecimal[][] fooMatrix;                    
 
                 int aState = aSignal.getCurrentState();
+                
+                System.out.println("                         - Estado Matriz[a][b] : "+ aSignal.getCurrentState() + "          -          " +aSignal.getSignalValues());
+
 
                 /**
                  * State = 4 quer dizer que o sinal NÃO é fanout
@@ -260,8 +309,8 @@ class SPRMP_CLASS_DEV_MODE {
                     
                     System.out.println("Erro bem aqui matriz de sinal : " + aSignal.getId());
 
-                    System.out.println(aSignal.getProbMatrix());
-                
+                    System.out.println("Checkando :" + aSignal.getProbMatrix()[0][0]);
+      
                     probState = aSignal.getProbMatrix()[a][b]; //AQUI
 
                     if(probState.compareTo(BigDecimal.ZERO) == 0) {
