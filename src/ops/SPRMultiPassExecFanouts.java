@@ -31,7 +31,7 @@ class main_SPRMP_Exec {
 
     public static void main(final String[] args) throws Exception {
         //System.out.println("\n\nHello world, working");
-        String circuitPath = "c17_cadence.v";
+        String circuitPath = "c17v3_fritz.v";//"c17_cadence.v";
         String reliability = "0.999";
         String mode = "big_decimal";
         CommonOps commonOps = new CommonOps();
@@ -41,11 +41,12 @@ class main_SPRMP_Exec {
 
         SPRMultiPassExecFanouts objeto_teste = new SPRMultiPassExecFanouts(reliability, mode, circuitPath, library);
         //objeto_teste.PTM_CALL();
-        //objeto_teste.SPRMP_CALL();
-        //objeto_teste.PTM_CALL();
-        //objeto.SPRMP_TESTE();
+        //objeto_teste.SPR_BigDecimal();
+        objeto_teste.SPR_MP();
         
+       
         
+       //float value_spr = (float) 0.99439436414118662916;
         
 
     }
@@ -58,17 +59,17 @@ class main_SPRMP_Exec {
  */
 public class SPRMultiPassExecFanouts {
 
-    private String reliability;
-    private String mode;
-    private String circuitFilePath;
-    private String genlib;
-    private String genlibPATH;
+    public String reliability;
+    public String mode;
+    public String circuitFilePath;
+    public String genlib;
+    public String genlibPATH;
     
     public CellLibrary cellLibrary;
-    private Circuit circuit;
-    private LevelCircuit levelCircuit;
+    public Circuit circuit;
+    public LevelCircuit levelCircuit;
     public ProbCircuit probCircuit;
-    private LevelCircuit lCircuit;
+    public LevelCircuit lCircuit;
 
 
     public SPRMultiPassExecFanouts(String reliabilty, String mode, String circuitFilePath, String genlib) {
@@ -150,13 +151,135 @@ public class SPRMultiPassExecFanouts {
         this.circuit = circuit;
      }
      
-     protected void SPRMP_CALL()throws Exception {
-        System.out.println("Calcing SPRMP bro...");
+     protected void SPR_BigDecimal()throws Exception {
+
+        System.out.println("SPR Bigdecimal Development : " + this.circuitFilePath + "   -   "  + this.reliability);
+        final long startTime = System.currentTimeMillis();
+        
+ 
+        /*CellLibrary*/
+        CellLibrary cellLib = new CellLibrary();
+        cellLib.initLibrary(this.genlibPATH);
+        /*CellLibrary*/
+        
+         /*Read Verilog*/
+        MappedVerilogReader verilog_circuit = new MappedVerilogReader(this.circuitFilePath, cellLib);
+        System.out.println("Circuito : "+ verilog_circuit.getCircuit());
+        /*Read Verilog*/
+        
+        
+        /*Circuit linked to verilog_circuit - init circuit*/
+         this.circuit = verilog_circuit.getCircuit();
+         System.out.println("Circuits : " + this.circuit.getName());
+         System.out.println("Gates : " + this.circuit.getGates());
+         System.out.println("Inputs : " + this.circuit.getInputs());
+         System.out.println("Outputs : " + this.circuit.getOutputs());
+         System.out.println("Signals : " + this.circuit.getSignals());
+         /*Circuit linked to verilog_circuit*/
+       
+        
+         /*Circuit Probabilities */
+         this.initLevelCircuit();
+         this.initProbCircuit();
+          /*Circuit Probabilities */
+          
+          
+          /*Gate levels*/
+          this.PrintGateLevels();
+          /*Gate levels*/
+        
+          
+          System.out.println("Level Circuit : "+ this.levelCircuit);
+  
+          cellLib.setPTMCells2(Float.valueOf(reliability));
+          cellLib.setPTMCells(new BigDecimal(reliability));
+          cellLib.teste();
+          
+          //CellLib
+          this.cellLibrary = cellLib;
+          
+          //ProbCircuit
+          probCircuit.setPTMReliabilityMatrix(); //Sempre usar variaveis criadas 
+          // taking off probCircuit.setProbSignalStates(false); //novo 
+          probCircuit.setDefaultProbSourceSignalMatrix();
+          
+          
+          System.out.println("This cells : "+ this.cellLibrary);
+                  
+          System.out.println("- SPR Bigdecimal Reliability : " + SPROps.getSPRReliability(probCircuit));
+          
+          //System.out.println("- SPRMP Reliability : " + SPRMultiPassV3Ops.getSPRMultiPassReliaiblity(this.probCircuit));
     } 
    
+      protected void SPR_MP()throws Exception {
+
+        System.out.println("SPR-MP Development : " + this.circuitFilePath + "   -   "  + this.reliability);
+        final long startTime = System.currentTimeMillis();
+        
+ 
+        /*CellLibrary*/
+        CellLibrary cellLib = new CellLibrary();
+        cellLib.initLibrary(this.genlibPATH);
+        /*CellLibrary*/
+        
+         /*Read Verilog*/
+        MappedVerilogReader verilog_circuit = new MappedVerilogReader(this.circuitFilePath, cellLib);
+        System.out.println("Circuito : "+ verilog_circuit.getCircuit());
+        /*Read Verilog*/
+        
+        
+        /*Circuit linked to verilog_circuit - init circuit*/
+         this.circuit = verilog_circuit.getCircuit();
+         System.out.println("Circuits : " + this.circuit.getName());
+         System.out.println("Gates : " + this.circuit.getGates());
+         System.out.println("Inputs : " + this.circuit.getInputs());
+         System.out.println("Outputs : " + this.circuit.getOutputs());
+         System.out.println("Signals : " + this.circuit.getSignals());
+         /*Circuit linked to verilog_circuit*/
+       
+        
+         /*Circuit Probabilities */
+         this.initLevelCircuit();
+         this.initProbCircuit();
+          /*Circuit Probabilities */
+          
+          
+          /*Gate levels*/
+          this.PrintGateLevels();
+          /*Gate levels*/
+        
+          
+          System.out.println("Level Circuit : "+ this.levelCircuit);
+  
+          cellLib.setPTMCells2(Float.valueOf(reliability));
+          cellLib.setPTMCells(new BigDecimal(reliability));
+          //cellLib.teste();
+          
+          //CellLib
+          this.cellLibrary = cellLib;
+          
+          //ProbCircuit
+          probCircuit.setPTMReliabilityMatrix(); //Sempre usar variaveis criadas 
+          // taking off probCircuit.setProbSignalStates(false); //novo 
+          probCircuit.setDefaultProbSourceSignalMatrix();
+          probCircuit.setProbSignalStates(false); //HEREn
+          
+          
+          System.out.println("This cells : "+ this.cellLibrary.getClass());
+                  
+          // SPR-MP info estipulation"
+          SPRMultiPassV3Ops.getTotalPasses(probCircuit);
+          SPRMultiPassV3Ops.getSPRMPPerState(probCircuit);
+          
+          System.out.println("SPR-MP Reliability : " + SPRMultiPassV3Ops.getSPRMultiPassReliaiblity(probCircuit));
+        
+          //System.out.println("- SPRMP Reliability : " + SPRMultiPassV3Ops.getSPRMultiPassReliaiblity(this.probCircuit));
+    } 
+   
+     
      protected void PTM_CALL() throws Exception {
 
-        System.out.println("SPRMP Development : " + this.circuitFilePath + "   -   "  + this.reliability);
+        System.out.println("PTM MODE : " + this.circuitFilePath + "   -   "  + this.reliability);
         final long startTime = System.currentTimeMillis();
         
  
