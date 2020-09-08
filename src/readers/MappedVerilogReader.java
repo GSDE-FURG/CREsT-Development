@@ -48,6 +48,8 @@ public class MappedVerilogReader {
         readFile(path);
     }
 
+ 
+
     /**
      * This method return the Verilog File Path.
      *
