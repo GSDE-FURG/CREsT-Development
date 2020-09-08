@@ -5,6 +5,7 @@
  */
 package ops;
 
+import com.sun.org.apache.xalan.internal.utils.XMLSecurityManager;
 import datastructures.CellLibrary;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -246,6 +247,41 @@ public class SPRMultiPassV3Ops {
             
             newFanouts.add(fanouts.get(i));            
         }
+                
+        ProbSignal pSignal = newFanouts.get(0);
+        
+        value = getMultiPass(pCircuit, newFanouts, pSignal, 0);
+        
+        
+        return value;
+    }
+    
+    /**
+     * This method pre-process the SPR-MP putting limit on it, takes fanouts from pCircuit and
+     * starts the recursive process
+     * Note: there is be considering 100% circuits fanouts
+     * @autor Clayton
+     * @param pCircuit - Circuits that will be processed
+     * @param fanoutsNumber - Number of fanouts that will be processed
+     * @return Reliability value based on SPR-MP method
+     */
+    public static BigDecimal getPRMultiPassReliaiblityByLimitedFanouts(ProbCircuit pCircuit, int fanoutsNumber) {
+                        
+        BigDecimal value;
+
+        ArrayList<ProbSignal> fanouts = pCircuit.getFanouts();
+        ArrayList<ProbSignal> newFanouts = new ArrayList<>();
+        
+        //for (int i = 0; i < (fanouts.size()); i++) {
+        
+       
+        
+        for (int i = 0; i < fanoutsNumber ; i++) {
+            //System.out.println("Fanout : "+ i + "   -   " + fanouts.get(i));
+            newFanouts.add(fanouts.get(i));            
+        }
+        
+         //System.out.println("=>> N(r) Fanouts : " + fanoutsNumber + "  - list of : " + newFanouts);
                 
         ProbSignal pSignal = newFanouts.get(0);
         

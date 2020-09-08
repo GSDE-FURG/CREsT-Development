@@ -4,11 +4,14 @@ import datastructures.CellLibrary;
 import datastructures.Circuit;
 import datastructures.Signal;
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import javax.swing.SpringLayout;
 import levelDatastructures.DepthGate;
 import levelDatastructures.GateLevel;
 import levelDatastructures.LevelCircuit;
 import readers.MappedVerilogReader;
 import signalProbability.ProbCircuit;
+import signalProbability.ProbSignal;
 
 
 /** Main method to run this class
@@ -26,15 +29,19 @@ class main_SPRMP_Exec {
         //CommonOps commonOps = new CommonOps();
         String library = "cadence.genlib";
         
-        Reliability_Methods spr_mp = new Reliability_Methods(reliability, mode, circuitPath, library);
+        /*
+        SPRMPFanoutsAnalysis spr_mp = new SPRMPFanoutsAnalysis(reliability, mode, circuitPath, library);
         spr_mp.SPR_MP();
         
-        Reliability_Methods spr = new Reliability_Methods(reliability, mode, circuitPath, library);
+        SPRMPFanoutsAnalysis spr = new SPRMPFanoutsAnalysis(reliability, mode, circuitPath, library);
         spr_mp.SPR_BigDecimal();
         
-        Reliability_Methods ptm = new Reliability_Methods(reliability, mode, circuitPath, library);
+        SPRMPFanoutsAnalysis ptm = new SPRMPFanoutsAnalysis(reliability, mode, circuitPath, library);
         ptm.PTM();
-
+        */
+        
+        SPRMPFanoutsAnalysis spr_mp_analysis = new SPRMPFanoutsAnalysis(reliability, mode, circuitPath, library);
+        spr_mp_analysis.SPR_MP_FANOUTS();
     }
 
 }
@@ -43,7 +50,7 @@ class main_SPRMP_Exec {
  * @version 1.0
  * @since Dev
 */
-public class Reliability_Methods {
+public class SPRMPFanoutsAnalysis {
   
 
     private final String reliability;
@@ -59,7 +66,7 @@ public class Reliability_Methods {
     private LevelCircuit lCircuit;
 
 
-    public Reliability_Methods(String reliabilty, String mode, String circuitFilePath, String genlib) {
+    public SPRMPFanoutsAnalysis(String reliabilty, String mode, String circuitFilePath, String genlib) {
 
         this.reliability = reliabilty;
         this.circuitFilePath = "abc\\" + circuitFilePath;
@@ -88,6 +95,7 @@ public class Reliability_Methods {
          System.out.println("Inputs : " + this.circuit.getInputs());
          System.out.println("Outputs : " + this.circuit.getOutputs());
          System.out.println("Signals : " + this.circuit.getSignals());
+        
      }
      
      public void PrintGateLevels() {
@@ -148,7 +156,7 @@ public class Reliability_Methods {
      
      public void SPR_BigDecimal()throws Exception {
 
-        System.out.println(" ===== SPR BIg Decimal File: " + this.circuitFilePath + "   - Precision : "  + this.reliability + " ===== ");
+        System.out.println("\n ===== SPR Big Decimal File: " + this.circuitFilePath + "   - Precision : "  + this.reliability + " ===== ");
         final long startTime = System.currentTimeMillis();
         
  
@@ -197,16 +205,23 @@ public class Reliability_Methods {
           
           //System.out.println("This cells : "+ this.cellLibrary);
                   
-          System.out.println("- SPR Bigdecimal Reliability : " + SPROps.getSPRReliability(probCircuit));
+  
+          BigDecimal spr_result = SPROps.getSPRReliability(probCircuit);
           
+          final long endTime = System.currentTimeMillis();
+          
+          String timeConsup =  Long.toString((endTime - startTime)) + " ms";
+          
+          System.out.println("- SPR Bigdecimal Reliability : " + spr_result + " Time(s) : " +timeConsup);
+         
           System.out.println(" =================================== END SPR ================= ");
           
           //System.out.println("- SPRMP Reliability : " + SPRMultiPassV3Ops.getSPRMultiPassReliaiblity(this.probCircuit));
     } 
-   
+     
      public void SPR_MP()throws Exception {
 
-        System.out.println(" ===== SPR-MP File: " + this.circuitFilePath + "   - Precision : "  + this.reliability + " ===== ");
+        System.out.println("\n ===== SPR-MP File: " + this.circuitFilePath + "   - Precision : "  + this.reliability + " ===== ");
         final long startTime = System.currentTimeMillis();
         
  
@@ -261,8 +276,98 @@ public class Reliability_Methods {
           //SPRMultiPassV3Ops.getTotalPasses(probCircuit);
           //SPRMultiPassV3Ops.getSPRMPPerState(probCircuit);
           
-          System.out.println("SPR-MP Reliability : " + SPRMultiPassV3Ops.getSPRMultiPassReliaiblity(probCircuit));
+          
+          
+         
+          
+           BigDecimal sprmp_result = SPRMultiPassV3Ops.getSPRMultiPassReliaiblity(probCircuit);
+           
+            final long endTime = System.currentTimeMillis();
+                   
+           String timeConsup =  Long.toString((endTime - startTime)) + " ms";
+           
+           System.out.println("SPR-MP Reliability : " + sprmp_result + " - Time (s) : " + timeConsup);
+          //String timeConsup =  Long.toString((endTime - startTime)) + " ms";
         
+          System.out.println(" =================================== END SPR-MP ================= ");
+    } 
+        
+     public void SPR_MP_FANOUTS()throws Exception {
+
+        System.out.println("\n DEBUGGING CODE ANALYSIS OF FANOUTS IN SPR-MP  File: " + this.circuitFilePath + "   - Precision : "  + this.reliability + " ===== ");
+        final long startTime = System.currentTimeMillis();
+        
+ 
+        /*CellLibrary*/
+        CellLibrary cellLib = new CellLibrary();
+        cellLib.initLibrary(this.genlibPATH);
+        /*CellLibrary*/
+        
+         /*Read Verilog*/
+        MappedVerilogReader verilog_circuit = new MappedVerilogReader(this.circuitFilePath, cellLib);
+        //System.out.println("Circuito : "+ verilog_circuit);
+         
+        /*Read Verilog*/
+        
+        
+        /*Circuit linked to verilog_circuit - init circuit*/
+         this.circuit = verilog_circuit.getCircuit();
+         
+            //this.PrintSpecs();
+         /*Circuit linked to verilog_circuit*/
+       
+        
+         /*Circuit Probabilities */
+         this.initLevelCircuit();
+         this.initProbCircuit();
+          /*Circuit Probabilities */
+          
+          
+          /*Gate levels*/
+            //this.PrintGateLevels();
+          /*Gate levels*/
+        
+          
+          //System.out.println("Level Circuit : "+ this.levelCircuit);
+  
+          cellLib.setPTMCells2(Float.valueOf(reliability));
+          cellLib.setPTMCells(new BigDecimal(reliability));
+          //cellLib.teste();
+          
+          //CellLib
+          this.cellLibrary = cellLib;
+          
+          //ProbCircuit
+          probCircuit.setPTMReliabilityMatrix(); //Sempre usar variaveis criadas 
+          // taking off probCircuit.setProbSignalStates(false); //novo 
+          probCircuit.setDefaultProbSourceSignalMatrix();
+          probCircuit.setProbSignalStates(false); //HERE
+          
+
+         /*limitar número de fanouts*/
+         System.out.println("\nFanout(n)      MTBF        Time(s)        "); 
+        
+         for (int i = 1; i <= this.probCircuit.getFanouts().size(); i++) {
+                
+              //System.out.println("\n -> Fanouts (n) = " + i);
+             
+              BigDecimal sprmp_result = SPRMultiPassV3Ops.getPRMultiPassReliaiblityByLimitedFanouts(probCircuit, i);
+              
+              final long endTime = System.currentTimeMillis();
+                   
+              String timeConsup =  Long.toString((endTime - startTime)) + " ms"; 
+              
+              System.out.println(i  + "      " + sprmp_result + "      " + timeConsup);
+              
+              
+              
+              //System.out.println("SPR-MP Reliability : " + sprmp_result + " - Time (s) : " + timeConsup + "\n");
+         }
+           
+           //BigDecimal sprmp_result = SPRMultiPassV3Ops.getSPRMultiPassReliaiblity(probCircuit);
+           
+          
+          
           System.out.println(" =================================== END SPR-MP ================= ");
     } 
    
