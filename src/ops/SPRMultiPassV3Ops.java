@@ -242,7 +242,7 @@ public class SPRMultiPassV3Ops {
         ArrayList<ProbSignal> newFanouts = new ArrayList<>();
         
         for (int i = 0; i < (fanouts.size()); i++) {
-            System.out.println("Fanout : "+ i + "   -   " + fanouts.get(i));
+            //System.out.println("Fanout : "+ i + "   -   " + fanouts.get(i));
             
             newFanouts.add(fanouts.get(i));            
         }

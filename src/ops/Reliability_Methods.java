@@ -1,14 +1,5 @@
 package ops;
-
-
 import tool.Terminal;
-
-
-
-/****  new libraries*/
-
-//package ops;
-
 import datastructures.CellLibrary;
 import datastructures.Circuit;
 import datastructures.Signal;
@@ -16,63 +7,59 @@ import java.math.BigDecimal;
 import levelDatastructures.DepthGate;
 import levelDatastructures.GateLevel;
 import levelDatastructures.LevelCircuit;
-
 import readers.MappedVerilogReader;
-
 import signalProbability.ProbCircuit;
 
-/**   */
 
-/**
- *
- * @author Clayton
- */
+/** Main method to run this class
+ * @author Clayton Farias
+ * @version 1.0
+ * @since Dev
+*/
 class main_SPRMP_Exec {
 
     public static void main(final String[] args) throws Exception {
-        //System.out.println("\n\nHello world, working");
-        String circuitPath = "c17v3_fritz.v";//"c17_cadence.v";
-        String reliability = "0.999";
-        String mode = "big_decimal";
-        CommonOps commonOps = new CommonOps();
-        //String library = CommonOps.getWorkPath(this) + "abc" + File.separator + 
-        //"cadence.genlib";
-        String library = "cadence.genlib";
-
-        SPRMultiPassExecFanouts objeto_teste = new SPRMultiPassExecFanouts(reliability, mode, circuitPath, library);
-        //objeto_teste.PTM_CALL();
-        //objeto_teste.SPR_BigDecimal();
-        objeto_teste.SPR_MP();
-        
        
+        String circuitPath = "c17v3_fritz.v";//"c17_cadence.v";
+        String reliability = "0.9999";
+        String mode = "big_decimal";
+        //CommonOps commonOps = new CommonOps();
+        String library = "cadence.genlib";
         
-       //float value_spr = (float) 0.99439436414118662916;
+        Reliability_Methods spr_mp = new Reliability_Methods(reliability, mode, circuitPath, library);
+        spr_mp.SPR_MP();
         
+        Reliability_Methods spr = new Reliability_Methods(reliability, mode, circuitPath, library);
+        spr_mp.SPR_BigDecimal();
+        
+        Reliability_Methods ptm = new Reliability_Methods(reliability, mode, circuitPath, library);
+        ptm.PTM();
 
     }
 
 }
+/** This class implements SPRMP fanouts analysis and provides a set of reliability methods (that can be callable) such as PTM, SPR, and SPR-MP
+ * @author Clayton Farias
+ * @version 1.0
+ * @since Dev
+*/
+public class Reliability_Methods {
+  
 
-/**
- *
- * @author Clayton
- */
-public class SPRMultiPassExecFanouts {
-
-    public String reliability;
-    public String mode;
-    public String circuitFilePath;
-    public String genlib;
-    public String genlibPATH;
+    private final String reliability;
+    private final String mode;
+    private final String circuitFilePath;
+    private final String genlib;
+    private final String genlibPATH;
     
-    public CellLibrary cellLibrary;
-    public Circuit circuit;
-    public LevelCircuit levelCircuit;
-    public ProbCircuit probCircuit;
-    public LevelCircuit lCircuit;
+    private CellLibrary cellLibrary;
+    private Circuit circuit;
+    private LevelCircuit levelCircuit;
+    private ProbCircuit probCircuit;
+    private LevelCircuit lCircuit;
 
 
-    public SPRMultiPassExecFanouts(String reliabilty, String mode, String circuitFilePath, String genlib) {
+    public Reliability_Methods(String reliabilty, String mode, String circuitFilePath, String genlib) {
 
         this.reliability = reliabilty;
         this.circuitFilePath = "abc\\" + circuitFilePath;
@@ -94,7 +81,15 @@ public class SPRMultiPassExecFanouts {
         }
         System.out.println("");
     }
-    
+     
+     public void PrintSpecs(){
+         System.out.println("Circuits : " + this.circuit.getName());
+         System.out.println("Gates : " + this.circuit.getGates());
+         System.out.println("Inputs : " + this.circuit.getInputs());
+         System.out.println("Outputs : " + this.circuit.getOutputs());
+         System.out.println("Signals : " + this.circuit.getSignals());
+     }
+     
      public void PrintGateLevels() {
         LevelCircuit lcirc = this.lCircuit;
         
@@ -120,7 +115,7 @@ public class SPRMultiPassExecFanouts {
                 }
             }                               
         } 
-        //Terminal.getInstance().terminalOutput(output);
+        
          System.out.println("PrintGateLevels : "+output);
     }
      
@@ -129,16 +124,16 @@ public class SPRMultiPassExecFanouts {
             
             this.lCircuit = this.levelCircuit; //Terminal.getInstance().getLevelCircuit();
             this.probCircuit = new ProbCircuit(this.circuit);
-            System.out.println("InitProbCircuit " + this.probCircuit.getName());
+            //System.out.println("InitProbCircuit " + this.probCircuit.getName());
             
         } else {
-            Terminal.getInstance().terminalOutput("Circuit is null!!");
+            System.out.println("Circuit is null !!!");
         }
     }
     
      public void initLevelCircuit(){    
         if(this.circuit != null) {
-            System.out.println("InitLevelCircuit");
+            //System.out.println("InitLevelCircuit");
             this.levelCircuit = new LevelCircuit(this.circuit);      
         }
         else
@@ -151,9 +146,9 @@ public class SPRMultiPassExecFanouts {
         this.circuit = circuit;
      }
      
-     protected void SPR_BigDecimal()throws Exception {
+     public void SPR_BigDecimal()throws Exception {
 
-        System.out.println("SPR Bigdecimal Development : " + this.circuitFilePath + "   -   "  + this.reliability);
+        System.out.println(" ===== SPR BIg Decimal File: " + this.circuitFilePath + "   - Precision : "  + this.reliability + " ===== ");
         final long startTime = System.currentTimeMillis();
         
  
@@ -164,17 +159,13 @@ public class SPRMultiPassExecFanouts {
         
          /*Read Verilog*/
         MappedVerilogReader verilog_circuit = new MappedVerilogReader(this.circuitFilePath, cellLib);
-        System.out.println("Circuito : "+ verilog_circuit.getCircuit());
+        //System.out.println("Circuito : "+ verilog_circuit.getCircuit());
         /*Read Verilog*/
         
         
         /*Circuit linked to verilog_circuit - init circuit*/
          this.circuit = verilog_circuit.getCircuit();
-         System.out.println("Circuits : " + this.circuit.getName());
-         System.out.println("Gates : " + this.circuit.getGates());
-         System.out.println("Inputs : " + this.circuit.getInputs());
-         System.out.println("Outputs : " + this.circuit.getOutputs());
-         System.out.println("Signals : " + this.circuit.getSignals());
+            //this.PrintSpecs();
          /*Circuit linked to verilog_circuit*/
        
         
@@ -185,15 +176,15 @@ public class SPRMultiPassExecFanouts {
           
           
           /*Gate levels*/
-          this.PrintGateLevels();
+            //this.PrintGateLevels();
           /*Gate levels*/
         
           
-          System.out.println("Level Circuit : "+ this.levelCircuit);
+          //System.out.println("Level Circuit : "+ this.levelCircuit);
   
           cellLib.setPTMCells2(Float.valueOf(reliability));
           cellLib.setPTMCells(new BigDecimal(reliability));
-          cellLib.teste();
+          //cellLib.teste();
           
           //CellLib
           this.cellLibrary = cellLib;
@@ -204,16 +195,18 @@ public class SPRMultiPassExecFanouts {
           probCircuit.setDefaultProbSourceSignalMatrix();
           
           
-          System.out.println("This cells : "+ this.cellLibrary);
+          //System.out.println("This cells : "+ this.cellLibrary);
                   
           System.out.println("- SPR Bigdecimal Reliability : " + SPROps.getSPRReliability(probCircuit));
+          
+          System.out.println(" =================================== END SPR ================= ");
           
           //System.out.println("- SPRMP Reliability : " + SPRMultiPassV3Ops.getSPRMultiPassReliaiblity(this.probCircuit));
     } 
    
-      protected void SPR_MP()throws Exception {
+     public void SPR_MP()throws Exception {
 
-        System.out.println("SPR-MP Development : " + this.circuitFilePath + "   -   "  + this.reliability);
+        System.out.println(" ===== SPR-MP File: " + this.circuitFilePath + "   - Precision : "  + this.reliability + " ===== ");
         final long startTime = System.currentTimeMillis();
         
  
@@ -230,11 +223,8 @@ public class SPRMultiPassExecFanouts {
         
         /*Circuit linked to verilog_circuit - init circuit*/
          this.circuit = verilog_circuit.getCircuit();
-         System.out.println("Circuits : " + this.circuit.getName());
-         System.out.println("Gates : " + this.circuit.getGates());
-         System.out.println("Inputs : " + this.circuit.getInputs());
-         System.out.println("Outputs : " + this.circuit.getOutputs());
-         System.out.println("Signals : " + this.circuit.getSignals());
+         
+            //this.PrintSpecs();
          /*Circuit linked to verilog_circuit*/
        
         
@@ -245,11 +235,11 @@ public class SPRMultiPassExecFanouts {
           
           
           /*Gate levels*/
-          this.PrintGateLevels();
+            //this.PrintGateLevels();
           /*Gate levels*/
         
           
-          System.out.println("Level Circuit : "+ this.levelCircuit);
+          //System.out.println("Level Circuit : "+ this.levelCircuit);
   
           cellLib.setPTMCells2(Float.valueOf(reliability));
           cellLib.setPTMCells(new BigDecimal(reliability));
@@ -265,21 +255,20 @@ public class SPRMultiPassExecFanouts {
           probCircuit.setProbSignalStates(false); //HEREn
           
           
-          System.out.println("This cells : "+ this.cellLibrary.getClass());
+          //System.out.println("This cells : "+ this.cellLibrary.getClass());
                   
-          // SPR-MP info estipulation"
-          SPRMultiPassV3Ops.getTotalPasses(probCircuit);
-          SPRMultiPassV3Ops.getSPRMPPerState(probCircuit);
+          //SPR-MP info estipulation"
+          //SPRMultiPassV3Ops.getTotalPasses(probCircuit);
+          //SPRMultiPassV3Ops.getSPRMPPerState(probCircuit);
           
           System.out.println("SPR-MP Reliability : " + SPRMultiPassV3Ops.getSPRMultiPassReliaiblity(probCircuit));
         
-          //System.out.println("- SPRMP Reliability : " + SPRMultiPassV3Ops.getSPRMultiPassReliaiblity(this.probCircuit));
+          System.out.println(" =================================== END SPR-MP ================= ");
     } 
    
-     
-     protected void PTM_CALL() throws Exception {
+     public void PTM() throws Exception {
 
-        System.out.println("PTM MODE : " + this.circuitFilePath + "   -   "  + this.reliability);
+         System.out.println(" ===== PTM File: " + this.circuitFilePath + "   - Precision : "  + this.reliability + " ===== ");
         final long startTime = System.currentTimeMillis();
         
  
@@ -296,11 +285,7 @@ public class SPRMultiPassExecFanouts {
         
         /*Circuit linked to verilog_circuit - init circuit*/
          this.circuit = verilog_circuit.getCircuit();
-         System.out.println("Circuits : " + this.circuit.getName());
-         System.out.println("Gates : " + this.circuit.getGates());
-         System.out.println("Inputs : " + this.circuit.getInputs());
-         System.out.println("Outputs : " + this.circuit.getOutputs());
-         System.out.println("Signals : " + this.circuit.getSignals());
+             //this.PrintSpecs();
          /*Circuit linked to verilog_circuit*/
        
         
@@ -311,34 +296,23 @@ public class SPRMultiPassExecFanouts {
           
           
           /*Gate levels*/
-          this.PrintGateLevels();
+            //this.PrintGateLevels();
           /*Gate levels*/
         
           
-          System.out.println("Level Circuit : "+ this.levelCircuit);
+          //System.out.println("Level Circuit : "+ this.levelCircuit);
 
-          
-          /*PTM*/
-          /*
-           cellLib.setPTMCells2(Float.valueOf(reliability));
-           cellLib.setPTMCells(new BigDecimal(reliability));
-           cellLib.teste();
-           pCircuit.setPTMsReliabilityMatrix(); //changed
-          */
-         
           cellLib.setPTMCells2(Float.valueOf(reliability));
           cellLib.setPTMCells(new BigDecimal(reliability));
-          cellLib.teste();
+          //cellLib.teste();
           
-         //CellLib
-          this.cellLibrary = cellLib;
-          
+     
            //ProbCircuit
           probCircuit.setPTMsReliabilityMatrix(); //Sempre usar variaveis criadas 
-          
-          System.out.println("This cells : "+ this.cellLibrary);
-          
+                   
           System.out.println("- PTM Reliability : " + PTMOps2.getCircuitReliabilityByPTM(probCircuit));
+          
+           System.out.println(" =================================== END PTM ================= ");
         
 
     }
