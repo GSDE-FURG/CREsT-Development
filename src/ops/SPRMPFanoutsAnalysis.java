@@ -23,9 +23,10 @@ class main_SPRMP_Exec {
 
     public static void main(final String[] args) throws Exception {
        
-        String circuitPath = "c17v3_fritz.v";//"c17_cadence.v";
+        String circuitPath ="c432_cadence.v" ;//"c17v3_fritz.v";//"c17_cadence.v";
         String reliability = "0.9999";
         String mode = "big_decimal";
+        long timeout = 10; //seconds
         //CommonOps commonOps = new CommonOps();
         String library = "cadence.genlib";
         
@@ -40,8 +41,10 @@ class main_SPRMP_Exec {
         ptm.PTM();
         */
         
+       
+        System.out.println("Timeout : " + timeout);
         SPRMPFanoutsAnalysis spr_mp_analysis = new SPRMPFanoutsAnalysis(reliability, mode, circuitPath, library);
-        spr_mp_analysis.SPR_MP_FANOUTS();
+        spr_mp_analysis.SPR_MP_FANOUTS(timeout);
     }
 
 }
@@ -64,6 +67,7 @@ public class SPRMPFanoutsAnalysis {
     private LevelCircuit levelCircuit;
     private ProbCircuit probCircuit;
     private LevelCircuit lCircuit;
+    private long timeout;
 
 
     public SPRMPFanoutsAnalysis(String reliabilty, String mode, String circuitFilePath, String genlib) {
@@ -292,9 +296,10 @@ public class SPRMPFanoutsAnalysis {
           System.out.println(" =================================== END SPR-MP ================= ");
     } 
         
-     public void SPR_MP_FANOUTS()throws Exception {
+     public void SPR_MP_FANOUTS(long timeout)throws Exception {
 
         System.out.println("\n DEBUGGING CODE ANALYSIS OF FANOUTS IN SPR-MP  File: " + this.circuitFilePath + "   - Precision : "  + this.reliability + " ===== ");
+        this.timeout = timeout;
         final long startTime = System.currentTimeMillis();
         
  
@@ -344,23 +349,33 @@ public class SPRMPFanoutsAnalysis {
           probCircuit.setProbSignalStates(false); //HERE
           
 
+         
+          
+         
+         System.out.println("Running SPR-MP whit timeout of : " + this.timeout);
+         System.out.println("Total of Fanouts (n) : " + this.probCircuit.getFanouts().size());
          /*limitar número de fanouts*/
          System.out.println("\nFanout(n)      MTBF        Time(s)        "); 
         
-         for (int i = 1; i <= this.probCircuit.getFanouts().size(); i++) {
-                
-              //System.out.println("\n -> Fanouts (n) = " + i);
-             
-              BigDecimal sprmp_result = SPRMultiPassV3Ops.getPRMultiPassReliaiblityByLimitedFanouts(probCircuit, i);
+        long endTime = System.currentTimeMillis();
+        for (int i = 1; i <= this.probCircuit.getFanouts().size(); i++) {
+            
               
-              final long endTime = System.currentTimeMillis();
-                   
-              String timeConsup =  Long.toString((endTime - startTime)) + " ms"; 
+              final long timeConsup = (endTime - startTime)/1000;
+              //String timeConsup =  Long.toString((endTime - startTime)) + " ms"; 
               
-              System.out.println(i  + "      " + sprmp_result + "      " + timeConsup);
-              
-              
-              
+              if((timeConsup) <=  this.timeout){
+                  
+                      BigDecimal sprmp_result = SPRMultiPassV3Ops.getPRMultiPassReliaiblityByLimitedFanouts(probCircuit, i);
+                      long endTimeInside = System.currentTimeMillis();
+                      final long insideTime = (endTimeInside - startTime)/1000;
+                      
+                      System.out.println(i  + "      " + sprmp_result + "      " + insideTime);
+                      endTime = endTimeInside;
+              }else{
+                  break;
+              }
+
               //System.out.println("SPR-MP Reliability : " + sprmp_result + " - Time (s) : " + timeConsup + "\n");
          }
            
