@@ -480,12 +480,14 @@ public class SPRMPFanoutsAnalysis {
              System.out.println(resultTable.get(i).PrintItemx());
          }
             
-          WriteExcel resultFile = new WriteExcel(this.circuit.getName() + "-" + this.timeout , "Resultado", Long.toString(this.timeoutMiliSeconds) , resultTable);
+         
+          System.out.println(" =================================== END SPR-MP ================= \n");
           
-          resultFile.write();
+           WriteExcel resultFile = new WriteExcel(this.circuit.getName() + "-" + this.timeout , "Resultado", Long.toString(this.timeoutMiliSeconds) , resultTable, idx);
+          
+           resultFile.write();
             
-          System.out.println(" =================================== END SPR-MP ================= ");
-    } 
+     } 
    
      public void PTM() throws Exception {
 

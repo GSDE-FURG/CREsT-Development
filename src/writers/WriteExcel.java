@@ -4,6 +4,7 @@ import datastructures.ItemX;
 
 import java.io.File;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Locale;
 
@@ -29,21 +30,26 @@ public class WriteExcel {
     private String inputFile;
     private String FileName;
     private String SheetName;
+    private int idx;
     private String TimeoutMiliSeconds;
     private long TimeoutSeconds;
     private List<ItemX> resultTable;
 
-    public WriteExcel(String inputFile, String SheetName, String TimeoutMiliSeconds ,List<ItemX> resultTable) {
+    public WriteExcel(String inputFile, String SheetName, String TimeoutMiliSeconds ,List<ItemX> resultTable, int idx) {
             this.inputFile = inputFile + ".xls";
             this.FileName = this.inputFile;
             this.SheetName =  SheetName + "-" + TimeoutSeconds;
             this.resultTable = resultTable;
             this.TimeoutMiliSeconds = TimeoutMiliSeconds;
             this.TimeoutSeconds = Long.valueOf(TimeoutMiliSeconds) / 1000;
+            this.idx = idx;
             //System.out.println(this.TimeoutSeconds);
     }
 
     public void write() throws IOException, WriteException {
+        
+        System.out.println("Creating Excell file : "+ this.FileName);
+        
         File file = new File(inputFile);
         WorkbookSettings wbSettings = new WorkbookSettings();
 
@@ -84,8 +90,9 @@ public class WriteExcel {
         // Write a few headers
         addCaption(sheet, 0, 0, "Fanouts");
         addCaption(sheet, 1, 0, "Reliability");
-        addCaption(sheet, 1, 0, "MTBF");
-        addCaption(sheet, 2, 0, "Time (ms)");
+        addCaption(sheet, 2, 0, "Failure Rate");
+        addCaption(sheet, 3, 0, "MTBF");
+        addCaption(sheet, 4, 0, "Time (ms)");
         
         
 
@@ -95,12 +102,15 @@ public class WriteExcel {
     private void createContent(WritableSheet sheet) throws WriteException,
             RowsExceededException {
         // Write a few number
+        /*
         for (int i = 1; i < 10; i++) {
             // First column
             addNumber(sheet, 0, i, i + 10);
             // Second column
             addNumber(sheet, 1, i, i * i);
         }
+        */
+        /*
         // Lets calculate the sum of it
         StringBuffer buf = new StringBuffer();
         buf.append("SUM(A2:A10)");
@@ -118,6 +128,19 @@ public class WriteExcel {
             // Second column
             addLabel(sheet, 1, i, "Another text");
         }
+        */
+        
+        //HERE NOW
+         for (int i = 0; i <= this.idx; i++){
+             //System.out.println(resultTable.get(i).PrintItemx());
+             addNumber(sheet, 0, i+1, (this.resultTable.get(i).getIdxFanout())); //Fanout
+             addLabel(sheet, 1, i+1,  (this.resultTable.get(i).getMTBF())); //reliability
+             
+             
+             addLabel(sheet, 2, i+1, "-LN(B"+(i+2)+")" ); //Failure Rate
+           
+             addLabel(sheet, 4, i+1,  (this.resultTable.get(i).getTime()));
+         }
     }
 
     private void addCaption(WritableSheet sheet, int column, int row, String s)

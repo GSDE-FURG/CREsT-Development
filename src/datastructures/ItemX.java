@@ -23,6 +23,17 @@ public class ItemX {
         this.time = time;
     }
     
+    public int getIdxFanout(){
+        return this.fanoutIdx;
+    }
+     public String getMTBF(){
+        
+        return String.valueOf(this.MTBF).replace(".", ",");
+    }
+     public String getTime(){
+        return String.valueOf(this.time);
+    }
+    
     public String PrintItemx(){
        // System.out.println("Fanout Idx: " + this.fanoutIdx);
        // System.out.println("MTBF: " + this.MTBF);
