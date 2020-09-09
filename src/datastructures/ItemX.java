@@ -28,7 +28,7 @@ public class ItemX {
        // System.out.println("MTBF: " + this.MTBF);
        // System.out.println("Time: " + this.time);
         
-        String item = "Fanout (n): " + this.fanoutIdx + "    Reliability: " + this.MTBF + "   Time: " + this.time;
+        String item = "Fanout (n): " + this.fanoutIdx + "        Reliability: " + this.MTBF + "        Time: " + this.time;
         
         return (item);
     }

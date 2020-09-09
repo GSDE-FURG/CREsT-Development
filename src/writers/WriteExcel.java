@@ -1,9 +1,10 @@
 package writers;
 
-
+import datastructures.ItemX;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 import java.util.Locale;
 
 import jxl.CellView;
@@ -26,23 +27,33 @@ public class WriteExcel {
     private WritableCellFormat timesBoldUnderline;
     private WritableCellFormat times;
     private String inputFile;
+    private String FileName;
+    private String SheetName;
+    private String TimeoutMiliSeconds;
+    private long TimeoutSeconds;
+    private List<ItemX> resultTable;
 
-public void setOutputFile(String inputFile) {
-        this.inputFile = inputFile;
+    public WriteExcel(String inputFile, String SheetName, String TimeoutMiliSeconds ,List<ItemX> resultTable) {
+            this.inputFile = inputFile + ".xls";
+            this.FileName = this.inputFile;
+            this.SheetName =  SheetName + "-" + TimeoutSeconds;
+            this.resultTable = resultTable;
+            this.TimeoutMiliSeconds = TimeoutMiliSeconds;
+            this.TimeoutSeconds = Long.valueOf(TimeoutMiliSeconds) / 1000;
+            //System.out.println(this.TimeoutSeconds);
     }
 
-    public void write(String sheetName) throws IOException, WriteException {
+    public void write() throws IOException, WriteException {
         File file = new File(inputFile);
         WorkbookSettings wbSettings = new WorkbookSettings();
 
         wbSettings.setLocale(new Locale("en", "EN"));
 
         WritableWorkbook workbook = Workbook.createWorkbook(file, wbSettings);
-        workbook.createSheet("Report", 0);
+        workbook.createSheet(this.SheetName, 0);
         WritableSheet excelSheet = workbook.getSheet(0);
-        
         createLabel(excelSheet);
-        //createContent(excelSheet);
+        createContent(excelSheet);
 
         workbook.write();
         workbook.close();
@@ -71,8 +82,12 @@ public void setOutputFile(String inputFile) {
         cv.setAutosize(true);
 
         // Write a few headers
-        addCaption(sheet, 0, 0, "Header 1");
-        addCaption(sheet, 1, 0, "This is another header");
+        addCaption(sheet, 0, 0, "Fanouts");
+        addCaption(sheet, 1, 0, "Reliability");
+        addCaption(sheet, 1, 0, "MTBF");
+        addCaption(sheet, 2, 0, "Time (ms)");
+        
+        
 
 
     }
@@ -125,12 +140,13 @@ public void setOutputFile(String inputFile) {
         label = new Label(column, row, s, times);
         sheet.addCell(label);
     }
-
+    /*
     public static void main(String[] args) throws WriteException, IOException {
-        WriteExcel test = new WriteExcel();
-        test.setOutputFile("lars.xls");
-        test.write("PLANILHA DE TESTE");
+        WriteExcel test = new WriteExcel("Name.xls", "RESULTADO");
+        //test.setOutputFile("lars.xls");
+        test.write("Resultado");
         System.out
-                .println("Please check the result file under lars.xls ");
+                .println("Please check the result file under : " + "Resultado");
     }
+    */
 }

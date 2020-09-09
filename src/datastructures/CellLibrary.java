@@ -254,7 +254,7 @@ public class CellLibrary {
     
     public void setPTMCells2(float reliability) {
         
-        System.out.println("PAPAI ===> " + reliability);
+        //System.out.println("PAPAI ===> " + reliability);
         ScriptEngineManager mgr = new ScriptEngineManager();
         ScriptEngine engine = mgr.getEngineByName("JavaScript");
         
