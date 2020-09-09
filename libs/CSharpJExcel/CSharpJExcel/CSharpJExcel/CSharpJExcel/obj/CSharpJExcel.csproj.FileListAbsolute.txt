@@ -1,0 +1,6 @@
+D:\Development\Wachovia\CSharpJExcel\CSharpJExcel\CSharpJExcel\obj\Debug\ResolveAssemblyReference.cache
+C:\Development\Wachovia\CSharpJExcel\CSharpJExcel\CSharpJExcel\bin\Debug\CSharpJExcel.dll
+C:\Development\Wachovia\CSharpJExcel\CSharpJExcel\CSharpJExcel\bin\Debug\CSharpJExcel.pdb
+C:\Development\Wachovia\CSharpJExcel\CSharpJExcel\CSharpJExcel\obj\Debug\ResolveAssemblyReference.cache
+C:\Development\Wachovia\CSharpJExcel\CSharpJExcel\CSharpJExcel\obj\Debug\CSharpJExcel.dll
+C:\Development\Wachovia\CSharpJExcel\CSharpJExcel\CSharpJExcel\obj\Debug\CSharpJExcel.pdb

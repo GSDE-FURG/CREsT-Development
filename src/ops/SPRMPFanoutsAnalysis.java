@@ -2,9 +2,16 @@ package ops;
 import tool.Terminal;
 import datastructures.CellLibrary;
 import datastructures.Circuit;
+import datastructures.ItemX;
 import datastructures.Signal;
+import java.io.FileWriter;
 import java.math.BigDecimal;
+import static java.nio.file.Files.list;
 import java.util.ArrayList;
+import java.util.Arrays;
+import static java.util.Collections.list;
+import java.util.Hashtable;
+import java.util.List;
 import javax.swing.SpringLayout;
 import levelDatastructures.DepthGate;
 import levelDatastructures.GateLevel;
@@ -35,19 +42,20 @@ class main_SPRMP_Exec {
         spr_mp.SPR_MP();
         
         SPRMPFanoutsAnalysis spr = new SPRMPFanoutsAnalysis(reliability, mode, circuitPath, library);
-        spr_mp.SPR_BigDecimal();
+        spr.SPR_BigDecimal();
         
         SPRMPFanoutsAnalysis ptm = new SPRMPFanoutsAnalysis(reliability, mode, circuitPath, library);
         ptm.PTM();
-        */
         
+        */
        
         System.out.println("Timeout : " + timeout);
         SPRMPFanoutsAnalysis spr_mp_analysis = new SPRMPFanoutsAnalysis(reliability, mode, circuitPath, library);
-        spr_mp_analysis.SPR_MP_FANOUTS(timeout);
+        spr_mp_analysis.SPR_MP_FANOUTS(timeout, library, circuitPath);
     }
-
+ 
 }
+
 /** This class implements SPRMP fanouts analysis and provides a set of reliability methods (that can be callable) such as PTM, SPR, and SPR-MP
  * @author Clayton Farias
  * @version 1.0
@@ -68,9 +76,13 @@ public class SPRMPFanoutsAnalysis {
     private ProbCircuit probCircuit;
     private LevelCircuit lCircuit;
     private long timeout;
-
-
+    //private final Hashtable<Integer, BigDecimal , BigDecimal> resultTable; // idx fanout, MTBF, Time
+    
+    
+    
+    
     public SPRMPFanoutsAnalysis(String reliabilty, String mode, String circuitFilePath, String genlib) {
+        
 
         this.reliability = reliabilty;
         this.circuitFilePath = "abc\\" + circuitFilePath;
@@ -78,6 +90,7 @@ public class SPRMPFanoutsAnalysis {
         this.genlib = genlib;
         this.genlibPATH = "abc\\" + this.genlib;
         this.cellLibrary = new CellLibrary();
+        //this.resultTable = new Hashtable<Integer, BigDecimal>();
         
 
     }
@@ -158,7 +171,7 @@ public class SPRMPFanoutsAnalysis {
         this.circuit = circuit;
      }
      
-     public void SPR_BigDecimal()throws Exception {
+     public BigDecimal SPR_BigDecimal()throws Exception {
 
         System.out.println("\n ===== SPR Big Decimal File: " + this.circuitFilePath + "   - Precision : "  + this.reliability + " ===== ");
         final long startTime = System.currentTimeMillis();
@@ -171,7 +184,7 @@ public class SPRMPFanoutsAnalysis {
         
          /*Read Verilog*/
         MappedVerilogReader verilog_circuit = new MappedVerilogReader(this.circuitFilePath, cellLib);
-        //System.out.println("Circuito : "+ verilog_circuit.getCircuit());
+        System.out.println("Circuito : "+ verilog_circuit.getCircuit());
         /*Read Verilog*/
         
         
@@ -220,6 +233,7 @@ public class SPRMPFanoutsAnalysis {
          
           System.out.println(" =================================== END SPR ================= ");
           
+          return spr_result;
           //System.out.println("- SPRMP Reliability : " + SPRMultiPassV3Ops.getSPRMultiPassReliaiblity(this.probCircuit));
     } 
      
@@ -296,11 +310,31 @@ public class SPRMPFanoutsAnalysis {
           System.out.println(" =================================== END SPR-MP ================= ");
     } 
         
-     public void SPR_MP_FANOUTS(long timeout)throws Exception {
+     public void SPR_MP_FANOUTS(long timeout, String library, String CircuitFile)throws Exception {
 
         System.out.println("\n DEBUGGING CODE ANALYSIS OF FANOUTS IN SPR-MP  File: " + this.circuitFilePath + "   - Precision : "  + this.reliability + " ===== ");
+        
         this.timeout = timeout;
+        
         final long startTime = System.currentTimeMillis();
+        
+        List<ItemX> resultTable = new ArrayList<>();   
+            /*
+            List<ItemX> resultTable = new ArrayList<>();   
+            ItemX t = new ItemX(0, new BigDecimal(0), 0);
+            resultTable.add(t);
+            */
+            
+            
+            SPRMPFanoutsAnalysis spr = new SPRMPFanoutsAnalysis(this.reliability, this.mode, CircuitFile, library);
+            long endTimeSPR = System.currentTimeMillis();
+            ItemX t = new ItemX (0 , spr.SPR_BigDecimal(), (endTimeSPR - startTime)/1000);
+            
+            resultTable.add(t);
+            
+        int idx=0;
+          
+        
         
  
         /*CellLibrary*/
@@ -310,9 +344,6 @@ public class SPRMPFanoutsAnalysis {
         
          /*Read Verilog*/
         MappedVerilogReader verilog_circuit = new MappedVerilogReader(this.circuitFilePath, cellLib);
-        //System.out.println("Circuito : "+ verilog_circuit);
-         
-        /*Read Verilog*/
         
         
         /*Circuit linked to verilog_circuit - init circuit*/
@@ -331,9 +362,7 @@ public class SPRMPFanoutsAnalysis {
           /*Gate levels*/
             //this.PrintGateLevels();
           /*Gate levels*/
-        
-          
-          //System.out.println("Level Circuit : "+ this.levelCircuit);
+
   
           cellLib.setPTMCells2(Float.valueOf(reliability));
           cellLib.setPTMCells(new BigDecimal(reliability));
@@ -348,19 +377,14 @@ public class SPRMPFanoutsAnalysis {
           probCircuit.setDefaultProbSourceSignalMatrix();
           probCircuit.setProbSignalStates(false); //HERE
           
-
-         
-          
-         
-         System.out.println("Running SPR-MP whit timeout of : " + this.timeout);
+         System.out.println("Running SPR-MP with the timeout of : " + this.timeout);
          System.out.println("Total of Fanouts (n) : " + this.probCircuit.getFanouts().size());
          /*limitar número de fanouts*/
-         System.out.println("\nFanout(n)      MTBF        Time(s)        "); 
+         System.out.println("\nFanout(n)      Reliability        Time(s)        "); 
         
         long endTime = System.currentTimeMillis();
         for (int i = 1; i <= this.probCircuit.getFanouts().size(); i++) {
-            
-              
+   
               final long timeConsup = (endTime - startTime)/1000;
               //String timeConsup =  Long.toString((endTime - startTime)) + " ms"; 
               
@@ -368,16 +392,29 @@ public class SPRMPFanoutsAnalysis {
                   
                       BigDecimal sprmp_result = SPRMultiPassV3Ops.getPRMultiPassReliaiblityByLimitedFanouts(probCircuit, i);
                       long endTimeInside = System.currentTimeMillis();
-                      final long insideTime = (endTimeInside - startTime)/1000;
+                      final long insideTime = (endTimeInside - startTime)/1000; //seconds
                       
                       System.out.println(i  + "      " + sprmp_result + "      " + insideTime);
                       endTime = endTimeInside;
+                      
+                      if(insideTime <= this.timeout){
+                        ItemX item = new ItemX(i, sprmp_result, insideTime);
+                        resultTable.add(item);
+                        idx = i;
+                      }
               }else{
                   break;
               }
-
-              //System.out.println("SPR-MP Reliability : " + sprmp_result + " - Time (s) : " + timeConsup + "\n");
          }
+         for (int i = 0; i <= idx; i++){
+             System.out.println(resultTable.get(i).PrintItemx());
+         }
+         
+       
+
+  
+        
+        
            
            //BigDecimal sprmp_result = SPRMultiPassV3Ops.getSPRMultiPassReliaiblity(probCircuit);
            
