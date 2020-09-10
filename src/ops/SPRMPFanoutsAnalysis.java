@@ -483,7 +483,7 @@ public class SPRMPFanoutsAnalysis {
          
           System.out.println(" =================================== END SPR-MP ================= \n");
           
-           WriteExcel resultFile = new WriteExcel(this.circuit.getName() + "-" + this.timeout , "Resultado", Long.toString(this.timeoutMiliSeconds) , resultTable, idx);
+           WriteExcel resultFile = new WriteExcel(this.circuit.getName() + "-" + this.timeout + "(s)", "Resultado", Long.toString(this.timeoutMiliSeconds) , resultTable, idx);
           
            resultFile.write();
             

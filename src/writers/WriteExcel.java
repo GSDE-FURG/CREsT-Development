@@ -44,7 +44,9 @@ public class WriteExcel {
             this.TimeoutMiliSeconds = TimeoutMiliSeconds;
             this.TimeoutSeconds = Long.valueOf(TimeoutMiliSeconds) / 1000;
             this.idx = idx;
-            this.delimitator = "0.000001";
+            this.delimitator = "0.000001"; //1E-6
+            
+            System.out.println("Failire Rate = Reliability / "+ this.delimitator + " = 1E-6");
             //System.out.println(this.TimeoutSeconds);
     }
 
