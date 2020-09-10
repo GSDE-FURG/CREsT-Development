@@ -33,6 +33,7 @@ public class WriteExcel {
     private int idx;
     private String TimeoutMiliSeconds;
     private long TimeoutSeconds;
+    private String delimitator;
     private List<ItemX> resultTable;
 
     public WriteExcel(String inputFile, String SheetName, String TimeoutMiliSeconds ,List<ItemX> resultTable, int idx) {
@@ -43,6 +44,7 @@ public class WriteExcel {
             this.TimeoutMiliSeconds = TimeoutMiliSeconds;
             this.TimeoutSeconds = Long.valueOf(TimeoutMiliSeconds) / 1000;
             this.idx = idx;
+            this.delimitator = "0.000001";
             //System.out.println(this.TimeoutSeconds);
     }
 
@@ -90,7 +92,7 @@ public class WriteExcel {
         // Write a few headers
         addCaption(sheet, 0, 0, "Fanouts");
         addCaption(sheet, 1, 0, "Reliability");
-        addCaption(sheet, 2, 0, "Failure Rate");
+        addCaption(sheet, 2, 0, "Failure Rate (1E-6)");
         addCaption(sheet, 3, 0, "MTBF");
         addCaption(sheet, 4, 0, "Time (ms)");
         
@@ -134,12 +136,24 @@ public class WriteExcel {
          for (int i = 0; i <= this.idx; i++){
              //System.out.println(resultTable.get(i).PrintItemx());
              addNumber(sheet, 0, i+1, (this.resultTable.get(i).getIdxFanout())); //Fanout
-             addLabel(sheet, 1, i+1,  (this.resultTable.get(i).getMTBF())); //reliability
              
+             addLabel(sheet, 1, i+1,  (this.resultTable.get(i).getMTBF())); //reliability      
              
-             addLabel(sheet, 2, i+1, "-LN(B"+(i+2)+")" ); //Failure Rate
-           
+                String strFormulaFailureRate = "-LN(B"+(i+2)+")" + "/" + this.delimitator;;//"(B"+(i+2)+")/1E-6" ;//
+             
+                Formula formulaFailureRate = new Formula(2, i+1, strFormulaFailureRate);
+             
+             sheet.addCell(formulaFailureRate); //FailureRate
+             
+             String strFormulaMTBF = "1/(C"+(i+2)+")" ; //"-LN(B"+(i+2)+")"; //MTBF
+             
+             Formula formulaMTBF = new Formula(3, i+1, strFormulaMTBF);
+             
+              sheet.addCell(formulaMTBF); //MTBF
+
              addLabel(sheet, 4, i+1,  (this.resultTable.get(i).getTime()));
+             
+              //this.
          }
     }
 
@@ -162,6 +176,7 @@ public class WriteExcel {
         Label label;
         label = new Label(column, row, s, times);
         sheet.addCell(label);
+       
     }
     /*
     public static void main(String[] args) throws WriteException, IOException {
