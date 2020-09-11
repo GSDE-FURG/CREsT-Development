@@ -39,7 +39,7 @@ public class WriteExcel {
     public WriteExcel(String inputFile, String SheetName, String TimeoutMiliSeconds ,List<ItemX> resultTable, int idx) {
             this.inputFile = inputFile + ".xls";
             this.FileName = this.inputFile;
-            this.SheetName =  SheetName + "-" + TimeoutSeconds;
+            this.SheetName =  SheetName;
             this.resultTable = resultTable;
             this.TimeoutMiliSeconds = TimeoutMiliSeconds;
             this.TimeoutSeconds = Long.valueOf(TimeoutMiliSeconds) / 1000;
