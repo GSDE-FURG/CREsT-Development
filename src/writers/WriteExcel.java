@@ -141,7 +141,7 @@ public class WriteExcel {
              
              addLabel(sheet, 1, i+1,  (this.resultTable.get(i).getMTBF())); //reliability      
              
-                String strFormulaFailureRate = "-LN(B"+(i+2)+")" + "/" + this.delimitator;;//"(B"+(i+2)+")/1E-6" ;//
+                String strFormulaFailureRate = "-LN(B"+(i+2)+")" + "/" + this.delimitator;//"  (-ln(0,99999)/1E-6) " ;//
              
                 Formula formulaFailureRate = new Formula(2, i+1, strFormulaFailureRate);
              
