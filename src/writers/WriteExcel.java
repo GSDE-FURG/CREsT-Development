@@ -3,10 +3,13 @@ package writers;
 import datastructures.ItemX;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+
 
 import jxl.CellView;
 import jxl.Workbook;
@@ -29,6 +32,7 @@ public class WriteExcel {
     private WritableCellFormat times;
     private String inputFile;
     private String FileName;
+    private String FileNameCsv;
     private String SheetName;
     private int idx;
     private String TimeoutMiliSeconds;
@@ -39,6 +43,7 @@ public class WriteExcel {
     public WriteExcel(String inputFile, String SheetName, String TimeoutMiliSeconds ,List<ItemX> resultTable, int idx) {
             this.inputFile = inputFile + ".xls";
             this.FileName = this.inputFile;
+            this.FileNameCsv = inputFile + "_csv.csv";
             this.SheetName =  SheetName;
             this.resultTable = resultTable;
             this.TimeoutMiliSeconds = TimeoutMiliSeconds;
@@ -49,7 +54,7 @@ public class WriteExcel {
             System.out.println("Failire Rate = Reliability / "+ this.delimitator + " = 1E-6");
             //System.out.println(this.TimeoutSeconds);
     }
-
+    
     public void write() throws IOException, WriteException {
         
         System.out.println("Creating Excell file : "+ this.FileName);
@@ -67,6 +72,53 @@ public class WriteExcel {
 
         workbook.write();
         workbook.close();
+    }
+
+
+    public void writeCSV() throws IOException, WriteException {
+            
+        
+            
+        System.out.println("Creating .csv file: "+ this.FileNameCsv);
+        
+            List<List<String>> rows = Arrays.asList(
+                 //Arrays.asList("Jean", "author", "Java"),
+                 //Arrays.asList("David", "editor", "Python"),
+                 //Arrays.asList("Scott", "editor", "Node.js")
+                 
+                  // Arrays.asList();
+             );
+            
+            //rows = Arrays.asList("aaaaa");
+
+             FileWriter csvWriter = new FileWriter(this.FileNameCsv);
+                /*
+                addCaption(sheet, 0, 0, "Fanouts");
+                addCaption(sheet, 1, 0, "Reliability");
+                addCaption(sheet, 2, 0, "Failure Rate (1E-6)");
+                addCaption(sheet, 3, 0, "MTBF");
+                addCaption(sheet, 4, 0, "Time (ms)");
+                */
+                
+             csvWriter.append("Fanouts");
+             csvWriter.append(",");
+             csvWriter.append("Reliability");
+             csvWriter.append(",");
+             csvWriter.append("Failure Rate (1E-6)");
+             csvWriter.append(",");
+             csvWriter.append("MTBF");
+             csvWriter.append(",");
+             csvWriter.append("Time (ms)");
+             csvWriter.append("\n");
+
+             for (int i = 0; i < this.resultTable.size(); i++ ) {
+                 
+                 csvWriter.append(this.resultTable.get(i).getLineResultTable());
+                 csvWriter.append("\n");
+             }
+
+             csvWriter.flush();
+             csvWriter.close();
     }
 
     private void createLabel(WritableSheet sheet)

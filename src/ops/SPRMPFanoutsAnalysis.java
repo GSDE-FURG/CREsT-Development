@@ -34,7 +34,7 @@ class main_SPRMP_Exec {
          
         Vector <Integer> TimeoutList = new Vector();
         
-        TimeoutList.add(60); //Segundos - 1m
+        TimeoutList.add(10); //Segundos - 1m
         //TimeoutList.add(600); // - 10m
         //TimeoutList.add(3600);//1h
         
@@ -432,8 +432,8 @@ public class SPRMPFanoutsAnalysis {
                         
                         if(nFanoutsTime * 1.7 > this.timeoutMiliSeconds){ //preempção
                             System.out.println("Stoping the execution, expected time ~ (" + nFanoutsTime * 2 + ") m(s) above the Timeout (~2x), Timeout : " + this.timeoutMiliSeconds + " ~ " + this.timeout  + "(s)");
-                            //i = (this.probCircuit.getFanouts().size()) + 11;
-                            //break;
+                            i = (this.probCircuit.getFanouts().size()) + 11;
+                            break;
                         }
                         
                        
@@ -459,6 +459,8 @@ public class SPRMPFanoutsAnalysis {
            WriteExcel resultFile = new WriteExcel(this.circuit.getName() + "-" + this.timeout + "(s)"  , "TimeOut-" + this.timeout +"(s)"    , Long.toString(this.timeoutMiliSeconds) , resultTable, idx);
           
            resultFile.write();
+           
+           resultFile.writeCSV();
             
      } 
    

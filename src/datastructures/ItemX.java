@@ -29,6 +29,9 @@ public class ItemX {
      public String getMTBF(){
         return String.valueOf(this.MTBF).replace(".", ",");
     }
+     public String getMTBFDOTCOMMA(){
+        return String.valueOf(this.MTBF).replace(".", ",");
+    }
       public BigDecimal getMTBFBigDecimal(){
         return (this.MTBF);
     }
@@ -47,6 +50,17 @@ public class ItemX {
         String item = "Fanout (n): " + this.fanoutIdx + "        Reliability: " + this.MTBF + "        Time: " + this.time  + "  ~  " + this.time/1000 + " (s)";
         
         return (item);
+    }
+    public String getLineResultTable(){
+       // System.out.println("Fanout Idx: " + this.fanoutIdx);
+       // System.out.println("MTBF: " + this.MTBF);
+       // System.out.println("Time: " + this.time);
+        
+        //String item = "Fanout (n): " + this.fanoutIdx + "        Reliability: " + this.MTBF + "        Time: " + this.time  + "  ~  " + this.time/1000 + " (s)";
+        
+        String itemx = this.fanoutIdx + "," + this.getMTBFDOTCOMMA() + "," + "=-LN(B"+(this.fanoutIdx+2)+")" + "/1E-6" + "," + "=1/C" + (this.fanoutIdx + 2) + ","   + this.getTime();
+        
+        return (itemx);
     }
     
 }
