@@ -27,7 +27,7 @@ class main_SPRMP_Exec {
 
     public static void main(final String[] args) throws Exception {
        
-        String circuitPath ="c432_cadence.v" ;//"c17v3_fritz.v";//"c17_cadence.v";
+        String circuitPath = "c432_cadence.v" ;//"c17v3_fritz.v";//"c17_cadence.v";
         String reliability = "0.9999";
         String mode = "big_decimal";
         String library = "cadence.genlib";
@@ -35,14 +35,14 @@ class main_SPRMP_Exec {
         Vector <Integer> TimeoutList = new Vector();
         
         TimeoutList.add(60); //Segundos - 1m
-        TimeoutList.add(600); // - 10m
-        TimeoutList.add(3600);//1h
+        //TimeoutList.add(600); // - 10m
+        //TimeoutList.add(3600);//1h
         
        
         for (int i = 0; i < TimeoutList.size(); i++) {
             
             System.out.println(TimeoutList.get(i));
-            long timeout = 10 ;///TimeoutList.get(i);
+            long timeout = TimeoutList.get(i);
             System.out.println(i + "  -  Timeout : " + timeout + "(s)");
                 SPRMPFanoutsAnalysis spr_mp_analysis = new SPRMPFanoutsAnalysis(reliability, timeout ,mode, circuitPath, library);
                 spr_mp_analysis.SPR_MP_FANOUTS(library, circuitPath);
@@ -237,11 +237,11 @@ public class SPRMPFanoutsAnalysis {
             this.spr_timeConsumption = (sprEndTime - sprStartTIme);
           
         
-          System.out.println("- SPR Bigdecimal Reliability : " + spr_result + " calc Time: " +(this.spr_timeConsumption) + " (ms)");
+          System.out.println("- SPR Bigdecimal Reliability : " + spr_result + " calc Time: " +(this.getSPRTimeConsumption()) + " (ms)");
           
           //System.out.println("- SPR Bigdecimal Reliability : " + spr_result + " PauloTime: " +(endTime - ) + " (ms)");
           
-          //System.out.println(" =================================== END SPR ================= ");         
+          System.out.println(" =================================== END SPR ================= \n");         
           
           return spr_result;
         
@@ -321,7 +321,8 @@ public class SPRMPFanoutsAnalysis {
     } 
         
      public void SPR_MP_FANOUTS(String library, String CircuitFile)throws Exception {
-        int idx = 0;
+        
+         int idx = 0;
         
         //System.out.println("\n DEBUGGING CODE ANALYSIS OF FANOUTS IN SPR-MP  File: " + this.circuitFilePath + "   - Precision : "  + this.reliability + " ===== ");
         ItemX t;
@@ -331,21 +332,24 @@ public class SPRMPFanoutsAnalysis {
         /*SPR Call*/
         SPRMPFanoutsAnalysis spr = new SPRMPFanoutsAnalysis(this.reliability, this.timeout, this.mode, CircuitFile, library);
         
-        long sprStartMethodTime = System.currentTimeMillis();
+        /*Time SPR*/
+        //long sprStartMethodTime = System.currentTimeMillis();
          
             BigDecimal spr_result = spr.getSPRBigDecimal(idx);
         
-        long sprEndMethodTime = System.currentTimeMillis();
+       // long sprEndMethodTime = System.currentTimeMillis();
           
         //-------- ----------- --------- ----------- -------------
-         System.out.println("        ~  SPR Method Time: " + (sprEndMethodTime - sprStartMethodTime) + "m(s)");
+        // System.out.println("       ~   SPR Method Time: " + (sprEndMethodTime - sprStartMethodTime) + "m(s)");
         
-        t = new ItemX (0 ,spr_result, spr.getSPRTimeConsumption()); 
-      
-        resultTable.add(t);
+            t = new ItemX (0 ,spr_result, spr.getSPRTimeConsumption()); 
+            resultTable.add(t);
         
-         long PauloTime2 = System.currentTimeMillis();
+         //long PauloTime2 = System.currentTimeMillis();
           
+         
+        long loadTimeStart = System.currentTimeMillis();
+         
         /*CellLibrary*/
         CellLibrary cellLib = new CellLibrary();
         cellLib.initLibrary(this.genlibPATH);
@@ -386,52 +390,63 @@ public class SPRMPFanoutsAnalysis {
           this.probCircuit.setDefaultProbSourceSignalMatrix();
           this.probCircuit.setProbSignalStates(false); //HERE
           
-         System.out.println("Running SPR-MP with the timeout: " +(this.timeoutMiliSeconds) + " (ms)");
-         System.out.println("Total of Fanouts (n) : " + this.probCircuit.getFanouts().size() + "    Timeout: " + this.timeout + "(s)");
-         /*limitar número de fanouts*/
-         System.out.println("\nFanout(n)        Reliability        Time(ms)           Time(s)"); 
+          long load_TimeEnd = System.currentTimeMillis();
+          
+          System.out.println("- Time to loag Genlib, Circuit (verilog), and settings probabilities: " + (load_TimeEnd - loadTimeStart) + " m(s)");
+          
+         
         
-         //System.out.println("Number of fanouts : " + this.probCircuit.getFanouts().size());
          long startTime = System.currentTimeMillis();
          
          long executionTimeGlobal = System.currentTimeMillis();
          
-         long PauloTime3 = System.currentTimeMillis();
+         long timeoutsideIF = (executionTimeGlobal - startTime);
          
+         long nFanoutsTime = 0;
          
-         System.out.println("PauloTime : " + (PauloTime3 - PauloTime2));
+         //System.out.println("- Running SPR-MP with the timeout: " +(this.timeoutMiliSeconds) + " (ms)");
+         System.out.println("- Total of Fanouts (n) : " + this.probCircuit.getFanouts().size() + "    Timeout: " + this.timeout + "(s)");
+         System.out.println("\n- Fanout(n)        Reliability        Time(ms)           Time(s)"); 
           
             for (int i = 1; i <= this.probCircuit.getFanouts().size(); i++){ //Fluxogram TimeExecution (ms)
                
-              final long timeoutsideIF = (executionTimeGlobal - startTime);
-               
-              if((timeoutsideIF) <=  (this.timeoutMiliSeconds)){ //(m(s)
+   
+              if((timeoutsideIF) <=  (this.timeoutMiliSeconds) && (nFanoutsTime <= this.timeoutMiliSeconds)){ //(m(s)
                       
                       long sprmpStartTime = System.currentTimeMillis();
                         BigDecimal sprmp_result = SPRMultiPassV3Ops.getPRMultiPassReliaiblityByLimitedFanouts(this.probCircuit, i);
                       long endTimeInside = System.currentTimeMillis();
                       
-                      //final long insideTime = (endTimeInside - startTime)/1000; //seconds
-                      final long insideTime = (endTimeInside - startTime); //seconds
+                      long sprmpTime = (endTimeInside - sprmpStartTime); //Rodada SPR
+
+                      nFanoutsTime = nFanoutsTime + sprmpTime; // Final - inicio
                       
-                     // System.out.println(i  + "        " + sprmp_result + "        " + insideTime + "  ~  " + insideTime/1000 + " (s)");
-                      System.out.println("MODE" + i  + "        " + sprmp_result + "        " + (endTimeInside- sprmpStartTime) + "  ~  " + (endTimeInside- sprmpStartTime) /1000 + " (s)");
-                      executionTimeGlobal = endTimeInside;
-                      
-                      if(insideTime <= (this.timeoutMiliSeconds)){
-                        ItemX item = new ItemX(i, sprmp_result, insideTime);
+                      System.out.println(i  + "        " + sprmp_result + "       (Round): " + sprmpTime + " m(s)     ~   " + " (Global): " + nFanoutsTime + " m(s) " + nFanoutsTime/1000 + " (s)");
+                     
+      
+                      if(nFanoutsTime <= (this.timeoutMiliSeconds)){
+                        
+                        ItemX item = new ItemX(i, sprmp_result, nFanoutsTime);
                         resultTable.add(item);
                         idx = i;
-                        if(insideTime * 2 > this.timeoutMiliSeconds){
-                            System.out.println("Stoping the execution, expected time " + this.timeoutMiliSeconds*2 + " above the timelimit (~2x) : " + this.timeoutMiliSeconds + " ~ " + this.timeout  + "(s)");
-                            i = (this.probCircuit.getFanouts().size()) + 11;
-                            break;
+                        
+                        if(nFanoutsTime * 1.7 > this.timeoutMiliSeconds){ //preempção
+                            System.out.println("Stoping the execution, expected time ~ (" + nFanoutsTime * 2 + ") m(s) above the Timeout (~2x), Timeout : " + this.timeoutMiliSeconds + " ~ " + this.timeout  + "(s)");
+                            //i = (this.probCircuit.getFanouts().size()) + 11;
+                            //break;
                         }
+                        
+                       
                       }
+                      
+                      
+                       
+                      
               }else{
                   break;
               }
          }
+         System.out.println("\n");
          for (int i = 0; i <= idx; i++){
              System.out.println(resultTable.get(i).PrintItemx());
          }

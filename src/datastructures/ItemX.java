@@ -15,7 +15,7 @@ public class ItemX {
    
     private final int fanoutIdx;
     private final BigDecimal MTBF;
-    private final long time;
+    private long time;
     
     public ItemX (int fanoutIdx, BigDecimal MTBF, long time){
         this.fanoutIdx = fanoutIdx;
@@ -27,11 +27,16 @@ public class ItemX {
         return this.fanoutIdx;
     }
      public String getMTBF(){
-        
         return String.valueOf(this.MTBF).replace(".", ",");
+    }
+      public BigDecimal getMTBFBigDecimal(){
+        return (this.MTBF);
     }
      public String getTime(){
         return String.valueOf(this.time);
+    }
+    public long getTimelong(){
+        return (this.time);
     }
     
     public String PrintItemx(){

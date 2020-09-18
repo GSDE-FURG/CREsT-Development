@@ -285,9 +285,9 @@ public class SPRMultiPassV3Ops {
                 
         ProbSignal pSignal = newFanouts.get(0);
         
-        // long sprmpStartTime = System.currentTimeMillis();
+        //long sprmpStartTime = System.currentTimeMillis();
         value = getMultiPass(pCircuit, newFanouts, pSignal, 0);
-        // long sprmpEndTime = System.currentTimeMillis();
+        //long sprmpEndTime = System.currentTimeMillis();
          
          //System.out.println("    ~ SPRMP : " + (sprmpEndTime - sprmpStartTime));
         
