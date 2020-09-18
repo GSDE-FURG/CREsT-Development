@@ -31,9 +31,7 @@ class main_SPRMP_Exec {
         String reliability = "0.9999";
         String mode = "big_decimal";
         String library = "cadence.genlib";
-        
-        //long timeout = 3; //seconds
-        
+         
         Vector <Integer> TimeoutList = new Vector();
         
         TimeoutList.add(60); //Segundos - 1m
@@ -227,11 +225,12 @@ public class SPRMPFanoutsAnalysis {
           // taking off probCircuit.setProbSignalStates(false); //novo 
           probCircuit.setDefaultProbSourceSignalMatrix();
           
-          final long startTime = System.currentTimeMillis();
+          //final long startTime = System.currentTimeMillis();
+          
           
           final long sprStartTIme = System.currentTimeMillis();
           
-            BigDecimal spr_result = SPROps.getSPRReliability(probCircuit);
+            BigDecimal spr_result = SPROps.getSPRReliability(this.probCircuit);
           
           final long sprEndTime = System.currentTimeMillis();
           
@@ -382,10 +381,10 @@ public class SPRMPFanoutsAnalysis {
           this.cellLibrary = cellLib;
           
           //ProbCircuit
-          probCircuit.setPTMReliabilityMatrix(); //Sempre usar variaveis criadas 
+          this.probCircuit.setPTMReliabilityMatrix(); //Sempre usar variaveis criadas 
           // taking off probCircuit.setProbSignalStates(false); //novo 
-          probCircuit.setDefaultProbSourceSignalMatrix();
-          probCircuit.setProbSignalStates(false); //HERE
+          this.probCircuit.setDefaultProbSourceSignalMatrix();
+          this.probCircuit.setProbSignalStates(false); //HERE
           
          System.out.println("Running SPR-MP with the timeout: " +(this.timeoutMiliSeconds) + " (ms)");
          System.out.println("Total of Fanouts (n) : " + this.probCircuit.getFanouts().size() + "    Timeout: " + this.timeout + "(s)");
@@ -394,7 +393,8 @@ public class SPRMPFanoutsAnalysis {
         
          //System.out.println("Number of fanouts : " + this.probCircuit.getFanouts().size());
          long startTime = System.currentTimeMillis();
-         long endTime = System.currentTimeMillis();
+         
+         long executionTimeGlobal = System.currentTimeMillis();
          
          long PauloTime3 = System.currentTimeMillis();
          
@@ -403,20 +403,20 @@ public class SPRMPFanoutsAnalysis {
           
             for (int i = 1; i <= this.probCircuit.getFanouts().size(); i++){ //Fluxogram TimeExecution (ms)
                
-                final long timeConsup = (endTime - startTime);
-                //final long timeConsup = (endTime - startTime)/1000;
-                //String timeConsup =  Long.toString((endTime - startTime)) + " ms"; 
-              
-              if((timeConsup) <=  (this.timeoutMiliSeconds)){ //(m(s)
+              final long timeoutsideIF = (executionTimeGlobal - startTime);
+               
+              if((timeoutsideIF) <=  (this.timeoutMiliSeconds)){ //(m(s)
                       
-                      BigDecimal sprmp_result = SPRMultiPassV3Ops.getPRMultiPassReliaiblityByLimitedFanouts(probCircuit, i);
+                      long sprmpStartTime = System.currentTimeMillis();
+                        BigDecimal sprmp_result = SPRMultiPassV3Ops.getPRMultiPassReliaiblityByLimitedFanouts(this.probCircuit, i);
                       long endTimeInside = System.currentTimeMillis();
                       
                       //final long insideTime = (endTimeInside - startTime)/1000; //seconds
                       final long insideTime = (endTimeInside - startTime); //seconds
                       
-                      System.out.println(i  + "        " + sprmp_result + "        " + insideTime + "  ~  " + insideTime/1000 + " (s)");
-                      endTime = endTimeInside;
+                     // System.out.println(i  + "        " + sprmp_result + "        " + insideTime + "  ~  " + insideTime/1000 + " (s)");
+                      System.out.println("MODE" + i  + "        " + sprmp_result + "        " + (endTimeInside- sprmpStartTime) + "  ~  " + (endTimeInside- sprmpStartTime) /1000 + " (s)");
+                      executionTimeGlobal = endTimeInside;
                       
                       if(insideTime <= (this.timeoutMiliSeconds)){
                         ItemX item = new ItemX(i, sprmp_result, insideTime);
