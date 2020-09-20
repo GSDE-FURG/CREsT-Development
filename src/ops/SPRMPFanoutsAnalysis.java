@@ -279,12 +279,12 @@ public class SPRMPFanoutsAnalysis {
           long startTime = System.nanoTime();    
                      BigDecimal spr_result = teste2.getSPRReliability(this.probCircuit); //SPROps.getSPRReliability(this.probCircuit);
           long endTime= System.nanoTime();
-                    
-          long estimatedTime = (endTime - startTime);
-          long durationInMs = TimeUnit.NANOSECONDS.toMillis(estimatedTime);
+          long durationInMs = TimeUnit.NANOSECONDS.toMillis(endTime - startTime);
+          this.spr_timeConsumption = (durationInMs);
+          
              System.out.println("SPR - Nano: " + durationInMs);
              
-          this.spr_timeConsumption = (durationInMs);
+          
 
           /*
           final long sprStartTIme = System.currentTimeMillis();
@@ -309,7 +309,7 @@ public class SPRMPFanoutsAnalysis {
     } 
      
      public void SPR_MP_FANOUTS(String library, String CircuitFile)throws Exception {
-        
+          SPRMultiPassV3Ops teste = new SPRMultiPassV3Ops();
          int idx = 0;
         
        
@@ -383,13 +383,17 @@ public class SPRMPFanoutsAnalysis {
           System.out.println("- Time to loag Genlib, Circuit (verilog), and settings probabilities: " + (load_TimeEnd - loadTimeStart) + " m(s)");
           
          /*News TimeStamp with Instant Now*/
-         Instant startTime = Instant.now();//System.currentTimeMillis();
+         long startTime = System.nanoTime();//Instant.now();//System.currentTimeMillis();
          
-         Instant executionTimeGlobal = Instant.now();//System.currentTimeMillis();
+         long executionTimeGlobal = System.nanoTime(); //Instant.now();//System.currentTimeMillis();
          
-            long timeoutsideIF = Duration.between(startTime, executionTimeGlobal).toMillis(); //(executionTimeGlobal - startTime);
+            long timeoutsideIF =  TimeUnit.NANOSECONDS.toMillis(executionTimeGlobal - startTime);//Duration.between(startTime, executionTimeGlobal).toMillis(); //(executionTimeGlobal - startTime);
          
-         long nFanoutsTime = 0;
+         long globalTime = 0;
+         
+         
+         //long endTime= System.nanoTime();
+         //long durationInMs = TimeUnit.NANOSECONDS.toMillis(endTime - startTime);
          
          //System.out.println("- Running SPR-MP with the timeout: " +(this.timeoutMiliSeconds) + " (ms)");
          System.out.println("- Total of Fanouts (n) : " + this.probCircuit.getFanouts().size() + "    Timeout: " + this.timeout + "(s)");
@@ -398,14 +402,21 @@ public class SPRMPFanoutsAnalysis {
             for (int i = 1; i <= this.probCircuit.getFanouts().size(); i++){ //Fluxogram TimeExecution (ms)
                
    
-              if((timeoutsideIF) <=  (this.timeoutMiliSeconds) && (nFanoutsTime <= this.timeoutMiliSeconds)){ //(m(s)
+              if((timeoutsideIF) <=  (this.timeoutMiliSeconds) && (globalTime <= this.timeoutMiliSeconds)){ //(m(s)
                     
                         /*New try*/
+                        /*
                         Instant start = Instant.now();
                                  BigDecimal sprmp_result = SPRMultiPassV3Ops.getPRMultiPassReliaiblityByLimitedFanouts(this.probCircuit, i);
                         Instant finish = Instant.now();
+                        */
+                       
+                        
+                        long sprmpStartTime = System.nanoTime(); //System.currentTimeMillis();
+                                    BigDecimal sprmp_result = teste.getPRMultiPassReliaiblityByLimitedFanouts(this.probCircuit, i);
+                        long sprmpEndTime = System.nanoTime();//System.currentTimeMillis();
            
-                        long sprmpTime = Duration.between(start, finish).toMillis();
+                        long sprmpTime =   TimeUnit.NANOSECONDS.toMillis(sprmpEndTime - sprmpStartTime);//Duration.between(start, finish).toMillis();
                       
                       /*
                       long sprmpStartTime = System.currentTimeMillis();
@@ -415,19 +426,19 @@ public class SPRMPFanoutsAnalysis {
                       
                       //long sprmpTime = (endTimeInside - sprmpStartTime); //Rodada SPR
 
-                      nFanoutsTime = nFanoutsTime + (Duration.between(startTime, finish).toMillis()); //nFanoutsTime + sprmpTime; // Final - inicio
+                      globalTime = globalTime + sprmpTime; // Final - inicio
                       
-                      System.out.println(i  + "        " + sprmp_result + "       (Round): " + sprmpTime + " m(s)     ~   " + " (Global): " + nFanoutsTime + " m(s) " + nFanoutsTime/1000 + " (s)");
+                      System.out.println(i  + "        " + sprmp_result + "       (Round): " + sprmpTime + " m(s)     ~   " + " (Global): " + globalTime + " m(s) " + globalTime/1000 + " (s)");
                      
       
-                      if(nFanoutsTime <= (this.timeoutMiliSeconds)){
+                      if(globalTime <= (this.timeoutMiliSeconds)){
                         
-                        ItemX item = new ItemX(i, sprmp_result, nFanoutsTime);
+                        ItemX item = new ItemX(i, sprmp_result, globalTime);
                         resultTable.add(item);
                         idx = i;
                         
-                        if(nFanoutsTime * 1.7 > this.timeoutMiliSeconds){ //preempção
-                            System.out.println("Stoping the execution, expected time ~ (" + nFanoutsTime * 2 + ") m(s) above the Timeout (~2x), Timeout : " + this.timeoutMiliSeconds + " ~ " + this.timeout  + "(s)");
+                        if(globalTime * 1.7 > this.timeoutMiliSeconds){ //preempção
+                            System.out.println("Stoping the execution, expected time ~ (" + globalTime * 2 + ") m(s) above the Timeout (~2x), Timeout : " + this.timeoutMiliSeconds + " ~ " + this.timeout  + "(s)");
                             i = (this.probCircuit.getFanouts().size()) + 11;
                             break;
                         }
