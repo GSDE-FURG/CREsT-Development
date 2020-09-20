@@ -191,7 +191,7 @@ public class WriteExcel {
              //System.out.println(resultTable.get(i).PrintItemx());
              addNumber(sheet, 0, i+1, (this.resultTable.get(i).getIdxFanout())); //Fanout
              
-             addLabel(sheet, 1, i+1,  (this.resultTable.get(i).getMTBF())); //reliability      
+             addLabel(sheet, 1, i+1,  (this.resultTable.get(i).getReliability())); //reliability      
              
                 String strFormulaFailureRate = "-LN(B"+(i+2)+")" + "/" + this.delimitator;//"  (-ln(0,99999)/1E-6) " ;//
              

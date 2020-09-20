@@ -26,14 +26,17 @@ import signalProbability.ProbCircuit;
 class main_SPRMP_Exec {
 
     public static void main(final String[] args) throws Exception {
+        
+         Vector <Integer> TimeoutList = new Vector();
        
+        //Read Inputs Circuit, Reliability, Genlib//
         String circuitPath = "c432_cadence.v" ;//"c17v3_fritz.v";//"c17_cadence.v";
         String reliability = "0.9999";
         String mode = "big_decimal";
         String library = "cadence.genlib";
          
-        Vector <Integer> TimeoutList = new Vector();
-        
+     
+        /*Timeout List*/
         TimeoutList.add(10); //Segundos - 1m
         //TimeoutList.add(600); // - 10m
         //TimeoutList.add(3600);//1h
@@ -82,6 +85,8 @@ public class SPRMPFanoutsAnalysis {
         //System.out.println("TESTE : "+ this.spr_timeConsumption);
         return this.spr_timeConsumption;
     }
+    
+    publi
     
     public SPRMPFanoutsAnalysis(String reliabilty,long Timeout, String mode, String circuitFilePath, String genlib) {
         
@@ -324,7 +329,7 @@ public class SPRMPFanoutsAnalysis {
         
          int idx = 0;
         
-        //System.out.println("\n DEBUGGING CODE ANALYSIS OF FANOUTS IN SPR-MP  File: " + this.circuitFilePath + "   - Precision : "  + this.reliability + " ===== ");
+       
         ItemX t;
         List<ItemX> resultTable = new ArrayList<>();   
         
