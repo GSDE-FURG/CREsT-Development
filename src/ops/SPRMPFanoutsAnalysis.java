@@ -35,36 +35,54 @@ class main_SPRMP_Exec {
          
        
         //Read Inputs Circuit, Reliability, Genlib//
-        String circuitPath = "c5315_cadence.v" ;//"c1355_cadence.v";//c432_cadence.v" ;//"c17v3_fritz.v";//"c17_cadence.v";
+        //String circuitPath = "c5315_cadence.v" ;//"c1355_cadence.v";//c432_cadence.v" ;//"c17v3_fritz.v";//"c17_cadence.v";
+        Vector circuitPath = new Vector();
         String reliability = "0.9999"; //4 digitos
         String mode = "big_decimal";
         String library = "cadence.genlib";
-         
+        
+        //New ones
+        circuitPath.add("c17_cadence.v");
+        circuitPath.add("c20_cadence.v");
+        circuitPath.add("c2670_cadence.v");
+        circuitPath.add("c3540_cadence.v");
+        /*
+        circuitPath.add("c432_cadence.v");
+        circuitPath.add("c1355_cadence.v");
+        circuitPath.add("c5315_cadence.v");
+        */
         main_SPRMP_Exec Analysis = new main_SPRMP_Exec();
         Analysis.callMethodsAnalisys(circuitPath, library, reliability);
        
       
     }
     
-    public void callMethodsAnalisys(String circuitPath, String library, String Reliability) throws Exception{
+    public void callMethodsAnalisys(Vector circuitPath, String library, String Reliability) throws Exception{
         
          Vector <Integer> TimeoutList = new Vector();
         /*Timeout List*/
-        TimeoutList.add(60); //Segundos - 1m
+        //TimeoutList.add(10); //Segundos - 1m
+         //TimeoutList.add(30); //Segundos - 1m
+        TimeoutList.add(60);
         TimeoutList.add(600); // - 10m
         TimeoutList.add(3600);//1h
-        //TimeoutList.add(60);
+        
        
-        for (int i = 0; i < TimeoutList.size(); i++) {
- 
-            System.out.println(TimeoutList.get(i));
-            long timeout = TimeoutList.get(i);
-            System.out.println(i+1 + "  -  Timeout : " + timeout + "(s)");
-                SPRMPFanoutsAnalysis spr_mp_analysis = new SPRMPFanoutsAnalysis(Reliability, timeout , circuitPath, library);
-                spr_mp_analysis.SPR_MP_FANOUTS(library, circuitPath);
-            System.out.println(" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ ");
+        for (int j = 0; j < circuitPath.size(); j++) {
             
+             for (int i = 0; i < TimeoutList.size(); i++) {
+
+                System.out.println(TimeoutList.get(i));
+                long timeout = TimeoutList.get(i);
+                System.out.println(i+1 + "  -  Timeout : " + timeout + "(s)");
+                    SPRMPFanoutsAnalysis spr_mp_analysis = new SPRMPFanoutsAnalysis(Reliability, timeout , circuitPath.get(j).toString(), library);
+                    spr_mp_analysis.SPR_MP_FANOUTS(library, circuitPath.get(j).toString());
+                System.out.println(" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ ");
+
+            }
+             
         }
+           
         
         
     }
