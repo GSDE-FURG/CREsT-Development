@@ -35,8 +35,8 @@ class main_SPRMP_Exec {
          
        
         //Read Inputs Circuit, Reliability, Genlib//
-        String circuitPath = "c1355_cadence.v";//c432_cadence.v" ;//"c17v3_fritz.v";//"c17_cadence.v";
-        String reliability = "0.999999"; //6 digitos
+        String circuitPath = "c5315_cadence.v" ;//"c1355_cadence.v";//c432_cadence.v" ;//"c17v3_fritz.v";//"c17_cadence.v";
+        String reliability = "0.9999"; //4 digitos
         String mode = "big_decimal";
         String library = "cadence.genlib";
          
@@ -50,10 +50,10 @@ class main_SPRMP_Exec {
         
          Vector <Integer> TimeoutList = new Vector();
         /*Timeout List*/
-        //TimeoutList.add(60); //Segundos - 1m
-        //TimeoutList.add(600); // - 10m
-        //TimeoutList.add(3600);//1h
-        TimeoutList.add(10);
+        TimeoutList.add(60); //Segundos - 1m
+        TimeoutList.add(600); // - 10m
+        TimeoutList.add(3600);//1h
+        //TimeoutList.add(60);
        
         for (int i = 0; i < TimeoutList.size(); i++) {
  
@@ -380,6 +380,7 @@ public class SPRMPFanoutsAnalysis {
             resultTable.add(t);
                t.setLoadTime(estimated_load_Time);
                 t.setPrecision(this.reliability);
+                 t.setNumberFanouts(this.probCircuit.getFanouts().size());
           
           System.out.println("- Time to loag Genlib, Circuit (verilog), and settings probabilities: " + (estimated_load_Time) + " m(s)");
           
@@ -436,18 +437,16 @@ public class SPRMPFanoutsAnalysis {
                         resultTable.add(item);
                         idx = i;
                         
-                        if(globalTime * 1.7 > this.timeoutMiliSeconds){ //preempção
+                        if(globalTime * 1.5 > this.timeoutMiliSeconds){ //preempção
                             System.out.println("Stoping the execution, expected time ~ (" + globalTime * 2 + ") m(s) above the Timeout (~2x), Timeout : " + this.timeoutMiliSeconds + " ~ " + this.timeout  + "(s)");
                             i = (this.probCircuit.getFanouts().size()) + 11;
-                            break;
+                           break;
                         }
                         
                        
                       }
                       
-                      
-                       
-                      
+
               }else{
                   break;
               }

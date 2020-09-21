@@ -103,24 +103,30 @@ public class WriteExcel {
              csvWriter.append(";");
              csvWriter.append("Reliability");
              csvWriter.append(";");
-             csvWriter.append("Failure Rate (1E-6)");
+             csvWriter.append("Failure Rate");
              csvWriter.append(";");
              csvWriter.append("MTBF");
              csvWriter.append(";");
-             csvWriter.append("Time (ms)");
+             csvWriter.append("Time m(s)");
+             csvWriter.append(";");
+             csvWriter.append("Time min");
              csvWriter.append(";");
              csvWriter.append("LoadTime m(s)");
              csvWriter.append(";");
              csvWriter.append("Precision");
+             csvWriter.append(";");
+             csvWriter.append("Number of Fanouts");
+             
+             
              csvWriter.append("\n");
 
              for (int i = 0; i < this.resultTable.size(); i++ ) {
                  
                  if(i == 0){
-                      csvWriter.append(this.resultTable.get(i).getLineResultTable() + ";" + this.resultTable.get(i).getLoadTime() + ";" + this.resultTable.get(i).getPrecision());
+                      csvWriter.append(this.resultTable.get(i).getLineResultTable() + ";" + this.resultTable.get(i).getLoadTime() + ";" + this.resultTable.get(i).getPrecision() + ";" + this.resultTable.get(i).getNumberFanouts());
                  }
                  else{
-                     csvWriter.append(this.resultTable.get(i).getLineResultTable() + ";" + 0);
+                     csvWriter.append(this.resultTable.get(i).getLineResultTable() + ";");
                  }
 
                  csvWriter.append("\n");
@@ -155,11 +161,13 @@ public class WriteExcel {
         // Write a few headers
         addCaption(sheet, 0, 0, "Fanouts");
         addCaption(sheet, 1, 0, "Reliability");
-        addCaption(sheet, 2, 0, "Failure Rate (1E-6)");
+        addCaption(sheet, 2, 0, "Failure Rate");
         addCaption(sheet, 3, 0, "MTBF");
-        addCaption(sheet, 4, 0, "Time (ms)");
-        addCaption(sheet, 5, 0, "LoadTime (ms)");
-        addCaption(sheet, 6, 0, "Precision");
+        addCaption(sheet, 4, 0, "Time m(s)");
+        addCaption(sheet, 5, 0, "Time (min)");
+        addCaption(sheet, 6, 0, "LoadTime m(s)");
+        addCaption(sheet, 7, 0, "Precision");
+        addCaption(sheet, 8, 0, "Number of Fanouts");
         
         
 
@@ -218,11 +226,15 @@ public class WriteExcel {
 
                 sheet.addCell(formulaMTBF); //MTBF
 
-                addLabel(sheet, 4, i+1,  (this.resultTable.get(i).getTime()));
+                addLabel(sheet, 4, i+1,  (this.resultTable.get(i).getTime())); //Time m(s)
                 
-                addLabel(sheet, 5, i+1, this.resultTable.get(i).getLoadTime()); //Loatime
+                addLabel(sheet, 5, i+1,  (this.resultTable.get(i).getTimeMin())); //Time (min)
                 
-                addLabel(sheet, 6, i+1, this.resultTable.get(i).getPrecision()); //Precision
+                addLabel(sheet, 6, i+1, this.resultTable.get(i).getLoadTime()); //Loatime
+                
+                addLabel(sheet, 7, i+1, this.resultTable.get(i).getPrecision()); //Precision
+                
+                addLabel(sheet, 8, i+1, this.resultTable.get(i).getNumberFanouts()); //NumberFanouts
                 
              }
              else{
@@ -243,6 +255,8 @@ public class WriteExcel {
                 sheet.addCell(formulaMTBF); //MTBF
 
                 addLabel(sheet, 4, i+1,  (this.resultTable.get(i).getTime()));
+                
+                 addLabel(sheet, 5, i+1,  (this.resultTable.get(i).getTimeMin())); //Time (min)
 
              }
              
