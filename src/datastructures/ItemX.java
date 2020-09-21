@@ -16,16 +16,31 @@ public class ItemX {
     private final int fanoutIdx;
     private final BigDecimal Reliability;
     private long time;
+    private long loadTime;
+    private String precision;
     
     public ItemX (int fanoutIdx, BigDecimal Reliability, long time){
         this.fanoutIdx = fanoutIdx;
         this.Reliability = Reliability;
         this.time = time;
+        this.loadTime = 0;
     }
     
     public int getIdxFanout(){
         return this.fanoutIdx;
     }
+     public String getLoadTime(){
+        return String.valueOf(this.loadTime);
+    }
+      public void setLoadTime(long LoadTime){
+        this.loadTime = LoadTime;
+     }
+      public void setPrecision(String precision){
+        this.precision = precision;
+     }
+      public String getPrecision(){
+         return String.valueOf(this.precision);
+     }
      public String getReliability(){
         return String.valueOf(this.Reliability).replace(".", ",");
     }
@@ -56,7 +71,7 @@ public class ItemX {
         
         //String item = "Fanout (n): " + this.fanoutIdx + "        Reliability: " + this.Reliability + "        Time: " + this.time  + "  ~  " + this.time/1000 + " (s)";
         
-        String itemx = this.fanoutIdx + "," + this.getReliabilityDOTCOMMA() + "," + "=-LN(B"+(this.fanoutIdx+2)+")" + "/1E-6" + "," + "=1/C" + (this.fanoutIdx + 2) + ","   + this.getTime();
+        String itemx = this.fanoutIdx + ";" + this.getReliabilityDOTCOMMA() + ";" + "=-LN(B"+(this.fanoutIdx+2)+")" + "/1E-6" + ";" + "=1/C" + (this.fanoutIdx + 2) + ";"   + this.getTime();
         
         return (itemx);
     }

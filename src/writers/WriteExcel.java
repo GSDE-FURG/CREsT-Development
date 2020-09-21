@@ -5,7 +5,6 @@ import datastructures.ItemX;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
@@ -101,19 +100,29 @@ public class WriteExcel {
                 */
                 
              csvWriter.append("Fanouts");
-             csvWriter.append(",");
+             csvWriter.append(";");
              csvWriter.append("Reliability");
-             csvWriter.append(",");
+             csvWriter.append(";");
              csvWriter.append("Failure Rate (1E-6)");
-             csvWriter.append(",");
+             csvWriter.append(";");
              csvWriter.append("MTBF");
-             csvWriter.append(",");
+             csvWriter.append(";");
              csvWriter.append("Time (ms)");
+             csvWriter.append(";");
+             csvWriter.append("LoadTime m(s)");
+             csvWriter.append(";");
+             csvWriter.append("Precision");
              csvWriter.append("\n");
 
              for (int i = 0; i < this.resultTable.size(); i++ ) {
                  
-                 csvWriter.append(this.resultTable.get(i).getLineResultTable());
+                 if(i == 0){
+                      csvWriter.append(this.resultTable.get(i).getLineResultTable() + ";" + this.resultTable.get(i).getLoadTime() + ";" + this.resultTable.get(i).getPrecision());
+                 }
+                 else{
+                     csvWriter.append(this.resultTable.get(i).getLineResultTable() + ";" + 0);
+                 }
+
                  csvWriter.append("\n");
              }
 
@@ -149,6 +158,8 @@ public class WriteExcel {
         addCaption(sheet, 2, 0, "Failure Rate (1E-6)");
         addCaption(sheet, 3, 0, "MTBF");
         addCaption(sheet, 4, 0, "Time (ms)");
+        addCaption(sheet, 5, 0, "LoadTime (ms)");
+        addCaption(sheet, 6, 0, "Precision");
         
         
 
@@ -189,25 +200,53 @@ public class WriteExcel {
         //HERE NOW
          for (int i = 0; i <= this.idx; i++){
              //System.out.println(resultTable.get(i).PrintItemx());
-             addNumber(sheet, 0, i+1, (this.resultTable.get(i).getIdxFanout())); //Fanout
              
-             addLabel(sheet, 1, i+1,  (this.resultTable.get(i).getReliability())); //reliability      
+             if(i == 0){
+                addNumber(sheet, 0, i+1, (this.resultTable.get(i).getIdxFanout())); //Fanout
+             
+                addLabel(sheet, 1, i+1,  (this.resultTable.get(i).getReliability())); //reliability      
              
                 String strFormulaFailureRate = "-LN(B"+(i+2)+")" + "/" + this.delimitator;//"  (-ln(0,99999)/1E-6) " ;//
              
                 Formula formulaFailureRate = new Formula(2, i+1, strFormulaFailureRate);
              
-             sheet.addCell(formulaFailureRate); //FailureRate
-             
-             String strFormulaMTBF = "1/(C"+(i+2)+")" ; //"-LN(B"+(i+2)+")"; //MTBF
-             
-             Formula formulaMTBF = new Formula(3, i+1, strFormulaMTBF);
-             
-              sheet.addCell(formulaMTBF); //MTBF
+                sheet.addCell(formulaFailureRate); //FailureRate
 
-             addLabel(sheet, 4, i+1,  (this.resultTable.get(i).getTime()));
+                String strFormulaMTBF = "1/(C"+(i+2)+")" ; //"-LN(B"+(i+2)+")"; //MTBF
+
+                Formula formulaMTBF = new Formula(3, i+1, strFormulaMTBF);
+
+                sheet.addCell(formulaMTBF); //MTBF
+
+                addLabel(sheet, 4, i+1,  (this.resultTable.get(i).getTime()));
+                
+                addLabel(sheet, 5, i+1, this.resultTable.get(i).getLoadTime()); //Loatime
+                
+                addLabel(sheet, 6, i+1, this.resultTable.get(i).getPrecision()); //Precision
+                
+             }
+             else{
+                addNumber(sheet, 0, i+1, (this.resultTable.get(i).getIdxFanout())); //Fanout
              
-              //this.
+                addLabel(sheet, 1, i+1,  (this.resultTable.get(i).getReliability())); //reliability      
+             
+                String strFormulaFailureRate = "-LN(B"+(i+2)+")" + "/" + this.delimitator;//"  (-ln(0,99999)/1E-6) " ;//
+             
+                Formula formulaFailureRate = new Formula(2, i+1, strFormulaFailureRate);
+             
+                sheet.addCell(formulaFailureRate); //FailureRate
+
+                String strFormulaMTBF = "1/(C"+(i+2)+")" ; //"-LN(B"+(i+2)+")"; //MTBF
+
+                Formula formulaMTBF = new Formula(3, i+1, strFormulaMTBF);
+
+                sheet.addCell(formulaMTBF); //MTBF
+
+                addLabel(sheet, 4, i+1,  (this.resultTable.get(i).getTime()));
+
+             }
+             
+           
          }
     }
 

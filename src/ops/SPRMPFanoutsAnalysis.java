@@ -35,8 +35,8 @@ class main_SPRMP_Exec {
          
        
         //Read Inputs Circuit, Reliability, Genlib//
-        String circuitPath = "c432_cadence.v" ;//"c17v3_fritz.v";//"c17_cadence.v";
-        String reliability = "0.9999";
+        String circuitPath = "c1355_cadence.v";//c432_cadence.v" ;//"c17v3_fritz.v";//"c17_cadence.v";
+        String reliability = "0.999999"; //6 digitos
         String mode = "big_decimal";
         String library = "cadence.genlib";
          
@@ -46,14 +46,14 @@ class main_SPRMP_Exec {
       
     }
     
-     public void callMethodsAnalisys(String circuitPath, String library, String Reliability) throws Exception{
+    public void callMethodsAnalisys(String circuitPath, String library, String Reliability) throws Exception{
         
          Vector <Integer> TimeoutList = new Vector();
         /*Timeout List*/
-        TimeoutList.add(10); //Segundos - 1m
+        //TimeoutList.add(60); //Segundos - 1m
         //TimeoutList.add(600); // - 10m
         //TimeoutList.add(3600);//1h
-        
+        TimeoutList.add(10);
        
         for (int i = 0; i < TimeoutList.size(); i++) {
  
@@ -68,8 +68,7 @@ class main_SPRMP_Exec {
         
         
     }
-    
- 
+   
 }
 
 /** This class implements SPRMP fanouts analysis and provides a set of reliability methods (that can be callable) such as PTM, SPR, and SPR-MP
@@ -95,14 +94,12 @@ public class SPRMPFanoutsAnalysis {
     private long spr_timeConsumption;
   
     
-    public long getSPRTimeConsumption(){
+     public long getSPRTimeConsumption(){
         //System.out.println("TESTE : "+ this.spr_timeConsumption);
         return this.spr_timeConsumption;
     }
     
-    
-    
-    public SPRMPFanoutsAnalysis(String reliabilty,long Timeout, String circuitFilePath, String genlib) {
+     public SPRMPFanoutsAnalysis(String reliabilty,long Timeout, String circuitFilePath, String genlib) {
         
 
         this.reliability = reliabilty;
@@ -196,7 +193,7 @@ public class SPRMPFanoutsAnalysis {
      }
      
      public BigDecimal getSPRBigDecimal(int indxFanouts)throws Exception {
-
+        SPROps teste2 = new SPROps();
         System.out.println("\n ===== SPR Big Decimal File: " + this.circuitFilePath + "   - Precision : "  + this.reliability + " ===== ");
          //System.out.println("Fanouts (" + indxFanouts  + ")");
         
@@ -275,17 +272,15 @@ public class SPRMPFanoutsAnalysis {
           
           */
          
-          SPROps teste2 = new SPROps();
+          
           long startTime = System.nanoTime();    
                      BigDecimal spr_result = teste2.getSPRReliability(this.probCircuit); //SPROps.getSPRReliability(this.probCircuit);
           long endTime= System.nanoTime();
           long durationInMs = TimeUnit.NANOSECONDS.toMillis(endTime - startTime);
           this.spr_timeConsumption = (durationInMs);
           
-             System.out.println("SPR - Nano: " + durationInMs);
-             
-          
-
+          //System.out.println("SPR - Nano: " + durationInMs);
+            
           /*
           final long sprStartTIme = System.currentTimeMillis();
           
@@ -309,7 +304,7 @@ public class SPRMPFanoutsAnalysis {
     } 
      
      public void SPR_MP_FANOUTS(String library, String CircuitFile)throws Exception {
-          SPRMultiPassV3Ops teste = new SPRMultiPassV3Ops();
+         SPRMultiPassV3Ops teste = new SPRMultiPassV3Ops();
          int idx = 0;
         
        
@@ -330,13 +325,12 @@ public class SPRMPFanoutsAnalysis {
         //-------- ----------- --------- ----------- -------------
         // System.out.println("       ~   SPR Method Time: " + (sprEndMethodTime - sprStartMethodTime) + "m(s)");
         
-            t = new ItemX (0 ,spr_result, spr.getSPRTimeConsumption()); 
-            resultTable.add(t);
+            
         
          //long PauloTime2 = System.currentTimeMillis();
           
          
-        long loadTimeStart = System.currentTimeMillis();
+        long loadTimeStart = System.nanoTime();//System.currentTimeMillis();
          
         /*CellLibrary*/
         CellLibrary cellLib = new CellLibrary();
@@ -378,9 +372,16 @@ public class SPRMPFanoutsAnalysis {
           this.probCircuit.setDefaultProbSourceSignalMatrix();
           this.probCircuit.setProbSignalStates(false); //HERE
           
-          long load_TimeEnd = System.currentTimeMillis();
+          long load_TimeEnd = System.nanoTime();//System.currentTimeMillis();
           
-          System.out.println("- Time to loag Genlib, Circuit (verilog), and settings probabilities: " + (load_TimeEnd - loadTimeStart) + " m(s)");
+          long estimated_load_Time = TimeUnit.NANOSECONDS.toMillis(load_TimeEnd - loadTimeStart);
+          
+          t = new ItemX (0 ,spr_result, spr.getSPRTimeConsumption()); 
+            resultTable.add(t);
+               t.setLoadTime(estimated_load_Time);
+                t.setPrecision(this.reliability);
+          
+          System.out.println("- Time to loag Genlib, Circuit (verilog), and settings probabilities: " + (estimated_load_Time) + " m(s)");
           
          /*News TimeStamp with Instant Now*/
          long startTime = System.nanoTime();//Instant.now();//System.currentTimeMillis();
@@ -401,7 +402,6 @@ public class SPRMPFanoutsAnalysis {
           
             for (int i = 1; i <= this.probCircuit.getFanouts().size(); i++){ //Fluxogram TimeExecution (ms)
                
-   
               if((timeoutsideIF) <=  (this.timeoutMiliSeconds) && (globalTime <= this.timeoutMiliSeconds)){ //(m(s)
                     
                         /*New try*/
@@ -428,9 +428,8 @@ public class SPRMPFanoutsAnalysis {
 
                       globalTime = globalTime + sprmpTime; // Final - inicio
                       
-                      System.out.println(i  + "        " + sprmp_result + "       (Round): " + sprmpTime + " m(s)     ~   " + " (Global): " + globalTime + " m(s) " + globalTime/1000 + " (s)");
+                      System.out.println(i  + "        " + sprmp_result + "       (Round): " + sprmpTime + " m(s)     ~   " + " (Global): " + globalTime + " m(s) " + globalTime/1000 + " (s)  -  " + globalTime/(1000*60) + " min  -  " + globalTime/(1000*60*60) + " hora");
                      
-      
                       if(globalTime <= (this.timeoutMiliSeconds)){
                         
                         ItemX item = new ItemX(i, sprmp_result, globalTime);
