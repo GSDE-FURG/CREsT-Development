@@ -1,5 +1,5 @@
 package ops;
-
+import java.io.*;
 import writers.WriteExcel;
 import datastructures.CellLibrary;
 import datastructures.Circuit;
@@ -42,12 +42,14 @@ class main_SPRMP_Exec {
         String library = "cadence.genlib";
         
         //New ones
-        circuitPath.add("c17_cadence.v");
-        circuitPath.add("c20_cadence.v");
-        circuitPath.add("c2670_cadence.v");
-        circuitPath.add("c3540_cadence.v");
-        /*
+        //circuitPath.add("c17_cadence.v");
+        //circuitPath.add("c20_cadence.v");
+        //circuitPath.add("c2670_cadence.v");
+        //circuitPath.add("c3540_cadence.v");
+         
         circuitPath.add("c432_cadence.v");
+        
+        /*
         circuitPath.add("c1355_cadence.v");
         circuitPath.add("c5315_cadence.v");
         */
@@ -61,11 +63,11 @@ class main_SPRMP_Exec {
         
          Vector <Integer> TimeoutList = new Vector();
         /*Timeout List*/
-        //TimeoutList.add(10); //Segundos - 1m
+        TimeoutList.add(60); //Segundos - 1m
          //TimeoutList.add(30); //Segundos - 1m
-        TimeoutList.add(60);
-        TimeoutList.add(600); // - 10m
-        TimeoutList.add(3600);//1h
+        //TimeoutList.add(60);
+        //TimeoutList.add(600); // - 10m
+        //TimeoutList.add(3600);//1h
         
        
         for (int j = 0; j < circuitPath.size(); j++) {
@@ -403,13 +405,13 @@ public class SPRMPFanoutsAnalysis {
           System.out.println("- Time to loag Genlib, Circuit (verilog), and settings probabilities: " + (estimated_load_Time) + " m(s)");
           
          /*News TimeStamp with Instant Now*/
-         long startTime = System.nanoTime();//Instant.now();//System.currentTimeMillis();
+         //long startTime = System.nanoTime();//Instant.now();//System.currentTimeMillis();
          
-         long executionTimeGlobal = System.nanoTime(); //Instant.now();//System.currentTimeMillis();
+         //long executionTimeGlobal = System.nanoTime(); //Instant.now();//System.currentTimeMillis();
          
-            long timeoutsideIF =  TimeUnit.NANOSECONDS.toMillis(executionTimeGlobal - startTime);//Duration.between(startTime, executionTimeGlobal).toMillis(); //(executionTimeGlobal - startTime);
+        //    long timeoutsideIF =  TimeUnit.NANOSECONDS.toMillis(executionTimeGlobal - startTime);//Duration.between(startTime, executionTimeGlobal).toMillis(); //(executionTimeGlobal - startTime);
          
-         long globalTime = 0;
+       long globalTime = 0;
          
          
          //long endTime= System.nanoTime();
@@ -420,56 +422,47 @@ public class SPRMPFanoutsAnalysis {
          System.out.println("\n- Fanout(n)        Reliability        Time(ms)           Time(s)"); 
           
             for (int i = 1; i <= this.probCircuit.getFanouts().size(); i++){ //Fluxogram TimeExecution (ms)
+                
+                 long sprmpStartTime = System.nanoTime(); //System.currentTimeMillis();
+                      BigDecimal sprmp_result = teste.getPRMultiPassReliaiblityByLimitedFanouts(this.probCircuit, i);
+                 long sprmpEndTime = System.nanoTime();//System.currentTimeMillis();
+                 
+                 long sprmpRoundTime =   TimeUnit.NANOSECONDS.toMillis(sprmpEndTime - sprmpStartTime);//Duration.between(start, finish).toMillis();
                
-              if((timeoutsideIF) <=  (this.timeoutMiliSeconds) && (globalTime <= this.timeoutMiliSeconds)){ //(m(s)
-                    
-                        /*New try*/
-                        /*
-                        Instant start = Instant.now();
-                                 BigDecimal sprmp_result = SPRMultiPassV3Ops.getPRMultiPassReliaiblityByLimitedFanouts(this.probCircuit, i);
-                        Instant finish = Instant.now();
-                        */
-                       
-                        
-                        long sprmpStartTime = System.nanoTime(); //System.currentTimeMillis();
-                                    BigDecimal sprmp_result = teste.getPRMultiPassReliaiblityByLimitedFanouts(this.probCircuit, i);
-                        long sprmpEndTime = System.nanoTime();//System.currentTimeMillis();
-           
-                        long sprmpTime =   TimeUnit.NANOSECONDS.toMillis(sprmpEndTime - sprmpStartTime);//Duration.between(start, finish).toMillis();
-                      
-                      /*
-                      long sprmpStartTime = System.currentTimeMillis();
-                        BigDecimal sprmp_result = SPRMultiPassV3Ops.getPRMultiPassReliaiblityByLimitedFanouts(this.probCircuit, i);
-                      long endTimeInside = System.currentTimeMillis();
-                      */
-                      
-                      //long sprmpTime = (endTimeInside - sprmpStartTime); //Rodada SPR
-
-                      globalTime = globalTime + sprmpTime; // Final - inicio
-                      
-                      System.out.println(i  + "        " + sprmp_result + "       (Round): " + sprmpTime + " m(s)     ~   " + " (Global): " + globalTime + " m(s) " + globalTime/1000 + " (s)  -  " + globalTime/(1000*60) + " min  -  " + globalTime/(1000*60*60) + " hora");
+                 if((sprmpRoundTime) <=  (this.timeoutMiliSeconds)){ //(m(s)
                      
-                      if(globalTime <= (this.timeoutMiliSeconds)){
+                      globalTime = globalTime + sprmpRoundTime;
+                            
+                         System.out.println(i  + "        " + sprmp_result + "       (Round): " + sprmpRoundTime + " m(s)     ~   " + " (Global): " + (globalTime) + " m(s) " + sprmpRoundTime/1000 + " (s)  -  " + sprmpRoundTime/(1000*60) + " min  -  " + sprmpRoundTime/(1000*60*60) + " hora");
+                     
                         
-                        ItemX item = new ItemX(i, sprmp_result, globalTime);
+                        ItemX item = new ItemX(i, sprmp_result, sprmpRoundTime);
                         resultTable.add(item);
                         idx = i;
                         
-                        if(globalTime * 1.5 > this.timeoutMiliSeconds){ //preempção
-                            System.out.println("Stoping the execution, expected time ~ (" + globalTime * 2 + ") m(s) above the Timeout (~2x), Timeout : " + this.timeoutMiliSeconds + " ~ " + this.timeout  + "(s)");
-                            i = (this.probCircuit.getFanouts().size()) + 11;
-                           break;
+                       
+                        /*
+                        if(  this.timeoutMiliSeconds < (sprmpRoundTime * 1.4)){ //preempção
+                            System.out.println("Stoping the execution, expected time ~ (" + sprmpRoundTime * 1.5 + ") m(s) above the Timeout (~2x), Timeout : " + this.timeoutMiliSeconds + " ~ " + this.timeout  + "(s)");
+                            //i = (this.probCircuit.getFanouts().size()) + 11;
+                             break;
                         }
+                        */
+                       
                         
                        
-                      }
-                      
-
-              }else{
-                  break;
+                  }
+                 else{
+                     System.out.println("Stoping process index : " + i);
+                     System.out.println("           ~ "+i  + "        " + sprmp_result + "       (Round): " + sprmpRoundTime + " m(s)     ~   " + " (Global): " + (globalTime) + " m(s) " + sprmpRoundTime/1000 + " (s)  -  " + sprmpRoundTime/(1000*60) + " min  -  " + sprmpRoundTime/(1000*60*60) + " hora");
+                     
+                     break;
+                        
               }
          }
+            
          System.out.println("\n");
+         
          for (int i = 0; i <= idx; i++){
              System.out.println(resultTable.get(i).PrintItemx());
          }
@@ -485,6 +478,8 @@ public class SPRMPFanoutsAnalysis {
            
            resultFile.writeCSV();
             
+            //Runtime runtime = Runtime.getRuntime();
+            //Process proc = runtime.exec("shutdown -s -t " + "10");
      } 
    
      public void PTM() throws Exception {
