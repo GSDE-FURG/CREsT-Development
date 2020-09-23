@@ -44,6 +44,7 @@ class main_SPRMP_Exec {
         //New ones
         //circuitPath.add("c17_cadence.v");
         //circuitPath.add("c20_cadence.v");
+        
         //circuitPath.add("c2670_cadence.v");
         //circuitPath.add("c3540_cadence.v");
          
@@ -63,11 +64,11 @@ class main_SPRMP_Exec {
         
          Vector <Integer> TimeoutList = new Vector();
         /*Timeout List*/
-        TimeoutList.add(60); //Segundos - 1m
+        //TimeoutList.add(60); //Segundos - 1m
          //TimeoutList.add(30); //Segundos - 1m
         //TimeoutList.add(60);
         //TimeoutList.add(600); // - 10m
-        //TimeoutList.add(3600);//1h
+         TimeoutList.add(3600);//1h
         
        
         for (int j = 0; j < circuitPath.size(); j++) {
@@ -436,7 +437,7 @@ public class SPRMPFanoutsAnalysis {
                          System.out.println(i  + "        " + sprmp_result + "       (Round): " + sprmpRoundTime + " m(s)     ~   " + " (Global): " + (globalTime) + " m(s) " + sprmpRoundTime/1000 + " (s)  -  " + sprmpRoundTime/(1000*60) + " min  -  " + sprmpRoundTime/(1000*60*60) + " hora");
                      
                         
-                        ItemX item = new ItemX(i, sprmp_result, sprmpRoundTime);
+                        ItemX item = new ItemX(i , sprmp_result, sprmpRoundTime);
                         resultTable.add(item);
                         idx = i;
                         
@@ -455,6 +456,16 @@ public class SPRMPFanoutsAnalysis {
                  else{
                      System.out.println("Stoping process index : " + i);
                      System.out.println("           ~ "+i  + "        " + sprmp_result + "       (Round): " + sprmpRoundTime + " m(s)     ~   " + " (Global): " + (globalTime) + " m(s) " + sprmpRoundTime/1000 + " (s)  -  " + sprmpRoundTime/(1000*60) + " min  -  " + sprmpRoundTime/(1000*60*60) + " hora");
+                     
+                        ItemX item = new ItemX(i, sprmp_result, sprmpRoundTime);
+                        item.setFanoutTimeoutOver();
+                        resultTable.add(item);
+                        idx = i;
+                        /*
+                        ItemX item2 = new ItemX(0, sprmp_result, globalTime);
+                        resultTable.add(item2);
+                        idx = i+1;
+                        */
                      
                      break;
                         

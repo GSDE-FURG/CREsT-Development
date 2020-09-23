@@ -29,15 +29,15 @@ public class WriteExcel {
 
     private WritableCellFormat timesBoldUnderline;
     private WritableCellFormat times;
-    private String inputFile;
-    private String FileName;
-    private String FileNameCsv;
-    private String SheetName;
-    private int idx;
-    private String TimeoutMiliSeconds;
-    private long TimeoutSeconds;
-    private String delimitator;
-    private List<ItemX> resultTable;
+    private final String inputFile;
+    private final String FileName;
+    private final String FileNameCsv;
+    private final String SheetName;
+    private final int idx;
+    private final String TimeoutMiliSeconds;
+    private final long TimeoutSeconds;
+    private final String delimitator;
+    private final List<ItemX> resultTable;
 
     public WriteExcel(String inputFile, String SheetName, String TimeoutMiliSeconds ,List<ItemX> resultTable, int idx) {
             this.inputFile = inputFile + ".xls";
@@ -238,7 +238,13 @@ public class WriteExcel {
                 
              }
              else{
-                addNumber(sheet, 0, i+1, (this.resultTable.get(i).getIdxFanout())); //Fanout
+                
+                if(i == this.idx){
+                     addLabel(sheet, 0, i+1, (this.resultTable.get(i).getFanoutTimeoutOver())); //Fanout
+                }else{
+                     addNumber(sheet, 0, i+1, (this.resultTable.get(i).getIdxFanout())); //Fanout
+                }
+               
              
                 addLabel(sheet, 1, i+1,  (this.resultTable.get(i).getReliability())); //reliability      
              

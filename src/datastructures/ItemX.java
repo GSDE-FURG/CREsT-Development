@@ -14,11 +14,13 @@ import java.math.BigDecimal;
 public class ItemX {
    
     private final int fanoutIdx;
+    private  String fanoutIdxSpecial;
     private final BigDecimal Reliability;
     private long time;
     private long loadTime;
     private String precision;
     private int numberFanouts;
+    
     
     public ItemX (int fanoutIdx, BigDecimal Reliability, long time){
         this.fanoutIdx = fanoutIdx;
@@ -26,6 +28,7 @@ public class ItemX {
         this.time = time;
         this.loadTime = 0;
         this.numberFanouts = 0;
+        this.fanoutIdxSpecial = "";
     }
     
     public int getIdxFanout(){
@@ -34,6 +37,12 @@ public class ItemX {
      public String getLoadTime(){
         return String.valueOf(this.loadTime);
     }
+      public void setFanoutTimeoutOver(){
+       this.fanoutIdxSpecial = "Above Timeout";
+     }
+      public String getFanoutTimeoutOver(){
+       return (this.fanoutIdx + "->" + this.fanoutIdxSpecial);
+     }
       public void setLoadTime(long LoadTime){
         this.loadTime = LoadTime;
      }
@@ -79,11 +88,16 @@ public class ItemX {
     }
     public String getLineResultTable(){
        
-        
+         String itemx;
         //String item = "Fanout (n): " + this.fanoutIdx + "        Reliability: " + this.Reliability + "        Time: " + this.time  + "  ~  " + this.time/1000 + " (s)";
         
-        String itemx = this.fanoutIdx + ";" + this.getReliabilityDOTCOMMA() + ";" + "=-LN(B"+(this.fanoutIdx+2)+")" + "/1E-6" + ";" + "=1/C" + (this.fanoutIdx + 2) + ";"   + this.getTime() + ";" + this.getTimeMin();
-        
+        if(this.fanoutIdxSpecial.equals("")){
+            itemx = this.fanoutIdx + ";" + this.getReliabilityDOTCOMMA() + ";" + "=-LN(B"+(this.fanoutIdx+2)+")" + "/1E-6" + ";" + "=1/C" + (this.fanoutIdx + 2) + ";"   + this.getTime() + ";" + this.getTimeMin();
+        }else{
+            itemx = this.fanoutIdx + "->" + this.fanoutIdxSpecial + ";" + this.getReliabilityDOTCOMMA() + ";" + "=-LN(B"+(this.fanoutIdx+2)+")" + "/1E-6" + ";" + "=1/C" + (this.fanoutIdx + 2) + ";"   + this.getTime() + ";" + this.getTimeMin();
+   
+        }
+       
         return (itemx);
     }
     
