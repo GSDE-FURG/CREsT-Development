@@ -6,9 +6,12 @@ import datastructures.Circuit;
 import datastructures.ItemX;
 import datastructures.Signal;
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.TreeSet;
@@ -68,7 +71,9 @@ class main_SPRMP_Exec {
          //TimeoutList.add(30); //Segundos - 1m
         //TimeoutList.add(60);
         //TimeoutList.add(600); // - 10m
-         TimeoutList.add(3600);//1h
+         TimeoutList.add(10);//1h
+         
+          //TimeoutList.add(3600);//1h
         
        
         for (int j = 0; j < circuitPath.size(); j++) {
@@ -414,28 +419,43 @@ public class SPRMPFanoutsAnalysis {
          
        long globalTime = 0;
          
-         
+       String output = "";
          //long endTime= System.nanoTime();
          //long durationInMs = TimeUnit.NANOSECONDS.toMillis(endTime - startTime);
          
          //System.out.println("- Running SPR-MP with the timeout: " +(this.timeoutMiliSeconds) + " (ms)");
          System.out.println("- Total of Fanouts (n) : " + this.probCircuit.getFanouts().size() + "    Timeout: " + this.timeout + "(s)");
          System.out.println("\n- Fanout(n)        Reliability        Time(ms)           Time(s)"); 
+         
+         SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+            
           
             for (int i = 1; i <= this.probCircuit.getFanouts().size(); i++){ //Fluxogram TimeExecution (ms)
                 
+                 Date hora = Calendar.getInstance().getTime(); // Ou qualquer outra forma que tem
+                    String timeStampBegin = sdf.format(hora);
+                    
                  long sprmpStartTime = System.nanoTime(); //System.currentTimeMillis();
                       BigDecimal sprmp_result = teste.getPRMultiPassReliaiblityByLimitedFanouts(this.probCircuit, i);
                  long sprmpEndTime = System.nanoTime();//System.currentTimeMillis();
+                 
+                    hora = Calendar.getInstance().getTime();
+                     String timeStampEnd = sdf.format(hora);
                  
                  long sprmpRoundTime =   TimeUnit.NANOSECONDS.toMillis(sprmpEndTime - sprmpStartTime);//Duration.between(start, finish).toMillis();
                
                  if((sprmpRoundTime) <=  (this.timeoutMiliSeconds)){ //(m(s)
                      
                       globalTime = globalTime + sprmpRoundTime;
-                            
-                         System.out.println(i  + "        " + sprmp_result + "       (Round): " + sprmpRoundTime + " m(s)     ~   " + " (Global): " + (globalTime) + " m(s) " + sprmpRoundTime/1000 + " (s)  -  " + sprmpRoundTime/(1000*60) + " min  -  " + sprmpRoundTime/(1000*60*60) + " hora");
-                     
+                         
+                         String line = "";
+                         
+                         line = i  + "        " + sprmp_result + "       (Round): " + sprmpRoundTime + " m(s)     ~   "  + sprmpRoundTime/1000 + " (s)  -  " + sprmpRoundTime/(1000*60) + " min  -  " + sprmpRoundTime/(1000*60*60) + " hora" + "    (Global): " + (globalTime) + " m(s) - " + timeStampBegin + " - " + timeStampEnd ;
+                       
+                         System.out.println(line);
+                         
+                         output = output + line + "\n";
+                                
                         
                         ItemX item = new ItemX(i , sprmp_result, sprmpRoundTime);
                         resultTable.add(item);
@@ -454,8 +474,18 @@ public class SPRMPFanoutsAnalysis {
                        
                   }
                  else{
+                     
                      System.out.println("Stoping process index : " + i);
-                     System.out.println("           ~ "+i  + "        " + sprmp_result + "       (Round): " + sprmpRoundTime + " m(s)     ~   " + " (Global): " + (globalTime) + " m(s) " + sprmpRoundTime/1000 + " (s)  -  " + sprmpRoundTime/(1000*60) + " min  -  " + sprmpRoundTime/(1000*60*60) + " hora");
+                     
+                     globalTime = globalTime + sprmpRoundTime;
+                     
+                     String overTimeout = "";
+                     
+                     overTimeout = "           ~ "+i  + "        " + sprmp_result + "       (Round): " + sprmpRoundTime + " m(s)     ~   " + " (Global): " + (globalTime) + " m(s) " + sprmpRoundTime/1000 + " (s)  -  " + sprmpRoundTime/(1000*60) + " min  -  " + sprmpRoundTime/(1000*60*60) + " hora  - " + timeStampBegin + " - " + timeStampEnd ;
+                     
+                     System.out.println(overTimeout);
+                     
+                     output = output + "\n" + overTimeout;
                      
                         ItemX item = new ItemX(i, sprmp_result, sprmpRoundTime);
                         item.setFanoutTimeoutOver();
@@ -483,14 +513,24 @@ public class SPRMPFanoutsAnalysis {
           
           //System.out.println("TimeOut-" + this.timeout +"(s)");
           
+           FileWriter logFile = new FileWriter("Log_"+this.circuit.getName()+"_"+"TimeOut-" + this.timeout +"(s).txt");
+           
+           logFile.write(output);
+           
+           logFile.close();
+           
+           System.out.println("LogFile saved as :" + "Log_"+this.circuit.getName()+"_"+"TimeOut-" + this.timeout +"(s).txt");
+          
            WriteExcel resultFile = new WriteExcel(this.circuit.getName() + "-" + this.timeout + "(s)"  , "TimeOut-" + this.timeout +"(s)"    , Long.toString(this.timeoutMiliSeconds) , resultTable, idx);
           
            resultFile.write();
            
            resultFile.writeCSV();
             
+           /*
             //Runtime runtime = Runtime.getRuntime();
             //Process proc = runtime.exec("shutdown -s -t " + "10");
+           */
      } 
    
      public void PTM() throws Exception {
