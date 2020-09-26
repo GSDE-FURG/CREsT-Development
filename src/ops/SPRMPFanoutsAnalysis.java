@@ -51,8 +51,16 @@ class main_SPRMP_Exec {
         //circuitPath.add("c2670_cadence.v");
         //circuitPath.add("c3540_cadence.v");
          
-        circuitPath.add("c432_cadence.v");
+        //circuitPath.add("caa2_cadence.v");
+        circuitPath.add("c17_cadence.v");
+       
         
+        
+        circuitPath.add("c20_cadence.v");
+        circuitPath.add("c17_cadence.v");
+        
+       
+       //circuitPath.add("c1355_cadence.v");
         /*
         circuitPath.add("c1355_cadence.v");
         circuitPath.add("c5315_cadence.v");
@@ -66,35 +74,35 @@ class main_SPRMP_Exec {
     public void callMethodsAnalisys(Vector circuitPath, String library, String Reliability) throws Exception{
         
          Vector <Integer> TimeoutList = new Vector();
-        /*Timeout List*/
-        //TimeoutList.add(60); //Segundos - 1m
-         //TimeoutList.add(30); //Segundos - 1m
-        //TimeoutList.add(60);
-        //TimeoutList.add(600); // - 10m
-         TimeoutList.add(10);//1h
          
-          //TimeoutList.add(3600);//1h
+          /*Timeout List*/
+          //TimeoutList.add(60); // 1 min
+          //TimeoutList.add(600); //10 min
+          TimeoutList.add(3600);//1 hora
         
        
-        for (int j = 0; j < circuitPath.size(); j++) {
-            System.out.println("======== Circuit : " + circuitPath.get(j));
-             for (int i = 0; i < TimeoutList.size(); i++) {
+          for (int j = 0; j < circuitPath.size(); j++) {
+            try {
+                System.out.println("======== Circuit : " + circuitPath.get(j));
+                 for (int i = 0; i < TimeoutList.size(); i++) {
 
-                System.out.println(TimeoutList.get(i));
-                long timeout = TimeoutList.get(i);
-                System.out.println(i+1 + "  -  Timeout : " + timeout + "(s)");
-                    SPRMPFanoutsAnalysis spr_mp_analysis = new SPRMPFanoutsAnalysis(Reliability, timeout , circuitPath.get(j).toString(), library);
-                    spr_mp_analysis.SPR_MP_FANOUTS(library, circuitPath.get(j).toString());
-                System.out.println(" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ ");
+                    System.out.println(TimeoutList.get(i));
+                    long timeout = TimeoutList.get(i);
+                    System.out.println(i+1 + "  -  Timeout : " + timeout + "(s)");
+                        SPRMPFanoutsAnalysis spr_mp_analysis = new SPRMPFanoutsAnalysis(Reliability, timeout , circuitPath.get(j).toString(), library);
+                        spr_mp_analysis.SPR_MP_FANOUTS(library, circuitPath.get(j).toString());
+                    System.out.println(" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ ");
+
+                }
 
             }
-             
-        }
-           
-        
-        
-    }
+             catch (Exception e) {
+                    System.out.println("x - File not exist: " + circuitPath.get(j));
+             }
+
+         }
    
+}
 }
 
 /** This class implements SPRMP fanouts analysis and provides a set of reliability methods (that can be callable) such as PTM, SPR, and SPR-MP
@@ -462,13 +470,13 @@ public class SPRMPFanoutsAnalysis {
                         idx = i;
                         
                        
-                        /*
-                        if(  this.timeoutMiliSeconds < (sprmpRoundTime * 1.4)){ //preempção
-                            System.out.println("Stoping the execution, expected time ~ (" + sprmpRoundTime * 1.5 + ") m(s) above the Timeout (~2x), Timeout : " + this.timeoutMiliSeconds + " ~ " + this.timeout  + "(s)");
-                            //i = (this.probCircuit.getFanouts().size()) + 11;
+                        
+                        if(( sprmpRoundTime * 1.9) > this.timeoutMiliSeconds){ //preempção
+                             System.out.println("Stoping the execution, expected time ~ (" + sprmpRoundTime * 1.5 + ") m(s) above the Timeout (~2x), Timeout : " + this.timeoutMiliSeconds + " ~ " + this.timeout  + "(s)");
+                             i = (this.probCircuit.getFanouts().size()) + 11;
                              break;
                         }
-                        */
+                        
                        
                         
                        
