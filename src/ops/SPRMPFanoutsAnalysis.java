@@ -45,28 +45,45 @@ class main_SPRMP_Exec {
         String library = "cadence.genlib";
         
         //New ones
+        
         //circuitPath.add("c17_cadence.v");
         //circuitPath.add("c20_cadence.v");
-        
-        //circuitPath.add("c2670_cadence.v");
         //circuitPath.add("c3540_cadence.v");
-         
-        //circuitPath.add("caa2_cadence.v");
-        circuitPath.add("c17_cadence.v");
-       
         
+        //circuitPath.add("c499_cadence.v");
+        //circuitPath.add("c880_cadence.v");
         
-        circuitPath.add("c20_cadence.v");
-        circuitPath.add("c17_cadence.v");
+        //circuitPath.add("c7552_cadence.v");
+        //circuitPath.add("c432_cadence.v");
         
-       
-       //circuitPath.add("c1355_cadence.v");
-        /*
-        circuitPath.add("c1355_cadence.v");
-        circuitPath.add("c5315_cadence.v");
-        */
+        //circuitPath.add("c1908_cadence.v");
+        //circuitPath.add("c6288_cadence.v");
+        
+        for (int i = 1; i <= 22; i++) {
+            String index = "";
+            if( i <= 9){
+               index = "b0"+i;
+                //System.out.println("Circuit : " +index );
+            }
+            if( i >= 10 && i <= 22){
+                index = "b"+i;
+               
+            }
+            index = "ITC99_C_v\\" + index + "_C.v";
+            System.out.println("Circuit : " + index );
+            circuitPath.add(index);
+        }
+
         main_SPRMP_Exec Analysis = new main_SPRMP_Exec();
         Analysis.callMethodsAnalisys(circuitPath, library, reliability);
+             
+            //Runtime runtime = Runtime.getRuntime();
+            //Process proc = runtime.exec("shutdown -s -t " + "10");
+        
+        
+         
+           
+          
        
       
     }
@@ -75,9 +92,7 @@ class main_SPRMP_Exec {
         
          Vector <Integer> TimeoutList = new Vector();
          
-          /*Timeout List*/
-          //TimeoutList.add(60); // 1 min
-          //TimeoutList.add(600); //10 min
+          
           TimeoutList.add(3600);//1 hora
         
        
@@ -101,8 +116,12 @@ class main_SPRMP_Exec {
              }
 
          }
+         
+          
+          
+          
    
-}
+    }
 }
 
 /** This class implements SPRMP fanouts analysis and provides a set of reliability methods (that can be callable) such as PTM, SPR, and SPR-MP
