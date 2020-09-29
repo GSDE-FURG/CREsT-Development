@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.TreeSet;
 import java.util.Vector;
@@ -22,6 +23,8 @@ import levelDatastructures.GateLevel;
 import levelDatastructures.LevelCircuit;
 import readers.MappedVerilogReader;
 import signalProbability.ProbCircuit;
+import signalProbability.ProbInterLevel;
+import signalProbability.ProbSignal;
 
 
 /** Main method to run this class
@@ -56,16 +59,21 @@ class main_SPRMP_Exec {
         //circuitPath.add("c7552_cadence.v");
         //circuitPath.add("c432_cadence.v");
         
-        //circuitPath.add("c1908_cadence.v");
+        circuitPath.add("c1908_cadence.v");
         //circuitPath.add("c6288_cadence.v");
         
-        for (int i = 1; i <= 22; i++) {
+        //circuitPath.add("c2670_cadence.v");
+        
+        //circuitPath.add("c1355_cadence.v");
+        
+        /*
+        for (int i = 14; i <= 22; i++) {
             String index = "";
-            if( i <= 9){
+            if( i <= 10){
                index = "b0"+i;
                 //System.out.println("Circuit : " +index );
             }
-            if( i >= 10 && i <= 22){
+            if( i >= 11 && i <= 22){
                 index = "b"+i;
                
             }
@@ -73,20 +81,18 @@ class main_SPRMP_Exec {
             System.out.println("Circuit : " + index );
             circuitPath.add(index);
         }
-
+        */
         main_SPRMP_Exec Analysis = new main_SPRMP_Exec();
         Analysis.callMethodsAnalisys(circuitPath, library, reliability);
-             
-            //Runtime runtime = Runtime.getRuntime();
-            //Process proc = runtime.exec("shutdown -s -t " + "10");
-        
-        
-         
-           
-          
-       
       
+             
+        /*
+            Runtime runtime = Runtime.getRuntime();
+            Process proc = runtime.exec("shutdown -s -t " + "10");
+        */
+
     }
+
     
     public void callMethodsAnalisys(Vector circuitPath, String library, String Reliability) throws Exception{
         
@@ -105,8 +111,9 @@ class main_SPRMP_Exec {
                     long timeout = TimeoutList.get(i);
                     System.out.println(i+1 + "  -  Timeout : " + timeout + "(s)");
                         SPRMPFanoutsAnalysis spr_mp_analysis = new SPRMPFanoutsAnalysis(Reliability, timeout , circuitPath.get(j).toString(), library);
-                        spr_mp_analysis.SPR_MP_FANOUTS(library, circuitPath.get(j).toString());
-                    System.out.println(" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ ");
+                        //spr_mp_analysis.SPR_MP_FANOUTS(library, circuitPath.get(j).toString());
+                        spr_mp_analysis.getInputFanouts(library, circuitPath.get(j).toString());
+                        System.out.println(" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ ");
 
                 }
 
@@ -188,35 +195,6 @@ public class SPRMPFanoutsAnalysis {
          System.out.println("Signals : " + this.circuit.getSignals());
         
      }
-     
-     public void PrintGateLevels() {
-        LevelCircuit lcirc = this.lCircuit;
-        
-        String output = "";
-        
-        for (int i = 0; i < lcirc.getGateLevels().size(); i++) {                        
-            GateLevel gLevel = lcirc.getGateLevels().get(i);
-   
-            output = output + "###########################\n";        
-            output = output + " ## GATE LEVEL " + gLevel.getLevel() + " ##\n"; 
-            output = output + "###########################\n";        
-                        
-            for (int j = 0; j < gLevel.getGates().size(); j++) {
-                Object gate = gLevel.getGates().get(j);
-                if(gate instanceof DepthGate) {
-                    DepthGate depthGate = (DepthGate)gate;
-                    output = output + (depthGate.toString() + " --> " + depthGate.getGate().getType() + "\n");
-                    output = output + "## ## ##\n";
-                } else {
-                    Signal signal = (Signal)gate;
-                    output = output + (signal.toString() + " --> WIRE!!!\n");                    
-                    output = output + "## ## ##\n";
-                }
-            }                               
-        } 
-        
-         System.out.println("PrintGateLevels : "+output);
-    }
      
      public void initProbCircuit() {
         if(this.circuit != null) {
@@ -356,7 +334,69 @@ public class SPRMPFanoutsAnalysis {
         
     } 
      
+     public void getInputFanouts(String library, String CircuitFile)throws Exception {
+         
+        /*CellLibrary*/
+        CellLibrary cellLib = new CellLibrary();
+        cellLib.initLibrary(this.genlibPATH);
+        /*CellLibrary*/
+        
+         /*Read Verilog*/
+        MappedVerilogReader verilog_circuit = new MappedVerilogReader(this.circuitFilePath, cellLib);
+        
+        
+        /*Circuit linked to verilog_circuit - init circuit*/
+         this.circuit = verilog_circuit.getCircuit();
+         
+            //this.PrintSpecs();
+         /*Circuit linked to verilog_circuit*/
+       
+        
+         /*Circuit Probabilities */
+         this.initLevelCircuit();
+         this.initProbCircuit();
+          /*Circuit Probabilities */
+          
+          
+          /*Gate levels*/
+            //this.PrintGateLevels();
+          /*Gate levels*/
+
+  
+          cellLib.setPTMCells2(Float.valueOf(reliability));
+          cellLib.setPTMCells(new BigDecimal(reliability));
+          //cellLib.teste();
+          
+          //CellLib
+          this.cellLibrary = cellLib;
+          
+          //ProbCircuit
+          this.probCircuit.setPTMReliabilityMatrix(); //Sempre usar variaveis criadas 
+          // taking off probCircuit.setProbSignalStates(false); //novo 
+          this.probCircuit.setDefaultProbSourceSignalMatrix();
+          this.probCircuit.setProbSignalStates(false); //HERE
+          
+         
+      
+          //Find entry fanouts
+         ArrayList<ProbSignal> inputfanouts = new ArrayList<>();
+         
+         inputfanouts.addAll(this.probCircuit.getInputFanoutsX());
+         
+         System.out.println("- Circuit fanouts Counter : " + this.probCircuit.getFanouts().size());
+                  
+         System.out.println("- All input Fanouts (first gateLevel) : \n    Size: "+ inputfanouts.size());
+            
+         for (int i = 0; i < inputfanouts.size(); i++) {
+             System.out.println("     " + i + " - " + inputfanouts.get(i));
+         }
+         
+     
+         
+     } 
+   
      public void SPR_MP_FANOUTS(String library, String CircuitFile)throws Exception {
+         
          SPRMultiPassV3Ops teste = new SPRMultiPassV3Ops();
          int idx = 0;
         
