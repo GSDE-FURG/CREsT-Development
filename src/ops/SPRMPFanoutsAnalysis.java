@@ -49,22 +49,26 @@ class main_SPRMP_Exec {
         
         //New ones
         
-        //circuitPath.add("c17_cadence.v");
-        //circuitPath.add("c20_cadence.v");
-        //circuitPath.add("c3540_cadence.v");
-        
-        //circuitPath.add("c499_cadence.v");
-        //circuitPath.add("c880_cadence.v");
-        
-        //circuitPath.add("c7552_cadence.v");
-        //circuitPath.add("c432_cadence.v");
-        
+        circuitPath.add("c2670_cadence.v");
+        circuitPath.add("c432_cadence.v");
+        circuitPath.add("c1355_cadence.v");
+        circuitPath.add("c7552_cadence.v");
+        circuitPath.add("c499_cadence.v");
+        circuitPath.add("c880_cadence.v");
+        circuitPath.add("c6288_cadence.v");
         circuitPath.add("c1908_cadence.v");
-        //circuitPath.add("c6288_cadence.v");
         
-        //circuitPath.add("c2670_cadence.v");
+        /*
+        circuitPath.add("c17_cadence.v");
+        circuitPath.add("c20_cadence.v");
+        circuitPath.add("c3540_cadence.v");
         
-        //circuitPath.add("c1355_cadence.v");
+        */
+        
+        
+        
+        
+        
         
         /*
         for (int i = 14; i <= 22; i++) {
@@ -388,7 +392,7 @@ public class SPRMPFanoutsAnalysis {
          System.out.println("- All input Fanouts (first gateLevel) : \n    Size: "+ inputfanouts.size());
             
          for (int i = 0; i < inputfanouts.size(); i++) {
-             System.out.println("     " + i + " - " + inputfanouts.get(i));
+             //System.out.println("     " + i + " - " + inputfanouts.get(i));
          }
          
      
