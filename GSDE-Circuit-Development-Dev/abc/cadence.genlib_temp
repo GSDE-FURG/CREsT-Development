@@ -1,0 +1,91 @@
+# The genlib library "cadence.genlib".
+GATE         ZERO       1.00   Y=CONST0;
+GATE          ONE       1.00   Y=CONST1;
+GATE        INVX1       1.00   Y=!A;
+    PIN         A        INV      1    999   1.00   0.00   1.00   0.00
+GATE        INVX2       1.00   Y=!A;
+    PIN         A        INV      1    999   1.00   0.00   1.00   0.00
+GATE        INVX4       1.00   Y=!A;
+    PIN         A        INV      1    999   1.00   0.00   1.00   0.00
+GATE        INVX8       1.00   Y=!A;
+    PIN         A        INV      1    999   1.00   0.00   1.00   0.00
+GATE        BUFX1       1.00   Y=A;
+    PIN         A     NONINV      1    999   1.00   0.00   1.00   0.00
+GATE        BUFX3       1.00   Y=A;
+    PIN         A     NONINV      1    999   1.00   0.00   1.00   0.00
+GATE     CLKBUFX1       1.00   Y=A;
+    PIN         A     NONINV      1    999   1.00   0.00   1.00   0.00
+GATE     CLKBUFX2       1.00   Y=A;
+    PIN         A     NONINV      1    999   1.00   0.00   1.00   0.00
+GATE     CLKBUFX3       1.00   Y=A;
+    PIN         A     NONINV      1    999   1.00   0.00   1.00   0.00
+GATE       NOR2X1       1.00   Y=!(A+B);
+    PIN         A        INV      1    999   1.00   0.00   1.00   0.00
+    PIN         B        INV      1    999   1.00   0.00   1.00   0.00
+GATE       NOR3X1       1.00   Y=!(A+B+C);
+    PIN         A        INV      1    999   1.00   0.00   1.00   0.00
+    PIN         B        INV      1    999   1.00   0.00   1.00   0.00
+    PIN         C        INV      1    999   1.00   0.00   1.00   0.00
+GATE       NOR4X1       1.00   Y=!(A+B+C+D);
+    PIN         A        INV      1    999   1.00   0.00   1.00   0.00
+    PIN         B        INV      1    999   1.00   0.00   1.00   0.00
+    PIN         C        INV      1    999   1.00   0.00   1.00   0.00
+    PIN         D        INV      1    999   1.00   0.00   1.00   0.00
+GATE      NAND2X1       1.00   Y=!(A*B);
+    PIN         A        INV      1    999   1.00   0.00   1.00   0.00
+    PIN         B        INV      1    999   1.00   0.00   1.00   0.00
+GATE      NAND2X2       1.00   Y=!(A*B);
+    PIN         A        INV      1    999   1.00   0.00   1.00   0.00
+    PIN         B        INV      1    999   1.00   0.00   1.00   0.00
+GATE      NAND3X1       1.00   Y=!(A*B*C);
+    PIN         A        INV      1    999   1.00   0.00   1.00   0.00
+    PIN         B        INV      1    999   1.00   0.00   1.00   0.00
+    PIN         C        INV      1    999   1.00   0.00   1.00   0.00
+GATE      NAND4X1       1.00   Y=!(A*B*C*D);
+    PIN         A        INV      1    999   1.00   0.00   1.00   0.00
+    PIN         B        INV      1    999   1.00   0.00   1.00   0.00
+    PIN         C        INV      1    999   1.00   0.00   1.00   0.00
+    PIN         D        INV      1    999   1.00   0.00   1.00   0.00
+GATE        OR2X1       1.00   Y=A+B;
+    PIN         A     NONINV      1    999   1.00   0.00   1.00   0.00
+    PIN         B     NONINV      1    999   1.00   0.00   1.00   0.00
+GATE        OR4X1       1.00   Y=A+B+C+D;
+    PIN         A     NONINV      1    999   1.00   0.00   1.00   0.00
+    PIN         B     NONINV      1    999   1.00   0.00   1.00   0.00
+    PIN         C     NONINV      1    999   1.00   0.00   1.00   0.00
+    PIN         D     NONINV      1    999   1.00   0.00   1.00   0.00
+GATE       AND2X1       1.00   Y=A*B;
+    PIN         A     NONINV      1    999   1.00   0.00   1.00   0.00
+    PIN         B     NONINV      1    999   1.00   0.00   1.00   0.00
+GATE      OAI21X1       1.00   Y=!((A0+A1)*B0);
+    PIN        A0        INV      1    999   1.00   0.00   1.00   0.00
+    PIN        A1        INV      1    999   1.00   0.00   1.00   0.00
+    PIN        B0        INV      1    999   1.00   0.00   1.00   0.00
+GATE      OAI22X1       1.00   Y=!((A0+A1)*(B0+B1));
+    PIN        A0        INV      1    999   1.00   0.00   1.00   0.00
+    PIN        A1        INV      1    999   1.00   0.00   1.00   0.00
+    PIN        B0        INV      1    999   1.00   0.00   1.00   0.00
+    PIN        B1        INV      1    999   1.00   0.00   1.00   0.00
+GATE      OAI33X1       1.00   Y=!((A0+A1+A2)*(B0+B1+B2));
+    PIN        A0        INV      1    999   1.00   0.00   1.00   0.00
+    PIN        A1        INV      1    999   1.00   0.00   1.00   0.00
+    PIN        A2        INV      1    999   1.00   0.00   1.00   0.00
+    PIN        B0        INV      1    999   1.00   0.00   1.00   0.00
+    PIN        B1        INV      1    999   1.00   0.00   1.00   0.00
+    PIN        B2        INV      1    999   1.00   0.00   1.00   0.00
+GATE      AOI21X1       1.00   Y=!(A0*A1+B0);
+    PIN        A0        INV      1    999   1.00   0.00   1.00   0.00
+    PIN        A1        INV      1    999   1.00   0.00   1.00   0.00
+    PIN        B0        INV      1    999   1.00   0.00   1.00   0.00
+GATE      AOI22X1       1.00   Y=!(A0*A1+B0*B1);
+    PIN        A0        INV      1    999   1.00   0.00   1.00   0.00
+    PIN        A1        INV      1    999   1.00   0.00   1.00   0.00
+    PIN        B0        INV      1    999   1.00   0.00   1.00   0.00
+    PIN        B1        INV      1    999   1.00   0.00   1.00   0.00
+GATE        MX2X1       1.00   Y=(A*B)+(S0*B)+(!S0*A);
+    PIN         A    UNKNOWN      1    999   1.00   0.00   1.00   0.00
+    PIN         B    UNKNOWN      1    999   1.00   0.00   1.00   0.00
+    PIN        S0    UNKNOWN      1    999   1.00   0.00   1.00   0.00
+GATE       XOR2X1       1.00   Y=(A*!B)+(!A*B);
+    PIN         A    UNKNOWN      1    999   1.00   0.00   1.00   0.00
+    PIN         B    UNKNOWN      1    999   1.00   0.00   1.00   0.00

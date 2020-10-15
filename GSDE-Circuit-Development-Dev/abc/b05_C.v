@@ -1,0 +1,575 @@
+// Benchmark "b05_C" written by ABC on Wed Aug 05 14:37:32 2020
+
+module b05_C ( 
+    STATO_REG_2__SCAN_IN, START, STATO_REG_1__SCAN_IN,
+    STATO_REG_0__SCAN_IN, FLAG_REG_SCAN_IN, RES_DISP_REG_SCAN_IN,
+    EN_DISP_REG_SCAN_IN, MAX_REG_0__SCAN_IN, MAX_REG_1__SCAN_IN,
+    MAX_REG_2__SCAN_IN, MAX_REG_3__SCAN_IN, MAX_REG_4__SCAN_IN,
+    MAX_REG_5__SCAN_IN, MAX_REG_6__SCAN_IN, MAX_REG_7__SCAN_IN,
+    MAX_REG_8__SCAN_IN, TEMP_REG_0__SCAN_IN, TEMP_REG_1__SCAN_IN,
+    TEMP_REG_2__SCAN_IN, TEMP_REG_3__SCAN_IN, TEMP_REG_4__SCAN_IN,
+    TEMP_REG_5__SCAN_IN, TEMP_REG_6__SCAN_IN, TEMP_REG_7__SCAN_IN,
+    TEMP_REG_8__SCAN_IN, MAR_REG_0__SCAN_IN, MAR_REG_1__SCAN_IN,
+    MAR_REG_2__SCAN_IN, MAR_REG_3__SCAN_IN, MAR_REG_4__SCAN_IN,
+    NUM_REG_0__SCAN_IN, NUM_REG_1__SCAN_IN, NUM_REG_2__SCAN_IN,
+    NUM_REG_3__SCAN_IN, NUM_REG_4__SCAN_IN,
+    U646, U792, U590, U589, U589, U590, U590, U590, U661, U662, U663, U664,
+    U665, U666, U667, U647, U648, U649, U650, U651, U652, U653, U792, U591,
+    U589, U589, U591, U591, U591, U654, U655, U656, U657, U658, U659, U660,
+    U680, U679, U678, U677, U676, U675, U674, U673, U672, U671, U727, U728,
+    U729, U730, U731, U732, U733, U734, U735, U736, U737, U738, U739, U740,
+    U741, U742, U743, U744, U670, U669, U668, U645, U644, U643  );
+  input  STATO_REG_2__SCAN_IN, START, STATO_REG_1__SCAN_IN,
+    STATO_REG_0__SCAN_IN, FLAG_REG_SCAN_IN, RES_DISP_REG_SCAN_IN,
+    EN_DISP_REG_SCAN_IN, MAX_REG_0__SCAN_IN, MAX_REG_1__SCAN_IN,
+    MAX_REG_2__SCAN_IN, MAX_REG_3__SCAN_IN, MAX_REG_4__SCAN_IN,
+    MAX_REG_5__SCAN_IN, MAX_REG_6__SCAN_IN, MAX_REG_7__SCAN_IN,
+    MAX_REG_8__SCAN_IN, TEMP_REG_0__SCAN_IN, TEMP_REG_1__SCAN_IN,
+    TEMP_REG_2__SCAN_IN, TEMP_REG_3__SCAN_IN, TEMP_REG_4__SCAN_IN,
+    TEMP_REG_5__SCAN_IN, TEMP_REG_6__SCAN_IN, TEMP_REG_7__SCAN_IN,
+    TEMP_REG_8__SCAN_IN, MAR_REG_0__SCAN_IN, MAR_REG_1__SCAN_IN,
+    MAR_REG_2__SCAN_IN, MAR_REG_3__SCAN_IN, MAR_REG_4__SCAN_IN,
+    NUM_REG_0__SCAN_IN, NUM_REG_1__SCAN_IN, NUM_REG_2__SCAN_IN,
+    NUM_REG_3__SCAN_IN, NUM_REG_4__SCAN_IN;
+  output U646, U792, U590, U589, U589, U590, U590, U590, U661, U662, U663,
+    U664, U665, U666, U667, U647, U648, U649, U650, U651, U652, U653, U792,
+    U591, U589, U589, U591, U591, U591, U654, U655, U656, U657, U658, U659,
+    U660, U680, U679, U678, U677, U676, U675, U674, U673, U672, U671, U727,
+    U728, U729, U730, U731, U732, U733, U734, U735, U736, U737, U738, U739,
+    U740, U741, U742, U743, U744, U670, U669, U668, U645, U644, U643;
+  wire n105, n108, n109, n110, n111, n112, n113, n114, n115, n116, n117,
+    n118, n119, n120, n121, n122, n123, n126, n127, n128, n131, n133, n134,
+    n135, n136, n139, n141, n143, n146, n160, n173, n175, n178, n179, n180,
+    n181, n182, n184, n185, n186, n188, n189, n190, n193, n198, n202, n203,
+    n205, n206, n210, n233, n243, n244, n247, n248, n275, n276, n277, n278,
+    n279, n280, n281, n282, n283, n284, n285, n286, n287, n288, n289, n290,
+    n300, n301, n302, n303, n304, n305, n313, n314, n315, n316, n317, n318,
+    n320, n321, n323, n324, n325, n326, n327, n328, n329, n330, n331, n332,
+    n333, n334, n335, n336, n337, n338, n339, n340, n341, n342, n343, n345,
+    n346, n347, n348, n349, n350, n351, n353, n354, n355, n356, n358, n359,
+    n363, n364, n366, n367, n369, n370, n372, n373, n374, n375, n377, n378,
+    n379, n381, n382, n383, n384, n385, n386, n387, n388, n389, n390, n391,
+    n392, n393, n395, n396, n397, n398, n399, n400, n401, n402, n403, n406,
+    n407, n408, n409, n411, n412, n413, n414, n416, n417, n418, n419, n420,
+    n421, n423, n424, n425, n426, n428, n430, n431, n433, n435, n439, n440,
+    n441, n442, n443, n444, n445, n447, n448, n449, n450, n451, n452, n453,
+    n454, n455, n456, n457, n458, n459, n460, n461, n462, n463, n464, n465,
+    n466, n467, n468, n469, n470, n471, n472, n473, n474, n475, n476, n477,
+    n478, n479, n480, n481, n482, n483, n484, n485, n486, n487, n488, n489,
+    n490, n491, n492, n493, n494, n495, n496, n497, n498, n499, n500, n501,
+    n502, n503, n504, n505, n506, n507, n508, n509, n510, n511, n512, n513,
+    n514, n515, n516, n517, n518, n519, n520, n521, n522, n523, n524, n525,
+    n526, n527, n528, n529, n530, n531, n532, n533, n534, n535, n536, n537,
+    n538, n539, n540, n541, n542, n543, n544, n545, n546, n547, n548, n549,
+    n550, n551, n552, n553, n554, n555, n556, n557, n558, n559, n560, n561,
+    n562, n563, n564, n565, n566, n567, n568, n569, n570, n571, n572, n573,
+    n574, n575, n576, n577, n578, n579, n581, n582, n584, n585, n587, n589,
+    n591, n592, n593, n594, n595, n596, n597, n599, n600, n602, n603, n605,
+    n607, n609, n611, n612, n614, n620, n622, n625, n627, n629, n631, n632,
+    n634, n635, n636, n637, n638, n639, n640, n641, n642, n643, n644, n645,
+    n646, n647, n648, n649, n650, n651, n652, n653, n654, n655, n656, n657,
+    n658, n659, n660, n661, n662, n663, n664, n665, n666, n667, n668, n669,
+    n670, n671, n672, n673, n674, n675, n676, n677, n678, n679, n680, n681,
+    n682, n683, n684, n685, n686, n687, n688, n689, n690, n691, n692, n693,
+    n694, n695, n696, n697, n698, n699, n700, n701, n703, n705, n707, n708,
+    n710, n712, n714, n716, n718, n720, n721, n722, n723, n725, n726, n727,
+    n729, n730, n732, n733, n736;
+  INVX1   g000(.A(MAX_REG_8__SCAN_IN), .Y(n105));
+  AOI21X1 g001(.A0(n105), .A1(RES_DISP_REG_SCAN_IN), .B0(EN_DISP_REG_SCAN_IN), .Y(U646));
+  NOR2X1  g002(.A(EN_DISP_REG_SCAN_IN), .B(RES_DISP_REG_SCAN_IN), .Y(U792));
+  INVX1   g003(.A(RES_DISP_REG_SCAN_IN), .Y(n108));
+  INVX1   g004(.A(MAX_REG_4__SCAN_IN), .Y(n109));
+  NOR4X1  g005(.A(MAX_REG_2__SCAN_IN), .B(MAX_REG_1__SCAN_IN), .C(MAX_REG_0__SCAN_IN), .D(MAX_REG_3__SCAN_IN), .Y(n110));
+  AOI21X1 g006(.A0(n110), .A1(n109), .B0(n105), .Y(n111));
+  NOR2X1  g007(.A(n110), .B(n109), .Y(n112));
+  INVX1   g008(.A(n112), .Y(n113));
+  AOI22X1 g009(.A0(n111), .A1(n113), .B0(n105), .B1(MAX_REG_4__SCAN_IN), .Y(n114));
+  INVX1   g010(.A(MAX_REG_2__SCAN_IN), .Y(n115));
+  NOR3X1  g011(.A(MAX_REG_2__SCAN_IN), .B(MAX_REG_1__SCAN_IN), .C(MAX_REG_0__SCAN_IN), .Y(n116));
+  OAI21X1 g012(.A0(MAX_REG_1__SCAN_IN), .A1(MAX_REG_0__SCAN_IN), .B0(MAX_REG_2__SCAN_IN), .Y(n117));
+  NAND2X1 g013(.A(n117), .B(MAX_REG_8__SCAN_IN), .Y(n118));
+  OAI22X1 g014(.A0(n116), .A1(n118), .B0(MAX_REG_8__SCAN_IN), .B1(n115), .Y(n119));
+  INVX1   g015(.A(MAX_REG_3__SCAN_IN), .Y(n120));
+  OAI21X1 g016(.A0(n116), .A1(n120), .B0(MAX_REG_8__SCAN_IN), .Y(n121));
+  OAI22X1 g017(.A0(n110), .A1(n121), .B0(MAX_REG_8__SCAN_IN), .B1(n120), .Y(n122));
+  NOR2X1  g018(.A(n122), .B(n119), .Y(n123));
+  NOR2X1  g019(.A(EN_DISP_REG_SCAN_IN), .B(n108), .Y(U590));
+  NOR2X1  g020(.A(EN_DISP_REG_SCAN_IN), .B(n108), .Y(U589));
+  NAND2X1 g021(.A(n116), .B(n120), .Y(n126));
+  OAI21X1 g022(.A0(n126), .A1(MAX_REG_4__SCAN_IN), .B0(MAX_REG_8__SCAN_IN), .Y(n127));
+  INVX1   g023(.A(n119), .Y(n128));
+  NAND2X1 g024(.A(n111), .B(n127), .Y(n131));
+  INVX1   g025(.A(MAX_REG_1__SCAN_IN), .Y(n133));
+  XOR2X1  g026(.A(MAX_REG_1__SCAN_IN), .B(MAX_REG_0__SCAN_IN), .Y(n134));
+  NAND2X1 g027(.A(n134), .B(MAX_REG_8__SCAN_IN), .Y(n135));
+  OAI21X1 g028(.A0(MAX_REG_8__SCAN_IN), .A1(n133), .B0(n135), .Y(n136));
+  OAI21X1 g029(.A0(n127), .A1(n111), .B0(n136), .Y(n139));
+  NOR2X1  g030(.A(n136), .B(n119), .Y(n141));
+  OAI21X1 g031(.A0(n127), .A1(n111), .B0(n122), .Y(n143));
+  OAI22X1 g032(.A0(n127), .A1(n112), .B0(MAX_REG_8__SCAN_IN), .B1(n109), .Y(n146));
+  AOI21X1 g033(.A0(n127), .A1(n127), .B0(n111), .Y(n160));
+  NAND4X1 g034(.A(n122), .B(n136), .C(n119), .D(n146), .Y(n173));
+  AOI21X1 g035(.A0(n127), .A1(n173), .B0(n111), .Y(n175));
+  OAI21X1 g036(.A0(n122), .A1(n119), .B0(n146), .Y(n178));
+  NAND4X1 g037(.A(n127), .B(n127), .C(n127), .D(n178), .Y(n179));
+  AOI21X1 g038(.A0(n179), .A1(n127), .B0(n175), .Y(n180));
+  NAND2X1 g039(.A(n180), .B(n131), .Y(n181));
+  AOI21X1 g040(.A0(n181), .A1(n131), .B0(n108), .Y(n182));
+  AOI21X1 g041(.A0(n182), .A1(n131), .B0(EN_DISP_REG_SCAN_IN), .Y(U661));
+  INVX1   g042(.A(U589), .Y(n184));
+  NAND2X1 g043(.A(n123), .B(n114), .Y(n185));
+  NAND2X1 g044(.A(n185), .B(n111), .Y(n186));
+  AOI21X1 g045(.A0(n126), .A1(MAX_REG_8__SCAN_IN), .B0(MAX_REG_4__SCAN_IN), .Y(n188));
+  OAI21X1 g046(.A0(n143), .A1(n141), .B0(n188), .Y(n189));
+  NAND4X1 g047(.A(n180), .B(n186), .C(n127), .D(n189), .Y(n190));
+  OAI21X1 g048(.A0(n190), .A1(n175), .B0(n131), .Y(n193));
+  AOI21X1 g049(.A0(n193), .A1(n131), .B0(n184), .Y(U662));
+  NOR4X1  g050(.A(n180), .B(n175), .C(n160), .D(n160), .Y(n198));
+  NOR2X1  g051(.A(n198), .B(n184), .Y(U663));
+  AOI21X1 g052(.A0(n131), .A1(n160), .B0(n184), .Y(U664));
+  NOR2X1  g053(.A(n175), .B(n160), .Y(n202));
+  AOI21X1 g054(.A0(n202), .A1(n190), .B0(n160), .Y(n203));
+  NOR2X1  g055(.A(n203), .B(n184), .Y(U665));
+  NAND3X1 g056(.A(n189), .B(n186), .C(n127), .Y(n205));
+  NAND2X1 g057(.A(n205), .B(n180), .Y(n206));
+  AOI21X1 g058(.A0(n206), .A1(n131), .B0(n184), .Y(U666));
+  AOI21X1 g059(.A0(n205), .A1(n180), .B0(n175), .Y(n210));
+  NOR2X1  g060(.A(n184), .B(n210), .Y(U667));
+  NAND3X1 g061(.A(n181), .B(n202), .C(n131), .Y(n233));
+  AOI21X1 g062(.A0(n146), .A1(n127), .B0(n128), .Y(n243));
+  NAND4X1 g063(.A(n128), .B(n146), .C(n127), .D(n122), .Y(n244));
+  NAND2X1 g064(.A(n233), .B(n139), .Y(n247));
+  AOI21X1 g065(.A0(n247), .A1(n244), .B0(n243), .Y(n248));
+  NAND2X1 g066(.A(n146), .B(n111), .Y(n275));
+  NOR2X1  g067(.A(n206), .B(n143), .Y(n276));
+  XOR2X1  g068(.A(n198), .B(n143), .Y(n277));
+  XOR2X1  g069(.A(n277), .B(n248), .Y(n278));
+  AOI21X1 g070(.A0(n278), .A1(n206), .B0(n276), .Y(n279));
+  NAND2X1 g071(.A(n279), .B(n275), .Y(n280));
+  INVX1   g072(.A(n280), .Y(n281));
+  NAND2X1 g073(.A(n281), .B(n127), .Y(n282));
+  NAND2X1 g074(.A(n205), .B(n119), .Y(n283));
+  INVX1   g075(.A(n283), .Y(n284));
+  NOR4X1  g076(.A(n119), .B(n114), .C(n111), .D(n143), .Y(n285));
+  NOR2X1  g077(.A(n285), .B(n243), .Y(n286));
+  XOR2X1  g078(.A(n286), .B(n247), .Y(n287));
+  AOI21X1 g079(.A0(n287), .A1(n206), .B0(n284), .Y(n288));
+  INVX1   g080(.A(n288), .Y(n289));
+  INVX1   g081(.A(MAX_REG_0__SCAN_IN), .Y(n290));
+  NOR2X1  g082(.A(n206), .B(n139), .Y(n300));
+  XOR2X1  g083(.A(n233), .B(n136), .Y(n301));
+  AOI21X1 g084(.A0(n301), .A1(n206), .B0(n300), .Y(n302));
+  NOR2X1  g085(.A(n302), .B(n290), .Y(n303));
+  AOI21X1 g086(.A0(n303), .A1(n289), .B0(n282), .Y(n304));
+  AOI21X1 g087(.A0(n304), .A1(n127), .B0(n111), .Y(n305));
+  NOR2X1  g088(.A(n280), .B(n111), .Y(n313));
+  INVX1   g089(.A(n302), .Y(n314));
+  NAND2X1 g090(.A(n314), .B(n289), .Y(n315));
+  NAND4X1 g091(.A(n313), .B(n127), .C(n127), .D(n315), .Y(n316));
+  NAND2X1 g092(.A(n302), .B(n290), .Y(n317));
+  NAND2X1 g093(.A(n317), .B(n289), .Y(n318));
+  OAI21X1 g094(.A0(n354), .A1(n316), .B0(n127), .Y(n320));
+  NOR2X1  g095(.A(n320), .B(n305), .Y(n321));
+  OAI21X1 g096(.A0(n282), .A1(n111), .B0(n127), .Y(n323));
+  NOR2X1  g097(.A(n317), .B(n289), .Y(n324));
+  OAI21X1 g098(.A0(n324), .A1(n279), .B0(n275), .Y(n325));
+  NOR4X1  g099(.A(n111), .B(n111), .C(n111), .D(n325), .Y(n326));
+  OAI21X1 g100(.A0(n326), .A1(n111), .B0(n323), .Y(n327));
+  NAND4X1 g101(.A(n281), .B(n127), .C(n127), .D(n288), .Y(n328));
+  OAI21X1 g102(.A0(n328), .A1(n111), .B0(n127), .Y(n329));
+  NOR2X1  g103(.A(n329), .B(n305), .Y(n330));
+  NOR3X1  g104(.A(n330), .B(n327), .C(n321), .Y(n331));
+  NAND2X1 g105(.A(n304), .B(n127), .Y(n332));
+  NAND2X1 g106(.A(n332), .B(n127), .Y(n333));
+  INVX1   g107(.A(n275), .Y(n334));
+  INVX1   g108(.A(n279), .Y(n335));
+  NOR4X1  g109(.A(n289), .B(n335), .C(n334), .D(n303), .Y(n336));
+  NAND2X1 g110(.A(n336), .B(n127), .Y(n337));
+  NOR3X1  g111(.A(n337), .B(n111), .C(n111), .Y(n338));
+  NOR4X1  g112(.A(n289), .B(n335), .C(n334), .D(n314), .Y(n339));
+  NAND3X1 g113(.A(n339), .B(n127), .C(n127), .Y(n340));
+  OAI21X1 g114(.A0(n340), .A1(n111), .B0(n127), .Y(n341));
+  OAI21X1 g115(.A0(n338), .A1(n111), .B0(n341), .Y(n342));
+  AOI21X1 g116(.A0(n342), .A1(n333), .B0(n108), .Y(n343));
+  AOI21X1 g117(.A0(n343), .A1(n331), .B0(EN_DISP_REG_SCAN_IN), .Y(U647));
+  NOR2X1  g118(.A(n327), .B(n321), .Y(n345));
+  OAI21X1 g119(.A0(n337), .A1(n111), .B0(n127), .Y(n346));
+  NAND4X1 g120(.A(n279), .B(n275), .C(n127), .D(n324), .Y(n347));
+  NOR3X1  g121(.A(n347), .B(n111), .C(n111), .Y(n348));
+  NOR2X1  g122(.A(n348), .B(n111), .Y(n349));
+  NAND3X1 g123(.A(n349), .B(n341), .C(n346), .Y(n350));
+  NAND3X1 g124(.A(n350), .B(n329), .C(n333), .Y(n351));
+  AOI21X1 g125(.A0(n351), .A1(n345), .B0(n184), .Y(U648));
+  NAND2X1 g126(.A(n316), .B(n127), .Y(n353));
+  NAND2X1 g127(.A(n318), .B(n313), .Y(n354));
+  NOR3X1  g128(.A(n354), .B(n111), .C(n111), .Y(n355));
+  OAI21X1 g129(.A0(n355), .A1(n111), .B0(n353), .Y(n356));
+  OAI21X1 g130(.A0(n338), .A1(n111), .B0(n329), .Y(n358));
+  NOR2X1  g131(.A(n358), .B(n341), .Y(n359));
+  AOI21X1 g132(.A0(n359), .A1(n320), .B0(n184), .Y(U649));
+  NOR2X1  g133(.A(n321), .B(n184), .Y(U650));
+  AOI21X1 g134(.A0(n349), .A1(n341), .B0(n358), .Y(n363));
+  NOR4X1  g135(.A(n327), .B(n356), .C(n305), .D(n363), .Y(n364));
+  NOR2X1  g136(.A(n364), .B(n184), .Y(U651));
+  NOR3X1  g137(.A(n349), .B(n342), .C(n305), .Y(n366));
+  NOR4X1  g138(.A(n330), .B(n327), .C(n321), .D(n366), .Y(n367));
+  NOR2X1  g139(.A(n367), .B(n184), .Y(U652));
+  AOI21X1 g140(.A0(n314), .A1(n289), .B0(n282), .Y(n369));
+  AOI21X1 g141(.A0(n369), .A1(n127), .B0(n111), .Y(n370));
+  OAI21X1 g142(.A0(n355), .A1(n111), .B0(n329), .Y(n372));
+  AOI21X1 g143(.A0(n349), .A1(n346), .B0(n372), .Y(n373));
+  OAI21X1 g144(.A0(n373), .A1(n370), .B0(n333), .Y(n374));
+  OAI21X1 g145(.A0(n326), .A1(n111), .B0(U589), .Y(n375));
+  AOI21X1 g146(.A0(n374), .A1(n323), .B0(n375), .Y(U653));
+  INVX1   g147(.A(NUM_REG_3__SCAN_IN), .Y(n377));
+  NOR2X1  g148(.A(NUM_REG_2__SCAN_IN), .B(NUM_REG_1__SCAN_IN), .Y(n378));
+  NOR2X1  g149(.A(n378), .B(n377), .Y(n379));
+  NOR4X1  g150(.A(NUM_REG_4__SCAN_IN), .B(EN_DISP_REG_SCAN_IN), .C(n108), .D(n379), .Y(U591));
+  NOR2X1  g151(.A(n379), .B(NUM_REG_4__SCAN_IN), .Y(n381));
+  INVX1   g152(.A(n381), .Y(n382));
+  XOR2X1  g153(.A(n378), .B(n377), .Y(n383));
+  NOR4X1  g154(.A(n377), .B(NUM_REG_2__SCAN_IN), .C(NUM_REG_1__SCAN_IN), .D(NUM_REG_4__SCAN_IN), .Y(n384));
+  AOI21X1 g155(.A0(n383), .A1(n382), .B0(n384), .Y(n385));
+  INVX1   g156(.A(n385), .Y(n386));
+  NAND2X1 g157(.A(n379), .B(NUM_REG_4__SCAN_IN), .Y(n387));
+  INVX1   g158(.A(n387), .Y(n388));
+  NOR2X1  g159(.A(n388), .B(n386), .Y(n389));
+  INVX1   g160(.A(n389), .Y(n390));
+  INVX1   g161(.A(NUM_REG_0__SCAN_IN), .Y(n391));
+  NOR2X1  g162(.A(n381), .B(n391), .Y(n392));
+  NOR3X1  g163(.A(n379), .B(NUM_REG_4__SCAN_IN), .C(n391), .Y(n393));
+  INVX1   g164(.A(n391), .Y(n395));
+  INVX1   g165(.A(NUM_REG_1__SCAN_IN), .Y(n396));
+  XOR2X1  g166(.A(NUM_REG_2__SCAN_IN), .B(n396), .Y(n397));
+  INVX1   g167(.A(NUM_REG_2__SCAN_IN), .Y(n398));
+  NOR3X1  g168(.A(n379), .B(NUM_REG_4__SCAN_IN), .C(n398), .Y(n399));
+  AOI21X1 g169(.A0(n397), .A1(n382), .B0(n399), .Y(n400));
+  XOR2X1  g170(.A(n381), .B(NUM_REG_1__SCAN_IN), .Y(n401));
+  NOR2X1  g171(.A(n401), .B(n400), .Y(n402));
+  AOI21X1 g172(.A0(n402), .A1(n395), .B0(n390), .Y(n403));
+  INVX1   g173(.A(n401), .Y(n406));
+  NOR3X1  g174(.A(n406), .B(n393), .C(n392), .Y(n407));
+  OAI21X1 g175(.A0(n407), .A1(n400), .B0(n389), .Y(n408));
+  NOR3X1  g176(.A(n408), .B(n402), .C(n390), .Y(n409));
+  AOI21X1 g177(.A0(n408), .A1(n403), .B0(n390), .Y(n411));
+  INVX1   g178(.A(n411), .Y(n412));
+  INVX1   g179(.A(n400), .Y(n413));
+  NOR3X1  g180(.A(n413), .B(n388), .C(n386), .Y(n414));
+  AOI21X1 g181(.A0(n443), .A1(n403), .B0(n412), .Y(n416));
+  NOR2X1  g182(.A(n401), .B(n391), .Y(n417));
+  NOR4X1  g183(.A(n413), .B(n388), .C(n386), .D(n417), .Y(n418));
+  NOR4X1  g184(.A(n413), .B(n388), .C(n386), .D(n406), .Y(n419));
+  NAND2X1 g185(.A(n419), .B(n418), .Y(n420));
+  AOI21X1 g186(.A0(n420), .A1(n403), .B0(n108), .Y(n421));
+  AOI21X1 g187(.A0(n421), .A1(n416), .B0(EN_DISP_REG_SCAN_IN), .Y(U654));
+  NOR3X1  g188(.A(n443), .B(n406), .C(n395), .Y(n423));
+  INVX1   g189(.A(n423), .Y(n424));
+  NAND3X1 g190(.A(n424), .B(n419), .C(n418), .Y(n425));
+  NAND3X1 g191(.A(n425), .B(n414), .C(n403), .Y(n426));
+  AOI21X1 g192(.A0(n426), .A1(n411), .B0(n184), .Y(U655));
+  INVX1   g193(.A(n403), .Y(n428));
+  INVX1   g194(.A(n418), .Y(n430));
+  NOR3X1  g195(.A(n419), .B(n430), .C(n443), .Y(n431));
+  AOI21X1 g196(.A0(n431), .A1(n409), .B0(n184), .Y(U656));
+  NOR3X1  g197(.A(n409), .B(n428), .C(n390), .Y(n433));
+  NOR2X1  g198(.A(n433), .B(n184), .Y(U657));
+  NAND4X1 g199(.A(n391), .B(n387), .C(n385), .D(n400), .Y(n435));
+  AOI21X1 g200(.A0(n435), .A1(n409), .B0(n184), .Y(U658));
+  AOI21X1 g201(.A0(n424), .A1(n416), .B0(n184), .Y(U659));
+  NOR3X1  g202(.A(n406), .B(n413), .C(n395), .Y(n439));
+  OAI21X1 g203(.A0(n439), .A1(n385), .B0(n387), .Y(n440));
+  NOR3X1  g204(.A(n402), .B(n388), .C(n386), .Y(n441));
+  AOI21X1 g205(.A0(n423), .A1(n419), .B0(n430), .Y(n442));
+  NAND3X1 g206(.A(n400), .B(n387), .C(n385), .Y(n443));
+  OAI21X1 g207(.A0(n443), .A1(n442), .B0(n441), .Y(n444));
+  AOI21X1 g208(.A0(n444), .A1(n403), .B0(n390), .Y(n445));
+  NOR3X1  g209(.A(n445), .B(n440), .C(n184), .Y(U660));
+  INVX1   g210(.A(NUM_REG_4__SCAN_IN), .Y(n447));
+  INVX1   g211(.A(FLAG_REG_SCAN_IN), .Y(n448));
+  INVX1   g212(.A(STATO_REG_1__SCAN_IN), .Y(n449));
+  INVX1   g213(.A(TEMP_REG_7__SCAN_IN), .Y(n450));
+  NOR2X1  g214(.A(MAR_REG_3__SCAN_IN), .B(MAR_REG_1__SCAN_IN), .Y(n451));
+  INVX1   g215(.A(MAR_REG_3__SCAN_IN), .Y(n452));
+  NAND2X1 g216(.A(n452), .B(MAR_REG_1__SCAN_IN), .Y(n453));
+  INVX1   g217(.A(MAR_REG_2__SCAN_IN), .Y(n454));
+  NOR3X1  g218(.A(MAR_REG_4__SCAN_IN), .B(n454), .C(MAR_REG_0__SCAN_IN), .Y(n455));
+  INVX1   g219(.A(MAR_REG_4__SCAN_IN), .Y(n456));
+  NOR3X1  g220(.A(n456), .B(MAR_REG_2__SCAN_IN), .C(MAR_REG_0__SCAN_IN), .Y(n457));
+  INVX1   g221(.A(MAR_REG_0__SCAN_IN), .Y(n458));
+  NOR3X1  g222(.A(MAR_REG_4__SCAN_IN), .B(MAR_REG_2__SCAN_IN), .C(n458), .Y(n459));
+  NOR3X1  g223(.A(n459), .B(n457), .C(n455), .Y(n460));
+  INVX1   g224(.A(MAR_REG_1__SCAN_IN), .Y(n461));
+  NAND2X1 g225(.A(MAR_REG_3__SCAN_IN), .B(n461), .Y(n462));
+  NOR4X1  g226(.A(MAR_REG_4__SCAN_IN), .B(MAR_REG_2__SCAN_IN), .C(n458), .D(n462), .Y(n463));
+  INVX1   g227(.A(n451), .Y(n464));
+  NAND3X1 g228(.A(MAR_REG_4__SCAN_IN), .B(n454), .C(MAR_REG_0__SCAN_IN), .Y(n465));
+  NAND3X1 g229(.A(MAR_REG_4__SCAN_IN), .B(MAR_REG_2__SCAN_IN), .C(n458), .Y(n466));
+  AOI21X1 g230(.A0(n466), .A1(n465), .B0(n464), .Y(n467));
+  NOR2X1  g231(.A(n467), .B(n463), .Y(n468));
+  OAI21X1 g232(.A0(n460), .A1(n453), .B0(n468), .Y(n469));
+  NAND3X1 g233(.A(MAR_REG_4__SCAN_IN), .B(MAR_REG_2__SCAN_IN), .C(MAR_REG_0__SCAN_IN), .Y(n470));
+  INVX1   g234(.A(n470), .Y(n471));
+  AOI21X1 g235(.A0(n471), .A1(n451), .B0(n469), .Y(n472));
+  INVX1   g236(.A(n472), .Y(n473));
+  NOR3X1  g237(.A(n456), .B(MAR_REG_2__SCAN_IN), .C(n458), .Y(n474));
+  NOR2X1  g238(.A(n452), .B(n461), .Y(n475));
+  AOI22X1 g239(.A0(n474), .A1(n475), .B0(n451), .B1(n457), .Y(n476));
+  NOR2X1  g240(.A(n452), .B(MAR_REG_1__SCAN_IN), .Y(n477));
+  NAND2X1 g241(.A(MAR_REG_3__SCAN_IN), .B(MAR_REG_1__SCAN_IN), .Y(n478));
+  NOR4X1  g242(.A(MAR_REG_4__SCAN_IN), .B(n454), .C(n458), .D(n478), .Y(n479));
+  AOI21X1 g243(.A0(n474), .A1(n477), .B0(n479), .Y(n480));
+  NAND2X1 g244(.A(n480), .B(n476), .Y(n481));
+  NOR4X1  g245(.A(MAR_REG_4__SCAN_IN), .B(n454), .C(MAR_REG_0__SCAN_IN), .D(n464), .Y(n482));
+  NAND2X1 g246(.A(n475), .B(n459), .Y(n483));
+  INVX1   g247(.A(n483), .Y(n484));
+  NOR3X1  g248(.A(n484), .B(n482), .C(n481), .Y(n485));
+  INVX1   g249(.A(n485), .Y(n486));
+  NOR2X1  g250(.A(MAR_REG_3__SCAN_IN), .B(n461), .Y(n487));
+  NAND4X1 g251(.A(MAR_REG_4__SCAN_IN), .B(MAR_REG_2__SCAN_IN), .C(n458), .D(n487), .Y(n488));
+  INVX1   g252(.A(n488), .Y(n489));
+  NAND3X1 g253(.A(MAR_REG_4__SCAN_IN), .B(n454), .C(n458), .Y(n490));
+  NAND3X1 g254(.A(n456), .B(MAR_REG_2__SCAN_IN), .C(MAR_REG_0__SCAN_IN), .Y(n491));
+  OAI22X1 g255(.A0(n464), .A1(n491), .B0(n462), .B1(n490), .Y(n492));
+  NOR4X1  g256(.A(n489), .B(n486), .C(n473), .D(n492), .Y(n493));
+  INVX1   g257(.A(TEMP_REG_6__SCAN_IN), .Y(n494));
+  INVX1   g258(.A(n493), .Y(n495));
+  NAND4X1 g259(.A(n456), .B(n454), .C(MAR_REG_0__SCAN_IN), .D(n451), .Y(n496));
+  NOR4X1  g260(.A(n454), .B(MAR_REG_1__SCAN_IN), .C(n458), .D(n452), .Y(n497));
+  INVX1   g261(.A(n497), .Y(n498));
+  NAND4X1 g262(.A(n496), .B(n488), .C(n476), .D(n498), .Y(n499));
+  NAND4X1 g263(.A(MAR_REG_2__SCAN_IN), .B(MAR_REG_1__SCAN_IN), .C(n458), .D(MAR_REG_3__SCAN_IN), .Y(n500));
+  NOR3X1  g264(.A(MAR_REG_4__SCAN_IN), .B(MAR_REG_2__SCAN_IN), .C(MAR_REG_0__SCAN_IN), .Y(n501));
+  OAI21X1 g265(.A0(n501), .A1(n455), .B0(n451), .Y(n502));
+  NOR2X1  g266(.A(n478), .B(n470), .Y(n503));
+  INVX1   g267(.A(n501), .Y(n504));
+  AOI21X1 g268(.A0(n478), .A1(n462), .B0(n504), .Y(n505));
+  NOR2X1  g269(.A(n505), .B(n503), .Y(n506));
+  NAND3X1 g270(.A(n506), .B(n502), .C(n500), .Y(n507));
+  AOI21X1 g271(.A0(n478), .A1(n453), .B0(n491), .Y(n508));
+  NOR3X1  g272(.A(n508), .B(n507), .C(n484), .Y(n509));
+  NAND2X1 g273(.A(n509), .B(n472), .Y(n510));
+  NOR2X1  g274(.A(n510), .B(n499), .Y(n511));
+  NOR2X1  g275(.A(n511), .B(TEMP_REG_5__SCAN_IN), .Y(n512));
+  INVX1   g276(.A(n512), .Y(n513));
+  INVX1   g277(.A(TEMP_REG_5__SCAN_IN), .Y(n514));
+  NOR3X1  g278(.A(n510), .B(n499), .C(n514), .Y(n515));
+  INVX1   g279(.A(TEMP_REG_4__SCAN_IN), .Y(n516));
+  NOR3X1  g280(.A(MAR_REG_4__SCAN_IN), .B(n454), .C(n458), .Y(n517));
+  OAI21X1 g281(.A0(n517), .A1(n474), .B0(n487), .Y(n518));
+  NAND3X1 g282(.A(n518), .B(n488), .C(n483), .Y(n519));
+  NOR2X1  g283(.A(n519), .B(n507), .Y(n520));
+  INVX1   g284(.A(n520), .Y(n521));
+  INVX1   g285(.A(TEMP_REG_3__SCAN_IN), .Y(n522));
+  AOI21X1 g286(.A0(n451), .A1(n459), .B0(n489), .Y(n523));
+  NAND2X1 g287(.A(n474), .B(n477), .Y(n524));
+  INVX1   g288(.A(n524), .Y(n525));
+  NOR3X1  g289(.A(n470), .B(MAR_REG_3__SCAN_IN), .C(n461), .Y(n526));
+  NOR4X1  g290(.A(n505), .B(n492), .C(n525), .D(n526), .Y(n527));
+  NAND4X1 g291(.A(n498), .B(n523), .C(n476), .D(n527), .Y(n528));
+  NAND2X1 g292(.A(n528), .B(n522), .Y(n529));
+  INVX1   g293(.A(n529), .Y(n530));
+  NOR2X1  g294(.A(n528), .B(n522), .Y(n531));
+  INVX1   g295(.A(n531), .Y(n532));
+  AOI22X1 g296(.A0(n451), .A1(n457), .B0(n477), .B1(n474), .Y(n533));
+  INVX1   g297(.A(n533), .Y(n534));
+  NOR3X1  g298(.A(n534), .B(n519), .C(n482), .Y(n535));
+  NAND2X1 g299(.A(n535), .B(n472), .Y(n536));
+  INVX1   g300(.A(n536), .Y(n537));
+  INVX1   g301(.A(TEMP_REG_2__SCAN_IN), .Y(n538));
+  AOI21X1 g302(.A0(n470), .A1(n465), .B0(n453), .Y(n539));
+  NOR4X1  g303(.A(n507), .B(n492), .C(n481), .D(n539), .Y(n540));
+  INVX1   g304(.A(TEMP_REG_0__SCAN_IN), .Y(n541));
+  NOR2X1  g305(.A(n460), .B(n453), .Y(n542));
+  NOR3X1  g306(.A(n467), .B(n463), .C(n542), .Y(n543));
+  NOR3X1  g307(.A(n519), .B(n492), .C(n479), .Y(n544));
+  NAND2X1 g308(.A(n544), .B(n543), .Y(n545));
+  NOR2X1  g309(.A(n545), .B(n541), .Y(n546));
+  INVX1   g310(.A(TEMP_REG_1__SCAN_IN), .Y(n547));
+  NOR3X1  g311(.A(n539), .B(n492), .C(n481), .Y(n548));
+  NAND4X1 g312(.A(n506), .B(n502), .C(n500), .D(n548), .Y(n549));
+  NAND3X1 g313(.A(n544), .B(n543), .C(TEMP_REG_0__SCAN_IN), .Y(n550));
+  OAI21X1 g314(.A0(n550), .A1(n549), .B0(n547), .Y(n551));
+  OAI21X1 g315(.A0(n546), .A1(n540), .B0(n551), .Y(n552));
+  OAI21X1 g316(.A0(n536), .A1(n538), .B0(n552), .Y(n553));
+  OAI21X1 g317(.A0(n537), .A1(TEMP_REG_2__SCAN_IN), .B0(n553), .Y(n554));
+  AOI21X1 g318(.A0(n554), .A1(n532), .B0(n530), .Y(n555));
+  AOI21X1 g319(.A0(n520), .A1(TEMP_REG_4__SCAN_IN), .B0(n555), .Y(n556));
+  AOI21X1 g320(.A0(n521), .A1(n516), .B0(n556), .Y(n557));
+  OAI21X1 g321(.A0(n557), .A1(n515), .B0(n513), .Y(n558));
+  OAI21X1 g322(.A0(n495), .A1(n494), .B0(n558), .Y(n559));
+  OAI21X1 g323(.A0(n493), .A1(TEMP_REG_6__SCAN_IN), .B0(n559), .Y(n560));
+  INVX1   g324(.A(n505), .Y(n561));
+  NAND4X1 g325(.A(n561), .B(n485), .C(n543), .D(n518), .Y(n562));
+  AOI21X1 g326(.A0(n562), .A1(n450), .B0(n560), .Y(n563));
+  XOR2X1  g327(.A(n485), .B(TEMP_REG_8__SCAN_IN), .Y(n564));
+  INVX1   g328(.A(n564), .Y(n565));
+  OAI21X1 g329(.A0(n562), .A1(n450), .B0(n565), .Y(n566));
+  OAI21X1 g330(.A0(n562), .A1(n450), .B0(n560), .Y(n567));
+  AOI21X1 g331(.A0(n562), .A1(n450), .B0(n565), .Y(n568));
+  NAND2X1 g332(.A(n568), .B(n567), .Y(n569));
+  OAI21X1 g333(.A0(n566), .A1(n563), .B0(n569), .Y(n570));
+  INVX1   g334(.A(START), .Y(n571));
+  INVX1   g335(.A(STATO_REG_0__SCAN_IN), .Y(n572));
+  AOI21X1 g336(.A0(n449), .A1(n571), .B0(n572), .Y(n573));
+  OAI21X1 g337(.A0(n570), .A1(n449), .B0(n573), .Y(n574));
+  AOI21X1 g338(.A0(n448), .A1(STATO_REG_1__SCAN_IN), .B0(n574), .Y(n575));
+  NAND4X1 g339(.A(NUM_REG_2__SCAN_IN), .B(NUM_REG_1__SCAN_IN), .C(NUM_REG_0__SCAN_IN), .D(NUM_REG_3__SCAN_IN), .Y(n576));
+  XOR2X1  g340(.A(n576), .B(NUM_REG_4__SCAN_IN), .Y(n577));
+  NOR3X1  g341(.A(n448), .B(n572), .C(n449), .Y(n578));
+  NAND2X1 g342(.A(n578), .B(n570), .Y(n579));
+  OAI22X1 g343(.A0(n577), .A1(n579), .B0(n575), .B1(n447), .Y(U680));
+  NAND3X1 g344(.A(NUM_REG_2__SCAN_IN), .B(NUM_REG_1__SCAN_IN), .C(NUM_REG_0__SCAN_IN), .Y(n581));
+  XOR2X1  g345(.A(n581), .B(NUM_REG_3__SCAN_IN), .Y(n582));
+  OAI22X1 g346(.A0(n579), .A1(n582), .B0(n575), .B1(n377), .Y(U679));
+  NAND2X1 g347(.A(NUM_REG_1__SCAN_IN), .B(NUM_REG_0__SCAN_IN), .Y(n584));
+  XOR2X1  g348(.A(n584), .B(NUM_REG_2__SCAN_IN), .Y(n585));
+  OAI22X1 g349(.A0(n579), .A1(n585), .B0(n575), .B1(n398), .Y(U678));
+  XOR2X1  g350(.A(NUM_REG_1__SCAN_IN), .B(n391), .Y(n587));
+  OAI22X1 g351(.A0(n579), .A1(n587), .B0(n575), .B1(n396), .Y(U677));
+  NAND3X1 g352(.A(n578), .B(n570), .C(n391), .Y(n589));
+  OAI21X1 g353(.A0(n575), .A1(n391), .B0(n589), .Y(U676));
+  INVX1   g354(.A(STATO_REG_2__SCAN_IN), .Y(n591));
+  NOR3X1  g355(.A(n572), .B(STATO_REG_1__SCAN_IN), .C(n571), .Y(n592));
+  NOR2X1  g356(.A(n503), .B(n591), .Y(n593));
+  NOR2X1  g357(.A(n593), .B(n592), .Y(n594));
+  INVX1   g358(.A(n594), .Y(n595));
+  NAND4X1 g359(.A(MAR_REG_2__SCAN_IN), .B(MAR_REG_1__SCAN_IN), .C(MAR_REG_0__SCAN_IN), .D(MAR_REG_3__SCAN_IN), .Y(n596));
+  XOR2X1  g360(.A(n596), .B(MAR_REG_4__SCAN_IN), .Y(n597));
+  OAI22X1 g361(.A0(n595), .A1(n456), .B0(n591), .B1(n597), .Y(U675));
+  NAND3X1 g362(.A(MAR_REG_2__SCAN_IN), .B(MAR_REG_1__SCAN_IN), .C(MAR_REG_0__SCAN_IN), .Y(n599));
+  XOR2X1  g363(.A(n599), .B(MAR_REG_3__SCAN_IN), .Y(n600));
+  OAI22X1 g364(.A0(n595), .A1(n452), .B0(n591), .B1(n600), .Y(U674));
+  NAND2X1 g365(.A(MAR_REG_1__SCAN_IN), .B(MAR_REG_0__SCAN_IN), .Y(n602));
+  XOR2X1  g366(.A(n602), .B(MAR_REG_2__SCAN_IN), .Y(n603));
+  OAI22X1 g367(.A0(n595), .A1(n454), .B0(n591), .B1(n603), .Y(U673));
+  XOR2X1  g368(.A(MAR_REG_1__SCAN_IN), .B(n458), .Y(n605));
+  OAI22X1 g369(.A0(n595), .A1(n461), .B0(n591), .B1(n605), .Y(U672));
+  NAND2X1 g370(.A(n594), .B(MAR_REG_0__SCAN_IN), .Y(n607));
+  OAI21X1 g371(.A0(MAR_REG_0__SCAN_IN), .A1(n591), .B0(n607), .Y(U671));
+  NAND2X1 g372(.A(TEMP_REG_8__SCAN_IN), .B(n449), .Y(n609));
+  OAI21X1 g373(.A0(n485), .A1(n449), .B0(n609), .Y(U727));
+  INVX1   g374(.A(n562), .Y(n611));
+  NAND2X1 g375(.A(TEMP_REG_7__SCAN_IN), .B(n449), .Y(n612));
+  OAI21X1 g376(.A0(n611), .A1(n449), .B0(n612), .Y(U728));
+  NAND2X1 g377(.A(TEMP_REG_6__SCAN_IN), .B(n449), .Y(n614));
+  OAI21X1 g378(.A0(n493), .A1(n449), .B0(n614), .Y(U729));
+  OAI21X1 g379(.A0(n499), .A1(n510), .B0(STATO_REG_1__SCAN_IN), .Y(n620));
+  OAI21X1 g380(.A0(n514), .A1(STATO_REG_1__SCAN_IN), .B0(n620), .Y(U730));
+  NAND2X1 g381(.A(TEMP_REG_4__SCAN_IN), .B(n449), .Y(n622));
+  OAI21X1 g382(.A0(n520), .A1(n449), .B0(n622), .Y(U731));
+  NAND2X1 g383(.A(n528), .B(STATO_REG_1__SCAN_IN), .Y(n625));
+  OAI21X1 g384(.A0(n522), .A1(STATO_REG_1__SCAN_IN), .B0(n625), .Y(U732));
+  NAND2X1 g385(.A(TEMP_REG_2__SCAN_IN), .B(n449), .Y(n627));
+  OAI21X1 g386(.A0(n537), .A1(n449), .B0(n627), .Y(U733));
+  NAND2X1 g387(.A(TEMP_REG_1__SCAN_IN), .B(n449), .Y(n629));
+  OAI21X1 g388(.A0(n540), .A1(n449), .B0(n629), .Y(U734));
+  INVX1   g389(.A(n545), .Y(n631));
+  NAND2X1 g390(.A(TEMP_REG_0__SCAN_IN), .B(n449), .Y(n632));
+  OAI21X1 g391(.A0(n631), .A1(n449), .B0(n632), .Y(U735));
+  NOR2X1  g392(.A(STATO_REG_0__SCAN_IN), .B(n449), .Y(n634));
+  INVX1   g393(.A(n634), .Y(n635));
+  NOR2X1  g394(.A(n566), .B(n563), .Y(n636));
+  AOI21X1 g395(.A0(n568), .A1(n567), .B0(n636), .Y(n637));
+  NOR2X1  g396(.A(n557), .B(n515), .Y(n638));
+  NOR2X1  g397(.A(n638), .B(n512), .Y(n639));
+  AOI21X1 g398(.A0(n493), .A1(TEMP_REG_6__SCAN_IN), .B0(n639), .Y(n640));
+  AOI21X1 g399(.A0(n495), .A1(n494), .B0(n640), .Y(n641));
+  XOR2X1  g400(.A(n562), .B(n450), .Y(n642));
+  XOR2X1  g401(.A(n493), .B(TEMP_REG_6__SCAN_IN), .Y(n643));
+  NAND2X1 g402(.A(n643), .B(n639), .Y(n644));
+  INVX1   g403(.A(n643), .Y(n645));
+  NAND2X1 g404(.A(n645), .B(n558), .Y(n646));
+  XOR2X1  g405(.A(n511), .B(TEMP_REG_5__SCAN_IN), .Y(n647));
+  NOR2X1  g406(.A(n647), .B(n557), .Y(n648));
+  NOR2X1  g407(.A(n520), .B(TEMP_REG_4__SCAN_IN), .Y(n649));
+  NOR4X1  g408(.A(n649), .B(n515), .C(n512), .D(n556), .Y(n650));
+  XOR2X1  g409(.A(n520), .B(TEMP_REG_4__SCAN_IN), .Y(n651));
+  NOR2X1  g410(.A(n651), .B(n555), .Y(n652));
+  NAND2X1 g411(.A(n651), .B(n555), .Y(n653));
+  NOR3X1  g412(.A(n554), .B(n531), .C(n530), .Y(n654));
+  AOI21X1 g413(.A0(n546), .A1(n540), .B0(TEMP_REG_1__SCAN_IN), .Y(n655));
+  AOI21X1 g414(.A0(n550), .A1(n549), .B0(n655), .Y(n656));
+  AOI21X1 g415(.A0(n537), .A1(TEMP_REG_2__SCAN_IN), .B0(n656), .Y(n657));
+  AOI21X1 g416(.A0(n536), .A1(n538), .B0(n657), .Y(n658));
+  AOI21X1 g417(.A0(n532), .A1(n529), .B0(n658), .Y(n659));
+  XOR2X1  g418(.A(n536), .B(n538), .Y(n660));
+  INVX1   g419(.A(n660), .Y(n661));
+  NOR2X1  g420(.A(n661), .B(n552), .Y(n662));
+  NOR2X1  g421(.A(n540), .B(TEMP_REG_1__SCAN_IN), .Y(n663));
+  NOR2X1  g422(.A(n549), .B(n547), .Y(n664));
+  AOI21X1 g423(.A0(n544), .A1(n543), .B0(TEMP_REG_0__SCAN_IN), .Y(n665));
+  NOR4X1  g424(.A(n664), .B(n663), .C(n546), .D(n665), .Y(n666));
+  OAI21X1 g425(.A0(n660), .A1(n656), .B0(n666), .Y(n667));
+  NOR4X1  g426(.A(n662), .B(n659), .C(n654), .D(n667), .Y(n668));
+  NAND2X1 g427(.A(n668), .B(n653), .Y(n669));
+  NOR4X1  g428(.A(n652), .B(n650), .C(n648), .D(n669), .Y(n670));
+  NAND3X1 g429(.A(n670), .B(n646), .C(n644), .Y(n671));
+  AOI21X1 g430(.A0(n642), .A1(n641), .B0(n671), .Y(n672));
+  OAI21X1 g431(.A0(n642), .A1(n641), .B0(n672), .Y(n673));
+  INVX1   g432(.A(MAX_REG_6__SCAN_IN), .Y(n674));
+  AOI22X1 g433(.A0(n540), .A1(MAX_REG_1__SCAN_IN), .B0(MAX_REG_0__SCAN_IN), .B1(n631), .Y(n675));
+  INVX1   g434(.A(n675), .Y(n676));
+  AOI22X1 g435(.A0(n536), .A1(n115), .B0(n133), .B1(n549), .Y(n677));
+  NOR2X1  g436(.A(n528), .B(n120), .Y(n678));
+  AOI21X1 g437(.A0(n537), .A1(MAX_REG_2__SCAN_IN), .B0(n678), .Y(n679));
+  INVX1   g438(.A(n679), .Y(n680));
+  AOI21X1 g439(.A0(n677), .A1(n676), .B0(n680), .Y(n681));
+  AOI22X1 g440(.A0(n521), .A1(n109), .B0(n120), .B1(n528), .Y(n682));
+  INVX1   g441(.A(n682), .Y(n683));
+  AOI22X1 g442(.A0(n511), .A1(MAX_REG_5__SCAN_IN), .B0(MAX_REG_4__SCAN_IN), .B1(n520), .Y(n684));
+  OAI21X1 g443(.A0(n683), .A1(n681), .B0(n684), .Y(n685));
+  NOR2X1  g444(.A(n511), .B(MAX_REG_5__SCAN_IN), .Y(n686));
+  INVX1   g445(.A(n686), .Y(n687));
+  AOI22X1 g446(.A0(n685), .A1(n687), .B0(n493), .B1(MAX_REG_6__SCAN_IN), .Y(n688));
+  AOI21X1 g447(.A0(n495), .A1(n674), .B0(n688), .Y(n689));
+  INVX1   g448(.A(MAX_REG_7__SCAN_IN), .Y(n690));
+  NAND2X1 g449(.A(n562), .B(n690), .Y(n691));
+  NAND2X1 g450(.A(n691), .B(n689), .Y(n692));
+  XOR2X1  g451(.A(n485), .B(MAX_REG_8__SCAN_IN), .Y(n693));
+  AOI21X1 g452(.A0(n611), .A1(MAX_REG_7__SCAN_IN), .B0(n693), .Y(n694));
+  NAND2X1 g453(.A(n694), .B(n692), .Y(n695));
+  AOI21X1 g454(.A0(n611), .A1(MAX_REG_7__SCAN_IN), .B0(n689), .Y(n696));
+  NAND2X1 g455(.A(n693), .B(n691), .Y(n697));
+  OAI21X1 g456(.A0(n697), .A1(n696), .B0(n695), .Y(n698));
+  NAND4X1 g457(.A(n673), .B(n637), .C(STATO_REG_1__SCAN_IN), .D(n698), .Y(n699));
+  NAND2X1 g458(.A(n699), .B(n635), .Y(n700));
+  NAND2X1 g459(.A(n700), .B(n486), .Y(n701));
+  OAI21X1 g460(.A0(n700), .A1(n105), .B0(n701), .Y(U736));
+  NAND2X1 g461(.A(n700), .B(n562), .Y(n703));
+  OAI21X1 g462(.A0(n700), .A1(n690), .B0(n703), .Y(U737));
+  NAND2X1 g463(.A(n700), .B(n495), .Y(n705));
+  OAI21X1 g464(.A0(n700), .A1(n674), .B0(n705), .Y(U738));
+  OAI21X1 g465(.A0(n499), .A1(n510), .B0(n700), .Y(n707));
+  NAND3X1 g466(.A(n699), .B(n635), .C(MAX_REG_5__SCAN_IN), .Y(n708));
+  NAND2X1 g467(.A(n708), .B(n707), .Y(U739));
+  NAND2X1 g468(.A(n700), .B(n521), .Y(n710));
+  OAI21X1 g469(.A0(n700), .A1(n109), .B0(n710), .Y(U740));
+  NAND2X1 g470(.A(n700), .B(n528), .Y(n712));
+  OAI21X1 g471(.A0(n700), .A1(n120), .B0(n712), .Y(U741));
+  NAND2X1 g472(.A(n700), .B(n536), .Y(n714));
+  OAI21X1 g473(.A0(n700), .A1(n115), .B0(n714), .Y(U742));
+  NAND2X1 g474(.A(n700), .B(n549), .Y(n716));
+  OAI21X1 g475(.A0(n700), .A1(n133), .B0(n716), .Y(U743));
+  NAND2X1 g476(.A(n700), .B(n545), .Y(n718));
+  OAI21X1 g477(.A0(n700), .A1(n290), .B0(n718), .Y(U744));
+  OAI21X1 g478(.A0(n449), .A1(STATO_REG_2__SCAN_IN), .B0(n572), .Y(n720));
+  OAI21X1 g479(.A0(n720), .A1(n593), .B0(EN_DISP_REG_SCAN_IN), .Y(n721));
+  NOR3X1  g480(.A(n478), .B(n470), .C(n591), .Y(n722));
+  AOI21X1 g481(.A0(n722), .A1(STATO_REG_0__SCAN_IN), .B0(n592), .Y(n723));
+  NAND2X1 g482(.A(n723), .B(n721), .Y(U670));
+  INVX1   g483(.A(n592), .Y(n725));
+  NAND2X1 g484(.A(n572), .B(n591), .Y(n726));
+  OAI21X1 g485(.A0(n726), .A1(STATO_REG_1__SCAN_IN), .B0(RES_DISP_REG_SCAN_IN), .Y(n727));
+  NAND2X1 g486(.A(n727), .B(n725), .Y(U669));
+  NAND2X1 g487(.A(n574), .B(FLAG_REG_SCAN_IN), .Y(n729));
+  NAND4X1 g488(.A(n637), .B(STATO_REG_0__SCAN_IN), .C(STATO_REG_1__SCAN_IN), .D(n673), .Y(n730));
+  NAND2X1 g489(.A(n730), .B(n729), .Y(U668));
+  INVX1   g490(.A(n593), .Y(n732));
+  OAI21X1 g491(.A0(n722), .A1(n449), .B0(n571), .Y(n733));
+  NAND4X1 g492(.A(n726), .B(n635), .C(n732), .D(n733), .Y(U645));
+  NAND2X1 g493(.A(n635), .B(n594), .Y(U644));
+  NAND2X1 g494(.A(n722), .B(START), .Y(n736));
+  OAI21X1 g495(.A0(n572), .A1(n449), .B0(n736), .Y(U643));
+endmodule
+
+
