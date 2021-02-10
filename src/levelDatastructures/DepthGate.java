@@ -20,6 +20,13 @@ public class DepthGate {
     public DepthGate(Gate gate) {
         this.gate = gate;
     }
+    
+    public void set_visited(){
+        this.visited = false;
+    }
+    public boolean get_visited(){
+        return this.visited;
+    }
 
     public Gate getGate() {
         return gate;

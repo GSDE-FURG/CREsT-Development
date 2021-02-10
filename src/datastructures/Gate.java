@@ -18,6 +18,9 @@ public class Gate {
     private ArrayList<Signal> outputs;    
     private Cell type;    
     
+    /*Clayton Farias*/
+    public ArrayList <Gate> gateOutputPath;
+    public ArrayList <Gate> nextgate;
     /**
      * Simple Gate constructor.
      *
@@ -178,6 +181,24 @@ public class Gate {
     public void setType(Cell type) {
         this.type = type;
     }   
+    
+    
+    
+    /*Clayton*/
+      public void setOutputPath(Gate gate) {
+       this.gateOutputPath.add(gate);
+    }
+     public Object getOutputPath() {
+       return this.gateOutputPath;
+    }
+     
+     public void setnextGate(Gate gate) {
+       this.nextgate.add(gate);
+    }
+     public ArrayList<Gate> genextGate() {
+       return this.nextgate;
+    }
+    
 
     @Override
     public String toString() {

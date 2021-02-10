@@ -115,6 +115,45 @@ public class ProbCircuit extends Circuit {
         return null;
     }
     
+     /* Clayton*/
+    public ArrayList<ProbSignal> getInputFanoutsX() {
+       
+        //System.out.println("Inside");
+        
+        ArrayList<ProbSignal> fanouts = new ArrayList<>();
+        LinkedHashSet<ProbSignal> linked = new LinkedHashSet();        
+        
+        for (int i = 0; i < this.getProbInterLevels().size(); i++) {
+                    
+            ProbInterLevel fooInter = this.getProbInterLevels().get(i);            
+            
+            ArrayList<ProbSignal> ins = fooInter.getInSignals();
+            ArrayList<ProbSignal> outs = new ArrayList<>(fooInter.getOutSignals());
+
+
+            if(!ins.equals(outs) || ins.size() != outs.size()) {
+                for (int k = 0; k < ins.size(); k++) {
+                    for (int l = 0; l < outs.size(); l++) {
+                        if(ins.get(k).equals(outs.get(l))) {
+                            outs.remove(l);
+                            break;
+                        }
+                    }
+                }
+                if(i==0){
+                    // System.out.println("I'm here..");
+                     linked.addAll(outs);  
+                }
+                                     
+            }                      
+        }
+
+        fanouts.addAll(linked);
+        return fanouts;
+  
+       // System.out.println("> level: " + i  +  " Input: "+ ins.get(k) + " Output: " + outs.get(k));
+    }
+    
     
     public void setProbSignalMatrix(ProbSignal pSignal, BigDecimal[][] matrix) {
         for(ProbSignal probSignal : this.probSignals) {

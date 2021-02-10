@@ -16,13 +16,32 @@ public class Signal {
     private String id;
     private Gate origin;
     private ArrayList<Gate> destiny = new ArrayList<>();
+    private int logicValue;
+    private boolean logicValueBoolean;
+    private int originalSignalValue;
+    
+    /*clayton*/
+    private boolean signalVisited;
+    private ArrayList <Object> signalOutputPath = new ArrayList<>();
     
     /**
      * Simple Signal constructor.
      *
      */
+    
+    /*Clayton*/
     public Signal() {
-
+        
+            this.logicValue = -2;
+            this.originalSignalValue = -2;
+            this.signalVisited = false;
+        
+    }
+    /*Clayton*/
+    public Signal(int logicvalue, int originalValue, boolean signalVisited) {
+            this.logicValue = -2;
+            this.originalSignalValue = -2;
+            this.signalVisited = false;
     }
     
     /**
@@ -33,7 +52,14 @@ public class Signal {
     public Signal(String id) {
         this.id = id;
     }
-    
+    /*Clayton*/
+    public void setOutputPath(ArrayList gate) {
+       this.signalOutputPath.add(gate);
+    }
+    /*Clayton*/
+     public Object getOutputPath() {
+       return this.signalOutputPath;
+    }
     /**
      * Signal constructor with defined "id", "origin" and "destiny".
      *
@@ -56,6 +82,13 @@ public class Signal {
         return id;
     }
     
+    public void setVisited(){
+        this.signalVisited = true;
+    }
+    public boolean getVisited(){
+        return this.signalVisited;
+    }
+    
     /**
      * This method set the Signal identification.
      *
@@ -63,6 +96,36 @@ public class Signal {
      */
     public void setId(String id) {
         this.id = id;
+    }
+    
+    /*Clayton Farias - Setting Logic value */
+    public void setLogicValueBoolean(Boolean logicValue){
+        this.logicValueBoolean = logicValue;
+    }
+    
+    public void setLogicValue(int logicValue){
+        this.logicValue = logicValue;
+    }
+    
+    public void setOriginalLogicValue(int logicValue){
+        this.originalSignalValue = logicValue;
+    }
+    
+     public int getOriginalLogicValue(){
+        return this.originalSignalValue;
+    }
+    
+    public int getLogicValue(){
+        return this.logicValue;
+    }
+    
+    public Character getLogicValueChar(){
+        Character r = (Character.highSurrogate(this.logicValue));// this.logicValue;
+        return r;
+    }
+    
+    public boolean getLogicValueBoolean(){
+        return this.logicValueBoolean;
     }
     
     /**
