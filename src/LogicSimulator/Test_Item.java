@@ -24,6 +24,8 @@ public class Test_Item {
     private int index;
     private long threadID;
     
+    
+    
     public Test_Item(ArrayList <Integer> inputVector, Signal faultSignal, int input_pos) {
             
             this.faultSignals = faultSignal;
@@ -35,7 +37,10 @@ public class Test_Item {
             
     }
     
-     public String getBitFlip(){
+    
+    
+    
+    public String getBitFlip(){
             
             String bitflip;
             String r = "";
@@ -123,7 +128,7 @@ public class Test_Item {
         return this.index;
     }
      
-    public void setfaultSignalsList(ArrayList<Signal> signalsFaultList){
+     public void setfaultSignalsList(ArrayList<Signal> signalsFaultList){
         this.allfaultSignals = signalsFaultList;
     }
     
