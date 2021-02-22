@@ -1579,8 +1579,6 @@ import writers.WriteExcel;
            System.out.println("--------------------\n");
      }
      
-   
-     
      public void writeTxtLog(String filename, String date, String dateend, int threads, long propagateTime, int nrVec,long propagateTimems) throws IOException{
         
         System.out.println("Creating .txt -> file: " + filename);
@@ -1618,6 +1616,24 @@ import writers.WriteExcel;
             
             file.write(content);
         }
+     }
+     
+    public ArrayList <Signal> calcAllSignals(){
+         //System.out.println("Sort Fault in the input injection");
+         ArrayList <Signal> signalList = new ArrayList<>();
+         signalList = this.circuit.getSignals();
+         
+         ArrayList <Signal> r = new ArrayList<>();
+                for (int i = 0; i < signalList.size(); i++) {
+                        //if(!((this.circuit.getInputs().contains(signalList.get(i))) || (this.circuit.getOutputs().contains(signalList.get(i))))){
+                           //this.internSignals.add(signalList.get(i));
+                           r.add(signalList.get(i));
+                        //}
+                    
+                }
+                System.out.println(" Cpnsiering all  Signals --> "+r);  
+                System.out.println("Signals list: "+ signalList.toString());
+         return r;
      }
      
      public ArrayList <Signal> calcInternSignals(){
@@ -2141,7 +2157,6 @@ import writers.WriteExcel;
           
      }
     
-     
      public long getTimeExecutionRound(){
          return this.time_seconds;
      }
@@ -2214,7 +2229,9 @@ import writers.WriteExcel;
                 
                 System.out.println("Threads: " + this.thread); 
                
-                this.internSignals = this.calcInternSignals(); // calc intern Signals
+                //this.internSignals = this.calcInternSignals(); // calc intern Signals
+                    
+                this.internSignals = this.calcAllSignals(); //Consider all signals in circuit, input, intermediate and output ones
                 
                 ArrayList <String> random_input_vectors =  this.calcInputRandom(cellLib, library, N, testNumber); //this.calcInputTableVector(this.probCircuit.getInputs().size(), N);
  
@@ -2318,7 +2335,7 @@ import writers.WriteExcel;
                            
                             this.unmasked_faults = this.unmasked_faults +  itemx_list.get(i).getPropagatedFaults();
                             
-                            System.out.println("Thread: " + itemx_list.get(i).getThreadId() + " - Total Faults : "+  itemx_list.get(i).getPropagatedFaults());
+                            System.out.println("Thread: " + itemx_list.get(i).getThreadId() + " - Sample size: " + partition + " - Total Faults : "+  itemx_list.get(i).getPropagatedFaults());
                     }
                
                 
@@ -2353,7 +2370,6 @@ import writers.WriteExcel;
                 System.out.println("Simulation TimeElapsed: " + propagateTime + " m(s)");
                 System.out.println("--------------------------------------------");
      }
-     
      
      public void MulltiThreading_Simulator(String library, String CircuitFile) throws IOException, Exception{
                 

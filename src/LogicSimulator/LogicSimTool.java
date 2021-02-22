@@ -14,6 +14,7 @@ import java.util.Vector;
 
 public class LogicSimTool {
     
+    
    
 
    public static void main(final String[] args) throws Exception {
@@ -28,9 +29,9 @@ public class LogicSimTool {
         
         
        // Vector circuit750k = new Vector();
-       //circuitList.add("c17v3_fritz.v");
+       circuitList.add("c17v3_fritz.v");
         
-        circuitList.add("c6288_cadence.v");
+       // circuitList.add("c6288_cadence.v");
         //circuitList.add("c7552_cadence.v");
        
         // circuitList.add("C499_cadence.v");
@@ -166,15 +167,15 @@ public class LogicSimTool {
              
              
             
-             Analysis.callMethodsAnalisysMonteCarlo(circuitList, library, reliability, Threads, 200, 10);
+             Analysis.callMethodsAnalisysMonteCarlo(circuitList, library, reliability, Threads, 31, 10);
+             /*
              Analysis.callMethodsAnalisysMonteCarlo(circuitList, library, reliability, Threads, 400, 10);
              Analysis.callMethodsAnalisysMonteCarlo(circuitList, library, reliability, Threads, 800, 10); 
              Analysis.callMethodsAnalisysMonteCarlo(circuitList, library, reliability, Threads, 1600, 10); 
              Analysis.callMethodsAnalisysMonteCarlo(circuitList, library, reliability, Threads, 3200, 10);
              Analysis.callMethodsAnalisysMonteCarlo(circuitList, library, reliability, Threads, 6400, 10);
-             Analysis.callMethodsAnalisysMonteCarlo(circuitList, library, reliability, Threads, 12800, 10);
-             
-             
+             Analysis.callMethodsAnalisysMonteCarlo(circuitList, library, reliability, Threads, 12800, 10);;
+            */             
              
              //Analysis.callMethodsAnalisys(circuitList, library, reliability, Threads, 10);
            // Analysis.callMethodsAnalisys(circuitList, library, reliability, Threads, 250000);
