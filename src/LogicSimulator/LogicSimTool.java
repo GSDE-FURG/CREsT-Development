@@ -167,7 +167,7 @@ public class LogicSimTool {
              
              
             
-             Analysis.callMethodsAnalisysMonteCarlo(circuitList, library, reliability, Threads, 31, 10);
+             Analysis.callMethodsAnalisysMonteCarlo(circuitList, library, reliability, Threads, 32, 10);
              /*
              Analysis.callMethodsAnalisysMonteCarlo(circuitList, library, reliability, Threads, 400, 10);
              Analysis.callMethodsAnalisysMonteCarlo(circuitList, library, reliability, Threads, 800, 10); 
@@ -302,16 +302,19 @@ public class LogicSimTool {
                     //logicSimulatorAnalisys.getSPRBigDecimal(threads);
              }
             //System.out.println("i ; testNumber;  unmaskedFaults; time");
-            String str = "Rodada;FalhasPropagadas;Tempo(s);Confiabilidade;NrVec" + "\n";
+            String str = "Round;Propagated Faults(n);Propagate Faults(%);Time(s);Reliability;Sample size" + "\n";
+            //testNumber = testNumber + 1; // 1 até X : 32 ( 1 - 32)
             for (int dd = 0; dd < list_itemx.size(); dd++) {
                   String confiabilidade = Float.toString(1-((float)list_itemx.get(dd).getPropagatedFaults()/testNumber));
+                  String propagacao_falhas = Float.toString(((float)list_itemx.get(dd).getPropagatedFaults()*100)/testNumber);
                   confiabilidade = confiabilidade.replace(".",",");
+                   propagacao_falhas = propagacao_falhas.replace(".",",");
                  //System.out.println(dd + " - TestNumber:" + list_itemx.get(dd).getVectorsNumbers() + " ; unmaskedfaults: " + list_itemx.get(dd).getPropagatedFaults() + " ; time: "+list_itemx.get(dd).getTime() + "(s)");
                   if(dd == 0){
-                       str = str +  list_itemx.get(dd).getInteractionIndex()  + ";" + list_itemx.get(dd).getPropagatedFaults() + ";" + list_itemx.get(dd).getTime() + ";" + confiabilidade  +";" + list_itemx.get(dd).getVectorsNumbers() + ";\n";
+                       str = str +  list_itemx.get(dd).getInteractionIndex()  + ";" + propagacao_falhas + ";" + list_itemx.get(dd).getPropagatedFaults() + ";" + list_itemx.get(dd).getTime() + ";" + confiabilidade  +";" + (list_itemx.get(dd).getVectorsNumbers()) + ";\n";
              
                   }else{
-                      str = str +  list_itemx.get(dd).getInteractionIndex()  + ";" + list_itemx.get(dd).getPropagatedFaults() + ";" + list_itemx.get(dd).getTime() + ";" + confiabilidade + ";"  +";\n";
+                      str = str +  list_itemx.get(dd).getInteractionIndex() + ";" + propagacao_falhas + ";" +list_itemx.get(dd).getPropagatedFaults() + ";" + list_itemx.get(dd).getTime() + ";" + confiabilidade + ";"  +";\n";
                   }
             
             }
