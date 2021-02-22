@@ -375,7 +375,7 @@ import signalProbability.ProbCircuit;
             return this.threadSimulationList;
         }
         
-    private String settingFaultInjectionResults(){
+        private String settingFaultInjectionResults(){
             
             int ini = this.startPos;
           
@@ -428,7 +428,8 @@ import signalProbability.ProbCircuit;
             }
           
             return r;
-        }       
+        }        
+       
         public int getPropagatedFaults(){
             return this.propagated_faults;
         }
@@ -633,16 +634,12 @@ import signalProbability.ProbCircuit;
                 final Map<ArrayList<Boolean>, Boolean> comb = cells.getComb();
                 final ArrayList <Boolean> input = new ArrayList<>();
                 final ArrayList <Integer> signals = new ArrayList<>();
-                final ArrayList <Signal> faulSignalsList = thread_item.getfaultSignalsList();//new ArrayList<>();
-                
-            
                 
                 for (int index = 0; index < inputsSignals.size(); index++) {
-                        //if(inputsSignals.get(index).getId().equals(faultSig.getId())){ //bit-flip //trying
-                        if(faulSignalsList.contains(inputsSignals.get(index))){ //bit-flip //trying
+                        
+                        if(inputsSignals.get(index).getId().equals(faultSig.getId())){ //bit-flip 
                            // System.out.println("Falha In");
                             //System.out.println("entrou");
-                            System.out.println("Bitflip to : " + inputsSignals.get(index) + " O: " + inputsSignals.get(index).getLogicValue());
                             if(inputsSignals.get(index).getOriginalLogicValue() == 0){
                                 thread_item.setSignalOriginalValue(0);
                                 thread_item.setFaultSignalValue(1);

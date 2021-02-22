@@ -25,7 +25,6 @@ public class Test_Item {
     private long threadID;
     
     public Test_Item(ArrayList <Integer> inputVector, Signal faultSignal, int input_pos) {
-            
             this.faultSignals = faultSignal;
             this.inputVector = inputVector;
             //this.faultSignalValue = sigValue;
@@ -121,14 +120,6 @@ public class Test_Item {
      
      public int getSimulationIndex(){
         return this.index;
-    }
-     
-    public void setfaultSignalsList(ArrayList<Signal> signalsFaultList){
-        this.allfaultSignals = signalsFaultList;
-    }
-    
-     public ArrayList<Signal> getfaultSignalsList(){
-        return (this.allfaultSignals);
     }
     
 }
