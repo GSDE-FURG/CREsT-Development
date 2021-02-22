@@ -71,7 +71,6 @@ import writers.WriteExcel;
     private long time_seconds;
     private MappedVerilogReader verilog_circuit;
     private ArrayList <Signal> internSignals = new ArrayList<>();
-  
     private final ArrayList <String> inputListValues = new ArrayList<>();
     private final ArrayList <ArrayList<String>> inputListValuesStr = new ArrayList<>();
     private final ArrayList <ArrayList<String>> outputFreeFaultListValueStr = new ArrayList<>();
@@ -1505,48 +1504,6 @@ import writers.WriteExcel;
                 
      }
      
-     public void writeCsvFileCompleteThMultipleFault(String filename, ArrayList <ThreadFaultInjection> itemx_list) throws IOException, WriteException{
-         
-             //System.out.println("Creating Complete log .....");
-             ArrayList <Signal> outputSignals = this.circuit.getOutputs();
-             ArrayList <Signal> inputSignals = this.circuit.getInputs();
-              
-            
-            String Header = "Input Signals" + ";" + "Fault Signal" + ";" + "Fault Type" + ";" + "Fault-Free Circuit Output" + ";" + "Faulty Circuit Output";
-            //String outputElementsHeader = "";
-            
-            /*
-            for (int i = 0; i < inputSignals.size(); i++) {
-                      if(i > 0){
-                        //inputSignalStr = inputSignalStr  + inputSignals.get(i).getId();
-                        inputValueSrt = inputValueSrt  +  inputSignals.get(i).getLogicValue();
-                      }
-                      else{
-                        //inputSignalStr = inputSignals.get(i).getId();
-                        inputValueSrt =  "" +  inputSignals.get(i).getLogicValue();
-                      }
-                      //values = values + signalsInput.get(i).getLogicValue() + "     ";
-                     // System.out.println(" - Signal (" + inputSignals.get(i) + ") Logic Value: " + inputSignals.get(i).getLogicValue());
-            }
-            for (int s = 0; s < outputSignals.size(); s++) {
-                          outputElementsHeader  = outputElementsHeader  + outputSignals.get(s).toString() + "(output)";
-            }
-              System.out.println("input signals: "+inputSignalStr);
-              System.out.println("input signals vaalues: "+inputValueSrt);
-           */
-            
-            
-            
-           // System.out.println("---->>>"+ this.outputListValueStr);
-            WriteCsvTh logfile = new WriteCsvTh();
-            
-            logfile.writeCSVCompleteThMultipleFault(filename, this.verilog_circuit.getCircuit().getName() + ".v", this.circuit.getInputs(), this.circuit.getOutputs(), 
-                    this.internSignals,  Header , itemx_list , Integer.toString(this.unmasked_faults));
-                
-     }
-     
-    
-     
      public void writeCsvFileComplete(String filename) throws IOException, WriteException{
          
              //System.out.println("Creatinf COmplete log .....");
@@ -1643,8 +1600,6 @@ import writers.WriteExcel;
             content = content+  "Number of Simulations (N): " + nrVec + "\n";
             
             content = content+  "Number of Threads: " + threads + "\n";
-           
-            
             content = content + "Number of observed faults (Ne): " + this.unmasked_faults + "\n";
             // content = content + "Number of observed faults (Ne): " + "\n";
             
@@ -1659,50 +1614,6 @@ import writers.WriteExcel;
             file.write(content);
         }
      }
-     
-     public void writeTxtLogMultipleFaults(String filename, String date, String dateend, ArrayList <ThreadFaultInjection> itemx_list, long propagateTime, int nrVec,long propagateTimems) throws IOException{
-        
-        System.out.println("Creating .txt -> file: " + filename);
-        //nrVec = nrVec + 1;
-                
-        //this.unmasked_faults = propagate_faults;
-        this.reliability_circuit =  (float) ( 1 - ((float) this.unmasked_faults / (float) (nrVec)));
-         
-       
-        double lamb = - Math.log(this.reliability_circuit);
-        this.MTBF = (1 / lamb);
-        
-        System.out.println("MTBF : " + this.MTBF);
-        String content = "";
-        try (FileWriter file = new FileWriter(filename+".txt")) {
-            
-            
-            content = "Date/hour: "  + date + "\n";
-                    
-            content = content + "Date/hour (end):d "+ dateend + "\n\n";
-            
-            content = content + "Circuit: " + this.circuit.getName() + "\n";
-            content = content+  "Number of Simulations (N): " + nrVec + "\n";
-            
-            content = content+  "Number of Threads: " + this.thread + "\n";
-            
-            content = content+  "Faults per Vector: " + (itemx_list.get(0).getThreadSimulatinArray().get(0).getfaultSignalsList().size()+1) + "\n";
-            
-            content = content + "Number of observed faults (Ne): " + this.unmasked_faults + "\n";
-            // content = content + "Number of observed faults (Ne): " + "\n";
-            
-            content = content +  "Reliability: " + this.reliability_circuit + "\n";
-            // content = content +  "Reliability: " + reliability + "\n";
-            
-            content = content +  "MTBF: " + this.MTBF + "\n\n";
-                
-            content = content +  "Execution Time m(s): " + propagateTimems + "\n";
-            content = content +  "Execution Time (s): " + propagateTime + "\n";
-            
-            file.write(content);
-        }
-     }
-     
      
     public ArrayList <Signal> calcAllSignals(){
          //System.out.println("Sort Fault in the input injection");
@@ -2593,8 +2504,6 @@ import writers.WriteExcel;
                                         // System.out.println("index: "+(j+1) + "     -     vec: " + inputVector);
                                         Test_Item temp = new Test_Item(inputVector, this.internSignals.get(SigIndex), j+1);
                                         
-                                        faultSignals.add(this.internSignals.get(SigIndex));
-                                        
                                         for(int x = 1; x < multipleFaults; x++ ){ //Add multiple faults Signals (1, 2 ,3 ,4 ..., N) bitflips per test vector
                                              SigIndex = this.randomInjectionFault();
                                              faultSignals.add(this.internSignals.get(SigIndex));
@@ -2663,21 +2572,21 @@ import writers.WriteExcel;
                 //this.writeCsvFileTh("Multithreading_Log_fault_free_"+this.circuit.getName()+"_Theads-"+ this.thread +  "_TestNumber-"+ N , itemx_list);
                 this.time_seconds = propagateTime;
                 
-                this.writeTxtLogMultipleFaults("Multithreading_Simple_Log_" +this.circuit.getName()+"_Theads-"+ this.thread +  "_TestNumber-"+ (N+1) + "_round-"+id+" of " + interaction , formattedDate,  formattedDate2, itemx_list, propagateTime, (N+1), propagateTimems);
+                this.writeTxtLog("Multithreading_Simple_Log_" +this.circuit.getName()+"_Theads-"+ this.thread +  "_TestNumber-"+ (N+1) + "_round-"+id+" of " + interaction , formattedDate,  formattedDate2, thread_list.size(), propagateTime, (N+1), propagateTimems);
                
-                this.writeCsvFileCompleteThMultipleFault("Multithreading_Complete_Log_"+this.circuit.getName()+"_Theads-"+ this.thread + "_TestNumber-"+ (N+1) + "_round-"+id+" of " + interaction , itemx_list);
+                this.writeCsvFileCompleteTh("Multithreading_Complete_Log_"+this.circuit.getName()+"_Theads-"+ this.thread + "_TestNumber-"+ (N+1) + "_round-"+id+" of " + interaction , itemx_list);
                
                 
                 System.out.println("----------------- Results ------------------");
                 System.out.println("Circuit: " + this.circuit.getName());
                 System.out.println("Total Vectors (N): " + (N+1));
-                System.out.println("Multiple Fault Injection: ): " + (multipleFaults));
                 System.out.println("Propagated fault(s) (Ne): " + this.unmasked_faults);
                 System.out.println("Reliability: " + "(1-(" + this.unmasked_faults + "/" + (N+1) + ")) = " + this.reliability_circuit);
                 System.out.println("MTBF (Mean Time Between failure) : " + this.MTBF);
                 System.out.println("Simulation TimeElapsed: " + propagateTime + " m(s)");
                 System.out.println("--------------------------------------------");
      }
+     
      
      public void MulltiThreading_Simulator(String library, String CircuitFile) throws IOException, Exception{
                 

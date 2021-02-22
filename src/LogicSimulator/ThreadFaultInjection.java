@@ -362,10 +362,6 @@ import signalProbability.ProbCircuit;
             return this.faultSignalArray;
         }
         
-          public  ArrayList <Test_Item> get_threadSimulationList(){
-            return this.threadSimulationList;
-        }
-        
         public  ArrayList <String> get_signalFaultListCuncorrentLinked(){
              ArrayList<String> list = new ArrayList<>(this.faultSignalCuncorrentLinked);
             return list;
@@ -379,7 +375,7 @@ import signalProbability.ProbCircuit;
             return this.threadSimulationList;
         }
         
-        private String settingFaultInjectionResults(){
+    private String settingFaultInjectionResults(){
             
             int ini = this.startPos;
           
@@ -433,7 +429,6 @@ import signalProbability.ProbCircuit;
           
             return r;
         }       
-        
         public int getPropagatedFaults(){
             return this.propagated_faults;
         }
@@ -639,20 +634,15 @@ import signalProbability.ProbCircuit;
                 final ArrayList <Boolean> input = new ArrayList<>();
                 final ArrayList <Integer> signals = new ArrayList<>();
                 final ArrayList <Signal> faulSignalsList = thread_item.getfaultSignalsList();//new ArrayList<>();
-                //System.out.println(" - Signal List: " + faulSignalsList);
+                
             
                 
                 for (int index = 0; index < inputsSignals.size(); index++) {
-                    
-                       // if(inputsSignals.get(index).getId().equals(faultSig.getId())){ //bit-flip //trying
-                    for (int x = 0; x < faulSignalsList.size(); x++) {
-                      // System.out.println(faulSignalsList.get(x) + "  -check  " + faulSignalsList.get(x).getId());
-                       if(inputsSignals.get(index).getId().equals(faulSignalsList.get(x).getId())){ //bit-flip //trying
-                       
-                        //if(faulSignalsList.contains(temp.)){ //bit-flip //trying
-                            System.out.println("Falha In");
+                        //if(inputsSignals.get(index).getId().equals(faultSig.getId())){ //bit-flip //trying
+                        if(faulSignalsList.contains(inputsSignals.get(index))){ //bit-flip //trying
+                           // System.out.println("Falha In");
                             //System.out.println("entrou");
-                           
+                            System.out.println("Bitflip to : " + inputsSignals.get(index) + " O: " + inputsSignals.get(index).getLogicValue());
                             if(inputsSignals.get(index).getOriginalLogicValue() == 0){
                                 thread_item.setSignalOriginalValue(0);
                                 thread_item.setFaultSignalValue(1);
@@ -667,10 +657,9 @@ import signalProbability.ProbCircuit;
                                    inputsSignals.get(index).setLogicValue(0);
                                    inputsSignals.get(index).setLogicValueBoolean(Boolean.FALSE);
                             }
-                          System.out.println(" -> fault injected (" + faulSignalsList.get(x) + ")" +  " - O(v):"+inputsSignals.get(index).getOriginalLogicValue() + "  N(v):"+inputsSignals.get(index).getLogicValue());                   
+                          // System.out.println(" -> fault injected (" + faultSig + ")" +  " - O(v):"+inputsSignals.get(index).getOriginalLogicValue() + "  N(v):"+inputsSignals.get(index).getLogicValue());                   
                         }
                         
-                     }
                         signals.add(inputsSignals.get(index).getLogicValue());
                         
                         if(inputsSignals.get(index).getLogicValue() == 0){
@@ -679,8 +668,6 @@ import signalProbability.ProbCircuit;
                         if(inputsSignals.get(index).getLogicValue() == 1){
                             input.add(Boolean.TRUE);
                         }
-                        
-                   
                 }
                 
                 //System.out.println("                                Input Signal: " + inputsSignals + " v: "+input);
