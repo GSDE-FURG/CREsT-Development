@@ -146,12 +146,13 @@ public class LogicSimTool {
          
          for (int i = 0; i < circuitList.size(); i++) {
              ArrayList <Simulation> list_itemx = new ArrayList<>();
-             
+             int multipleFault = 2;
              for (int k = 0; k < threads.size(); k++) {         
                     for (int j = 0; j < interactions; j++) {
                          
                          Operations_LogicSim logicSimulatorAnalisys = new Operations_LogicSim(Reliability, i , circuitList.get(i).toString(), library, (int) threads.get(k));
-                         logicSimulatorAnalisys.MulltiThreading_Simulator_ramdomInputs_MonteCarlo(library, Reliability, testNumber, interactions, j); 
+                         //logicSimulatorAnalisys.MulltiThreading_Simulator_ramdomInputs_MonteCarlo_SingleFault(library, Reliability, testNumber, interactions, j); //Singlefault
+                         logicSimulatorAnalisys.MulltiThreading_Simulator_ramdomInputs_MonteCarlo_MultipleFault(library, Reliability, testNumber, interactions, j, multipleFault);  //Multiple Fault 
                          Simulation x = new Simulation(j, logicSimulatorAnalisys.getPropagatedFaults(), testNumber, logicSimulatorAnalisys.getTimeExecutionRound());
                          list_itemx.add(x);
                     }
