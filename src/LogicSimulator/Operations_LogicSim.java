@@ -2284,15 +2284,14 @@ import writers.WriteExcel;
                                     }  
                                    
                                 }
-                               // System.out.println(" start: "+ start + "  - end: " + end);                         
+                                // System.out.println(" start: "+ start + "  - end: " + end);                         
                                 for (int j = start; j < end ; j++) {
                                         
                                         inputVector = this.getInputVector(ListInputVectors, j); //input Test n
                                         //this.insertInputVector(cellLib, "selected", inputVector); //Depois na hora de inseriri vetor
                                         int SigIndex = this.randomInjectionFault();
 
-                                       // System.out.println("index: "+(j+1) + "     -     vec: " + inputVector);
-
+                                        // System.out.println("index: "+(j+1) + "     -     vec: " + inputVector);
                                         Test_Item temp = new Test_Item(inputVector, this.internSignals.get(SigIndex), j+1);
 
                                         ItemxSimulationList.add(temp);

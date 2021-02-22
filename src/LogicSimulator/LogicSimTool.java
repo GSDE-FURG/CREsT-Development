@@ -98,6 +98,7 @@ public class LogicSimTool {
             this.testNumber = testNumber;
             this.time = time;
         }
+        
         public int getInteractionIndex(){
             return this.iteraction;
         }
@@ -109,9 +110,8 @@ public class LogicSimTool {
         }
         public long getTime(){
             return this.time;
-        }
+        } 
         
-            
     }
     
     public void callMethodsAnalisys(Vector circuitList, String library, String Reliability, Vector threads, int testNumber) throws Exception{
