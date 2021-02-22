@@ -56,7 +56,6 @@ import writers.WriteExcel;
     private final String circuitFilePath;
     private final String library;
     private final String libraryPath;
-    
     private CellLibrary cellLibrary;
     private Circuit circuit;
     private LevelCircuit levelCircuit;
@@ -66,13 +65,10 @@ import writers.WriteExcel;
     private final long timeoutMiliSeconds;
     private long spr_timeConsumption;
     private int thread;
-    
     private int unmasked_faults ;
     private float reliability_circuit;
     private double MTBF;
-    
     private long time_seconds;
-    
     private MappedVerilogReader verilog_circuit;
     private ArrayList <Signal> internSignals = new ArrayList<>();
     private final ArrayList <String> inputListValues = new ArrayList<>();

@@ -14,7 +14,7 @@ import java.util.Vector;
 
 public class LogicSimTool {
     
-   public static void main(final String[] args) throws Exception {
+    public static void main(final String[] args) throws Exception {
      
             Vector circuitList = new Vector();
             Vector Threads = new Vector();
@@ -85,6 +85,7 @@ public class LogicSimTool {
     
       
     }
+    
     public class Simulation{
             private final int iteraction;
             private final int propagatedFaults;
@@ -128,7 +129,7 @@ public class LogicSimTool {
                 }
         }
       }
-
+    
      /**
      *
      * @param circuitList
@@ -180,11 +181,7 @@ public class LogicSimTool {
                    file.write(str);
            }
         }
-         
-        
-
-        
-         
+   
     }
 
 }
