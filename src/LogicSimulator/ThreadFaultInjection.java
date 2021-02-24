@@ -15,6 +15,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -477,7 +478,7 @@ import signalProbability.ProbCircuit;
                         for (int i = 0; i < inputSignais.size(); i++) {
                                 int randomLogicValue = gerador.nextInt(2);
                                 inputSignais.get(i).setLogicValue(randomLogicValue);
-                               // System.out.println(inputSignais.get(i)+" : '"+inputSignais.get(i).getLogicValue()+"'");
+                                //System.out.println(inputSignais.get(i)+" : '"+inputSignais.get(i).getLogicValue()+"'");
                         }
                        
                     break;
@@ -488,12 +489,16 @@ import signalProbability.ProbCircuit;
 
                         //Random gerador = new Random();
                         //vetor de entrada aleatório
-                        
+                        String S = "        ";
+                        //System.out.println("Input Vec: "+ vector);
                         for (int i = 0; i < inputSignals.size(); i++) {
                                 //int randomLogicValue = gerador.nextInt(2);
                                 inputSignals.get(i).setLogicValue(vector.get(i));
+                                inputSignals.get(i).setOriginalLogicValue(vector.get(i));
+                                //S = S + "  " + inputSignals.get(i)+" : '"+inputSignals.get(i).getOriginalLogicValue()+"'";
                                 //System.out.println(inputSignals.get(i)+" : '"+inputSignals.get(i).getLogicValue()+"'");
                         }
+                       // System.out.println("Input Vec: "+ vector+ " S: "+ S);
                    break;
                        
                 }
@@ -641,22 +646,45 @@ import signalProbability.ProbCircuit;
                 for (int index = 0; index < inputsSignals.size(); index++) {
                         
                         if(inputsSignals.get(index).getId().equals(faultSig.getId())){ //bit-flip 
-                           // System.out.println("Falha In");
+                             //System.out.println("Falha In Sig: " + faultSig + " (O): "+ faultSig.getOriginalLogicValue() + " (N): "+ faultSig.getLogicValue());
                             //System.out.println("entrou");
                             if(inputsSignals.get(index).getOriginalLogicValue() == 0){
                                 thread_item.setSignalOriginalValue(0);
                                 thread_item.setFaultSignalValue(1);
                               
+                                inputsSignals.get(index).setOriginalLogicValue(0);
                                 inputsSignals.get(index).setLogicValue(1);
                                 inputsSignals.get(index).setLogicValueBoolean(Boolean.TRUE);
+
+                                /* thread item */
+                                 thread_item.getFaultSignal().setOriginalLogicValue(0);
+                                 thread_item.getFaultSignal().setLogicValue(1);
+                                 thread_item.getFaultSignal().setLogicValueBoolean(Boolean.TRUE);
+                                 
+                                 /*Fault Sig*/
+                                 faultSig.setOriginalLogicValue(0);
+                                 faultSig.setLogicValue(1);
+                                 faultSig.setLogicValueBoolean(Boolean.TRUE);
                             }
                             else{
                                    thread_item.setSignalOriginalValue(1);
                                    thread_item.setFaultSignalValue(0);
                                     
+                                   inputsSignals.get(index).setOriginalLogicValue(1);
                                    inputsSignals.get(index).setLogicValue(0);
                                    inputsSignals.get(index).setLogicValueBoolean(Boolean.FALSE);
+                                   
+                                   /* thread item */
+                                    thread_item.getFaultSignal().setOriginalLogicValue(1);
+                                    thread_item.getFaultSignal().setLogicValue(0);
+                                    thread_item.getFaultSignal().setLogicValueBoolean(Boolean.FALSE);  
+                                    
+                                    /*Fault Sig*/
+                                    faultSig.setOriginalLogicValue(1);
+                                    faultSig.setLogicValue(0);
+                                    faultSig.setLogicValueBoolean(Boolean.FALSE);
                             }
+                             System.out.println("Falha In Sig: " + thread_item.getFaultSignal() + " (O): "+ thread_item.getFaultSignal().getOriginalLogicValue() + " (N): "+ thread_item.getFaultSignal().getLogicValue() + "  vec: " +thread_item.getinputVector() );
                           // System.out.println(" -> fault injected (" + faultSig + ")" +  " - O(v):"+inputsSignals.get(index).getOriginalLogicValue() + "  N(v):"+inputsSignals.get(index).getLogicValue());                   
                         }
                         
