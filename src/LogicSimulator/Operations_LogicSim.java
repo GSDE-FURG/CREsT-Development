@@ -2166,7 +2166,7 @@ import writers.WriteExcel;
                 
                 long loadTimeStart = System.nanoTime();//System.currentTimeMillis();
                 
-                testNumber--;
+                //testNumber--;
                 
                 LocalDateTime myDateObj = LocalDateTime.now();
                 //System.out.println("Before formatting: " + myDateObj);
@@ -2225,7 +2225,7 @@ import writers.WriteExcel;
                
                 int N = this.calcNumberOfInputVector();  //(int) Math.pow(2, this.probCircuit.getInputs().size());
                
-                // System.out.println("Number total of input vectors : "+ N);
+                System.out.println("Number total of input vectors : "+ N);
                 
                 System.out.println("Threads: " + this.thread); 
                
@@ -2238,6 +2238,9 @@ import writers.WriteExcel;
                 ArrayList <ArrayList<Integer>> ListInputVectors =  this.splitInputPatternsInInt(random_input_vectors, this.probCircuit.getInputs().size());
                 
                 N = testNumber;
+                
+                System.out.println("N: " + N);
+                        
                 
                 List thread_list = new ArrayList();
                 
@@ -2252,9 +2255,11 @@ import writers.WriteExcel;
                     temp = Math.floor(N/this.thread); 
                     //System.out.println("Division : "+ a);
                     partition =  (int) temp ;//(int) Math.round(collapsed_faults/NThreads); 
+                    
+                    
                 }
                 
-                //System.out.println("Partion : "+ partition);
+                System.out.println("Partion : "+ partition);
                 int start = 0;
                 int end = partition;
                 
@@ -2263,28 +2268,27 @@ import writers.WriteExcel;
                  //ArrayList <Integer, String> example = new ArrayList<>();
                 
                 for (int i = 0; i < this.thread; i++) { //Loop of simulations
-                                //System.out.println(" - Thread: "+i);
+                                System.out.println(" - Thread: "+i);
                                
                                 ArrayList <Test_Item> ItemxSimulationList = new ArrayList<>();
                     
                                 ArrayList <Integer> inputVector = new ArrayList<>();
                                 
                                 if((this.thread-1) == (i)){
-
                                     start = end;
                                     end = N; 
                                 }
                                 else{
                                     if(i == 0){
                                         start = 0;
-                                        end = partition;
+                                        end = partition + 1;
                                     }else{
                                          start = start + partition;
                                          end = start + partition;  
                                     }  
                                    
                                 }
-                                // System.out.println(" start: "+ start + "  - end: " + end);                         
+                                System.out.println("            start: "+ start + "  - < end: " + end);                         
                                 for (int j = start; j < end ; j++) {
                                         
                                         inputVector = this.getInputVector(ListInputVectors, j); //input Test n
@@ -2327,14 +2331,16 @@ import writers.WriteExcel;
                      
                      
                     //this.processLogicSimMultiThreadingResultsRandom(thread_list, itemx_list, propagateTimeStart, N, formattedDate, testNumber);
-                    
+                    System.out.println("itemx_list.size(): " + itemx_list.size());
                     for (int i=0; i < itemx_list.size() ; i++) {
 
                             // System.out.println("SIgnal fault list : "+ this.SignalFault);
                            
                             this.unmasked_faults = this.unmasked_faults +  itemx_list.get(i).getPropagatedFaults();
                             
-                            System.out.println("Thread: " + itemx_list.get(i).getThreadId() + " - Sample size: " + partition + " - Total Faults : "+  itemx_list.get(i).getPropagatedFaults());
+                            System.out.println("Thread: " + itemx_list.get(i).getThreadId() + " - Sample size: "
+                                    + partition + " - Total Faults : "+  itemx_list.get(i).getPropagatedFaults()
+                                            + "  - Total input vectors: " + itemx_list.get(i).getThreadSimulatinArraySize());
                     }
                
                 
@@ -2359,6 +2365,7 @@ import writers.WriteExcel;
                
                 this.writeCsvFileCompleteTh("Multithreading_Complete_Log_"+this.circuit.getName()+"_Theads-"+ this.thread + "_TestNumber-"+ (N+1) + "_round-"+id+" of " + interaction , itemx_list);
                
+                
                 
                 System.out.println("----------------- Results ------------------");
                 System.out.println("Circuit: " + this.circuit.getName());
