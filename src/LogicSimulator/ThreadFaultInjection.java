@@ -146,9 +146,6 @@ import signalProbability.ProbCircuit;
             }
  
         }
-        public  int getThreadSimulatinArraySize(){
-            return this.threadSimulationList.size();
-        }
 
         public  ArrayList <Test_Item> getThreadSimulatinArray(){
             return this.threadSimulationList;
