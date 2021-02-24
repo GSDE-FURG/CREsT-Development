@@ -1403,7 +1403,7 @@ import writers.WriteExcel;
          return vector;
      }
      
-     public  ArrayList<String> calcInputRandom(CellLibrary cellLib, String Option, int vecInput_size, int numTest){
+     public  ArrayList<String> calcInputRandom(CellLibrary cellLib, String Option, int vecMaxSize, int numTest){
               
                 // - ---------------------------------------- creating input vector ------------------------------------------------------
                 System.out.println("");
@@ -1415,7 +1415,11 @@ import writers.WriteExcel;
                         
                         Random gerador = new Random();
                         String str = "";
-                        if(numTest < vecInput_size){
+                        if(numTest <= vecMaxSize ){
+                            System.out.println("* LogicSIm tool will test ("+ numTest +") vectors");
+                        }else{
+                             System.out.println("* Warning you are testing ("+ numTest +") vectors, its above the maximum circuit vector trutable test 2^(inputs) test ("+ vecMaxSize  +")");
+                        }
                             for (int i = 0; i < numTest; i++) {
                                  for (int j = 0; j < inputSignaisSize; j++) {
                                       int randomLogicValue = gerador.nextInt(2);
@@ -1430,7 +1434,7 @@ import writers.WriteExcel;
                                // System.out.println(inputSignais.get(i)+" : '"+inputSignais.get(i).getLogicValue()+"'");
                           }
                        
-                       }
+                       
                         
                         //vetor de entrada aleatório
                         
@@ -1673,7 +1677,7 @@ import writers.WriteExcel;
              ArrayList <Integer> inputVectorTemp = ListInputVectors.get(i);
              ArrayList <Integer> inputVector = new ArrayList<>();
              
-             //  System.out.println(">>: "+ ListInputVectors.get(i) + " SIZE: "+ ListInputVectors.size());
+             //System.out.println(">>: "+ ListInputVectors.get(i) + " SIZE: "+ ListInputVectors.size());
              
              for (int j = 0; j < inputVectorTemp.size(); j++) {  // 0 - 0000 ; 1 - 0001; 2 - 0010; .... (n) inputs
                               inputVector.add(ListInputVectors.get(i).get(j));
@@ -2236,10 +2240,10 @@ import writers.WriteExcel;
                 ArrayList <String> random_input_vectors =  this.calcInputRandom(cellLib, library, N, testNumber); //this.calcInputTableVector(this.probCircuit.getInputs().size(), N);
  
                 ArrayList <ArrayList<Integer>> ListInputVectors =  this.splitInputPatternsInInt(random_input_vectors, this.probCircuit.getInputs().size());
-                
+                //System.out.println("List: " + ListInputVectors.size());
                 N = testNumber;
                 
-                System.out.println("N: " + N);
+                //System.out.println("N: " + N);
                         
                 
                 List thread_list = new ArrayList();
@@ -2281,24 +2285,28 @@ import writers.WriteExcel;
                                 else{
                                     if(i == 0){
                                         start = 0;
-                                        end = partition + 1;
+                                        end = partition;
                                     }else{
                                          start = start + partition;
-                                         end = start + partition;  
+                                         end = start + partition;
+                                         //end--;
                                     }  
                                    
                                 }
-                                System.out.println("            start: "+ start + "  - < end: " + end);                         
+                                //System.out.println("            start: "+ start + "  - < end: " + (end-1));                         
                                 for (int j = start; j < end ; j++) {
-                                        
-                                        inputVector = this.getInputVector(ListInputVectors, j); //input Test n
-                                        //this.insertInputVector(cellLib, "selected", inputVector); //Depois na hora de inseriri vetor
-                                        int SigIndex = this.randomInjectionFault();
+                                    
+                                        if(j < N){
+                                            //System.out.println("J: " + j);
+                                            inputVector = this.getInputVector(ListInputVectors, j); //input Test n
+                                            //this.insertInputVector(cellLib, "selected", inputVector); //Depois na hora de inseriri vetor
+                                            int SigIndex = this.randomInjectionFault();
 
-                                        // System.out.println("index: "+(j+1) + "     -     vec: " + inputVector);
-                                        Test_Item temp = new Test_Item(inputVector, this.internSignals.get(SigIndex), j+1);
+                                            // System.out.println("index: "+(j+1) + "     -     vec: " + inputVector);
+                                            Test_Item temp = new Test_Item(inputVector, this.internSignals.get(SigIndex), j+1);
 
-                                        ItemxSimulationList.add(temp);
+                                            ItemxSimulationList.add(temp);
+                                        }
                                 }
                                 
                                 
@@ -2331,7 +2339,7 @@ import writers.WriteExcel;
                      
                      
                     //this.processLogicSimMultiThreadingResultsRandom(thread_list, itemx_list, propagateTimeStart, N, formattedDate, testNumber);
-                    System.out.println("itemx_list.size(): " + itemx_list.size());
+                    //System.out.println("itemx_list.size(): " + itemx_list.size());
                     for (int i=0; i < itemx_list.size() ; i++) {
 
                             // System.out.println("SIgnal fault list : "+ this.SignalFault);
