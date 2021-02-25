@@ -330,22 +330,28 @@ import signalProbability.ProbCircuit;
                 
                 if(this.circuit.getOutputs().get(s).getId().equals(thread_item.getFaultSignal().getId())){
                      
-                     if(this.circuit.getOutputs().get(s).getOriginalLogicValue() == 1){ //Bitflip output signal 
-                         
-                          this.circuit.getOutputs().get(s).setLogicValue(0);
-                          outputInjection = outputInjection +  this.circuit.getOutputs().get(s).getLogicValue();
+                     if(this.circuit.getOutputs().get(s).getLogicValueBoolean()){ //Bitflip output signal 
+                          int flag = 0;
+                          //this.circuit.getOutputs().get(s).setLogicValue(0);
+                          outputInjection = outputInjection + 0;
+                           System.out.println("0: Vec: " + thread_item.getinputVector() + "     "+ this.circuit.getOutputs().get(s) + " Output: Expect(" + this.circuit.getOutputs().get(s).getLogicValue()+ ")" 
+                                   + " Boolean :(" + this.circuit.getOutputs().get(s).getLogicValueBoolean()+ ")" );
                           
                      }else{
+                          int flag = 1;
+                          //this.circuit.getOutputs().get(s).setLogicValue(0);
+                          outputInjection = outputInjection +  1;
                           
-                          this.circuit.getOutputs().get(s).setLogicValue(1);
-                          outputInjection = outputInjection +  this.circuit.getOutputs().get(s).getLogicValue();
+                          System.out.println("1: Vec: " + thread_item.getinputVector() + "     "+ this.circuit.getOutputs().get(s) + " Output: Expect(" + this.circuit.getOutputs().get(s).getLogicValue()+ ")" 
+                                   + " Boolean :(" + this.circuit.getOutputs().get(s).getLogicValueBoolean()+ ")" );
+                        
                      }
                     
                      
                  }else{
                      outputInjection = outputInjection +  this.circuit.getOutputs().get(s).getLogicValue();
                  }
-                 
+                
                 // outputInjection = outputInjection + signalsOutput.get(s).getOriginalLogicValue(); 
                //  System.out.println("           - Gate: " + signalsOutput.get(s).getOrigin() + " (" + signalsOutput.get(s).getOrigin().getType() + ") - Output: "+ signalsOutput.get(s) + " - Logic value: "+ signalsOutput.get(s).getLogicValue() + " [" + signalsOutput.get(s).getLogicValueBoolean() + "]" );             
                 //System.out.println("free - Gate: " + signalsOutput.get(s).getOrigin() + " (" + signalsOutput.get(s).getOrigin().getType() + ") - Output: "+ signalsOutput.get(s) + " - Logic value: "+ signalsOutput.get(s).getOriginalLogicValue() + " [" + signalsOutput.get(s).getLogicValueBoolean() + "]" );             
@@ -565,11 +571,13 @@ import signalProbability.ProbCircuit;
                                 
                                 if(sig.getId().equals(faultSig.getId())){
                                    // System.out.println("@ "+faultSig+" Sig EQUAL "+sig);
-                                    //faultSig.setOriginalLogicValue(1);
-                                    //faultSig.setLogicValue(0); // bitfip
+                                       faultSig.setOriginalLogicValue(1);
+                                     faultSig.setLogicValue(0); // bitfip
+                                    faultSig.setLogicValueBoolean(Boolean.FALSE);
                                     
-                                    //thread_item.setSignalOriginalValue(1);
-                                    //thread_item.setFaultSignalValue(0);
+                                    thread_item.setSignalOriginalValue(1);
+                                     thread_item.setFaultSignalValue(0);
+                                   
                                
                                 }
                                 
@@ -580,16 +588,17 @@ import signalProbability.ProbCircuit;
                                 gate.getGate().getOutputs().get(s).setLogicValueBoolean(Boolean.FALSE);
                                 
                                 
-                                /*
+                                
                                 if(sig.getId().equals(faultSig.getId())){
                                    // System.out.println("@ "+faultSig+" Sig EQUAL "+sig);
-                                    //faultSig.setOriginalLogicValue(0);
-                                   // faultSig.setLogicValue(0); // bitfip
+                                    faultSig.setOriginalLogicValue(0);
+                                   faultSig.setLogicValue(1); // bitfip
+                                   faultSig.setLogicValueBoolean(Boolean.TRUE);
                                     
-                                   // thread_item.setSignalOriginalValue(0);
+                                   thread_item.setSignalOriginalValue(0);
                                     thread_item.setFaultSignalValue(1);
                                 }
-                                */
+                                
                                 
                             }
                         }
@@ -679,7 +688,16 @@ import signalProbability.ProbCircuit;
                                 
                                 inputsSignals.get(index).setOriginalLogicValue(thread_item.getFaultSignal().getOriginalLogicValue());
                                 inputsSignals.get(index).setLogicValue(thread_item.getFaultSignal().getLogicValue());
-                                 inputsSignals.get(index).setLogicValueBoolean(thread_item.getFaultSignal().getLogicValueBoolean());
+                                inputsSignals.get(index).setLogicValueBoolean(thread_item.getFaultSignal().getLogicValueBoolean());
+                                
+                                faultSig.setOriginalLogicValue(thread_item.getFaultSignal().getOriginalLogicValue());
+                                faultSig.setLogicValue(thread_item.getFaultSignal().getLogicValue());
+                                faultSig.setLogicValueBoolean(thread_item.getFaultSignal().getLogicValueBoolean());
+                                
+                                        thread_item.setSignalOriginalValue(thread_item.getFaultSignal().getOriginalLogicValue());
+                                        thread_item.setFaultSignalValue(thread_item.getFaultSignal().getLogicValue());
+                                
+                               
                                 /*
                                 thread_item.setSignalOriginalValue(0);
                                 thread_item.setFaultSignalValue(1);
@@ -710,6 +728,13 @@ import signalProbability.ProbCircuit;
                                  inputsSignals.get(index).setOriginalLogicValue(thread_item.getFaultSignal().getOriginalLogicValue());
                                  inputsSignals.get(index).setLogicValue(thread_item.getFaultSignal().getLogicValue());
                                  inputsSignals.get(index).setLogicValueBoolean(thread_item.getFaultSignal().getLogicValueBoolean());
+                                 
+                                    faultSig.setOriginalLogicValue(thread_item.getFaultSignal().getOriginalLogicValue());
+                                    faultSig.setLogicValue(thread_item.getFaultSignal().getLogicValue());
+                                    faultSig.setLogicValueBoolean(thread_item.getFaultSignal().getLogicValueBoolean());
+                                    
+                                     thread_item.setSignalOriginalValue(thread_item.getFaultSignal().getOriginalLogicValue());
+                                        thread_item.setFaultSignalValue(thread_item.getFaultSignal().getLogicValue());
                                  
                             }
                           // System.out.println(" -> fault injected (" + faultSig + ")" +  " - O(v):"+inputsSignals.get(index).getOriginalLogicValue() + "  N(v):"+inputsSignals.get(index).getLogicValue());                   
@@ -809,7 +834,7 @@ import signalProbability.ProbCircuit;
          return (boolean) output;
      }    
         
-       
+     
         @Override
         public  void run() {
             try {

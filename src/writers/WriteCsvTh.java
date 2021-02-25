@@ -346,7 +346,7 @@ public class WriteCsvTh {
                             }
                             
                            // System.out.println("T: " + i + " fault: " + item.get(y).getFaultSignal() + " - v: "+ s + " faultfree: " + faultFree + " fault: " + fault + " - " + T );
-                            
+                            //csvWriter.append(s  + ";" + item.get(y).getFaultSignal() +";" + "(" + item.get(y).getFaultSignal().getOriginalLogicValue()+ ")to(" +  item.get(y).getFaultSignal().getLogicValue() + ")" + ";"+ faultFree + ";" + fault + ";" + propagated_faults);
                             csvWriter.append(s  + ";" + item.get(y).getFaultSignal() +";" + item.get(y).getBitFlip() + ";"+ faultFree + ";" + fault + ";" + propagated_faults);
                             csvWriter.append("\n");
                             propagated_faults = "";
