@@ -1419,7 +1419,7 @@ import writers.WriteExcel;
                         
                         Random gerador = new Random();
                         String str = "";
-                        if(numTest < vecInput_size){
+                        if(numTest <= vecInput_size){
                             for (int i = 0; i < numTest; i++) {
                                  for (int j = 0; j < inputSignaisSize; j++) {
                                       int randomLogicValue = gerador.nextInt(2);
@@ -2267,9 +2267,9 @@ import writers.WriteExcel;
                  
                  //ArrayList<ArrayList<Integer>> InputLIST = new ArrayList<<>>();
                  ArrayList <ArrayList<Integer>> vectors_teste = new ArrayList<>();
-                 ArrayList<Integer> qq = new ArrayList<>();
-                    qq.add(0); qq.add(0); qq.add(0); qq.add(0); qq.add(0); 
-                  vectors_teste.add(qq);
+                 ArrayList<Integer> x = new ArrayList<>();
+                 x.add(0); x.add(0); x.add(0); x.add(0); x.add(0); 
+                  vectors_teste.add(x);
                  
                   ArrayList<Integer> c = new ArrayList<>();
                   c.add(0); c.add(0); c.add(1); c.add(0); c.add(1); 
@@ -2298,7 +2298,7 @@ import writers.WriteExcel;
                                 if((this.thread-1) == (i)){
 
                                     start = 0;
-                                    end = N; 
+                                    end = N+1; 
                                 }
                                 else{
                                     if(i == 0){
@@ -2313,12 +2313,12 @@ import writers.WriteExcel;
                                 System.out.println(" start: "+ start + "  - end: " + end);                         
                                 for (int j = start; j < end ; j++) {
                                     
-                                     System.out.println(" = = = = Sig: " + this.internSignals.get(6) + "   vec: " + vectors_teste.get(j) );
+                                     System.out.println(" = = = = Sig: " + this.internSignals.get(9) + "   vec: " + inputVector);
 
                                         
                                         inputVector = vectors_teste.get(j) ;//this.getInputVector(ListInputVectors, j); //input Test n
                                         //this.insertInputVector(cellLib, "selected", inputVector); //Depois na hora de inseriri vetor
-                                        int SigIndex = 6; //this.randomInjectionFault();
+                                        int SigIndex = 5; //this.randomInjectionFault();
                                          
                                        // System.out.println("index: "+(j+1) + "     -     vec: " + inputVector);
                                       

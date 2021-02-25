@@ -168,7 +168,7 @@ public class LogicSimTool {
              
              
             
-             Analysis.callMethodsAnalisysMonteCarlo(circuitList, library, reliability, Threads, 31, 1);
+             Analysis.callMethodsAnalisysMonteCarlo(circuitList, library, reliability, Threads, 32, 1);
              /*
              Analysis.callMethodsAnalisysMonteCarlo(circuitList, library, reliability, Threads, 400, 10);
              Analysis.callMethodsAnalisysMonteCarlo(circuitList, library, reliability, Threads, 800, 10); 
