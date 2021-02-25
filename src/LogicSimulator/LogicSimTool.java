@@ -25,8 +25,8 @@ public class LogicSimTool {
         String library = "cadence.genlib";
         
         //Threads.add(64);
-        Threads.add(1);
-        //Threads.add(8);
+        //Threads.add(1);
+        Threads.add(8);
         
         
        // Vector circuit750k = new Vector();
@@ -286,8 +286,8 @@ public class LogicSimTool {
                     for (int j = 0; j < interactions; j++) {
                          
                          Operations_LogicSim logicSimulatorAnalisys = new Operations_LogicSim(Reliability, i , circuitList.get(i).toString(), library, (int) threads.get(k));
-                         //logicSimulatorAnalisys.MulltiThreading_Simulator_ramdomInputs_MonteCarlo(library, Reliability, testNumber, interactions, j); 
-                         logicSimulatorAnalisys.TESTEMODE(library, Reliability, testNumber, interactions, j);
+                         logicSimulatorAnalisys.MulltiThreading_Simulator_ramdomInputs_MonteCarlo(library, Reliability, testNumber, interactions, j); 
+                         //logicSimulatorAnalisys.TESTEMODE(library, Reliability, testNumber, interactions, j);
                          item x = new item(j, logicSimulatorAnalisys.getPropagatedFaults(), testNumber, logicSimulatorAnalisys.getTimeExecutionRound());
                          list_itemx.add(x);
                     }

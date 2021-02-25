@@ -2313,12 +2313,12 @@ import writers.WriteExcel;
                                 System.out.println(" start: "+ start + "  - end: " + end);                         
                                 for (int j = start; j < end ; j++) {
                                     
-                                     System.out.println(" = = = = Sig: " + this.internSignals.get(5) + "   vec: " + vectors_teste.get(j) );
+                                     System.out.println(" = = = = Sig: " + this.internSignals.get(6) + "   vec: " + vectors_teste.get(j) );
 
                                         
                                         inputVector = vectors_teste.get(j) ;//this.getInputVector(ListInputVectors, j); //input Test n
                                         //this.insertInputVector(cellLib, "selected", inputVector); //Depois na hora de inseriri vetor
-                                        int SigIndex = 5; //this.randomInjectionFault();
+                                        int SigIndex = 6; //this.randomInjectionFault();
                                          
                                        // System.out.println("index: "+(j+1) + "     -     vec: " + inputVector);
                                       
