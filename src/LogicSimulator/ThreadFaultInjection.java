@@ -321,9 +321,27 @@ import signalProbability.ProbCircuit;
             
             String outputInjection = "";
             
-            for (int s = 0; s < signalsOutput.size(); s++) { //All outputs to str                 
+            for (int s = 0; s < signalsOutput.size(); s++) { //All outputs to str   
+                
+                if(this.circuit.getOutputs().get(s).getId().equals(thread_item.getFaultSignal().getId())){
+                     
+                     if(this.circuit.getOutputs().get(s).getOriginalLogicValue() == 1){ //Bitflip output signal 
+                         
+                          this.circuit.getOutputs().get(s).setLogicValue(0);
+                          outputInjection = outputInjection +  this.circuit.getOutputs().get(s).getLogicValue();
+                          
+                     }else{
+                          
+                          this.circuit.getOutputs().get(s).setLogicValue(1);
+                          outputInjection = outputInjection +  this.circuit.getOutputs().get(s).getLogicValue();
+                     }
+                    
+                     
+                 }else{
+                     outputInjection = outputInjection +  this.circuit.getOutputs().get(s).getLogicValue();
+                 }
                  
-                 outputInjection = outputInjection + signalsOutput.get(s).getOriginalLogicValue(); 
+                // outputInjection = outputInjection + signalsOutput.get(s).getOriginalLogicValue(); 
                //  System.out.println("           - Gate: " + signalsOutput.get(s).getOrigin() + " (" + signalsOutput.get(s).getOrigin().getType() + ") - Output: "+ signalsOutput.get(s) + " - Logic value: "+ signalsOutput.get(s).getLogicValue() + " [" + signalsOutput.get(s).getLogicValueBoolean() + "]" );             
                 //System.out.println("free - Gate: " + signalsOutput.get(s).getOrigin() + " (" + signalsOutput.get(s).getOrigin().getType() + ") - Output: "+ signalsOutput.get(s) + " - Logic value: "+ signalsOutput.get(s).getOriginalLogicValue() + " [" + signalsOutput.get(s).getLogicValueBoolean() + "]" );             
             }
