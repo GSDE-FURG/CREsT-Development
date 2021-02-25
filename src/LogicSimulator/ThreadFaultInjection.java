@@ -143,7 +143,7 @@ import signalProbability.ProbCircuit;
                     //System.out.println("Index : "+ this.threadSimulationList.get(i).getSimulationIndex() + "  - vec:" + this.threadSimulationList.get(i).getinputVector());
                     //this.insertInputVectors(cellLib, "selected", this.threadSimulationList.get(i).getinputVector());
                     this.insertInputVectors("selected", this.threadSimulationList.get(i).getinputVector());
-                    this.propagateInputVectors(this.threadSimulationList.get(i).getSimulationIndex(), this.threadSimulationList.get(i).getinputVector(), this.threadSimulationList.get(i).getFaultSignal(), this.threadSimulationList.get(i));
+                    this.propagateInputVectors(this.threadSimulationList.get(i).getSimulationIndex(), this.threadSimulationList.get(i).getinputVector(), this.threadSimulationList.get(i));
                     this.getPropagateFaultFreeResults( this.threadSimulationList.get(i).getinputVector(), this.threadSimulationList.get(i).getSimulationIndex(), this.threadSimulationList.get(i), i+1);
             }
                 
@@ -190,7 +190,7 @@ import signalProbability.ProbCircuit;
         }
     }
         
-        private  void propagateInputVectors(int testNumber, ArrayList <Integer> vector, Signal faultSig, Test_Item thread_item) throws IOException, WriteException{
+        private  void propagateInputVectors(int testNumber, ArrayList <Integer> vector, Test_Item thread_item) throws IOException, WriteException{
            
             this.threadID = (long) Thread.currentThread().getId();
             thread_item.setThreadID(this.threadID);
@@ -229,10 +229,12 @@ import signalProbability.ProbCircuit;
                                 gate.getGate().getOutputs().get(s).setLogicValue(1);
                                 gate.getGate().getOutputs().get(s).setLogicValueBoolean(Boolean.TRUE);  
                                 
+                                /*
                                 if(sig.getId().equals(faultSig.getId())){
                                    // System.out.println("@ "+faultSig+" Sig EQUAL "+sig);
                                     faultSig.setOriginalLogicValue(1);
                                 }
+                                */
                             }
                             else{           
                                 thread_item.setSignalOriginalValue(0);
@@ -241,10 +243,12 @@ import signalProbability.ProbCircuit;
                                 gate.getGate().getOutputs().get(s).setLogicValue(0);
                                 gate.getGate().getOutputs().get(s).setLogicValueBoolean(Boolean.FALSE);
                                 
+                                /*
                                 if(sig.getId().equals(faultSig.getId())){
                                     //System.out.println("@ "+faultSig+" Sig EQUAL "+sig);
                                     faultSig.setOriginalLogicValue(0);
                                 }
+                                */
                             }
                             
                             //  System.out.println("              - Gate: "+ gatesInThisLevel.get(k)  + "  type: "+ gate.getGate().getType() + "Sig: " + sig +  " output: " + sig.getOriginalLogicValue());
@@ -546,29 +550,29 @@ import signalProbability.ProbCircuit;
                         final DepthGate gate = (DepthGate) object;
                         //gate.getGate().getType()
                         //System.out.println("              - Gate: "+ gatesInThisLevel.get(k)  + "  type: "+ gate.getGate().getType());
-                        boolean test = this.calculateOutputFacultInjectionGateValue(gate.getGate().getType(), gate, gate.getGate().getInputs(), faultSig, thread_item);  //Method calc the output from the gate cal bitflip
+                        boolean gateResult = this.calculateOutputFacultInjectionGateValue(gate.getGate().getType(), gate, gate.getGate().getInputs(), faultSig, thread_item);  //Method calc the output from the gate cal bitflip
                         
                         for (int s = 0; s < gate.getGate().getOutputs().size(); s++) {
                             
                             Signal sig = gate.getGate().getOutputs().get(s);
                             
-                            if(test == true){  //bitflip
+                            if(gateResult == true){  //Gate Output
                                 gate.getGate().getOutputs().get(s).setOriginalLogicValue(1);
                                 gate.getGate().getOutputs().get(s).setLogicValue(1);
                                 gate.getGate().getOutputs().get(s).setLogicValueBoolean(Boolean.TRUE);  
                                 
                               
-                                /*
+                                
                                 if(sig.getId().equals(faultSig.getId())){
                                    // System.out.println("@ "+faultSig+" Sig EQUAL "+sig);
                                     //faultSig.setOriginalLogicValue(1);
                                     //faultSig.setLogicValue(0); // bitfip
                                     
                                     //thread_item.setSignalOriginalValue(1);
-                                    thread_item.setFaultSignalValue(0);
+                                    //thread_item.setFaultSignalValue(0);
                                
                                 }
-                                */
+                                
                             }
                             else{           
                                 gate.getGate().getOutputs().get(s).setOriginalLogicValue(0);
@@ -668,39 +672,45 @@ import signalProbability.ProbCircuit;
                         if(inputsSignals.get(index).getId().equals(faultSig.getId())){ //bit-flip 
                            // System.out.println("Falha In");
                             //System.out.println("entrou");
-                            if(inputsSignals.get(index).getOriginalLogicValue() == 0){
+                            if(inputsSignals.get(index).getOriginalLogicValue() == 0){ //Efetua o bitflip
+                                thread_item.getFaultSignal().setOriginalLogicValue(0);
+                                thread_item.getFaultSignal().setLogicValue(1);
+                                thread_item.getFaultSignal().setLogicValueBoolean(Boolean.TRUE);
+                                
+                                inputsSignals.get(index).setOriginalLogicValue(thread_item.getFaultSignal().getOriginalLogicValue());
+                                inputsSignals.get(index).setLogicValue(thread_item.getFaultSignal().getLogicValue());
+                                 inputsSignals.get(index).setLogicValueBoolean(thread_item.getFaultSignal().getLogicValueBoolean());
+                                /*
                                 thread_item.setSignalOriginalValue(0);
                                 thread_item.setFaultSignalValue(1);
                               
                                 inputsSignals.get(index).setLogicValue(1);
                                 inputsSignals.get(index).setLogicValueBoolean(Boolean.TRUE);
+                                */
                                 
                                 /* thread item */
+                                /*
                                  thread_item.getFaultSignal().setOriginalLogicValue(0);
                                  thread_item.getFaultSignal().setLogicValue(1);
                                  thread_item.getFaultSignal().setLogicValueBoolean(Boolean.TRUE);
+                                */
                                  
                                  /*Fault Sig*/
-                                 faultSig.setOriginalLogicValue(0);
+                                /* 
+                                faultSig.setOriginalLogicValue(0);
                                  faultSig.setLogicValue(1);
                                  faultSig.setLogicValueBoolean(Boolean.TRUE);
+                                 */
                             }
                             else{
-                                   thread_item.setSignalOriginalValue(1);
-                                   thread_item.setFaultSignalValue(0);
-                                    
-                                   inputsSignals.get(index).setLogicValue(0);
-                                   inputsSignals.get(index).setLogicValueBoolean(Boolean.FALSE);
-                                   
-                                    /* thread item */
-                                    thread_item.getFaultSignal().setOriginalLogicValue(1);
-                                    thread_item.getFaultSignal().setLogicValue(0);
-                                    thread_item.getFaultSignal().setLogicValueBoolean(Boolean.FALSE);  
-                                    
-                                    /*Fault Sig*/
-                                    faultSig.setOriginalLogicValue(1);
-                                    faultSig.setLogicValue(0);
-                                    faultSig.setLogicValueBoolean(Boolean.FALSE);
+                                 thread_item.getFaultSignal().setOriginalLogicValue(1);
+                                 thread_item.getFaultSignal().setLogicValue(0);
+                                 thread_item.getFaultSignal().setLogicValueBoolean(Boolean.FALSE);
+                                
+                                 inputsSignals.get(index).setOriginalLogicValue(thread_item.getFaultSignal().getOriginalLogicValue());
+                                 inputsSignals.get(index).setLogicValue(thread_item.getFaultSignal().getLogicValue());
+                                 inputsSignals.get(index).setLogicValueBoolean(thread_item.getFaultSignal().getLogicValueBoolean());
+                                 
                             }
                           // System.out.println(" -> fault injected (" + faultSig + ")" +  " - O(v):"+inputsSignals.get(index).getOriginalLogicValue() + "  N(v):"+inputsSignals.get(index).getLogicValue());                   
                         }
