@@ -137,6 +137,8 @@ import signalProbability.ProbCircuit;
        
         private void startSimulationFaultFree() throws IOException, WriteException{   
             
+            
+            
             for (int i = 0; i < this.threadSimulationList.size(); i++) {
                     //System.out.println("Index : "+ this.threadSimulationList.get(i).getSimulationIndex() + "  - vec:" + this.threadSimulationList.get(i).getinputVector());
                     //this.insertInputVectors(cellLib, "selected", this.threadSimulationList.get(i).getinputVector());
@@ -144,7 +146,8 @@ import signalProbability.ProbCircuit;
                     this.propagateInputVectors(this.threadSimulationList.get(i).getSimulationIndex(), this.threadSimulationList.get(i).getinputVector(), this.threadSimulationList.get(i).getFaultSignal(), this.threadSimulationList.get(i));
                     this.getPropagateFaultFreeResults( this.threadSimulationList.get(i).getinputVector(), this.threadSimulationList.get(i).getSimulationIndex(), this.threadSimulationList.get(i), i+1);
             }
- 
+                
+            
         }
 
         public  ArrayList <Test_Item> getThreadSimulatinArray(){

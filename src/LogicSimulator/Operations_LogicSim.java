@@ -56,6 +56,7 @@ import writers.WriteExcel;
     private final String circuitFilePath;
     private final String library;
     private final String libraryPath;
+    
     private CellLibrary cellLibrary;
     private Circuit circuit;
     private LevelCircuit levelCircuit;
@@ -65,10 +66,13 @@ import writers.WriteExcel;
     private final long timeoutMiliSeconds;
     private long spr_timeConsumption;
     private int thread;
+    
     private int unmasked_faults ;
     private float reliability_circuit;
     private double MTBF;
+    
     private long time_seconds;
+    
     private MappedVerilogReader verilog_circuit;
     private ArrayList <Signal> internSignals = new ArrayList<>();
     private final ArrayList <String> inputListValues = new ArrayList<>();
@@ -1578,10 +1582,9 @@ import writers.WriteExcel;
      public void writeTxtLog(String filename, String date, String dateend, int threads, long propagateTime, int nrVec,long propagateTimems) throws IOException{
         
         System.out.println("Creating .txt -> file: " + filename);
-        //nrVec = nrVec + 1;
-                
+        
         //this.unmasked_faults = propagate_faults;
-        this.reliability_circuit =  (float) ( 1 - ((float) this.unmasked_faults / (float) (nrVec)));
+        this.reliability_circuit =  (float) ( 1 - ((float) this.unmasked_faults / (float) nrVec));
          
        
         double lamb = - Math.log(this.reliability_circuit);
@@ -1845,14 +1848,14 @@ import writers.WriteExcel;
                 
                 this.writeCsvFileTh("Multithreading_Log_fault_free_"+this.circuit.getName()+"_Theads-"+ this.thread, itemx_list);
                 
-                this.writeTxtLog("Multithreading_Simple_Log_" +this.circuit.getName()+"_Theads-"+ this.thread , dateini,  formattedDate2, thread_list.size(), propagateTime, (N+1), propagateTimems);
+                this.writeTxtLog("Multithreading_Simple_Log_" +this.circuit.getName()+"_Theads-"+ this.thread , dateini,  formattedDate2, thread_list.size(), propagateTime, N, propagateTimems);
                 
                 this.writeCsvFileCompleteTh("Multithreading_Complete_Log_"+this.circuit.getName()+"_Theads-"+ this.thread, itemx_list);
                
                 
                 System.out.println("----------------- Results ------------------");
                 System.out.println("Circuit: " + this.circuit.getName());
-                System.out.println("Total Vectors (N): " + (N+1));
+                System.out.println("Total Vectors (N): " + N);
                 System.out.println("Propagated fault(s) (Ne): " + this.unmasked_faults);
                 System.out.println("Reliability: " + "(1-(" + this.unmasked_faults + "/" + N + ")) = " + this.reliability_circuit);
                 System.out.println("MTBF (Mean Time Between failure) : " + this.MTBF);
@@ -2166,16 +2169,13 @@ import writers.WriteExcel;
                 
                 long loadTimeStart = System.nanoTime();//System.currentTimeMillis();
                 
-                testNumber--;
-                
                 LocalDateTime myDateObj = LocalDateTime.now();
                 //System.out.println("Before formatting: " + myDateObj);
                 DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
                 String formattedDate = myDateObj.format(myFormatObj);
                 System.out.println("- Simulation start in : " + formattedDate);
-                System.out.println("- Vec size: (0 - " + testNumber + ") " + (testNumber+1) );
-                System.out.println("- Round (" + id + ") of (" + interaction + ")" );
-                
+                System.out.println("- Vec size: " + testNumber);
+                 System.out.println("- Round : " + interaction);
          
                 /*Reading CellLibrary*/
                 CellLibrary cellLib = new CellLibrary();
@@ -2284,14 +2284,15 @@ import writers.WriteExcel;
                                     }  
                                    
                                 }
-                                // System.out.println(" start: "+ start + "  - end: " + end);                         
+                               // System.out.println(" start: "+ start + "  - end: " + end);                         
                                 for (int j = start; j < end ; j++) {
                                         
                                         inputVector = this.getInputVector(ListInputVectors, j); //input Test n
                                         //this.insertInputVector(cellLib, "selected", inputVector); //Depois na hora de inseriri vetor
                                         int SigIndex = this.randomInjectionFault();
 
-                                        // System.out.println("index: "+(j+1) + "     -     vec: " + inputVector);
+                                       // System.out.println("index: "+(j+1) + "     -     vec: " + inputVector);
+
                                         Test_Item temp = new Test_Item(inputVector, this.internSignals.get(SigIndex), j+1);
 
                                         ItemxSimulationList.add(temp);
@@ -2355,16 +2356,16 @@ import writers.WriteExcel;
                 //this.writeCsvFileTh("Multithreading_Log_fault_free_"+this.circuit.getName()+"_Theads-"+ this.thread +  "_TestNumber-"+ N , itemx_list);
                 this.time_seconds = propagateTime;
                 
-                this.writeTxtLog("Multithreading_Simple_Log_" +this.circuit.getName()+"_Theads-"+ this.thread +  "_TestNumber-"+ (N+1) + "_round-"+id+" of " + interaction , formattedDate,  formattedDate2, thread_list.size(), propagateTime, (N+1), propagateTimems);
+                this.writeTxtLog("Multithreading_Simple_Log_" +this.circuit.getName()+"_Theads-"+ this.thread +  "_TestNumber-"+ N + "_round-"+id+" of " + interaction , formattedDate,  formattedDate2, thread_list.size(), propagateTime, N, propagateTimems);
                
-                this.writeCsvFileCompleteTh("Multithreading_Complete_Log_"+this.circuit.getName()+"_Theads-"+ this.thread + "_TestNumber-"+ (N+1) + "_round-"+id+" of " + interaction , itemx_list);
+                this.writeCsvFileCompleteTh("Multithreading_Complete_Log_"+this.circuit.getName()+"_Theads-"+ this.thread + "_TestNumber-"+ N + "_round-"+id+" of " + interaction , itemx_list);
                
                 
                 System.out.println("----------------- Results ------------------");
                 System.out.println("Circuit: " + this.circuit.getName());
-                System.out.println("Total Vectors (N): " + (N+1));
+                System.out.println("Total Vectors (N): " + N);
                 System.out.println("Propagated fault(s) (Ne): " + this.unmasked_faults);
-                System.out.println("Reliability: " + "(1-(" + this.unmasked_faults + "/" + (N+1) + ")) = " + this.reliability_circuit);
+                System.out.println("Reliability: " + "(1-(" + this.unmasked_faults + "/" + N + ")) = " + this.reliability_circuit);
                 System.out.println("MTBF (Mean Time Between failure) : " + this.MTBF);
                 System.out.println("Simulation TimeElapsed: " + propagateTime + " m(s)");
                 System.out.println("--------------------------------------------");
