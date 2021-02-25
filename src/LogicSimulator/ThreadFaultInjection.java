@@ -211,7 +211,7 @@ import signalProbability.ProbCircuit;
                         DepthGate gate = (DepthGate) object;
                         //gate.getGate().getType()
                         //System.out.println("              - Gate: "+ gatesInThisLevel.get(k)  + "  type: "+ gate.getGate().getType());
-                        boolean test = this.calculateFaultFreeOutputGateValue(gate.getGate().getType(), gate, gate.getGate().getInputs());  //Method calc the output from the gate
+                        boolean outputGate = this.calculateFaultFreeOutputGateValue(gate.getGate().getType(), gate, gate.getGate().getInputs());  //Method calc the output from the gate
                       
                         
                         for (int s = 0; s < gate.getGate().getOutputs().size(); s++) {
@@ -220,8 +220,9 @@ import signalProbability.ProbCircuit;
                             
                             //System.out.println(faultSig+" Sig EQUAL "+sig);
 
-                            if(test == true){
+                            if(outputGate == true){    //Saida do GATE  = 1
                                 thread_item.setSignalOriginalValue(1);
+                                
                                 
                                 //sig.setLogicValue(1);
                                 gate.getGate().getOutputs().get(s).setOriginalLogicValue(1);
@@ -494,7 +495,9 @@ import signalProbability.ProbCircuit;
                         //vetor de entrada aleatório
                         for (int i = 0; i < inputSignais.size(); i++) {
                                 int randomLogicValue = gerador.nextInt(2);
-                                inputSignais.get(i).setLogicValue(randomLogicValue);
+                                //inputSignais.get(i).setLogicValue(randomLogicValue); //old
+                                this.circuit.getInputs().get(i).setLogicValue(randomLogicValue);
+                                this.circuit.getInputs().get(i).setOriginalLogicValue(vector.get(i));
                                // System.out.println(inputSignais.get(i)+" : '"+inputSignais.get(i).getLogicValue()+"'");
                         }
                        
@@ -509,7 +512,9 @@ import signalProbability.ProbCircuit;
                         
                         for (int i = 0; i < inputSignals.size(); i++) {
                                 //int randomLogicValue = gerador.nextInt(2);
-                                inputSignals.get(i).setLogicValue(vector.get(i));
+                                 //inputSignals.get(i).setLogicValue(vector.get(i));
+                                 this.circuit.getInputs().get(i).setLogicValue(vector.get(i));
+                                 this.circuit.getInputs().get(i).setOriginalLogicValue(vector.get(i));
                                 //System.out.println(inputSignals.get(i)+" : '"+inputSignals.get(i).getLogicValue()+"'");
                         }
                    break;
