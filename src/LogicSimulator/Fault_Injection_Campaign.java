@@ -2033,7 +2033,6 @@ import writers.WriteExcel;
           
      }
     
-    
      public void Sequential_Logic_Simulator(String library, String CircuitFile) throws IOException, ScriptException, Exception{  
          
                 long loadTimeStart = System.nanoTime();//System.currentTimeMillis();
@@ -2596,7 +2595,7 @@ import writers.WriteExcel;
           
      }
         
-     public void Print_Circuit_Specs (String library, String CircuitFile) throws IOException, Exception{
+     public void print_Circuit_Specs (String library, String CircuitFile) throws IOException, Exception{
                 
                 long loadTimeStart = System.nanoTime();//System.currentTimeMillis();
                 

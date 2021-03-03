@@ -257,7 +257,7 @@ public class main {
                    
                     //logicSimulatorAnalisys.MulltiThreading_Logic_Simulator_ramdomInputs(library, Reliability, testNumber); 
                     
-                    //logicSimulatorAnalisys.Print_Circuit_Specs(library, Reliability);
+                    //logicSimulatorAnalisys.print_Circuit_Specs(library, Reliability);
                         
                
         }
