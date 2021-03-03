@@ -12,7 +12,7 @@ import java.util.Vector;
 */
 
 
-public class LogicSimTool {
+public class main {
     
     
    
@@ -165,11 +165,11 @@ public class LogicSimTool {
        
       */
        //try {
-            //LogicSimTool Analysis2 = new LogicSimTool();
+            //LogicSimTool Analysis2 = new main();
             
             //Analysis2.callMethodsAnalisys(circuit750k, library, reliability, Threads, 1000000);
            
-             LogicSimTool Analysis = new LogicSimTool();
+             main Analysis = new main();
              
              
              
@@ -251,11 +251,11 @@ public class LogicSimTool {
          for (int i = 0; i < circuitList.size(); i++) {
              
              for (int k = 0; k < threads.size(); k++) {
-                   Operations_LogicSim logicSimulatorAnalisys = new Operations_LogicSim(Reliability, i , circuitList.get(i).toString(), library, (int) threads.get(k));
-                    //logicSimulatorAnalisys.SequentialSimulator(library, Reliability); //Analise Sequencial
-                    //logicSimulatorAnalisys.MulltiThreading_Simulator(library, Reliability);;
+                   Fault_Injection_Campaign logicSimulatorAnalisys = new Fault_Injection_Campaign(Reliability, i , circuitList.get(i).toString(), library, (int) threads.get(k));
+                    //logicSimulatorAnalisys.Sequential_Logic_Simulator(library, Reliability); //Analise Sequencial
+                    //logicSimulatorAnalisys.MulltiThreading_Logic_Simulator(library, Reliability);;
                    
-                    //logicSimulatorAnalisys.MulltiThreading_Simulator_ramdomInputs(library, Reliability, testNumber); 
+                    //logicSimulatorAnalisys.MulltiThreading_Logic_Simulator_ramdomInputs(library, Reliability, testNumber); 
                     
                     //logicSimulatorAnalisys.Print_Circuit_Specs(library, Reliability);
                         
@@ -289,14 +289,14 @@ public class LogicSimTool {
              
              for (int k = 0; k < threads.size(); k++) {
                   
-                    //logicSimulatorAnalisys.SequentialSimulator(library, Reliability); //Analise Sequencial
-                    //logicSimulatorAnalisys.MulltiThreading_Simulator(library, Reliability);;
-                    //logicSimulatorAnalisys.MulltiThreading_Simulator_ramdomInputs(library, Reliability, testNumber); 
+                    //logicSimulatorAnalisys.Sequential_Logic_Simulator(library, Reliability); //Analise Sequencial
+                    //logicSimulatorAnalisys.MulltiThreading_Logic_Simulator(library, Reliability);;
+                    //logicSimulatorAnalisys.MulltiThreading_Logic_Simulator_ramdomInputs(library, Reliability, testNumber); 
                         
                     for (int j = 0; j < interactions; j++) {
                          
-                         Operations_LogicSim logicSimulatorAnalisys = new Operations_LogicSim(Reliability, i , circuitList.get(i).toString(), library, (int) threads.get(k));
-                         logicSimulatorAnalisys.MulltiThreading_Simulator_ramdomInputs_MonteCarlo(library, Reliability, testNumber, interactions, j); 
+                         Fault_Injection_Campaign logicSimulatorAnalisys = new Fault_Injection_Campaign(Reliability, i , circuitList.get(i).toString(), library, (int) threads.get(k));
+                         logicSimulatorAnalisys.MulltiThreading__Logic_Simulator_ramdomInputs_MonteCarlo(library, Reliability, testNumber, interactions, j); 
                          //logicSimulatorAnalisys.TESTEMODE(library, Reliability, testNumber, interactions, j);
                          item x = new item(j, logicSimulatorAnalisys.getPropagatedFaults(), testNumber, logicSimulatorAnalisys.getTimeExecutionRound());
                          list_itemx.add(x);

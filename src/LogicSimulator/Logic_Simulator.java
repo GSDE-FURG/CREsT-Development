@@ -41,7 +41,7 @@ import signalProbability.ProbCircuit;
  *
  * @author clayt
  */
- public class ThreadFaultInjection implements Runnable{
+ public class Logic_Simulator implements Runnable{
 
         private long threadID;
         private String inputStr;
@@ -78,7 +78,7 @@ import signalProbability.ProbCircuit;
        
         private final ArrayList <String> faultSignalBitFlipArray = new ArrayList<>();
         
-        public ThreadFaultInjection(ArrayList <Test_Item> threadSimulationList, Circuit circuit, CellLibrary cellLibrary, LevelCircuit levelCircuit, int start, int end, String genlib, String circuitFilePath) throws IOException, ScriptException, Exception{
+        public Logic_Simulator(ArrayList <Test_Item> threadSimulationList, Circuit circuit, CellLibrary cellLibrary, LevelCircuit levelCircuit, int start, int end, String genlib, String circuitFilePath) throws IOException, ScriptException, Exception{
        
           
            this.threadSimulationList = threadSimulationList;
@@ -844,9 +844,9 @@ import signalProbability.ProbCircuit;
                 startSimulationFaultInjection();
                 //printResults();
             } catch (IOException ex) {
-                Logger.getLogger(ThreadFaultInjection.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(Logic_Simulator.class.getName()).log(Level.SEVERE, null, ex);
             } catch (WriteException ex) {
-                Logger.getLogger(ThreadFaultInjection.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(Logic_Simulator.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
          

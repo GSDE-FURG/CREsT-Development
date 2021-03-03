@@ -2,7 +2,7 @@ package writers;
 
 
 import LogicSimulator.Test_Item;
-import LogicSimulator.ThreadFaultInjection;
+import LogicSimulator.Logic_Simulator;
 import datastructures.Signal;
 import java.io.File;
 import java.io.FileWriter;
@@ -251,7 +251,7 @@ public class WriteCsvTh {
              csvWriter.close();
     }
     
-    public void writeCSVCompleteTh(String filename, String circuitName, ArrayList <Signal> inputSignals,  ArrayList <Signal> outputSignals,  ArrayList <Signal> all_signals, String Head, ArrayList <ThreadFaultInjection> thread_list_test, String propagated_faults) throws IOException {
+    public void writeCSVCompleteTh(String filename, String circuitName, ArrayList <Signal> inputSignals,  ArrayList <Signal> outputSignals,  ArrayList <Signal> all_signals, String Head, ArrayList <Logic_Simulator> thread_list_test, String propagated_faults) throws IOException {
        
         this.FileName = filename;
         this.FileNameCsv = this.FileName + ".csv";
@@ -426,7 +426,7 @@ public class WriteCsvTh {
     }
     
     @SuppressWarnings("empty-statement")
-     public void writeCSVTh(String filename, String circuitName, ArrayList <Signal> inputSignals,  ArrayList <Signal> outputSignals,  ArrayList <Signal> all_signals, String Head, ArrayList <ThreadFaultInjection> thread_list_tesst_items) throws IOException {
+     public void writeCSVTh(String filename, String circuitName, ArrayList <Signal> inputSignals,  ArrayList <Signal> outputSignals,  ArrayList <Signal> all_signals, String Head, ArrayList <Logic_Simulator> thread_list_tesst_items) throws IOException {
        
         this.FileName = filename;
         this.FileNameCsv = this.FileName + ".csv";

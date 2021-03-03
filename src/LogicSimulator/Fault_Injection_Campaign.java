@@ -47,16 +47,15 @@ import writers.WriteExcel;
 
 /**
  *
- * @author clayt
+ * @author Clayton Farias
  */
- public class Operations_LogicSim {
+ public class Fault_Injection_Campaign {
   
 
     private final String reliability;
     private final String circuitFilePath;
     private final String library;
     private final String libraryPath;
-    
     private CellLibrary cellLibrary;
     private Circuit circuit;
     private LevelCircuit levelCircuit;
@@ -66,13 +65,10 @@ import writers.WriteExcel;
     private final long timeoutMiliSeconds;
     private long spr_timeConsumption;
     private int thread;
-    
     private int unmasked_faults ;
     private float reliability_circuit;
     private double MTBF;
-    
     private long time_seconds;
-    
     private MappedVerilogReader verilog_circuit;
     private ArrayList <Signal> internSignals = new ArrayList<>();
     private final ArrayList <String> inputListValues = new ArrayList<>();
@@ -83,7 +79,7 @@ import writers.WriteExcel;
     private final ArrayList <ArrayList<String>> SignalFaultBitFlip = new ArrayList<>();
     
     
-     public Operations_LogicSim(String reliabilty,long Timeout, String circuitFilePath, String library, int threads) {
+     public Fault_Injection_Campaign(String reliabilty,long Timeout, String circuitFilePath, String library, int threads) {
         
 
         this.reliability = reliabilty;
@@ -339,7 +335,7 @@ import writers.WriteExcel;
         
         
         /*SPR Call*/
-        Operations_LogicSim spr = new Operations_LogicSim(this.reliability, this.timeout,  CircuitFile, library, 0);
+        Fault_Injection_Campaign spr = new Fault_Injection_Campaign(this.reliability, this.timeout,  CircuitFile, library, 0);
         
         /*Time SPR*/
         //long sprStartMethodTime = System.currentTimeMillis();
@@ -1468,7 +1464,7 @@ import writers.WriteExcel;
          
      }
      
-     public void writeCsvFileCompleteTh(String filename, ArrayList <ThreadFaultInjection> itemx_list) throws IOException, WriteException{
+     public void writeCsvFileCompleteTh(String filename, ArrayList <Logic_Simulator> itemx_list) throws IOException, WriteException{
          
              //System.out.println("Creating Complete log .....");
              ArrayList <Signal> outputSignals = this.circuit.getOutputs();
@@ -1555,7 +1551,7 @@ import writers.WriteExcel;
                 
      }
      
-     public void writeCsvFileTh(String filename, ArrayList <ThreadFaultInjection> itemx_list) throws IOException, WriteException{
+     public void writeCsvFileTh(String filename, ArrayList <Logic_Simulator> itemx_list) throws IOException, WriteException{
             System.out.println("---------- New Csv_Txt ----------\n");
             String Header = "Input Signals" + ";" + "Fault-Free Circuit Output";
             
@@ -1618,7 +1614,7 @@ import writers.WriteExcel;
         }
      }
      
-    public ArrayList <Signal> calcAllSignals(){
+     public ArrayList <Signal> calcAllSignals(){
          //System.out.println("Sort Fault in the input injection");
          ArrayList <Signal> signalList = new ArrayList<>();
          signalList = this.circuit.getSignals();
@@ -1631,7 +1627,7 @@ import writers.WriteExcel;
                         //}
                     
                 }
-                System.out.println(" Cpnsiering all  Signals --> "+r);  
+                System.out.println(" Considering all signals --> "+r);  
                 System.out.println("Signals list: "+ signalList.toString());
          return r;
      }
@@ -1686,7 +1682,358 @@ import writers.WriteExcel;
          
      }
     
-     public void SequentialSimulator(String library, String CircuitFile) throws IOException, ScriptException, Exception{  
+     public void setInputVectorPartitionYhread(int partition, int start, int end){
+         
+     }
+     
+     public void processLogicSimMultiThreadingRsults(List thread_list, ArrayList <Logic_Simulator> itemx_list, long propagateTimeStart, int N, String dateini) throws IOException, WriteException{
+         
+                 
+         
+                 for (int i=0; i < itemx_list.size() ; i++) {
+
+                            // System.out.println("SIgnal fault list : "+ this.SignalFault);
+                           
+                            this.unmasked_faults = this.unmasked_faults +  itemx_list.get(i).getPropagatedFaults();
+                            
+                            System.out.println("Thread: " + itemx_list.get(i).getThreadId() + " - Total Faults : "+  itemx_list.get(i).getPropagatedFaults());
+                    }
+               
+                
+                
+                long propagateTimeEnd = System.nanoTime();
+                long propagateTime =   TimeUnit.NANOSECONDS.toSeconds(propagateTimeEnd - propagateTimeStart);
+                long propagateTimems =   TimeUnit.NANOSECONDS.toMillis(propagateTimeEnd - propagateTimeStart);
+                
+             
+                LocalDateTime myDateObj2 = LocalDateTime.now();
+                DateTimeFormatter myFormatObj2 = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+                String formattedDate2 = myDateObj2.format(myFormatObj2);
+                
+                System.out.println("- Simulation finished at: " + formattedDate2);
+                System.out.println("- PropagatedTime (s): " + propagateTime);
+                System.out.println("");
+                
+                this.writeCsvFileTh("Multithreading_Log_fault_free_"+this.circuit.getName()+"_Theads-"+ this.thread, itemx_list);
+                
+                this.writeTxtLog("Multithreading_Simple_Log_" +this.circuit.getName()+"_Theads-"+ this.thread , dateini,  formattedDate2, thread_list.size(), propagateTime, N, propagateTimems);
+                
+                this.writeCsvFileCompleteTh("Multithreading_Complete_Log_"+this.circuit.getName()+"_Theads-"+ this.thread, itemx_list);
+               
+                
+                System.out.println("----------------- Results ------------------");
+                System.out.println("Circuit: " + this.circuit.getName());
+                System.out.println("Total Vectors (N): " + N);
+                System.out.println("Propagated fault(s) (Ne): " + this.unmasked_faults);
+                System.out.println("Reliability: " + "(1-(" + this.unmasked_faults + "/" + N + ")) = " + this.reliability_circuit);
+                System.out.println("MTBF (Mean Time Between failure) : " + this.MTBF);
+                System.out.println("Simulation TimeElapsed: " + propagateTime + " m(s)");
+                System.out.println("--------------------------------------------");
+
+                
+         
+     }
+      
+     public void processLogicSimMultiThreadingResultsRandom(List thread_list, ArrayList <Logic_Simulator> itemx_list, long propagateTimeStart, int N, String dateini, int testNumber) throws IOException, WriteException{
+         
+                 
+         
+                 for (int i=0; i < itemx_list.size() ; i++) {
+
+                            // System.out.println("SIgnal fault list : "+ this.SignalFault);
+                           
+                            this.unmasked_faults = this.unmasked_faults +  itemx_list.get(i).getPropagatedFaults();
+                            
+                            System.out.println("Thread: " + itemx_list.get(i).getThreadId() + " - Total Faults : "+  itemx_list.get(i).getPropagatedFaults());
+                    }
+               
+                
+                
+                long propagateTimeEnd = System.nanoTime();
+                long propagateTime =   TimeUnit.NANOSECONDS.toSeconds(propagateTimeEnd - propagateTimeStart);
+                long propagateTimems =   TimeUnit.NANOSECONDS.toMillis(propagateTimeEnd - propagateTimeStart);
+                
+             
+                LocalDateTime myDateObj2 = LocalDateTime.now();
+                DateTimeFormatter myFormatObj2 = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+                String formattedDate2 = myDateObj2.format(myFormatObj2);
+                
+                System.out.println("- Simulation finished at: " + formattedDate2);
+                System.out.println("- PropagatedTime (s): " + propagateTime);
+                System.out.println("");
+                
+                //this.writeCsvFileTh("Multithreading_Log_fault_free_"+this.circuit.getName()+"_Theads-"+ this.thread +  "_TestNumber-"+ N , itemx_list);
+                
+                this.writeTxtLog("Multithreading_Simple_Log_" +this.circuit.getName()+"_Theads-"+ this.thread +  "_TestNumber-"+ N , dateini,  formattedDate2, thread_list.size(), propagateTime, N, propagateTimems);
+                
+                this.writeCsvFileCompleteTh("Multithreading_Complete_Log_"+this.circuit.getName()+"_Theads-"+ this.thread + "_TestNumber-"+ N , itemx_list);
+               
+                
+                System.out.println("----------------- Results ------------------");
+                System.out.println("Circuit: " + this.circuit.getName());
+                System.out.println("Total Vectors (N): " + N);
+                System.out.println("Propagated fault(s) (Ne): " + this.unmasked_faults);
+                System.out.println("Reliability: " + "(1-(" + this.unmasked_faults + "/" + N + ")) = " + this.reliability_circuit);
+                System.out.println("MTBF (Mean Time Between failure) : " + this.MTBF);
+                System.out.println("Simulation TimeElapsed: " + propagateTime + " m(s)");
+                System.out.println("--------------------------------------------");
+
+                
+         
+     }
+    
+     public void MulltiThreading_Logic_Simulator_ramdomInputs(String library, String CircuitFile, int testNumber) throws IOException, Exception{
+                
+                long loadTimeStart = System.nanoTime();//System.currentTimeMillis();
+                
+                LocalDateTime myDateObj = LocalDateTime.now();
+                //System.out.println("Before formatting: " + myDateObj);
+                DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+                String formattedDate = myDateObj.format(myFormatObj);
+                System.out.println("- Simulation start in : " + formattedDate);
+         
+                /*Reading CellLibrary*/
+                CellLibrary cellLib = new CellLibrary();
+                this.cellLibrary = cellLib;
+                this.cellLibrary.initLibrary(this.libraryPath);
+                
+                System.out.println("--- Reading celllib ...");
+                //System.out.println("  - Avaliable logic gatesin this library: "+cellLib.getCells());
+                /*----------------------*/
+                
+                /*Reading verilog*/
+                MappedVerilogReader verilog_circuit = new MappedVerilogReader(this.circuitFilePath, this.cellLibrary);
+                this.verilog_circuit = verilog_circuit;
+                /*Circuit linked to verilog_circuit - init circuit*/
+                this.circuit = verilog_circuit.getCircuit();
+                System.out.println("--- Reading verilog: " + this.verilog_circuit.getCircuit().getName() + ".v");
+                //System.out.println("Patterns : " + this.verilog_circuit.getGatePattern());
+                /*----------------------*/
+                
+                
+                /* Print circuit Specs*/
+                System.out.println("\n------ Printing Circuit Specs: --------");
+                this.PrintSpecs();
+                System.out.println("---------------------------------------\n");
+                /*----------------------*/
+                
+                /*Circuit Probabilities */
+                this.initLevelCircuit();
+               
+                /*Init ProbCircuits*/
+                 this.initProbCircuit();
+                
+                /*Init PTMs Const*/
+                cellLib.setPTMCells2(Float.valueOf(reliability));
+                cellLib.setPTMCells(new BigDecimal(reliability));
+               
+                long loadTimeEnd = System.nanoTime();//System.currentTimeMillis();
+              
+                long loadTime =   TimeUnit.NANOSECONDS.toMillis(loadTimeEnd - loadTimeStart);
+              
+                System.out.println("- Load Time m(s): " + loadTime);
+               
+                System.out.println("\n------ Inserting the input vector --------");
+                System.out.println("     - Circuit Input(s): "+this.probCircuit.getInputs());
+                System.out.println("     - Circuit Output(s): "+this.probCircuit.getOutputs());
+                
+               
+                int N = this.calcNumberOfInputVector();  //(int) Math.pow(2, this.probCircuit.getInputs().size());
+               
+                // System.out.println("Number total of input vectors : "+ N);
+                
+                System.out.println("Threads: " + this.thread); 
+               
+                this.internSignals = this.calcInternSignals(); // calc intern Signals
+                
+                ArrayList <String> random_input_vectors =  this.calcInputRandom(cellLib, library, N, testNumber); //this.calcInputTableVector(this.probCircuit.getInputs().size(), N);
+ 
+                ArrayList <ArrayList<Integer>> ListInputVectors =  this.splitInputPatternsInInt(random_input_vectors, this.probCircuit.getInputs().size());
+                
+                N = testNumber;
+                
+                List thread_list = new ArrayList();
+                
+                long propagateTimeStart = System.nanoTime();
+                
+                int partition;
+                if(this.thread == 1){
+                     partition = N; //final_pos/NThreads ;
+                }
+                else{
+                    double temp;
+                    temp = Math.floor(N/this.thread); 
+                    //System.out.println("Division : "+ a);
+                    partition =  (int) temp ;//(int) Math.round(collapsed_faults/NThreads); 
+                }
+                
+                //System.out.println("Partion : "+ partition);
+                int start = 0;
+                int end = partition;
+                
+                 ArrayList <Logic_Simulator> itemx_list = new ArrayList<>();
+                 
+                 //ArrayList <Integer, String> example = new ArrayList<>();
+                
+                for (int i = 0; i < this.thread; i++) { //Loop of simulations
+                                //System.out.println(" - Thread: "+i);
+                               
+                                ArrayList <Test_Item> ItemxSimulationList = new ArrayList<>();
+                    
+                                ArrayList <Integer> inputVector = new ArrayList<>();
+                                
+                                if((this.thread-1) == (i)){
+
+                                    start = end;
+                                    end = N; 
+                                }
+                                else{
+                                    if(i == 0){
+                                        start = 0;
+                                        end = partition;
+                                    }else{
+                                         start = start + partition;
+                                         end = start + partition;  
+                                    }  
+                                   
+                                }
+                               // System.out.println(" start: "+ start + "  - end: " + end);                         
+                                for (int j = start; j < end ; j++) {
+                                        
+                                        inputVector = this.getInputVector(ListInputVectors, j); //input Test n
+                                        //this.insertInputVector(cellLib, "selected", inputVector); //Depois na hora de inseriri vetor
+                                        int SigIndex = this.randomInjectionFault();
+
+                                       // System.out.println("index: "+(j+1) + "     -     vec: " + inputVector);
+
+                                        Test_Item temp = new Test_Item(inputVector, this.internSignals.get(SigIndex), j+1);
+
+                                        ItemxSimulationList.add(temp);
+                                }
+                                
+                                
+                                Logic_Simulator threadItem = new Logic_Simulator(ItemxSimulationList, this.circuit, this.cellLibrary, this.levelCircuit, start, end, this.library, this.circuitFilePath); // Thread contex info
+                                itemx_list.add(threadItem); // Itemx sorted's
+                              
+                             
+                                
+                           
+                             
+                             Runnable runnable = threadItem; // Logic_Simulator(listThreadItemx, this.circuit, cellLib, levelCircuit);
+                             Thread thread = new Thread(runnable);
+                             thread_list.add(thread);
+                                
+                           //  System.out.println("\n---------------------------------------");  
+                             
+                     }
+                  
+                    Thread thread_temp = null;// new Thread();
+                    for (int i=0; i < thread_list.size() ; i++) {
+                        thread_temp = (Thread) thread_list.get(i);
+                        thread_temp.start();
+                        
+                    }
+                    
+                     for (int i=0; i < thread_list.size() ; i++) {
+                        thread_temp = (Thread) thread_list.get(i);
+                        thread_temp.join();
+                    }
+                     
+                     
+                    this.processLogicSimMultiThreadingResultsRandom(thread_list, itemx_list, propagateTimeStart, N, formattedDate, testNumber);
+                    
+                    //int propagate_faults = 0;
+                  
+                   /* last version
+                    for (int i=0; i < itemx_list.size() ; i++) {
+                        
+                            //System.out.println(thread_item_list.get(i).getResults());
+                            this.inputListValuesStr.add(itemx_list.get(i).get_inputListValuesStr());
+                           
+                            
+                            //System.out.println((i+1) + " - SAIDA FREE FAULT: " + thread_item_list.get(i).get_outputListValueStr());
+                           /// System.out.println("         MAP thread:"+(i+1) + " - SAIDA FREE FAULT: " + thread_item_list.get(i).get_Map_fault_free());
+                            
+                            //Map<String, String> freeMap = new TreeMap<>(itemx_list.get(i).get_Map_fault_free());
+                            Map<String, String> faultMap = new TreeMap<>(itemx_list.get(i).get_Map_fault_fault());
+                            //thread_item_list.get(i).printMap(treeMap); 
+                           // System.out.println("Tree: "+ treeMap);
+                            //thread_item_list.get(i).get_Map_fault_free_str();
+                           // ArrayList<String> fault_free = new ArrayList<>();
+                            ArrayList<String> fault_inject = new ArrayList<>();
+                            
+                           //System.out.println("~~~~~~ Unsorted Free: "+freeMap);
+                            
+                           
+                            freeMap.entrySet().forEach((entry) -> { 
+                                fault_free.add(entry.getValue());
+                            });
+                            
+                             faultMap.entrySet().forEach((entryx) -> { 
+                                fault_inject.add(entryx.getValue());
+                            });
+                            
+                             //System.out.println("~~~~~~ Free: "+freeMap);
+                            
+                            //System.out.println(" Thread("+ i +"): fault free list-> " + fault_free + "  fault injected -> " + fault_inject);
+                            //this.outputFreeFaultListValueStr.add(fault_free); //mandei o fault free
+                            this.outputFreeFaultListValueStr.add(itemx_list.get(i).getLinkedFaultFreeResults()); //faultfree
+                            
+
+                            //this.outputListValueStr.add(thread_item_list.get(i).get_outputListValueStr());
+                            //this.outputListValueStr.add(fault_inject);
+                            this.outputListValueStr.add(itemx_list.get(i).getLinkedFaultResults());
+                            
+                            ///this.SignalFault.add(itemx_list.get(i).get_signalFaultList());
+                            this.SignalFault.add(itemx_list.get(i).get_signalFaultListCuncorrentLinked());
+                            
+                            this.SignalFaultBitFlip.add(itemx_list.get(i).get_signalFaultListBitflip());
+                            
+                            System.out.println("SIgnal fault list : "+ this.SignalFault);
+                            //propagate_faults = propagate_faults + itemx_list.get(i).getPropagatedFaults();
+                            this.unmasked_faults = this.unmasked_faults +  itemx_list.get(i).getPropagatedFaults();
+                            
+                            System.out.println(i + "Faults in : "+  itemx_list.get(i).getPropagatedFaults());
+                    }
+                    */
+                    /*
+                   System.out.println(""+this.inputListValuesStr);
+                   System.out.println(""+this.outputFreeFaultListValueStr);
+                   System.out.println(""+this.outputListValueStr);
+                    */
+                
+                /*
+                long propagateTimeEnd = System.nanoTime();
+                long propagateTime =   TimeUnit.NANOSECONDS.toMillis(propagateTimeEnd - propagateTimeStart);
+                
+             
+                LocalDateTime myDateObj2 = LocalDateTime.now();
+                DateTimeFormatter myFormatObj2 = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+                String formattedDate2 = myDateObj2.format(myFormatObj2);
+                
+                System.out.println("- Simulation finished at: " + formattedDate2);
+                System.out.println("- PropagatedTime m(s): " + propagateTime);
+                System.out.println("");
+                
+                this.writeCsvFileTh("Multithreading_Log_fault_free_"+this.circuit.getName()+"_Theads-"+ this.thread);
+                this.writeTxtLog("Multithreading_Simple_Log_" +this.circuit.getName()+"_Theads-"+ this.thread , formattedDate2, thread_list.size(), propagateTime, N);
+                this.writeCsvFileCompleteTh("Multithreading_Complete_Log_"+this.circuit.getName()+"_Theads-"+ this.thread);
+               
+                System.out.println("Main: Porpagated fault -: "+this.unmasked_faults);
+
+                */
+          
+     }
+    
+     public long getTimeExecutionRound(){
+         return this.time_seconds;
+     }
+     
+     public int getPropagatedFaults(){
+         return this.unmasked_faults;
+     }
+      
+     public void Sequential_Logic_Simulator(String library, String CircuitFile) throws IOException, ScriptException, Exception{  
          
                 long loadTimeStart = System.nanoTime();//System.currentTimeMillis();
                 
@@ -1813,595 +2160,8 @@ import writers.WriteExcel;
                     
                    
      }
-     
-     public void setInputVectorPartitionYhread(int partition, int start, int end){
-         
-     }
-     
-     public void processLogicSimMultiThreadingRsults(List thread_list, ArrayList <ThreadFaultInjection> itemx_list, long propagateTimeStart, int N, String dateini) throws IOException, WriteException{
-         
-                 
-         
-                 for (int i=0; i < itemx_list.size() ; i++) {
-
-                            // System.out.println("SIgnal fault list : "+ this.SignalFault);
-                           
-                            this.unmasked_faults = this.unmasked_faults +  itemx_list.get(i).getPropagatedFaults();
-                            
-                            System.out.println("Thread: " + itemx_list.get(i).getThreadId() + " - Total Faults : "+  itemx_list.get(i).getPropagatedFaults());
-                    }
-               
-                
-                
-                long propagateTimeEnd = System.nanoTime();
-                long propagateTime =   TimeUnit.NANOSECONDS.toSeconds(propagateTimeEnd - propagateTimeStart);
-                long propagateTimems =   TimeUnit.NANOSECONDS.toMillis(propagateTimeEnd - propagateTimeStart);
-                
-             
-                LocalDateTime myDateObj2 = LocalDateTime.now();
-                DateTimeFormatter myFormatObj2 = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
-                String formattedDate2 = myDateObj2.format(myFormatObj2);
-                
-                System.out.println("- Simulation finished at: " + formattedDate2);
-                System.out.println("- PropagatedTime (s): " + propagateTime);
-                System.out.println("");
-                
-                this.writeCsvFileTh("Multithreading_Log_fault_free_"+this.circuit.getName()+"_Theads-"+ this.thread, itemx_list);
-                
-                this.writeTxtLog("Multithreading_Simple_Log_" +this.circuit.getName()+"_Theads-"+ this.thread , dateini,  formattedDate2, thread_list.size(), propagateTime, N, propagateTimems);
-                
-                this.writeCsvFileCompleteTh("Multithreading_Complete_Log_"+this.circuit.getName()+"_Theads-"+ this.thread, itemx_list);
-               
-                
-                System.out.println("----------------- Results ------------------");
-                System.out.println("Circuit: " + this.circuit.getName());
-                System.out.println("Total Vectors (N): " + N);
-                System.out.println("Propagated fault(s) (Ne): " + this.unmasked_faults);
-                System.out.println("Reliability: " + "(1-(" + this.unmasked_faults + "/" + N + ")) = " + this.reliability_circuit);
-                System.out.println("MTBF (Mean Time Between failure) : " + this.MTBF);
-                System.out.println("Simulation TimeElapsed: " + propagateTime + " m(s)");
-                System.out.println("--------------------------------------------");
-
-                
-         
-     }
       
-     public void processLogicSimMultiThreadingResultsRandom(List thread_list, ArrayList <ThreadFaultInjection> itemx_list, long propagateTimeStart, int N, String dateini, int testNumber) throws IOException, WriteException{
-         
-                 
-         
-                 for (int i=0; i < itemx_list.size() ; i++) {
-
-                            // System.out.println("SIgnal fault list : "+ this.SignalFault);
-                           
-                            this.unmasked_faults = this.unmasked_faults +  itemx_list.get(i).getPropagatedFaults();
-                            
-                            System.out.println("Thread: " + itemx_list.get(i).getThreadId() + " - Total Faults : "+  itemx_list.get(i).getPropagatedFaults());
-                    }
-               
-                
-                
-                long propagateTimeEnd = System.nanoTime();
-                long propagateTime =   TimeUnit.NANOSECONDS.toSeconds(propagateTimeEnd - propagateTimeStart);
-                long propagateTimems =   TimeUnit.NANOSECONDS.toMillis(propagateTimeEnd - propagateTimeStart);
-                
-             
-                LocalDateTime myDateObj2 = LocalDateTime.now();
-                DateTimeFormatter myFormatObj2 = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
-                String formattedDate2 = myDateObj2.format(myFormatObj2);
-                
-                System.out.println("- Simulation finished at: " + formattedDate2);
-                System.out.println("- PropagatedTime (s): " + propagateTime);
-                System.out.println("");
-                
-                //this.writeCsvFileTh("Multithreading_Log_fault_free_"+this.circuit.getName()+"_Theads-"+ this.thread +  "_TestNumber-"+ N , itemx_list);
-                
-                this.writeTxtLog("Multithreading_Simple_Log_" +this.circuit.getName()+"_Theads-"+ this.thread +  "_TestNumber-"+ N , dateini,  formattedDate2, thread_list.size(), propagateTime, N, propagateTimems);
-                
-                this.writeCsvFileCompleteTh("Multithreading_Complete_Log_"+this.circuit.getName()+"_Theads-"+ this.thread + "_TestNumber-"+ N , itemx_list);
-               
-                
-                System.out.println("----------------- Results ------------------");
-                System.out.println("Circuit: " + this.circuit.getName());
-                System.out.println("Total Vectors (N): " + N);
-                System.out.println("Propagated fault(s) (Ne): " + this.unmasked_faults);
-                System.out.println("Reliability: " + "(1-(" + this.unmasked_faults + "/" + N + ")) = " + this.reliability_circuit);
-                System.out.println("MTBF (Mean Time Between failure) : " + this.MTBF);
-                System.out.println("Simulation TimeElapsed: " + propagateTime + " m(s)");
-                System.out.println("--------------------------------------------");
-
-                
-         
-     }
-    
-     public void MulltiThreading_Simulator_ramdomInputs(String library, String CircuitFile, int testNumber) throws IOException, Exception{
-                
-                long loadTimeStart = System.nanoTime();//System.currentTimeMillis();
-                
-                LocalDateTime myDateObj = LocalDateTime.now();
-                //System.out.println("Before formatting: " + myDateObj);
-                DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
-                String formattedDate = myDateObj.format(myFormatObj);
-                System.out.println("- Simulation start in : " + formattedDate);
-         
-                /*Reading CellLibrary*/
-                CellLibrary cellLib = new CellLibrary();
-                this.cellLibrary = cellLib;
-                this.cellLibrary.initLibrary(this.libraryPath);
-                
-                System.out.println("--- Reading celllib ...");
-                //System.out.println("  - Avaliable logic gatesin this library: "+cellLib.getCells());
-                /*----------------------*/
-                
-                /*Reading verilog*/
-                MappedVerilogReader verilog_circuit = new MappedVerilogReader(this.circuitFilePath, this.cellLibrary);
-                this.verilog_circuit = verilog_circuit;
-                /*Circuit linked to verilog_circuit - init circuit*/
-                this.circuit = verilog_circuit.getCircuit();
-                System.out.println("--- Reading verilog: " + this.verilog_circuit.getCircuit().getName() + ".v");
-                //System.out.println("Patterns : " + this.verilog_circuit.getGatePattern());
-                /*----------------------*/
-                
-                
-                /* Print circuit Specs*/
-                System.out.println("\n------ Printing Circuit Specs: --------");
-                this.PrintSpecs();
-                System.out.println("---------------------------------------\n");
-                /*----------------------*/
-                
-                /*Circuit Probabilities */
-                this.initLevelCircuit();
-               
-                /*Init ProbCircuits*/
-                 this.initProbCircuit();
-                
-                /*Init PTMs Const*/
-                cellLib.setPTMCells2(Float.valueOf(reliability));
-                cellLib.setPTMCells(new BigDecimal(reliability));
-               
-                long loadTimeEnd = System.nanoTime();//System.currentTimeMillis();
-              
-                long loadTime =   TimeUnit.NANOSECONDS.toMillis(loadTimeEnd - loadTimeStart);
-              
-                System.out.println("- Load Time m(s): " + loadTime);
-               
-                System.out.println("\n------ Inserting the input vector --------");
-                System.out.println("     - Circuit Input(s): "+this.probCircuit.getInputs());
-                System.out.println("     - Circuit Output(s): "+this.probCircuit.getOutputs());
-                
-               
-                int N = this.calcNumberOfInputVector();  //(int) Math.pow(2, this.probCircuit.getInputs().size());
-               
-                // System.out.println("Number total of input vectors : "+ N);
-                
-                System.out.println("Threads: " + this.thread); 
-               
-                this.internSignals = this.calcInternSignals(); // calc intern Signals
-                
-                ArrayList <String> random_input_vectors =  this.calcInputRandom(cellLib, library, N, testNumber); //this.calcInputTableVector(this.probCircuit.getInputs().size(), N);
- 
-                ArrayList <ArrayList<Integer>> ListInputVectors =  this.splitInputPatternsInInt(random_input_vectors, this.probCircuit.getInputs().size());
-                
-                N = testNumber;
-                
-                List thread_list = new ArrayList();
-                
-                long propagateTimeStart = System.nanoTime();
-                
-                int partition;
-                if(this.thread == 1){
-                     partition = N; //final_pos/NThreads ;
-                }
-                else{
-                    double temp;
-                    temp = Math.floor(N/this.thread); 
-                    //System.out.println("Division : "+ a);
-                    partition =  (int) temp ;//(int) Math.round(collapsed_faults/NThreads); 
-                }
-                
-                //System.out.println("Partion : "+ partition);
-                int start = 0;
-                int end = partition;
-                
-                 ArrayList <ThreadFaultInjection> itemx_list = new ArrayList<>();
-                 
-                 //ArrayList <Integer, String> example = new ArrayList<>();
-                
-                for (int i = 0; i < this.thread; i++) { //Loop of simulations
-                                //System.out.println(" - Thread: "+i);
-                               
-                                ArrayList <Test_Item> ItemxSimulationList = new ArrayList<>();
-                    
-                                ArrayList <Integer> inputVector = new ArrayList<>();
-                                
-                                if((this.thread-1) == (i)){
-
-                                    start = end;
-                                    end = N; 
-                                }
-                                else{
-                                    if(i == 0){
-                                        start = 0;
-                                        end = partition;
-                                    }else{
-                                         start = start + partition;
-                                         end = start + partition;  
-                                    }  
-                                   
-                                }
-                               // System.out.println(" start: "+ start + "  - end: " + end);                         
-                                for (int j = start; j < end ; j++) {
-                                        
-                                        inputVector = this.getInputVector(ListInputVectors, j); //input Test n
-                                        //this.insertInputVector(cellLib, "selected", inputVector); //Depois na hora de inseriri vetor
-                                        int SigIndex = this.randomInjectionFault();
-
-                                       // System.out.println("index: "+(j+1) + "     -     vec: " + inputVector);
-
-                                        Test_Item temp = new Test_Item(inputVector, this.internSignals.get(SigIndex), j+1);
-
-                                        ItemxSimulationList.add(temp);
-                                }
-                                
-                                
-                                ThreadFaultInjection threadItem = new ThreadFaultInjection(ItemxSimulationList, this.circuit, this.cellLibrary, this.levelCircuit, start, end, this.library, this.circuitFilePath); // Thread contex info
-                                itemx_list.add(threadItem); // Itemx sorted's
-                              
-                             
-                                
-                           
-                             
-                             Runnable runnable = threadItem; // ThreadFaultInjection(listThreadItemx, this.circuit, cellLib, levelCircuit);
-                             Thread thread = new Thread(runnable);
-                             thread_list.add(thread);
-                                
-                           //  System.out.println("\n---------------------------------------");  
-                             
-                     }
-                  
-                    Thread thread_temp = null;// new Thread();
-                    for (int i=0; i < thread_list.size() ; i++) {
-                        thread_temp = (Thread) thread_list.get(i);
-                        thread_temp.start();
-                        
-                    }
-                    
-                     for (int i=0; i < thread_list.size() ; i++) {
-                        thread_temp = (Thread) thread_list.get(i);
-                        thread_temp.join();
-                    }
-                     
-                     
-                    this.processLogicSimMultiThreadingResultsRandom(thread_list, itemx_list, propagateTimeStart, N, formattedDate, testNumber);
-                    
-                    //int propagate_faults = 0;
-                  
-                   /* last version
-                    for (int i=0; i < itemx_list.size() ; i++) {
-                        
-                            //System.out.println(thread_item_list.get(i).getResults());
-                            this.inputListValuesStr.add(itemx_list.get(i).get_inputListValuesStr());
-                           
-                            
-                            //System.out.println((i+1) + " - SAIDA FREE FAULT: " + thread_item_list.get(i).get_outputListValueStr());
-                           /// System.out.println("         MAP thread:"+(i+1) + " - SAIDA FREE FAULT: " + thread_item_list.get(i).get_Map_fault_free());
-                            
-                            //Map<String, String> freeMap = new TreeMap<>(itemx_list.get(i).get_Map_fault_free());
-                            Map<String, String> faultMap = new TreeMap<>(itemx_list.get(i).get_Map_fault_fault());
-                            //thread_item_list.get(i).printMap(treeMap); 
-                           // System.out.println("Tree: "+ treeMap);
-                            //thread_item_list.get(i).get_Map_fault_free_str();
-                           // ArrayList<String> fault_free = new ArrayList<>();
-                            ArrayList<String> fault_inject = new ArrayList<>();
-                            
-                           //System.out.println("~~~~~~ Unsorted Free: "+freeMap);
-                            
-                           
-                            freeMap.entrySet().forEach((entry) -> { 
-                                fault_free.add(entry.getValue());
-                            });
-                            
-                             faultMap.entrySet().forEach((entryx) -> { 
-                                fault_inject.add(entryx.getValue());
-                            });
-                            
-                             //System.out.println("~~~~~~ Free: "+freeMap);
-                            
-                            //System.out.println(" Thread("+ i +"): fault free list-> " + fault_free + "  fault injected -> " + fault_inject);
-                            //this.outputFreeFaultListValueStr.add(fault_free); //mandei o fault free
-                            this.outputFreeFaultListValueStr.add(itemx_list.get(i).getLinkedFaultFreeResults()); //faultfree
-                            
-
-                            //this.outputListValueStr.add(thread_item_list.get(i).get_outputListValueStr());
-                            //this.outputListValueStr.add(fault_inject);
-                            this.outputListValueStr.add(itemx_list.get(i).getLinkedFaultResults());
-                            
-                            ///this.SignalFault.add(itemx_list.get(i).get_signalFaultList());
-                            this.SignalFault.add(itemx_list.get(i).get_signalFaultListCuncorrentLinked());
-                            
-                            this.SignalFaultBitFlip.add(itemx_list.get(i).get_signalFaultListBitflip());
-                            
-                            System.out.println("SIgnal fault list : "+ this.SignalFault);
-                            //propagate_faults = propagate_faults + itemx_list.get(i).getPropagatedFaults();
-                            this.unmasked_faults = this.unmasked_faults +  itemx_list.get(i).getPropagatedFaults();
-                            
-                            System.out.println(i + "Faults in : "+  itemx_list.get(i).getPropagatedFaults());
-                    }
-                    */
-                    /*
-                   System.out.println(""+this.inputListValuesStr);
-                   System.out.println(""+this.outputFreeFaultListValueStr);
-                   System.out.println(""+this.outputListValueStr);
-                    */
-                
-                /*
-                long propagateTimeEnd = System.nanoTime();
-                long propagateTime =   TimeUnit.NANOSECONDS.toMillis(propagateTimeEnd - propagateTimeStart);
-                
-             
-                LocalDateTime myDateObj2 = LocalDateTime.now();
-                DateTimeFormatter myFormatObj2 = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
-                String formattedDate2 = myDateObj2.format(myFormatObj2);
-                
-                System.out.println("- Simulation finished at: " + formattedDate2);
-                System.out.println("- PropagatedTime m(s): " + propagateTime);
-                System.out.println("");
-                
-                this.writeCsvFileTh("Multithreading_Log_fault_free_"+this.circuit.getName()+"_Theads-"+ this.thread);
-                this.writeTxtLog("Multithreading_Simple_Log_" +this.circuit.getName()+"_Theads-"+ this.thread , formattedDate2, thread_list.size(), propagateTime, N);
-                this.writeCsvFileCompleteTh("Multithreading_Complete_Log_"+this.circuit.getName()+"_Theads-"+ this.thread);
-               
-                System.out.println("Main: Porpagated fault -: "+this.unmasked_faults);
-
-                */
-          
-     }
-    
-     public long getTimeExecutionRound(){
-         return this.time_seconds;
-     }
-     
-     public int getPropagatedFaults(){
-         return this.unmasked_faults;
-     }
-     
-      public void TESTEMODE(String library, String CircuitFile, int testNumber, int interaction, int id) throws IOException, Exception{
-                
-               
-                long loadTimeStart = System.nanoTime();//System.currentTimeMillis();
-                
-                LocalDateTime myDateObj = LocalDateTime.now();
-                //System.out.println("Before formatting: " + myDateObj);
-                DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
-                String formattedDate = myDateObj.format(myFormatObj);
-                System.out.println("- Simulation start in : " + formattedDate);
-                System.out.println("- Vec size: " + testNumber);
-                 System.out.println("- Round : " + interaction);
-         
-                /*Reading CellLibrary*/
-                CellLibrary cellLib = new CellLibrary();
-                this.cellLibrary = cellLib;
-                this.cellLibrary.initLibrary(this.libraryPath);
-                
-                System.out.println("--- Reading celllib ...");
-                //System.out.println("  - Avaliable logic gatesin this library: "+cellLib.getCells());
-                /*----------------------*/
-                
-                /*Reading verilog*/
-                MappedVerilogReader verilog_circuit = new MappedVerilogReader(this.circuitFilePath, this.cellLibrary);
-                this.verilog_circuit = verilog_circuit;
-                /*Circuit linked to verilog_circuit - init circuit*/
-                this.circuit = verilog_circuit.getCircuit();
-                System.out.println("--- Reading verilog: " + this.verilog_circuit.getCircuit().getName() + ".v");
-                //System.out.println("Patterns : " + this.verilog_circuit.getGatePattern());
-                /*----------------------*/
-                
-                
-                /* Print circuit Specs*/
-                System.out.println("\n------ Printing Circuit Specs: --------");
-                this.PrintSpecs();
-                System.out.println("---------------------------------------\n");
-                /*----------------------*/
-                
-                /*Circuit Probabilities */
-                this.initLevelCircuit();
-               
-                /*Init ProbCircuits*/
-                 this.initProbCircuit();
-                
-                /*Init PTMs Const*/
-                cellLib.setPTMCells2(Float.valueOf(reliability));
-                cellLib.setPTMCells(new BigDecimal(reliability));
-               
-                long loadTimeEnd = System.nanoTime();//System.currentTimeMillis();
-              
-                long loadTime =   TimeUnit.NANOSECONDS.toMillis(loadTimeEnd - loadTimeStart);
-              
-                System.out.println("- Load Time m(s): " + loadTime);
-               
-                System.out.println("\n------ Inserting the input vector --------");
-                System.out.println("     - Circuit Input(s): "+this.probCircuit.getInputs());
-                System.out.println("     - Circuit Output(s): "+this.probCircuit.getOutputs());
-                
-               
-                int N = this.calcNumberOfInputVector();  //(int) Math.pow(2, this.probCircuit.getInputs().size());
-               
-                // System.out.println("Number total of input vectors : "+ N);
-                
-                System.out.println("Threads: " + this.thread); 
-               
-                //this.internSignals = this.calcInternSignals(); // calc intern Signals
-                
-                testNumber = 4;
-                    
-                this.internSignals = this.calcAllSignals(); //Consider all signals in circuit, input, intermediate and output ones
-                
-                ArrayList <String> random_input_vectors =  this.calcInputRandom(cellLib, library, N, testNumber); //this.calcInputTableVector(this.probCircuit.getInputs().size(), N);
- 
-                ArrayList <ArrayList<Integer>> ListInputVectors =  this.splitInputPatternsInInt(random_input_vectors, this.probCircuit.getInputs().size());
-                
-                N = testNumber;
-                
-                List thread_list = new ArrayList();
-                
-                long propagateTimeStart = System.nanoTime();
-                
-                int partition;
-                if(this.thread == 1){
-                     partition = N; //final_pos/NThreads ;
-                }
-                else{
-                    double temp;
-                    temp = Math.floor(N/this.thread); 
-                    //System.out.println("Division : "+ a);
-                    partition =  (int) temp ;//(int) Math.round(collapsed_faults/NThreads); 
-                }
-                
-                //System.out.println("Partion : "+ partition);
-                int start = 0;
-                int end = partition;
-                
-                 ArrayList <ThreadFaultInjection> itemx_list = new ArrayList<>();
-                 
-                 //ArrayList <Integer, String> example = new ArrayList<>();
-                 
-                 //ArrayList<ArrayList<Integer>> InputLIST = new ArrayList<<>>();
-                 ArrayList <ArrayList<Integer>> vectors_teste = new ArrayList<>();
-                 ArrayList<Integer> x = new ArrayList<>();
-                 x.add(0); x.add(0); x.add(0); x.add(0); x.add(0); 
-                  vectors_teste.add(x);
-                 
-                  ArrayList<Integer> c = new ArrayList<>();
-                  c.add(0); c.add(0); c.add(1); c.add(0); c.add(1); 
-                   vectors_teste.add(c);
-                 
-                  
-                  ArrayList<Integer> tt = new ArrayList<>();
-                  tt.add(1); tt.add(0); tt.add(0); tt.add(0); tt.add(1); 
-                   vectors_teste.add(tt);
-                  
-                  
-                   ArrayList<Integer> eee = new ArrayList<>();
-                   eee.add(1); eee.add(0); eee.add(0); eee.add(1); eee.add(0); 
-                   vectors_teste.add(eee);
-                 
-                 
-                 
-                
-                for (int i = 0; i < this.thread; i++) { //Loop of simulations
-                                //System.out.println(" - Thread: "+i);
-                               
-                                ArrayList <Test_Item> ItemxSimulationList = new ArrayList<>();
-                    
-                                ArrayList <Integer> inputVector = new ArrayList<>();
-                                
-                                if((this.thread-1) == (i)){
-
-                                    start = 0;
-                                    end = N+1; 
-                                }
-                                else{
-                                    if(i == 0){
-                                        start = 0;
-                                        end = partition;
-                                    }else{
-                                         start = start + partition;
-                                         end = start + partition;  
-                                    }  
-                                   
-                                }
-                                System.out.println(" start: "+ start + "  - end: " + end);                         
-                                for (int j = start; j < end ; j++) {
-                                    
-                                     System.out.println(" = = = = Sig: " + this.internSignals.get(9) + "   vec: " + inputVector);
-
-                                        
-                                        inputVector = vectors_teste.get(j) ;//this.getInputVector(ListInputVectors, j); //input Test n
-                                        //this.insertInputVector(cellLib, "selected", inputVector); //Depois na hora de inseriri vetor
-                                        int SigIndex = 5; //this.randomInjectionFault();
-                                         
-                                       // System.out.println("index: "+(j+1) + "     -     vec: " + inputVector);
-                                      
-                                        Test_Item temp = new Test_Item(inputVector, this.internSignals.get(SigIndex), j+1);
-
-                                        ItemxSimulationList.add(temp);
-                                }
-                                
-                                
-                                ThreadFaultInjection threadItem = new ThreadFaultInjection(ItemxSimulationList, this.circuit, this.cellLibrary, this.levelCircuit, start, end, this.library, this.circuitFilePath); // Thread contex info
-                                itemx_list.add(threadItem); // Itemx sorted's
-                              
-                             
-                                
-                           
-                             
-                             Runnable runnable = threadItem; // ThreadFaultInjection(listThreadItemx, this.circuit, cellLib, levelCircuit);
-                             Thread thread = new Thread(runnable);
-                             thread_list.add(thread);
-                                
-                           //  System.out.println("\n---------------------------------------");  
-                             
-                     }
-                  
-                    Thread thread_temp = null;// new Thread();
-                    for (int i=0; i < thread_list.size() ; i++) {
-                        thread_temp = (Thread) thread_list.get(i);
-                        thread_temp.start();
-                        
-                    }
-                    
-                     for (int i=0; i < thread_list.size() ; i++) {
-                        thread_temp = (Thread) thread_list.get(i);
-                        thread_temp.join();
-                    }
-                     
-                     
-                    //this.processLogicSimMultiThreadingResultsRandom(thread_list, itemx_list, propagateTimeStart, N, formattedDate, testNumber);
-                    
-                    for (int i=0; i < itemx_list.size() ; i++) {
-
-                            // System.out.println("SIgnal fault list : "+ this.SignalFault);
-                           
-                            this.unmasked_faults = this.unmasked_faults +  itemx_list.get(i).getPropagatedFaults();
-                            
-                            System.out.println("Thread: " + itemx_list.get(i).getThreadId() + " - Sample size: " + partition + " - Total Faults : "+  itemx_list.get(i).getPropagatedFaults());
-                    }
-               
-                
-                
-                long propagateTimeEnd = System.nanoTime();
-                long propagateTime =   TimeUnit.NANOSECONDS.toSeconds(propagateTimeEnd - propagateTimeStart);
-                long propagateTimems =   TimeUnit.NANOSECONDS.toMillis(propagateTimeEnd - propagateTimeStart);
-                
-             
-                LocalDateTime myDateObj2 = LocalDateTime.now();
-                DateTimeFormatter myFormatObj2 = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
-                String formattedDate2 = myDateObj2.format(myFormatObj2);
-                
-                System.out.println("- Simulation finished at: " + formattedDate2);
-                System.out.println("- PropagatedTime (s): " + propagateTime);
-                System.out.println("");
-                
-                //this.writeCsvFileTh("Multithreading_Log_fault_free_"+this.circuit.getName()+"_Theads-"+ this.thread +  "_TestNumber-"+ N , itemx_list);
-                this.time_seconds = propagateTime;
-                
-                this.writeTxtLog("Multithreading_Simple_Log_" +this.circuit.getName()+"_Theads-"+ this.thread +  "_TestNumber-"+ N + "_round-"+id+" of " + interaction , formattedDate,  formattedDate2, thread_list.size(), propagateTime, N, propagateTimems);
-               
-                this.writeCsvFileCompleteTh("Multithreading_Complete_Log_"+this.circuit.getName()+"_Theads-"+ this.thread + "_TestNumber-"+ N + "_round-"+id+" of " + interaction , itemx_list);
-               
-                
-                System.out.println("----------------- Results ------------------");
-                System.out.println("Circuit: " + this.circuit.getName());
-                System.out.println("Total Vectors (N): " + N);
-                System.out.println("Propagated fault(s) (Ne): " + this.unmasked_faults);
-                System.out.println("Reliability: " + "(1-(" + this.unmasked_faults + "/" + N + ")) = " + this.reliability_circuit);
-                System.out.println("MTBF (Mean Time Between failure) : " + this.MTBF);
-                System.out.println("Simulation TimeElapsed: " + propagateTime + " m(s)");
-                System.out.println("--------------------------------------------");
-     }
-     
-     
-     public void MulltiThreading_Simulator_ramdomInputs_MonteCarlo(String library, String CircuitFile, int testNumber, int interaction, int id) throws IOException, Exception{
+     public void MulltiThreading__Logic_Simulator_ramdomInputs_MonteCarlo(String library, String CircuitFile, int testNumber, int interaction, int id) throws IOException, Exception{
                 
                 long loadTimeStart = System.nanoTime();//System.currentTimeMillis();
                 
@@ -2494,7 +2254,7 @@ import writers.WriteExcel;
                 int start = 0;
                 int end = partition;
                 
-                 ArrayList <ThreadFaultInjection> itemx_list = new ArrayList<>();
+                 ArrayList <Logic_Simulator> itemx_list = new ArrayList<>();
                  
                  //ArrayList <Integer, String> example = new ArrayList<>();
                 
@@ -2535,14 +2295,14 @@ import writers.WriteExcel;
                                 }
                                 
                                 
-                                ThreadFaultInjection threadItem = new ThreadFaultInjection(ItemxSimulationList, this.circuit, this.cellLibrary, this.levelCircuit, start, end, this.library, this.circuitFilePath); // Thread contex info
+                                Logic_Simulator threadItem = new Logic_Simulator(ItemxSimulationList, this.circuit, this.cellLibrary, this.levelCircuit, start, end, this.library, this.circuitFilePath); // Thread contex info
                                 itemx_list.add(threadItem); // Itemx sorted's
                               
                              
                                 
                            
                              
-                             Runnable runnable = threadItem; // ThreadFaultInjection(listThreadItemx, this.circuit, cellLib, levelCircuit);
+                             Runnable runnable = threadItem; // Logic_Simulator(listThreadItemx, this.circuit, cellLib, levelCircuit);
                              Thread thread = new Thread(runnable);
                              thread_list.add(thread);
                                 
@@ -2607,7 +2367,7 @@ import writers.WriteExcel;
                 System.out.println("--------------------------------------------");
      }
      
-     public void MulltiThreading_Simulator(String library, String CircuitFile) throws IOException, Exception{
+     public void MulltiThreading_Logic_Simulator(String library, String CircuitFile) throws IOException, Exception{
                 
                 long loadTimeStart = System.nanoTime();//System.currentTimeMillis();
                 
@@ -2695,7 +2455,7 @@ import writers.WriteExcel;
                 int start = 0;
                 int end = partition;
                 
-                 ArrayList <ThreadFaultInjection> itemx_list = new ArrayList<>();
+                 ArrayList <Logic_Simulator> itemx_list = new ArrayList<>();
                  
                  //ArrayList <Integer, String> example = new ArrayList<>();
                 
@@ -2719,7 +2479,7 @@ import writers.WriteExcel;
                                         ItemxSimulationList.add(temp);
                                 }
                              
-                             ThreadFaultInjection threadItem = new ThreadFaultInjection(ItemxSimulationList, this.circuit, this.cellLibrary, this.levelCircuit, start, end, this.library, this.circuitFilePath); // Thread contex info
+                             Logic_Simulator threadItem = new Logic_Simulator(ItemxSimulationList, this.circuit, this.cellLibrary, this.levelCircuit, start, end, this.library, this.circuitFilePath); // Thread contex info
                              itemx_list.add(threadItem); // Itemx sorted's
                                 
                                 start = start +  partition;
@@ -2729,7 +2489,7 @@ import writers.WriteExcel;
                                 
                             
                              
-                             Runnable runnable = threadItem; // ThreadFaultInjection(listThreadItemx, this.circuit, cellLib, levelCircuit);
+                             Runnable runnable = threadItem; // Logic_Simulator(listThreadItemx, this.circuit, cellLib, levelCircuit);
                              Thread thread = new Thread(runnable);
                              thread_list.add(thread);
                                 

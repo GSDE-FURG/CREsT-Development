@@ -1,7 +1,7 @@
 package writers;
 
 
-import LogicSimulator.ThreadFaultInjection;
+import LogicSimulator.Logic_Simulator;
 import datastructures.Signal;
 import java.io.File;
 import java.io.FileWriter;
