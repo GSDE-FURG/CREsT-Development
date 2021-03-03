@@ -114,6 +114,14 @@ import writers.WriteExcel;
         System.out.println("");
     }
      
+     public long getTimeExecutionRound(){
+         return this.time_seconds;
+     }
+     
+     public int getPropagatedFaults(){
+         return this.unmasked_faults;
+     }
+     
      public void PrintSpecs(){
          
          System.out.println("Circuit : " + this.circuit.getName());
@@ -1614,7 +1622,7 @@ import writers.WriteExcel;
         }
      }
      
-     public ArrayList <Signal> calcAllSignals(){
+     public ArrayList <Signal> get_all_signals(){
          //System.out.println("Sort Fault in the input injection");
          ArrayList <Signal> signalList = new ArrayList<>();
          signalList = this.circuit.getSignals();
@@ -1632,7 +1640,7 @@ import writers.WriteExcel;
          return r;
      }
      
-     public ArrayList <Signal> calcInternSignals(){
+     public ArrayList <Signal> get_all_intermediate_signals(){
          //System.out.println("Sort Fault in the input injection");
          ArrayList <Signal> signalList = new ArrayList<>();
          signalList = this.circuit.getSignals();
@@ -1661,12 +1669,12 @@ import writers.WriteExcel;
                         return randomSignalIndex;
      }
      
-     public int calcNumberOfInputVector(){
+     public int calculate_Number_Of_Input_Vector(){
         int n = (int) Math.pow(2, this.probCircuit.getInputs().size());
         return n;
      }
     
-     public ArrayList <Integer> getInputVector(ArrayList <ArrayList<Integer>> ListInputVectors, int i){
+     public ArrayList <Integer> get_Input_Vectors(ArrayList <ArrayList<Integer>> ListInputVectors, int i){
            
              
              ArrayList <Integer> inputVectorTemp = ListInputVectors.get(i);
@@ -1838,13 +1846,13 @@ import writers.WriteExcel;
                 System.out.println("     - Circuit Output(s): "+this.probCircuit.getOutputs());
                 
                
-                int N = this.calcNumberOfInputVector();  //(int) Math.pow(2, this.probCircuit.getInputs().size());
+                int N = this.calculate_Number_Of_Input_Vector();  //(int) Math.pow(2, this.probCircuit.getInputs().size());
                
                 // System.out.println("Number total of input vectors : "+ N);
                 
                 System.out.println("Threads: " + this.thread); 
                
-                this.internSignals = this.calcInternSignals(); // calc intern Signals
+                this.internSignals = this.get_all_intermediate_signals(); // calc intern Signals
                 
                 ArrayList <String> random_input_vectors =  this.calcInputRandom(cellLib, library, N, testNumber); //this.calcInputTableVector(this.probCircuit.getInputs().size(), N);
  
@@ -1900,7 +1908,7 @@ import writers.WriteExcel;
                                // System.out.println(" start: "+ start + "  - end: " + end);                         
                                 for (int j = start; j < end ; j++) {
                                         
-                                        inputVector = this.getInputVector(ListInputVectors, j); //input Test n
+                                        inputVector = this.get_Input_Vectors(ListInputVectors, j); //input Test n
                                         //this.insertInputVector(cellLib, "selected", inputVector); //Depois na hora de inseriri vetor
                                         int SigIndex = this.randomInjectionFault();
 
@@ -2025,14 +2033,7 @@ import writers.WriteExcel;
           
      }
     
-     public long getTimeExecutionRound(){
-         return this.time_seconds;
-     }
-     
-     public int getPropagatedFaults(){
-         return this.unmasked_faults;
-     }
-      
+    
      public void Sequential_Logic_Simulator(String library, String CircuitFile) throws IOException, ScriptException, Exception{  
          
                 long loadTimeStart = System.nanoTime();//System.currentTimeMillis();
@@ -2088,11 +2089,11 @@ import writers.WriteExcel;
                 System.out.println("     - Circuit Output(s): "+this.probCircuit.getOutputs());
                 
                
-                int N = this.calcNumberOfInputVector();  //(int) Math.pow(2, this.probCircuit.getInputs().size());
+                int N = this.calculate_Number_Of_Input_Vector();  //(int) Math.pow(2, this.probCircuit.getInputs().size());
                
                 System.out.println("Total input vectors: 2^(" + this.probCircuit.getInputs().size() + ") = " + N);
                 
-                this.internSignals = this.calcInternSignals(); // calc intern Signals
+                this.internSignals = this.get_all_intermediate_signals(); // calc intern Signals
                 
                 ArrayList <String> raw_inputVectors =  this.calcInputTableVector(this.probCircuit.getInputs().size(), N);
  
@@ -2104,7 +2105,7 @@ import writers.WriteExcel;
                     
                              ArrayList <Integer> inputVector = new ArrayList<>();
                              
-                             inputVector = this.getInputVector(ListInputVectors, i);
+                             inputVector = this.get_Input_Vectors(ListInputVectors, i);
 
                              this.insertInputVector(cellLib, "selected", inputVector, i);
                              
@@ -2219,15 +2220,15 @@ import writers.WriteExcel;
                 System.out.println("     - Circuit Output(s): "+this.probCircuit.getOutputs());
                 
                
-                int N = this.calcNumberOfInputVector();  //(int) Math.pow(2, this.probCircuit.getInputs().size());
+                int N = this.calculate_Number_Of_Input_Vector();  //(int) Math.pow(2, this.probCircuit.getInputs().size());
                
                 // System.out.println("Number total of input vectors : "+ N);
                 
                 System.out.println("Threads: " + this.thread); 
                
-                //this.internSignals = this.calcInternSignals(); // calc intern Signals
+                //this.internSignals = this.get_all_intermediate_signals(); // calc intern Signals
                     
-                this.internSignals = this.calcAllSignals(); //Consider all signals in circuit, input, intermediate and output ones
+                this.internSignals = this.get_all_signals(); //Consider all signals in circuit, input, intermediate and output ones
                 
                 ArrayList <String> random_input_vectors =  this.calcInputRandom(cellLib, library, N, testNumber); //this.calcInputTableVector(this.probCircuit.getInputs().size(), N);
  
@@ -2283,7 +2284,7 @@ import writers.WriteExcel;
                                // System.out.println(" start: "+ start + "  - end: " + end);                         
                                 for (int j = start; j < end ; j++) {
                                         
-                                        inputVector = this.getInputVector(ListInputVectors, j); //input Test n
+                                        inputVector = this.get_Input_Vectors(ListInputVectors, j); //input Test n
                                         //this.insertInputVector(cellLib, "selected", inputVector); //Depois na hora de inseriri vetor
                                         int SigIndex = this.randomInjectionFault();
 
@@ -2423,11 +2424,11 @@ import writers.WriteExcel;
                 System.out.println("     - Circuit Output(s): "+this.probCircuit.getOutputs());
                 
                
-                int N = this.calcNumberOfInputVector();  //(int) Math.pow(2, this.probCircuit.getInputs().size());
+                int N = this.calculate_Number_Of_Input_Vector();  //(int) Math.pow(2, this.probCircuit.getInputs().size());
                
                 System.out.println("Number total of input vectors : "+ N);
                 
-                this.internSignals = this.calcInternSignals(); // calc intern Signals
+                this.internSignals = this.get_all_intermediate_signals(); // calc intern Signals
                 
                 ArrayList <String> raw_inputVectors =  this.calcInputTableVector(this.probCircuit.getInputs().size(), N);
  
@@ -2468,7 +2469,7 @@ import writers.WriteExcel;
                                 
                                 for (int j = start; j < end ; j++) {
                                     
-                                        inputVector = this.getInputVector(ListInputVectors, j); //input Test n
+                                        inputVector = this.get_Input_Vectors(ListInputVectors, j); //input Test n
                                         //this.insertInputVector(cellLib, "selected", inputVector); //Depois na hora de inseriri vetor
                                         int SigIndex = this.randomInjectionFault();
 
@@ -2650,8 +2651,8 @@ import writers.WriteExcel;
                 
                 
                
-                 int N = this.calcNumberOfInputVector();  //(int) Math.pow(2, this.probCircuit.getInputs().size());
-                 this.internSignals = this.calcInternSignals();
+                 int N = this.calculate_Number_Of_Input_Vector();  //(int) Math.pow(2, this.probCircuit.getInputs().size());
+                 this.internSignals = this.get_all_intermediate_signals();
                  
                  System.out.println("Total Signals: " + this.circuit.getSignals().size()); 
                  System.out.println("Total input vectors: 2^" + this.circuit.getInputs().size());
