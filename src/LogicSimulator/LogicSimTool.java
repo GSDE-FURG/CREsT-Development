@@ -30,7 +30,7 @@ public class LogicSimTool {
         
         
        // Vector circuit750k = new Vector();
-       circuitList.add("c17v3_fritz.v");
+         // circuitList.add("c17v3_fritz.v");
         
        // circuitList.add("c6288_cadence.v");
         //circuitList.add("c7552_cadence.v");
@@ -49,16 +49,23 @@ public class LogicSimTool {
          //circuit750k.add("C2670_cadence.v");
         //circuit750k.add("C5315_cadence.v");
         
-        /*
-        circuit750k.add("c432_cadence.v");
+      
+        //circuitList.add("c432_cadence.v");
+          /*
         circuit750k.add("C499_cadence.v");
         circuit750k.add("C1908_cadence.v");
         circuit750k.add("C3540_cadence.v");
         
         */
         
+        
+          circuitList.add("c432_cadence.v");
+          circuitList.add("C5315_cadence.v");
+          circuitList.add("C7552_cadence.v");
+          circuitList.add("c6288_cadence.v");
+          
         /*
-        circuitList.add("c432_cadence.v");
+         circuitList.add("c432_cadence.v");
         circuitList.add("C499_cadence.v");
         circuitList.add("C880_cadence.v");
         circuitList.add("C1355_cadence.v");
@@ -66,7 +73,9 @@ public class LogicSimTool {
         circuitList.add("C3540_cadence.v");
         circuitList.add("C2670_cadence.v");
         circuitList.add("C5315_cadence.v");
+        circuitList.add("C7552_cadence.v");
         */
+        
         /*
         Vector circuitListXXXXXXXX = new Vector();
         circuitListXXXXXXXX.add("C2670_cadence.v");
@@ -168,15 +177,16 @@ public class LogicSimTool {
              
              
             
-             Analysis.callMethodsAnalisysMonteCarlo(circuitList, library, reliability, Threads, 32, 1);
-             /*
+            //Analysis.callMethodsAnalisysMonteCarlo(circuitList, library, reliability, Threads,  16577, 10); //99% de confiança
+            
+             Analysis.callMethodsAnalisysMonteCarlo(circuitList, library, reliability, Threads,  200, 10);
              Analysis.callMethodsAnalisysMonteCarlo(circuitList, library, reliability, Threads, 400, 10);
              Analysis.callMethodsAnalisysMonteCarlo(circuitList, library, reliability, Threads, 800, 10); 
              Analysis.callMethodsAnalisysMonteCarlo(circuitList, library, reliability, Threads, 1600, 10); 
              Analysis.callMethodsAnalisysMonteCarlo(circuitList, library, reliability, Threads, 3200, 10);
              Analysis.callMethodsAnalisysMonteCarlo(circuitList, library, reliability, Threads, 6400, 10);
-             Analysis.callMethodsAnalisysMonteCarlo(circuitList, library, reliability, Threads, 12800, 10);;
-            */             
+             Analysis.callMethodsAnalisysMonteCarlo(circuitList, library, reliability, Threads, 12800, 10);
+                      
              
              //Analysis.callMethodsAnalisys(circuitList, library, reliability, Threads, 10);
            // Analysis.callMethodsAnalisys(circuitList, library, reliability, Threads, 250000);

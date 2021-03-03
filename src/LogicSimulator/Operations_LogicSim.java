@@ -2571,7 +2571,7 @@ import writers.WriteExcel;
                            
                             this.unmasked_faults = this.unmasked_faults +  itemx_list.get(i).getPropagatedFaults();
                             
-                            System.out.println("Thread: " + itemx_list.get(i).getThreadId() + " - Sample size: " + partition + " - Total Faults : "+  itemx_list.get(i).getPropagatedFaults());
+                           /// System.out.println("Thread: " + itemx_list.get(i).getThreadId() + " - Sample size: " + partition + " - Total Faults : "+  itemx_list.get(i).getPropagatedFaults());
                     }
                
                 

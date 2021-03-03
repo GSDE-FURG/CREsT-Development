@@ -49,12 +49,12 @@ class main_SPRMP_Exec {
         //Read Inputs Circuit, Reliability, Genlib//
         //String circuitPath = "c5315_cadence.v" ;//"c1355_cadence.v";//c432_cadence.v" ;//"c17v3_fritz.v";//"c17_cadence.v";
         Vector circuitPath = new Vector();
-        String reliability = "0.9999"; //4 digitos
+        String reliability = "0.99713"; //4 digitos
         String mode = "big_decimal";
         String library = "cadence.genlib";
-        
+       
         //New ones
-        
+        /*
         circuitPath.add("c2670_cadence.v");
         circuitPath.add("c432_cadence.v");
         circuitPath.add("c1355_cadence.v");
@@ -63,6 +63,11 @@ class main_SPRMP_Exec {
         circuitPath.add("c880_cadence.v");
         circuitPath.add("c6288_cadence.v");
         circuitPath.add("c1908_cadence.v");
+        */
+        
+        circuitPath.add("c432_cadence.v");
+        circuitPath.add("C499_cadence.v");
+        circuitPath.add("C880_cadence.v");
         
         /*
         circuitPath.add("c17_cadence.v");
@@ -94,7 +99,7 @@ class main_SPRMP_Exec {
         */
         main_SPRMP_Exec Analysis = new main_SPRMP_Exec();
         Analysis.callMethodsAnalisys(circuitPath, library, reliability);
-      
+     
              
         /*
             Runtime runtime = Runtime.getRuntime();
@@ -121,8 +126,10 @@ class main_SPRMP_Exec {
                     long timeout = TimeoutList.get(i);
                     System.out.println(i+1 + "  -  Timeout : " + timeout + "(s)");
                         SPRMPFanoutsAnalysis spr_mp_analysis = new SPRMPFanoutsAnalysis(Reliability, timeout , circuitPath.get(j).toString(), library);
-                        spr_mp_analysis.SPR_MP_FANOUTS(library, circuitPath.get(j).toString());
-                        spr_mp_analysis.getInputFanouts(library, circuitPath.get(j).toString());
+                        //spr_mp_analysis.SPR_MP_FANOUTS(library, circuitPath.get(j).toString());
+                        //spr_mp_analysis.getInputFanouts(library, circuitPath.get(j).toString());
+                        
+                        spr_mp_analysis.getSPRBigDecimal(i);
                         System.out.println(" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ ");
 
                 }
