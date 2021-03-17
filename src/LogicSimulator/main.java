@@ -1,4 +1,5 @@
 package LogicSimulator;
+import java.io.File;
 import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.Vector;
@@ -7,7 +8,7 @@ import java.util.Vector;
 
 /** Main method to run this class
  * @author Clayton Farias
- * @version 1.0
+ * @version 2.0
  * @since Dev
 */
 
@@ -15,202 +16,43 @@ import java.util.Vector;
 public class main {
     
     
-   
-
    public static void main(final String[] args) throws Exception {
      
-        Vector circuitList = new Vector();
+       
         Vector Threads = new Vector();
-        String reliability = "0.9999"; //4 digitos
-        String library = "cadence.genlib";
+        Threads.add(8); //Number of threads
+            String reliability = "0.9999"; // Used only to start necessary matrix dependences
         
-        //Threads.add(64);
-        //Threads.add(1);
-        Threads.add(8);
+        String relativePath = "abc/"; //Folder with circtuis and genlib
+        //String library =  relativePath + "cadence.genlib"; // Standart genlib
+        String library =  relativePath  + "lib_full_no_cost.genlib";  // Different genlib
         
-        
-       // Vector circuit750k = new Vector();
-         // circuitList.add("c17v3_fritz.v");
-        
-       // circuitList.add("c6288_cadence.v");
-        //circuitList.add("c7552_cadence.v");
+        int sampleSize = 16577; // sample size (N) to 99% (IC - Interval of confidence) and E = 1% (Sample Error) 
        
-        // circuitList.add("C499_cadence.v");
-        /*
-        circuitList.add("C880_cadence.v");
+        main Analysis = new main();
+
+        //Analysis.singleCircuitMonteCarlo(library, relativePath, "c432_cadence.v", sampleSize, reliability, Threads); // Single circuit Monte Carlo evaluation
         
-        circuitList.add("C1355_cadence.v");
-        circuitList.add("C1908_cadence.v");
-        circuitList.add("C3540_cadence.v");
-        circuitList.add("C2670_cadence.v");
-        */
-        ////circuitList.add("C5315_cadence.v");
-        
-         //circuit750k.add("C2670_cadence.v");
-        //circuit750k.add("C5315_cadence.v");
-        
-      
-        //circuitList.add("c432_cadence.v");
-          /*
-        circuit750k.add("C499_cadence.v");
-        circuit750k.add("C1908_cadence.v");
-        circuit750k.add("C3540_cadence.v");
-        
-        */
-        
-        
-          circuitList.add("c432_cadence.v");
-          circuitList.add("C5315_cadence.v");
-          circuitList.add("C7552_cadence.v");
-          circuitList.add("c6288_cadence.v");
+ 
+          //circuitList.add("c432_cadence.v");
+          //circuitList.add("c499_cadence.v");
+          //circuitList.add("c880_cadence.v");
+          //circuitList.add("C5315_cadence.v");
+          //circuitList.add("C7552_cadence.v");
+          //circuitList.add("c6288_cadence.v");
+           
+          Analysis.circuitsInFolderMonteCarlo(library, relativePath, sampleSize, reliability, Threads);// Vector List with the circuits to Monte Carlo evaluation
           
-        /*
-         circuitList.add("c432_cadence.v");
-        circuitList.add("C499_cadence.v");
-        circuitList.add("C880_cadence.v");
-        circuitList.add("C1355_cadence.v");
-        circuitList.add("C1908_cadence.v");
-        circuitList.add("C3540_cadence.v");
-        circuitList.add("C2670_cadence.v");
-        circuitList.add("C5315_cadence.v");
-        circuitList.add("C7552_cadence.v");
-        */
         
-        /*
-        Vector circuitListXXXXXXXX = new Vector();
-        circuitListXXXXXXXX.add("C2670_cadence.v");
-        /*
-        //circuitList.add("C2670_cadence.v");
-        /*
-         circuitList.add("c17v3_fritz.v"); //TI
-         circuitList.add("c17_Cadence.v"); //TI
-         circuitList.add("FAV1.v"); //TI
-         circuitList.add("multiplex-4bits.v"); //TI
-        */
-        
-        
-        //circuitList.add("c17v3_fritz.v");
-       
-       // circuitList.add("c432_cadence.v");
-       /*
-        circuitList.add("C499_cadence.v");
-        circuitList.add("C880_cadence.v");
-        circuitList.add("C1355_cadence.v");
-        circuitList.add("C1908_cadence.v");
-        
-         circuitList.add("C2670_cadence.v"); Prblematico
-       
-       */
-
-        //circuitList.add("C3540_cadence.v");
-       // circuitList.add("C5315_cadence.v");
-        //circuitList.add("C6288_cadence.v");
-        
-     
-        
-        /*
-        Threads.add(2);
-        Threads.add(4);
-        Threads.add(8);
-        Threads.add(16);
-        Threads.add(32);
-        Threads.add(64);
-        
-        
-        
-        
-        circuitList.add("c17v3_fritz.v");
-        circuitList.add("C17_cadence.v");
-        circuitList.add("FAv1.v");
-        circuitList.add("c20.v");
-        */
-
-        //circuitList.add("C17_cadence.v");
-        //circuitList.add("FAv1.v"); 
-         //circuitPath.add("c17Classic.v");
-       // circuitList.add("c17v3_fritz.v");
-        //Lista de teste
-        /* //Funciona Sem erro e Bate Resultados Planilha 
-            circuitPath.add("c17v2_fritz.v"); //ok 
-            circuitPath.add("c17v3_fritz.v"); //ok
-            circuitPath.add("C17_cadence.v");   //Ok testado !
-            circuitPath.add("FAv1.v");  //Ok testado !
-            circuitPath.add("c17_mapped.v"); //Ok testado!!
-        */
-       
-         //circuitPath.add("cla_unit.v");
-       // circuitPath.add("c17v3_fritz.v"); 
-      // circuitPath.add("FAv1.v"); 
-         //circuitPath.add("c17v3_fritz.v"); //ok
-      //circuitPath.add("FAv1.v");  //Ok testado !
-       //circuitPath.add("C17_cadence.v"); 
-       //  circuitPath.add("c17v3_fritz.v");
-         //circuitPath.add("s38584_n2564.v");
-         // circuitPath.add("C17_cadence.v");   
-       //  circuitPath.add("c20.v");
-       /* 
-       circuitPath.add("c17Classic.v");
-       
-       circuitPath.add("C17_cadence.v");   
-      
-       circuitPath.add("c17v3_fritz.v");
-      
-       //circuitPath.add("c17v2_fritz.v");         //Circuito Diferente do C17 Saidas são incorretas
-       
-       circuitPath.add("FAV1.v");
-       
-       circuitPath.add("c20.v");
-       
-       circuitPath.add("c432_cadence.v");
-       
-      */
-       //try {
-            //LogicSimTool Analysis2 = new main();
-            
-            //Analysis2.callMethodsAnalisys(circuit750k, library, reliability, Threads, 1000000);
-           
-             main Analysis = new main();
-             
-             
-             
-            // Analysis.callMethodsAnalisys(circuitList, library, reliability, Threads, 0);
-             
-             
-            
-            //Analysis.callMethodsAnalisysMonteCarlo(circuitList, library, reliability, Threads,  16577, 10); //99% de confiança
-            
-             Analysis.callMethodsAnalisysMonteCarlo(circuitList, library, reliability, Threads,  200, 10);
-             Analysis.callMethodsAnalisysMonteCarlo(circuitList, library, reliability, Threads, 400, 10);
-             Analysis.callMethodsAnalisysMonteCarlo(circuitList, library, reliability, Threads, 800, 10); 
-             Analysis.callMethodsAnalisysMonteCarlo(circuitList, library, reliability, Threads, 1600, 10); 
-             Analysis.callMethodsAnalisysMonteCarlo(circuitList, library, reliability, Threads, 3200, 10);
-             Analysis.callMethodsAnalisysMonteCarlo(circuitList, library, reliability, Threads, 6400, 10);
-             Analysis.callMethodsAnalisysMonteCarlo(circuitList, library, reliability, Threads, 12800, 10);
-                      
-             
-             //Analysis.callMethodsAnalisys(circuitList, library, reliability, Threads, 10);
-           // Analysis.callMethodsAnalisys(circuitList, library, reliability, Threads, 250000);
-           // Analysis.callMethodsAnalisys(circuitList, library, reliability, Threads, 2000000);
-            
-            /*
-           
-            */
-      // } catch (Exception e) {
-       //    System.out.println("Error!!!!");
-      // }
-      
+         
        
        
-       
-       
-       /*
-      
-        double timeInSeconds = 1;
-        Runtime runtime = Runtime.getRuntime();
-        String a;
-        Process proc = runtime.exec("shutdown -s -t 1");
-		
-        System.exit(0);
+       /*   -- After simulation this command shutdown the computer !!! ---
+            double timeInSeconds = 1;
+            Runtime runtime = Runtime.getRuntime();
+            String a;
+            Process proc = runtime.exec("shutdown -s -t 1");
+            System.exit(0);
        */
     
       
@@ -243,6 +85,52 @@ public class main {
             
     }
     
+     public void singleCircuitMonteCarlo(String library, String folderPath, String circuit, int sampleSize, String reliability, Vector Threads) throws Exception{
+            
+            Vector singleCircuit = new Vector();
+            singleCircuit.add(circuit);
+            int interactions = 1;
+            folderPath = "./" + folderPath;
+            System.out.println(""+folderPath);
+            
+            //this.callMethodsAnalisysMonteCarlo(singleCircuit, folderPath ,library, reliability, Threads,  sampleSize, interactions); // sampleSize (N) 99% de confiança e = 1% -- Consider all Signals (input, intermediate, output)
+            
+            this.callMethodsAnalisysMonteCarlo_Only_IntermediateSignals(singleCircuit, folderPath ,library, reliability, Threads,  sampleSize, interactions); // sampleSize (N) 99% de confiança e = 1% -- Consider only INTERMEDIATE Signals
+         
+     }
+     
+     public void circuitsInFolderMonteCarlo(String library, String relativePath, int sampleSize, String reliability, Vector Threads) throws Exception{
+         
+        String[] circuitFiles;
+        String relative_circuit_PATH =  relativePath;
+        File f = new File(relative_circuit_PATH);
+        int interactions = 1;
+        
+        Vector circuitList = new Vector();
+
+        // Populates the array with names of files and directories
+         System.out.println("CircuitList: ");
+        circuitFiles = f.list();
+        // For each pathname in the circuitFiles array
+        for (String pathname : circuitFiles) {
+            // Print the names of files and directories
+            if(pathname.endsWith(".v")){
+                System.out.println(pathname);
+                circuitList.add(pathname); 
+            }
+             //circuitListName.add(pathname);
+        }
+         System.out.println("======================\n");
+        //System.out.println(""+circuitList);
+        
+        this.callMethodsAnalisysMonteCarlo_Only_IntermediateSignals(circuitList,relativePath, library, reliability, Threads,  sampleSize, interactions); // sampleSize (N) 99% de confiança e = 1% -- Consider only INTERMEDIATE Signals
+       
+        // this.callMethodsAnalisysMonteCarlo(circuitList,relativePath, library, reliability, Threads,  sampleSize, interactions); // sampleSize (N) 99% de confiança e = 1% -- Consider all Signals
+         
+        
+         
+     }
+    
       public void callMethodsAnalisys(Vector circuitList, String library, String Reliability, Vector threads, int testNumber) throws Exception{
         
          Vector <Integer> TimeoutList = new Vector();
@@ -269,6 +157,78 @@ public class main {
     }
       }
 
+      /**
+     *
+     * @param circuitList
+     * @param library
+     * @param Reliability
+     * @param threads
+     * @param testNumber
+     * @param interactions
+     * @throws Exception
+     */
+    public void callMethodsAnalisysMonteCarlo(Vector circuitList, String folderPath, String library, String Reliability, Vector threads, int testNumber, int interactions) throws Exception{
+        
+         Vector <Integer> TimeoutList = new Vector();
+        
+         
+         for (int i = 0; i < circuitList.size(); i++) {
+             
+             ArrayList <item> list_itemx = new ArrayList<>();
+             System.out.println("=======  Simulation: " +  i + " -  Circuit: " + circuitList.get(i) + "    =======");
+             
+             for (int k = 0; k < threads.size(); k++) {
+                  
+                    //logicSimulatorAnalisys.Sequential_Logic_Simulator(library, Reliability); //Analise Sequencial
+                    //logicSimulatorAnalisys.MulltiThreading_Logic_Simulator(library, Reliability);;
+                    //logicSimulatorAnalisys.MulltiThreading_Logic_Simulator_ramdomInputs(library, Reliability, testNumber); 
+                        
+                    for (int j = 0; j < interactions; j++) {
+                         
+                         Fault_Injection_Campaign logicSimulatorAnalisys = new Fault_Injection_Campaign(Reliability, i , folderPath + circuitList.get(i).toString(), library, (int) threads.get(k));
+                         logicSimulatorAnalisys.MulltiThreading__Logic_Simulator_ramdomInputs_MonteCarlo(library, Reliability, testNumber, interactions, j); 
+                         //logicSimulatorAnalisys.TESTEMODE(library, Reliability, testNumber, interactions, j);
+                         item x = new item(j, logicSimulatorAnalisys.getPropagatedFaults(), testNumber, logicSimulatorAnalisys.getTimeExecutionRound());
+                         list_itemx.add(x);
+                    }
+                              
+                   //System.out.println("Lista: " + list_itemx);           ;
+                   
+                   
+                    
+                   
+                   //logicSimulatorAnalisys.circuits_specifications(library, Reliability);
+                    
+                    //logicSimulatorAnalisys.PTM();
+                    //logicSimulatorAnalisys.getSPRBigDecimal(threads);
+             }
+            //System.out.println("i ; testNumber;  unmaskedFaults; time");
+            String str = "Rodada;FalhasPropagadas;Tempo(s);Confiabilidade;NrVec" + "\n";
+            for (int dd = 0; dd < list_itemx.size(); dd++) {
+                  String confiabilidade = Float.toString(1-((float)list_itemx.get(dd).getPropagatedFaults()/testNumber));
+                  confiabilidade = confiabilidade.replace(".",",");
+                 //System.out.println(dd + " - TestNumber:" + list_itemx.get(dd).getVectorsNumbers() + " ; unmaskedfaults: " + list_itemx.get(dd).getPropagatedFaults() + " ; time: "+list_itemx.get(dd).getTime() + "(s)");
+                  if(dd == 0){
+                       str = str +  list_itemx.get(dd).getInteractionIndex()  + ";" + list_itemx.get(dd).getPropagatedFaults() + ";" + list_itemx.get(dd).getTime() + ";" + confiabilidade  +";" + list_itemx.get(dd).getVectorsNumbers() + ";\n";
+             
+                  }else{
+                      str = str +  list_itemx.get(dd).getInteractionIndex()  + ";" + list_itemx.get(dd).getPropagatedFaults() + ";" + list_itemx.get(dd).getTime() + ";" + confiabilidade + ";"  +";\n";
+                  }
+            
+            }
+
+            try (FileWriter file = new FileWriter("Monte_Carlo_"+circuitList.get(i).toString()+ "_TestNumber-" + testNumber +"_interactions-"+ interactions + ".csv")) {
+                   file.write(str);
+           }
+        }
+         
+        
+
+        
+         
+    }
+
+      
     /**
      *
      * @param circuitList
@@ -279,13 +239,15 @@ public class main {
      * @param interactions
      * @throws Exception
      */
-    public void callMethodsAnalisysMonteCarlo(Vector circuitList, String library, String Reliability, Vector threads, int testNumber, int interactions) throws Exception{
+    public void callMethodsAnalisysMonteCarlo_Only_IntermediateSignals(Vector circuitList, String folderPath, String library, String Reliability, Vector threads, int testNumber, int interactions) throws Exception{
         
          Vector <Integer> TimeoutList = new Vector();
         
          
          for (int i = 0; i < circuitList.size(); i++) {
+             
              ArrayList <item> list_itemx = new ArrayList<>();
+             System.out.println("=======  Simulation: " +  i + " -  Circuit: " + circuitList.get(i) + "    =======");
              
              for (int k = 0; k < threads.size(); k++) {
                   
@@ -295,8 +257,8 @@ public class main {
                         
                     for (int j = 0; j < interactions; j++) {
                          
-                         Fault_Injection_Campaign logicSimulatorAnalisys = new Fault_Injection_Campaign(Reliability, i , circuitList.get(i).toString(), library, (int) threads.get(k));
-                         logicSimulatorAnalisys.MulltiThreading__Logic_Simulator_ramdomInputs_MonteCarlo(library, Reliability, testNumber, interactions, j); 
+                         Fault_Injection_Campaign logicSimulatorAnalisys = new Fault_Injection_Campaign(Reliability, i , folderPath + circuitList.get(i).toString(), library, (int) threads.get(k));
+                         logicSimulatorAnalisys.MulltiThreading__Logic_Simulator_ramdomInputs_MonteCarlo_Only_IntermediateSignals(library, Reliability, testNumber, interactions, j); 
                          //logicSimulatorAnalisys.TESTEMODE(library, Reliability, testNumber, interactions, j);
                          item x = new item(j, logicSimulatorAnalisys.getPropagatedFaults(), testNumber, logicSimulatorAnalisys.getTimeExecutionRound());
                          list_itemx.add(x);

@@ -19,17 +19,11 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Comparator;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import java.util.TreeMap;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import static javafx.scene.input.KeyCode.N;
 import javax.script.ScriptException;
 import jxl.write.WriteException;
 import levelDatastructures.DepthGate;
@@ -83,10 +77,12 @@ import writers.WriteExcel;
         
 
         this.reliability = reliabilty;
-        this.circuitFilePath = "abc\\" + circuitFilePath;
+        //this.circuitFilePath = "abc\\" + circuitFilePath;
+         this.circuitFilePath = circuitFilePath;
         
         this.library = library;
-        this.libraryPath = "abc\\" + this.library;
+        this.libraryPath =  this.library;
+        //this.libraryPath = "abc\\" + this.library;
         this.cellLibrary = new CellLibrary();
         
         this.timeout = Timeout;
@@ -124,13 +120,13 @@ import writers.WriteExcel;
      
      public void PrintSpecs(){
          
-         System.out.println("Circuit : " + this.circuit.getName());
+         System.out.println("           Circuit Name : " + this.circuit.getName());
         // System.out.println("- Logic Gates : " + this.circuit.getGates());
-         System.out.println("- Logic Gates (size): " + this.circuit.getGates().size() );
+         System.out.println("               - Logic Gates (size): " + this.circuit.getGates().size() );
          //System.out.println("- Inputs : " + this.circuit.getInputs());
-         System.out.println("- inputs (size): " + this.circuit.getInputs().size() );
-         System.out.println("- Outputs : " + this.circuit.getOutputs().size());
-         //System.out.println("- Signals : " + this.circuit.getSignals());
+         System.out.println("               - Inputs : " + this.circuit.getInputs().size() );
+         System.out.println("               - Outputs : " + this.circuit.getOutputs().size());
+         System.out.println("               - Signals : " + this.circuit.getSignals().size());
         
      }
      
@@ -1635,8 +1631,8 @@ import writers.WriteExcel;
                         //}
                     
                 }
-                System.out.println(" Considering all signals --> "+r);  
-                System.out.println("Signals list: "+ signalList.toString());
+                System.out.println("  - Considering all signals (input, intermediate, output): "+r.size());  
+                //System.out.println("Signals list: "+ signalList.toString());
          return r;
      }
      
@@ -1653,8 +1649,9 @@ import writers.WriteExcel;
                         }
                     
                 }
-                //System.out.println(" --> "+ this.internSignals);  
+                 //System.out.println(" --> "+ this.internSignals);  
                 //System.out.println("Signals list: "+ signalList.toString());
+                System.out.println("  --- Intermediate Signals (total): " + r.size() );
          return r;
      }
      
@@ -2160,7 +2157,80 @@ import writers.WriteExcel;
                     
                    
      }
-      
+     
+     public ArrayList <Signal> identificate_ONE_ZERO_CTE(){
+         
+          ArrayList <GateLevel> gatesLevels = this.levelCircuit.getGateLevels();
+           ArrayList <Signal> Sig = new ArrayList<>();
+           for (int j = 0; j < gatesLevels.size(); j++) {
+                            
+                ArrayList <Object> gatesInThisLevel = gatesLevels.get(j).getGates();
+                
+                for (int k = 0; k < gatesInThisLevel.size(); k++) {
+                    String AwnsString = gatesInThisLevel.get(k).getClass().toString();
+                    //System.out.println("Aws: "+ AwnsString);
+                    if(AwnsString.equals("class levelDatastructures.DepthGate")){
+                        Object object = gatesInThisLevel.get(k);
+                        DepthGate gate = (DepthGate) object;
+                        String X = gate.getGate().getType().toString();
+                        if(X.equals("ZERO") || X.equals("ONE")){
+                            System.out.println(" ACHOU GATE : " + gate.getGate().getId()  + "  type: " + gate.getGate().getType());
+                            ArrayList <Signal> temp = gate.getGate().getOutputs();
+                            for (int sigs = 0; sigs < temp.size() ; sigs++) {
+                                  Sig.add(temp.get(sigs));
+                            }
+                          
+                        }
+                    }
+                }
+           }
+           return Sig;
+     }
+     
+     public int decide_Random_Signals_Contrains(ArrayList <Signal> Signals_exceptions){
+         
+         int SigIndex = this.randomInjectionFault();
+         boolean skip_test = true;
+         
+         
+         
+         if(Signals_exceptions.size() > 0)
+            {
+                //System.out.println("size: " + Signals_exceptions.size());
+                for (int i = 0; i < Signals_exceptions.size(); i++) {
+                    if(this.internSignals.get(SigIndex).getId().equals(Signals_exceptions.get(i).getId())){ // Signal sorted equal to WIRE stop test
+                        System.out.println(this.internSignals.get(SigIndex).getId() + "   this Signal exception Sorted Found " + Signals_exceptions.get(i).getId());
+                        skip_test = false;
+                        this.internSignals.remove(SigIndex);
+                        Signals_exceptions.remove(i);
+                        return (decide_Random_Signals_Contrains(Signals_exceptions));
+                   }
+            }
+         }
+         
+         if(skip_test == false){ // test fail
+             return (decide_Random_Signals_Contrains(Signals_exceptions));
+         }else{ //test assed
+            // System.out.println("TEST PAssed Sig sorted: " + this.internSignals.get(SigIndex).getId());
+              return (SigIndex);
+         }
+         
+         
+        
+     }
+     
+   
+     /**
+       * Monte Carlo Evaluation for cadence_genlib 
+        *Considering fault injection in Signals (all):
+                - Input, Intermediate and Output
+        @author Clayton
+        @param library
+        @param CircuitFile 
+        @param testNumber 
+        @param interaction 
+        @param id
+      */
      public void MulltiThreading__Logic_Simulator_ramdomInputs_MonteCarlo(String library, String CircuitFile, int testNumber, int interaction, int id) throws IOException, Exception{
                 
                 long loadTimeStart = System.nanoTime();//System.currentTimeMillis();
@@ -2169,16 +2239,17 @@ import writers.WriteExcel;
                 //System.out.println("Before formatting: " + myDateObj);
                 DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
                 String formattedDate = myDateObj.format(myFormatObj);
-                System.out.println("- Simulation start in : " + formattedDate);
-                System.out.println("- Vec size: " + testNumber);
-                 System.out.println("- Round : " + interaction);
+                System.out.println("    - Simulation start in : " + formattedDate);
+                System.out.println("    - Sample size (N): " + testNumber);
+                System.out.println("    -  Interaction: " + interaction);
+                System.out.println("    - Threads in execution: " + this.thread); 
          
                 /*Reading CellLibrary*/
                 CellLibrary cellLib = new CellLibrary();
                 this.cellLibrary = cellLib;
                 this.cellLibrary.initLibrary(this.libraryPath);
                 
-                System.out.println("--- Reading celllib ...");
+                System.out.println("... Reading Genlib " + " at -> " + this.libraryPath  + " ... ok");
                 //System.out.println("  - Avaliable logic gatesin this library: "+cellLib.getCells());
                 /*----------------------*/
                 
@@ -2187,15 +2258,15 @@ import writers.WriteExcel;
                 this.verilog_circuit = verilog_circuit;
                 /*Circuit linked to verilog_circuit - init circuit*/
                 this.circuit = verilog_circuit.getCircuit();
-                System.out.println("--- Reading verilog: " + this.verilog_circuit.getCircuit().getName() + ".v");
+                System.out.println("... Reading verilog "+ " at -> " + this.circuitFilePath  + " ... ok");
                 //System.out.println("Patterns : " + this.verilog_circuit.getGatePattern());
                 /*----------------------*/
                 
                 
                 /* Print circuit Specs*/
-                System.out.println("\n------ Printing Circuit Specs: --------");
+                System.out.println("\n        ------ Printing Circuit Specs: --------");
                 this.PrintSpecs();
-                System.out.println("---------------------------------------\n");
+                System.out.println("          ---------------------------------------\n");
                 /*----------------------*/
                 
                 /*Circuit Probabilities */
@@ -2214,16 +2285,17 @@ import writers.WriteExcel;
               
                 System.out.println("- Load Time m(s): " + loadTime);
                
-                System.out.println("\n------ Inserting the input vector --------");
-                System.out.println("     - Circuit Input(s): "+this.probCircuit.getInputs());
-                System.out.println("     - Circuit Output(s): "+this.probCircuit.getOutputs());
+                System.out.println("\n        ------ Printing Signals --------");
+                System.out.println("            - Input(s): "+this.probCircuit.getInputs());
+                System.out.println("            - Output(s): "+this.probCircuit.getOutputs());
+               
                 
                
                 int N = this.calculate_Number_Of_Input_Vector();  //(int) Math.pow(2, this.probCircuit.getInputs().size());
                
                 // System.out.println("Number total of input vectors : "+ N);
                 
-                System.out.println("Threads: " + this.thread); 
+                
                
                 //this.internSignals = this.get_all_intermediate_signals(); // calc intern Signals
                     
@@ -2257,6 +2329,12 @@ import writers.WriteExcel;
                  ArrayList <Logic_Simulator> itemx_list = new ArrayList<>();
                  
                  //ArrayList <Integer, String> example = new ArrayList<>();
+                 
+                 
+            
+               //ArrayList <Signal> Signals_CTE_ONE_ZERO = identificate_ONE_ZERO_CTE();  //ONLY USE WHEN ITS NOT CADENCE.GENLIB
+               
+               //System.out.println("LOGIC GATES consider WIRES (CTE) Can't inject fault: " + Signals_CTE_ONE_ZERO);
                 
                 for (int i = 0; i < this.thread; i++) { //Loop of simulations
                                 //System.out.println(" - Thread: "+i);
@@ -2285,8 +2363,10 @@ import writers.WriteExcel;
                                         
                                         inputVector = this.get_Input_Vectors(ListInputVectors, j); //input Test n
                                         //this.insertInputVector(cellLib, "selected", inputVector); //Depois na hora de inseriri vetor
-                                        int SigIndex = this.randomInjectionFault();
-
+                                        int SigIndex = this.randomInjectionFault(); //ORIGINAL CADENCE.GENLIB
+                                        
+                                        //int SigIndex = decide_Random_Signals_Contrains(Signals_CTE_ONE_ZERO);
+                                        
                                        // System.out.println("index: "+(j+1) + "     -     vec: " + inputVector);
 
                                         Test_Item temp = new Test_Item(inputVector, this.internSignals.get(SigIndex), j+1);
@@ -2357,7 +2437,7 @@ import writers.WriteExcel;
                 this.writeCsvFileCompleteTh("Multithreading_Complete_Log_"+this.circuit.getName()+"_Theads-"+ this.thread + "_TestNumber-"+ N + "_round-"+id+" of " + interaction , itemx_list);
                
                 
-                System.out.println("----------------- Results ------------------");
+                System.out.println("\n\n----------------- Results ------------------");
                 System.out.println("Circuit: " + this.circuit.getName());
                 System.out.println("Total Vectors (N): " + N);
                 System.out.println("Propagated fault(s) (Ne): " + this.unmasked_faults);
@@ -2366,7 +2446,237 @@ import writers.WriteExcel;
                 System.out.println("Simulation TimeElapsed: " + propagateTime + " m(s)");
                 System.out.println("--------------------------------------------");
      }
-     
+    
+     /**
+       * Monte Carlo Evaluation for any Genlib
+        *Considering fault injection only in intermediate Signals:
+             
+        @author Clayton
+        @param library
+        @param CircuitFile 
+        @param testNumber 
+        @param interaction 
+        @param id
+      */
+    public void MulltiThreading__Logic_Simulator_ramdomInputs_MonteCarlo_Only_IntermediateSignals(String library, String CircuitFile, int testNumber, int interaction, int id) throws IOException, Exception{
+                
+        
+        System.out.println(" ----- ONLY INTERMEDIATE SIGNALS -------");
+                long loadTimeStart = System.nanoTime();//System.currentTimeMillis();
+                
+                LocalDateTime myDateObj = LocalDateTime.now();
+                //System.out.println("Before formatting: " + myDateObj);
+                DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+                String formattedDate = myDateObj.format(myFormatObj);
+                System.out.println("    - Simulation start in : " + formattedDate);
+                System.out.println("    - Sample size (N): " + testNumber);
+                System.out.println("    -  Interaction: " + interaction);
+                System.out.println("    - Threads in execution: " + this.thread); 
+         
+                /*Reading CellLibrary*/
+                CellLibrary cellLib = new CellLibrary();
+                this.cellLibrary = cellLib;
+                this.cellLibrary.initLibrary(this.libraryPath);
+                
+                System.out.println("... Reading Genlib " + " at -> " + this.libraryPath  + " ... ok");
+                //System.out.println("  - Avaliable logic gatesin this library: "+cellLib.getCells());
+                /*----------------------*/
+                
+                /*Reading verilog*/
+                MappedVerilogReader verilog_circuit = new MappedVerilogReader(this.circuitFilePath, this.cellLibrary);
+                this.verilog_circuit = verilog_circuit;
+                /*Circuit linked to verilog_circuit - init circuit*/
+                this.circuit = verilog_circuit.getCircuit();
+                System.out.println("... Reading verilog "+ " at -> " + this.circuitFilePath  + " ... ok");
+                //System.out.println("Patterns : " + this.verilog_circuit.getGatePattern());
+                /*----------------------*/
+                
+                
+                /* Print circuit Specs*/
+                System.out.println("\n        ------ Printing Circuit Specs: --------");
+                this.PrintSpecs();
+                System.out.println("          ---------------------------------------\n");
+                /*----------------------*/
+                
+                /*Circuit Probabilities */
+                this.initLevelCircuit();
+               
+                /*Init ProbCircuits*/
+                 this.initProbCircuit();
+                
+                /*Init PTMs Const*/
+                cellLib.setPTMCells2(Float.valueOf(reliability));
+                cellLib.setPTMCells(new BigDecimal(reliability));
+               
+                long loadTimeEnd = System.nanoTime();//System.currentTimeMillis();
+              
+                long loadTime =   TimeUnit.NANOSECONDS.toMillis(loadTimeEnd - loadTimeStart);
+              
+                System.out.println("- Load Time m(s): " + loadTime);
+               
+                System.out.println("\n        ------ Printing Signals --------");
+                System.out.println("            - Input(s): "+this.probCircuit.getInputs());
+                System.out.println("            - Output(s): "+this.probCircuit.getOutputs());
+               
+                
+               
+                int N = this.calculate_Number_Of_Input_Vector();  //(int) Math.pow(2, this.probCircuit.getInputs().size());
+               
+                // System.out.println("Number total of input vectors : "+ N);
+                
+                
+               
+                this.internSignals = this.get_all_intermediate_signals(); // calc intern Signals
+                    
+                //this.internSignals = this.get_all_signals(); //Consider all signals in circuit, input, intermediate and output ones
+                
+                ArrayList <String> random_input_vectors =  this.calcInputRandom(cellLib, library, N, testNumber); //this.calcInputTableVector(this.probCircuit.getInputs().size(), N);
+ 
+                ArrayList <ArrayList<Integer>> ListInputVectors =  this.splitInputPatternsInInt(random_input_vectors, this.probCircuit.getInputs().size());
+                
+                N = testNumber;
+                
+                List thread_list = new ArrayList();
+                
+                long propagateTimeStart = System.nanoTime();
+                
+                int partition;
+                if(this.thread == 1){
+                     partition = N; //final_pos/NThreads ;
+                }
+                else{
+                    double temp;
+                    temp = Math.floor(N/this.thread); 
+                    //System.out.println("Division : "+ a);
+                    partition =  (int) temp ;//(int) Math.round(collapsed_faults/NThreads); 
+                }
+                
+                //System.out.println("Partion : "+ partition);
+                int start = 0;
+                int end = partition;
+                
+                 ArrayList <Logic_Simulator> itemx_list = new ArrayList<>();
+                 
+                 //ArrayList <Integer, String> example = new ArrayList<>();
+                 
+                 
+            
+               ArrayList <Signal> Signals_CTE_ONE_ZERO = identificate_ONE_ZERO_CTE();  //ONLY USE WHEN ITS NOT CADENCE.GENLIB
+               
+               System.out.println("LOGIC GATES consider WIRES (CTE) Can't inject fault: " + Signals_CTE_ONE_ZERO);
+                
+               for (int i = 0; i < this.thread; i++) { //Loop of simulations
+                                //System.out.println(" - Thread: "+i);
+                               
+                                ArrayList <Test_Item> ItemxSimulationList = new ArrayList<>();
+                    
+                                ArrayList <Integer> inputVector = new ArrayList<>();
+                                
+                                if((this.thread-1) == (i)){
+
+                                    start = end;
+                                    end = N; 
+                                }
+                                else{
+                                    if(i == 0){
+                                        start = 0;
+                                        end = partition;
+                                    }else{
+                                         start = start + partition;
+                                         end = start + partition;  
+                                    }  
+                                   
+                                }
+                               // System.out.println(" start: "+ start + "  - end: " + end);                         
+                                for (int j = start; j < end ; j++) {
+                                        
+                                        inputVector = this.get_Input_Vectors(ListInputVectors, j); //input Test n
+                                        //this.insertInputVector(cellLib, "selected", inputVector); //Depois na hora de inseriri vetor
+                                        int SigIndex = this.randomInjectionFault(); //ORIGINAL CADENCE.GENLIB
+                                        
+                                        //int SigIndex = decide_Random_Signals_Contrains(Signals_CTE_ONE_ZERO);
+                                        
+                                       // System.out.println("index: "+(j+1) + "     -     vec: " + inputVector);
+
+                                        Test_Item temp = new Test_Item(inputVector, this.internSignals.get(SigIndex), j+1);
+
+                                        ItemxSimulationList.add(temp);
+                                }
+                                
+                                
+                                Logic_Simulator threadItem = new Logic_Simulator(ItemxSimulationList, this.circuit, this.cellLibrary, this.levelCircuit, start, end, this.library, this.circuitFilePath); // Thread contex info
+                                itemx_list.add(threadItem); // Itemx sorted's
+                              
+                             
+                                
+                           
+                             
+                             Runnable runnable = threadItem; // Logic_Simulator(listThreadItemx, this.circuit, cellLib, levelCircuit);
+                             Thread thread = new Thread(runnable);
+                             thread_list.add(thread);
+                                
+                           //  System.out.println("\n---------------------------------------");  
+                             
+                     }
+                  
+                    Thread thread_temp = null;// new Thread();
+                    for (int i=0; i < thread_list.size() ; i++) {
+                        thread_temp = (Thread) thread_list.get(i);
+                        thread_temp.start();
+                        
+                    }
+                    
+                     for (int i=0; i < thread_list.size() ; i++) {
+                        thread_temp = (Thread) thread_list.get(i);
+                        thread_temp.join();
+                    }
+                     
+                     
+                    //this.processLogicSimMultiThreadingResultsRandom(thread_list, itemx_list, propagateTimeStart, N, formattedDate, testNumber);
+                    
+                    for (int i=0; i < itemx_list.size() ; i++) {
+
+                            // System.out.println("SIgnal fault list : "+ this.SignalFault);
+                           
+                            this.unmasked_faults = this.unmasked_faults +  itemx_list.get(i).getPropagatedFaults();
+                            
+                           /// System.out.println("Thread: " + itemx_list.get(i).getThreadId() + " - Sample size: " + partition + " - Total Faults : "+  itemx_list.get(i).getPropagatedFaults());
+                    }
+               
+                
+                
+                long propagateTimeEnd = System.nanoTime();
+                long propagateTime =   TimeUnit.NANOSECONDS.toSeconds(propagateTimeEnd - propagateTimeStart);
+                long propagateTimems =   TimeUnit.NANOSECONDS.toMillis(propagateTimeEnd - propagateTimeStart);
+                
+             
+                LocalDateTime myDateObj2 = LocalDateTime.now();
+                DateTimeFormatter myFormatObj2 = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+                String formattedDate2 = myDateObj2.format(myFormatObj2);
+                
+                System.out.println("- Simulation finished at: " + formattedDate2);
+                System.out.println("- PropagatedTime (s): " + propagateTime);
+                System.out.println("");
+                
+                //this.writeCsvFileTh("Multithreading_Log_fault_free_"+this.circuit.getName()+"_Theads-"+ this.thread +  "_TestNumber-"+ N , itemx_list);
+                this.time_seconds = propagateTime;
+                
+                this.writeTxtLog("Multithreading_Simple_Log_" +this.circuit.getName()+"_Theads-"+ this.thread +  "_TestNumber-"+ N + "_round-"+id+" of " + interaction , formattedDate,  formattedDate2, thread_list.size(), propagateTime, N, propagateTimems);
+               
+                this.writeCsvFileCompleteTh("Multithreading_Complete_Log_"+this.circuit.getName()+"_Theads-"+ this.thread + "_TestNumber-"+ N + "_round-"+id+" of " + interaction , itemx_list);
+               
+                
+                System.out.println("\n\n----------------- Results ------------------");
+                System.out.println("Circuit: " + this.circuit.getName());
+                System.out.println("Total Vectors (N): " + N);
+                System.out.println("Propagated fault(s) (Ne): " + this.unmasked_faults);
+                System.out.println("Reliability: " + "(1-(" + this.unmasked_faults + "/" + N + ")) = " + this.reliability_circuit);
+                System.out.println("MTBF (Mean Time Between failure) : " + this.MTBF);
+                System.out.println("Simulation TimeElapsed: " + propagateTime + " m(s)");
+                System.out.println("--------------------------------------------");
+     }
+    
+    
      public void MulltiThreading_Logic_Simulator(String library, String CircuitFile) throws IOException, Exception{
                 
                 long loadTimeStart = System.nanoTime();//System.currentTimeMillis();

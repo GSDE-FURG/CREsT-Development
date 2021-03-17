@@ -11,25 +11,13 @@ import datastructures.Circuit;
 import datastructures.Signal;
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import java.util.SortedSet;
-import java.util.TreeSet;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
-import static javafx.scene.input.KeyCode.K;
-import static javafx.scene.input.KeyCode.V;
 import javax.script.ScriptException;
-import static jdk.nashorn.internal.objects.NativeArray.map;
 import jxl.write.WriteException;
 import levelDatastructures.DepthGate;
 import levelDatastructures.GateLevel;
@@ -87,8 +75,8 @@ import signalProbability.ProbCircuit;
            this.levelCircuit = levelCircuit;
            this.startPos = start;
            this.endPosition = end;
-           //this.genlibPATH = genlib;
-           this.genlibPATH = "abc\\" + genlib;
+           this.genlibPATH = genlib;
+           //this.genlibPATH = "abc\\" + genlib;
            
            this.propagated_faults = 0;
            
@@ -754,6 +742,22 @@ import signalProbability.ProbCircuit;
                 Object output = "stuck";
                 
                 String r = "";
+                
+                 String gate_temp = gate.getGate().getType().toString();
+                //System.out.println("Gate: " + gate_temp);
+                
+                if(gate_temp.equals("ZERO")){
+                    //System.out.println("  OPS ------------------------------ ZERO    " + gate_temp );
+                    r = "0";
+                    //boolean saida = 
+                    return Boolean.FALSE;
+                }
+                if(gate_temp.equals("ONE")){
+                    //System.out.println("  OPS ------------------------------ OONE    " + gate_temp );
+                    r = "1";
+                    //boolean saida = 
+                    return Boolean.TRUE;
+                }
                 for (Map.Entry<ArrayList<Boolean>, Boolean> entry : comb.entrySet()){
                          if(entry.getKey().equals(input)){
                              //System.out.println("Input Finded: " + entry.getKey() + " output " + entry.getValue());
@@ -774,7 +778,8 @@ import signalProbability.ProbCircuit;
                 if(!output.equals("stuck")){
                    //System.out.println("               Gate: " + gate.getGate() + "(" +cells.getName() + ") inputSignals: " + gate.getGate().getInputs() + " -> values: "  + signals + " ~ " + input  + " -> Output " + gate.getGate().getOutputs() + " is: " + r + " ["+ output +"] ------ \n");
                 }else{
-                    System.out.println("ERROR stuck !!!!! o: "+output);
+                    System.out.println("ERROR stuck !!!!! o: "+output + "  GATE: " + gate.getGate() + "  type: " + gate.getGate().getType());
+                    
                     
                 }
                
@@ -804,6 +809,23 @@ import signalProbability.ProbCircuit;
                 Object output = "stuck";
                 
                 String r = "";
+                
+                String gate_temp = gate.getGate().getType().toString();
+                //System.out.println("Gate: " + gate_temp);
+                
+                if(gate_temp.equals("ZERO")){
+                    //System.out.println("  OPS ------------------------------ ZERO    " + gate_temp );
+                    r = "0";
+                    //boolean saida = 
+                    return Boolean.FALSE;
+                }
+                if(gate_temp.equals("ONE")){
+                    //System.out.println("  OPS ------------------------------ OONE    " + gate_temp );
+                    r = "1";
+                    //boolean saida = 
+                    return Boolean.TRUE;
+                }
+                
                 for (Map.Entry<ArrayList<Boolean>, Boolean> entry : comb.entrySet()){
                          if(entry.getKey().equals(input)){
                              //System.out.println("Input Finded: " + entry.getKey() + " output " + entry.getValue());
@@ -827,7 +849,7 @@ import signalProbability.ProbCircuit;
                 if(!output.equals("stuck")){
                    //System.out.println("   xxaxaxaxa            Gate: " + gate.getGate() + "(" +cells.getName() + ") inputSignals: " + gate.getGate().getInputs() + " -> values: "  + signals + " ~ " + input  + " -> Output " + gate.getGate().getOutputs() + " is: " + r + " ["+ output +"] ------ \n");
                 }else{
-                    System.out.println("ERROR stuck !!!!! out : " + output);
+                    System.out.println("ERROR stuck !!!!! out : " + output + "  GATE: " + gate.getGate() + "  -- INFO type : " + gate.getGate().getType() );
                 }
                
          
