@@ -8,7 +8,7 @@ import java.io.*;
 import java.util.*;
 
 
-class Graph {
+class Graph_TEMP {
 	private int V; // No. of vertices
 
 	// Array of lists for 
@@ -16,7 +16,7 @@ class Graph {
 	private LinkedList<Integer> adj[];
 
 	// Constructor
-	@SuppressWarnings("unchecked") Graph(int v)
+	@SuppressWarnings("unchecked") Graph_TEMP(int v)
 	{
 		V = v;
 		adj = new LinkedList[v];
@@ -67,7 +67,7 @@ class Graph {
 	// Driver Code
 	public static void main(String args[])
 	{
-		Graph g = new Graph(4);
+		Graph_TEMP g = new Graph_TEMP(4);
 
 		g.addEdge(0, 1);
 		g.addEdge(0, 2);
