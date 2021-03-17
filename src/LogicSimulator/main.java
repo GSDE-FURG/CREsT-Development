@@ -23,7 +23,7 @@ public class main {
         Threads.add(8); //Number of threads
             String reliability = "0.9999"; // Used only to start necessary matrix dependences
         
-        String relativePath = "abc/"; //Folder with circtuis and genlib
+        String relativePath = "abc/"; //Folder with circuits and genlib
         //String library =  relativePath + "cadence.genlib"; // Standart genlib
         String library =  relativePath  + "lib_full_no_cost.genlib";  // Different genlib
         
