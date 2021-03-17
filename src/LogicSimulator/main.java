@@ -120,7 +120,7 @@ public class main {
         
             //this.callMethodsAnalisysMonteCarlo(circuitList,relativePath, library, reliability, Threads,  sampleSize, interactions); // sampleSize (N) 99% de confiança e = 1% -- Consider all Signals
        
-            this.callMethodsAnalisysMonteCarlo_Only_IntermediateSignals(circuitList, relativePath, library, reliability, Threads,  sampleSize, interactions); // sampleSize (N) 99% de confiança e = 1% -- Consider only INTERMEDIATE Signals
+           // this.callMethodsAnalisysMonteCarlo_Only_IntermediateSignals(circuitList, relativePath, library, reliability, Threads,  sampleSize, interactions); // sampleSize (N) 99% de confiança e = 1% -- Consider only INTERMEDIATE Signals
        
             this.callMethodsAnalisysMonteCarlo_Only_Intermediate_AND_OutputSignals(circuitList, relativePath, library, reliability, Threads,  sampleSize, interactions); // sampleSize (N) 99% de confiança e = 1% -- Consider only INTERMEDIATE Signals
        
