@@ -23,8 +23,10 @@ public class main {
         Threads.add(8); //Number of threads
             String reliability = "0.9999"; // Used only to start necessary matrix dependences
         
+     
+        
         String relativePath = "abc/"; //Folder with circuits and genlib
-        //String library =  relativePath + "cadence.genlib"; // Standart genlib
+         //String library =  relativePath + "cadence.genlib"; // Standart genlib
         String library =  relativePath  + "lib_full_no_cost.genlib";  // Different genlib
         
         int sampleSize = 16577; // sample size (N) to 99% (IC - Interval of confidence) and E = 1% (Sample Error) 
@@ -316,7 +318,13 @@ public class main {
                          
                          Fault_Injection_Campaign logicSimulatorAnalisys = new Fault_Injection_Campaign(Reliability, i , folderPath + circuitList.get(i).toString(), library, (int) threads.get(k));
                          
-                         logicSimulatorAnalisys.MulltiThreading__Logic_Simulator_ramdomInputs_MonteCarlo_Only_Intermediate_AND_outputSignals(library, Reliability, testNumber, interactions, j); 
+                         //Monte Carlo 16577 sample size
+                         //logicSimulatorAnalisys.MulltiThreading__Logic_Simulator_ramdomInputs_MonteCarlo_Only_Intermediate_AND_outputSignals(library, Reliability, testNumber, interactions, j); 
+                         
+                         
+                         //True Table - all input vectors 2^n - Option NÂO PRECISA DO testNumber 
+                         logicSimulatorAnalisys.MulltiThreading__Logic_Simulator_ramdomInputs_MonteCarlo_Only_Intermediate_AND_outputSignals_TRUETABLE(library, Reliability, testNumber, interactions, j); 
+                      
                          
                          item x = new item(j, logicSimulatorAnalisys.getPropagatedFaults(), testNumber, logicSimulatorAnalisys.getTimeExecutionRound());
                          list_itemx.add(x);
