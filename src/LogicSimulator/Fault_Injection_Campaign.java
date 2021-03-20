@@ -2923,7 +2923,7 @@ import writers.WriteExcel;
                 System.out.println("\n\n----------------- Results ------------------");
                 System.out.println("Circuit: " + this.circuit.getName());
                 System.out.println("Total Vectors (N): " + N);
-                System.out.println("Propagated fault(s) (Ne): " + this.unmasked_faults);
+                System.out.println("Propagated fault(s) (Ne): " + this.unmasked_faults);              
                 System.out.println("Reliability: " + "(1-(" + this.unmasked_faults + "/" + N + ")) = " + this.reliability_circuit);
                 System.out.println("MTBF (Mean Time Between failure) : " + this.MTBF);
                 System.out.println("Simulation TimeElapsed: " + propagateTime + " m(s)");
@@ -2993,14 +2993,45 @@ import writers.WriteExcel;
                
                 int N = this.calculate_Number_Of_Input_Vector();  //(int) Math.pow(2, this.probCircuit.getInputs().size());
                
-                //this.signals_to_inject_faults = this.get_all_intermediate_and_output_signals(); // ESSE AQUI 
+                //this.signals_to_inject_faults = this.get_all_intermediate_and_output_signals(); // ESSE AQUI
+
                 this.signals_to_inject_faults = this.circuit.getInputs();
                                
                 
                 ArrayList <String> random_input_vectors =  this.calcInputRandom(cellLib, library, N, testNumber); //this.calcInputTableVector(this.probCircuit.getInputs().size(), N);
  
                 ArrayList <ArrayList<Integer>> ListInputVectors =  this.splitInputPatternsInInt(random_input_vectors, this.probCircuit.getInputs().size());
+                /*
+                int counter = 0;
+                int counter2 = 0;
+                int counter3 = 0;
+                int counter4 = 0;
                 
+                
+                for (String random_input_vector : random_input_vectors) {                                        
+                    
+                    switch(random_input_vector) {
+                        case "00":
+                            counter+=1;
+                            break;
+                        case "01":
+                            counter2+=1;
+                            break;
+                        case "10":
+                            counter3+=1;
+                            break;
+                        case "11":
+                            counter4+=1;
+                            break;
+                        
+                    }
+                }
+                
+                System.out.println("00 => " + counter);
+                System.out.println("01 => " + counter2);
+                System.out.println("10 => " + counter3);
+                System.out.println("11 => " + counter4);
+                */
                 N = testNumber;
                 
                 List thread_list = new ArrayList();
@@ -3065,8 +3096,8 @@ import writers.WriteExcel;
                                         
                                        // System.out.println("index: "+(j+1) + "     -     vec: " + inputVector);
 
-                                        Test_Item temp = new Test_Item(inputVector, this.signals_to_inject_faults.get(SigIndex), j+1);
-
+                                        Test_Item temp = new Test_Item(inputVector, this.signals_to_inject_faults.get(SigIndex), j+1);                                                                                
+                                        
                                         ItemxSimulationList.add(temp);
                                 }
                                 
@@ -3099,7 +3130,8 @@ import writers.WriteExcel;
                     }
                      
                      
-                    //this.processLogicSimMultiThreadingResultsRandom(thread_list, itemx_list, propagateTimeStart, N, formattedDate, testNumber);
+                    //this.processLogicSimMultiThreadingResultsRandom(thread_list, itemx_list, propagateTimeStart, N, formattedDate, testNumber);         
+                    
                     
                     for (int i=0; i < itemx_list.size() ; i++) {
 
@@ -3109,6 +3141,26 @@ import writers.WriteExcel;
                             
                            /// System.out.println("Thread: " + itemx_list.get(i).getThreadId() + " - Sample size: " + partition + " - Total Faults : "+  itemx_list.get(i).getPropagatedFaults());
                     }
+                    
+                    int counter = 0;
+                    
+                    for (int i=0; i < itemx_list.size() ; i++) {
+                        for (Test_Item test_Item : itemx_list.get(i).getThreadSimulatinArray()) {
+                            if (test_Item.getOrignalOutput().equals(test_Item.getFaultOutput())) {
+                                System.out.println("Input: " + test_Item.getinputVector());
+                                System.out.println("Output: " + test_Item.getOrignalOutput());
+                                System.out.println("FaultSignal: " + test_Item.getFaultSignal());
+                                System.out.println("FaultSignalOriginalValue(SignalObj): " + test_Item.getFaultSignal().getOriginalLogicValue());                                
+                                System.out.println("FaultSignalFaultValue(SignalObj): " + test_Item.getFaultSignal().getLogicValue());
+                                System.out.println("FaultSignalOriginalValue(TestItem): " + test_Item.getSignalOriginalValue());
+                                System.out.println("FaultSignalFaultValue(TestItem): " + test_Item.getFaultSignalValue());
+                                System.out.println("BitFlip: " + test_Item.getBitFlip());
+                                System.out.println("-------------");
+                            }
+                        }
+                    }
+                    
+                    System.out.println("Counter == " + counter);
                
                 
                 

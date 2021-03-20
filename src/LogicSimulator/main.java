@@ -20,7 +20,7 @@ public class main {
      
        
         Vector Threads = new Vector();
-        Threads.add(8); //Number of threads
+        Threads.add(2); //Number of threads
             String reliability = "0.9999"; // Used only to start necessary matrix dependences
         
      
@@ -101,7 +101,7 @@ public class main {
         String[] circuitFiles;
         String relative_circuit_PATH =  relativePath;
         File f = new File(relative_circuit_PATH);
-        int interactions = 5;
+        int interactions = 1;
         
         Vector circuitList = new Vector();
 
