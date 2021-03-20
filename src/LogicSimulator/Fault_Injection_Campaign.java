@@ -2992,15 +2992,23 @@ import writers.WriteExcel;
                 
                
                 int N = this.calculate_Number_Of_Input_Vector();  //(int) Math.pow(2, this.probCircuit.getInputs().size());
+                
+                
+                System.out.println("N :" + N);
+                       
                
                 //this.signals_to_inject_faults = this.get_all_intermediate_and_output_signals(); // ESSE AQUI
 
                 this.signals_to_inject_faults = this.circuit.getInputs();
                                
                 
-                ArrayList <String> random_input_vectors =  this.calcInputRandom(cellLib, library, N, testNumber); //this.calcInputTableVector(this.probCircuit.getInputs().size(), N);
+                System.out.println("Size this.signals_to_inject_faults: " + this.signals_to_inject_faults.size());
+                
+                ArrayList <String> random_input_vectors = this.calcInputTableVector(this.probCircuit.getInputs().size(), N); //this.calcInputRandom(cellLib, library, N, testNumber); //
  
                 ArrayList <ArrayList<Integer>> ListInputVectors =  this.splitInputPatternsInInt(random_input_vectors, this.probCircuit.getInputs().size());
+                
+                System.out.println("Size ListInputVectors: " + ListInputVectors.size());
                 /*
                 int counter = 0;
                 int counter2 = 0;
@@ -3032,27 +3040,18 @@ import writers.WriteExcel;
                 System.out.println("10 => " + counter3);
                 System.out.println("11 => " + counter4);
                 */
-                N = testNumber;
+                //N = testNumber;
                 
                 List thread_list = new ArrayList();
                 
                 long propagateTimeStart = System.nanoTime();
                 
                 int partition;
-                if(this.thread == 1){
-                     partition = N; //final_pos/NThreads ;
-                }
-                else{
-                    double temp;
-                    temp = Math.floor(N/this.thread); 
-                    //System.out.println("Division : "+ a);
-                    partition =  (int) temp ;//(int) Math.round(collapsed_faults/NThreads); 
-                }
+                int start= 0;
+                int end = N;
+                partition = N;
                 
-                //System.out.println("Partion : "+ partition);
-                int start = 0;
-                int end = partition;
-                
+
                  ArrayList <Logic_Simulator> itemx_list = new ArrayList<>();
                  
                  //ArrayList <Integer, String> example = new ArrayList<>();
@@ -3072,26 +3071,19 @@ import writers.WriteExcel;
                                 
                                 if((this.thread-1) == (i)){
 
-                                    start = end;
+                                    start = 0;
                                     end = N; 
                                 }
-                                else{
-                                    if(i == 0){
-                                        start = 0;
-                                        end = partition;
-                                    }else{
-                                         start = start + partition;
-                                         end = start + partition;  
-                                    }  
-                                   
-                                }
-                               // System.out.println(" start: "+ start + "  - end: " + end);                         
+                                System.out.println(" _ start: "+ start + "  - end: " + end);                         
                                 for (int j = start; j < end ; j++) {
                                         
+                                  
+                                        System.out.println("J: " + j);
                                         inputVector = this.get_Input_Vectors(ListInputVectors, j); //input Test n
                                         //this.insertInputVector(cellLib, "selected", inputVector); //Depois na hora de inseriri vetor
                                         int SigIndex = this.randomInjectionFault(); //ORIGINAL CADENCE.GENLIB
-                                        
+                                            System.out.println("Sig Index: " + SigIndex + " Sig: " +  this.signals_to_inject_faults.get(SigIndex));
+                                                    
                                         //int SigIndex = decide_Random_Signals_Contrains(Signals_CTE_ONE_ZERO);
                                         
                                        // System.out.println("index: "+(j+1) + "     -     vec: " + inputVector);
@@ -3099,6 +3091,7 @@ import writers.WriteExcel;
                                         Test_Item temp = new Test_Item(inputVector, this.signals_to_inject_faults.get(SigIndex), j+1);                                                                                
                                         
                                         ItemxSimulationList.add(temp);
+                                    
                                 }
                                 
                                 
@@ -3135,16 +3128,38 @@ import writers.WriteExcel;
                     
                     for (int i=0; i < itemx_list.size() ; i++) {
 
-                            // System.out.println("SIgnal fault list : "+ this.SignalFault);
+                            ///System.out.println("SIgnal fault list : "+ this.SignalFault);
                            
                             this.unmasked_faults = this.unmasked_faults +  itemx_list.get(i).getPropagatedFaults();
                             
-                           /// System.out.println("Thread: " + itemx_list.get(i).getThreadId() + " - Sample size: " + partition + " - Total Faults : "+  itemx_list.get(i).getPropagatedFaults());
+                           System.out.println("Thread: " + itemx_list.get(i).getThreadId() + " - Sample size: " + partition + " - Total Faults : "+  itemx_list.get(i).getPropagatedFaults());
                     }
                     
                     int counter = 0;
-                    
-                    for (int i=0; i < itemx_list.size() ; i++) {
+                    System.out.println(" -------- ");
+                            
+                    for (int k = 0 ; k < itemx_list.size() ; k++) {
+                        
+                        Logic_Simulator temp = itemx_list.get(k);
+                        
+                        ArrayList<Test_Item> test_Item = temp.getThreadSimulatinArray();
+                        
+                        System.out.println("Temp: " + temp);
+                        
+                        for (int i = 0; i < test_Item.size(); i++) {
+                         
+                             System.out.println("Input: " + test_Item.get(i).getinputVector());
+                                System.out.println("Output: " + test_Item.get(i).getOrignalOutput());
+                                System.out.println("FaultSignal: " + test_Item.get(i).getFaultSignal());
+                                    System.out.println("FaultSignalOriginalValue(SignalObj): " + test_Item.get(i).getFaultSignal().getOriginalLogicValue());                                
+                                    System.out.println("FaultSignalFaultValue(SignalObj): " + test_Item.get(i).getFaultSignal().getLogicValue());
+                            System.out.println("FaultSignalOriginalValue(TestItem): " + test_Item.get(i).getSignalOriginalValue());
+                            System.out.println("FaultSignalFaultValue(TestItem): " + test_Item.get(i).getFaultSignalValue());
+                                System.out.println("BitFlip: " + test_Item.get(i).getBitFlip());
+                                System.out.println("-------------");
+                        }
+                        
+                        /*
                         for (Test_Item test_Item : itemx_list.get(i).getThreadSimulatinArray()) {
                             if (test_Item.getOrignalOutput().equals(test_Item.getFaultOutput())) {
                                 System.out.println("Input: " + test_Item.getinputVector());
@@ -3158,6 +3173,7 @@ import writers.WriteExcel;
                                 System.out.println("-------------");
                             }
                         }
+                        */
                     }
                     
                     System.out.println("Counter == " + counter);

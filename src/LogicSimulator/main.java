@@ -20,7 +20,7 @@ public class main {
      
        
         Vector Threads = new Vector();
-        Threads.add(2); //Number of threads
+        Threads.add(1); //Number of threads
             String reliability = "0.9999"; // Used only to start necessary matrix dependences
         
      
@@ -260,6 +260,7 @@ public class main {
                          //logicSimulatorAnalisys.MulltiThreading__Logic_Simulator_ramdomInputs_MonteCarlo_Only_IntermediateSignals(library, Reliability, testNumber, interactions, j); 
                          logicSimulatorAnalisys.MulltiThreading__Logic_Simulator_ramdomInputs_MonteCarlo_Only_InputsSignals(library, Reliability, testNumber, interactions, j); 
                          
+                         
                          //logicSimulatorAnalisys.TESTEMODE(library, Reliability, testNumber, interactions, j);
                          item x = new item(j, logicSimulatorAnalisys.getPropagatedFaults(), testNumber, logicSimulatorAnalisys.getTimeExecutionRound());
                          list_itemx.add(x);
@@ -325,7 +326,7 @@ public class main {
                          //Monte Carlo 16577 sample size
                          logicSimulatorAnalisys.MulltiThreading__Logic_Simulator_ramdomInputs_MonteCarlo_Only_Intermediate_AND_outputSignals(library, Reliability, testNumber, interactions, j); 
                          
-                         
+                        
                          //True Table - all input vectors 2^n - Option NÂO PRECISA DO testNumber 
                          //logicSimulatorAnalisys.MulltiThreading__Logic_Simulator_ramdomInputs_MonteCarlo_Only_Intermediate_AND_outputSignals_TRUETABLE(library, Reliability, testNumber, interactions, j); 
                       
