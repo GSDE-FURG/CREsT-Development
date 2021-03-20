@@ -25,7 +25,7 @@ public class main {
         
      
         
-        String relativePath = "abc/"; //Folder with circuits and genlib
+        String relativePath = "abc/xor_experiment/"; //Folder with circuits and genlib
          //String library =  relativePath + "cadence.genlib"; // Standart genlib
         String library =  relativePath  + "lib_full_no_cost.genlib";  // Different genlib
         
@@ -101,7 +101,7 @@ public class main {
         String[] circuitFiles;
         String relative_circuit_PATH =  relativePath;
         File f = new File(relative_circuit_PATH);
-        int interactions = 1;
+        int interactions = 5;
         
         Vector circuitList = new Vector();
 
@@ -122,9 +122,9 @@ public class main {
         
             //this.callMethodsAnalisysMonteCarlo(circuitList,relativePath, library, reliability, Threads,  sampleSize, interactions); // sampleSize (N) 99% de confiança e = 1% -- Consider all Signals
        
-           // this.callMethodsAnalisysMonteCarlo_Only_IntermediateSignals(circuitList, relativePath, library, reliability, Threads,  sampleSize, interactions); // sampleSize (N) 99% de confiança e = 1% -- Consider only INTERMEDIATE Signals
+            this.callMethodsAnalisysMonteCarlo_Only_IntermediateSignals(circuitList, relativePath, library, reliability, Threads,  sampleSize, interactions); // sampleSize (N) 99% de confiança e = 1% -- Consider only INTERMEDIATE Signals
        
-            this.callMethodsAnalisysMonteCarlo_Only_Intermediate_AND_OutputSignals(circuitList, relativePath, library, reliability, Threads,  sampleSize, interactions); // sampleSize (N) 99% de confiança e = 1% -- Consider only INTERMEDIATE Signals
+            //this.callMethodsAnalisysMonteCarlo_Only_Intermediate_AND_OutputSignals(circuitList, relativePath, library, reliability, Threads,  sampleSize, interactions); // sampleSize (N) 99% de confiança e = 1% -- Consider only INTERMEDIATE Signals
        
         
          
@@ -257,7 +257,9 @@ public class main {
                     for (int j = 0; j < interactions; j++) {
                          
                          Fault_Injection_Campaign logicSimulatorAnalisys = new Fault_Injection_Campaign(Reliability, i , folderPath + circuitList.get(i).toString(), library, (int) threads.get(k));
-                         logicSimulatorAnalisys.MulltiThreading__Logic_Simulator_ramdomInputs_MonteCarlo_Only_IntermediateSignals(library, Reliability, testNumber, interactions, j); 
+                         //logicSimulatorAnalisys.MulltiThreading__Logic_Simulator_ramdomInputs_MonteCarlo_Only_IntermediateSignals(library, Reliability, testNumber, interactions, j); 
+                         logicSimulatorAnalisys.MulltiThreading__Logic_Simulator_ramdomInputs_MonteCarlo_Only_InputsSignals(library, Reliability, testNumber, interactions, j); 
+                         
                          //logicSimulatorAnalisys.TESTEMODE(library, Reliability, testNumber, interactions, j);
                          item x = new item(j, logicSimulatorAnalisys.getPropagatedFaults(), testNumber, logicSimulatorAnalisys.getTimeExecutionRound());
                          list_itemx.add(x);
@@ -302,8 +304,10 @@ public class main {
     public void callMethodsAnalisysMonteCarlo_Only_Intermediate_AND_OutputSignals(Vector circuitList, String folderPath, String library, String Reliability, Vector threads, int testNumber, int interactions) throws Exception{
         
          Vector <Integer> TimeoutList = new Vector();
+                  
         
          for (int i = 0; i < circuitList.size(); i++) {
+             
              
              ArrayList <item> list_itemx = new ArrayList<>();
              System.out.println("=======  Simulation: " +  i + " -  Circuit: " + circuitList.get(i) + "    =======");
@@ -319,11 +323,11 @@ public class main {
                          Fault_Injection_Campaign logicSimulatorAnalisys = new Fault_Injection_Campaign(Reliability, i , folderPath + circuitList.get(i).toString(), library, (int) threads.get(k));
                          
                          //Monte Carlo 16577 sample size
-                         //logicSimulatorAnalisys.MulltiThreading__Logic_Simulator_ramdomInputs_MonteCarlo_Only_Intermediate_AND_outputSignals(library, Reliability, testNumber, interactions, j); 
+                         logicSimulatorAnalisys.MulltiThreading__Logic_Simulator_ramdomInputs_MonteCarlo_Only_Intermediate_AND_outputSignals(library, Reliability, testNumber, interactions, j); 
                          
                          
                          //True Table - all input vectors 2^n - Option NÂO PRECISA DO testNumber 
-                         logicSimulatorAnalisys.MulltiThreading__Logic_Simulator_ramdomInputs_MonteCarlo_Only_Intermediate_AND_outputSignals_TRUETABLE(library, Reliability, testNumber, interactions, j); 
+                         //logicSimulatorAnalisys.MulltiThreading__Logic_Simulator_ramdomInputs_MonteCarlo_Only_Intermediate_AND_outputSignals_TRUETABLE(library, Reliability, testNumber, interactions, j); 
                       
                          
                          item x = new item(j, logicSimulatorAnalisys.getPropagatedFaults(), testNumber, logicSimulatorAnalisys.getTimeExecutionRound());
