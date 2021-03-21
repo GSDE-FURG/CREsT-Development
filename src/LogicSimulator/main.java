@@ -20,7 +20,7 @@ public class main {
      
        
         Vector Threads = new Vector();
-        Threads.add(1); //Number of threads
+        Threads.add(4); //Number of threads
             String reliability = "0.9999"; // Used only to start necessary matrix dependences
         
      
@@ -88,11 +88,11 @@ public class main {
             folderPath = "./" + folderPath;
             System.out.println(""+folderPath);
             
-            // this.callMethodsAnalisysMonteCarlo(singleCircuit, folderPath ,library, reliability, Threads,  sampleSize, interactions); // sampleSize (N) 99% de confiança e = 1% -- Consider ALL Signals (input, intermediate, output)
+            this.callMethodsAnalisysMonteCarlo(singleCircuit, folderPath ,library, reliability, Threads,  sampleSize, interactions); // sampleSize (N) 99% de confiança e = 1% -- Consider ALL Signals (input, intermediate, output)
             
             // this.callMethodsAnalisysMonteCarlo_Only_IntermediateSignals(singleCircuit, folderPath ,library, reliability, Threads,  sampleSize, interactions); // sampleSize (N) 99% de confiança e = 1% -- Consider only INTERMEDIATE Signals
             
-            this.callMethodsAnalisysMonteCarlo_Only_Intermediate_AND_OutputSignals(singleCircuit, folderPath ,library, reliability, Threads,  sampleSize, interactions); // sampleSize (N) 99% de confiança e = 1% -- Consider INTERMEDIATE and OUTPUT Signals
+            //this.callMethodsAnalisysMonteCarlo_Only_Intermediate_AND_OutputSignals(singleCircuit, folderPath ,library, reliability, Threads,  sampleSize, interactions); // sampleSize (N) 99% de confiança e = 1% -- Consider INTERMEDIATE and OUTPUT Signals
          
      }
      
@@ -120,9 +120,9 @@ public class main {
          System.out.println("======================\n");
         //System.out.println(""+circuitList);
         
-            //this.callMethodsAnalisysMonteCarlo(circuitList,relativePath, library, reliability, Threads,  sampleSize, interactions); // sampleSize (N) 99% de confiança e = 1% -- Consider all Signals
+            this.callMethodsAnalisysMonteCarlo(circuitList,relativePath, library, reliability, Threads,  sampleSize, interactions); // sampleSize (N) 99% de confiança e = 1% -- Consider all Signals
        
-            this.callMethodsAnalisysMonteCarlo_Only_IntermediateSignals(circuitList, relativePath, library, reliability, Threads,  sampleSize, interactions); // sampleSize (N) 99% de confiança e = 1% -- Consider only INTERMEDIATE Signals
+            //this.callMethodsAnalisysMonteCarlo_Only_IntermediateSignals(circuitList, relativePath, library, reliability, Threads,  sampleSize, interactions); // sampleSize (N) 99% de confiança e = 1% -- Consider only INTERMEDIATE Signals
        
             //this.callMethodsAnalisysMonteCarlo_Only_Intermediate_AND_OutputSignals(circuitList, relativePath, library, reliability, Threads,  sampleSize, interactions); // sampleSize (N) 99% de confiança e = 1% -- Consider only INTERMEDIATE Signals
        
