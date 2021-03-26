@@ -14,7 +14,7 @@ import java.util.Vector;
  */
 public class mainOps{
         
-        private ArrayList <String> circuitList = new ArrayList<>(); //CircuitList for simulation
+        private final ArrayList <String> circuitList = new ArrayList<>(); //CircuitList for simulation
         int threads; 
         String reliabilityConst;
         String relativePath;

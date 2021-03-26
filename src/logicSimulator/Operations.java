@@ -30,11 +30,11 @@ import writers.WriteCsvTh;
  */
  public class Operations  extends mainOps{
     
-    private ArrayList <Logic_Simulator> itemx_list = new ArrayList<>();
+    private ArrayList <LogicSimulator> itemx_list = new ArrayList<>();
     private int sampleSize;
     private CellLibrary cellLibrary;
     private Circuit circuit;
-    private final String circuitString;
+    private final String circuitNameStr;
     private LevelCircuit levelCircuit;
     private ProbCircuit probCircuit;
     private LevelCircuit lCircuit;
@@ -54,7 +54,7 @@ import writers.WriteCsvTh;
             super(threads, reliabilityConst, relativePath, genlib);
             
              this.cellLibrary = new CellLibrary();
-             this.circuitString = circuitName;
+             this.circuitNameStr = circuitName;
     }
     
     public ArrayList <Signal> vectorGenerator(String option){
@@ -233,7 +233,7 @@ import writers.WriteCsvTh;
                         return randomSignalIndex;
      }
     
-    public void writeCsvFileCompleteTh(String filename, ArrayList <Logic_Simulator> itemx_list) throws IOException, WriteException{
+    public void writeCsvFileCompleteTh(String filename, ArrayList <LogicSimulator> itemx_list) throws IOException, WriteException{
          
              //System.out.println("Creating Complete log .....");
              ArrayList <Signal> outputSignals = this.circuit.getOutputs();
@@ -241,12 +241,9 @@ import writers.WriteCsvTh;
               
             
             String Header = "Input Signals" + ";" + "Fault Signal" + ";" + "Fault Type" + ";" + "Fault-Free Circuit Output" + ";" + "Faulty Circuit Output";
-            //String outputElementsHeader = "";
-             
-           // System.out.println("---->>>"+ this.outputListValueStr);
             WriteCsvTh logfile = new WriteCsvTh();
             
-            logfile.writeCSVCompleteTh(filename, this.verilog_circuit.getCircuit().getName() + ".v", this.circuit.getInputs(), this.circuit.getOutputs(), 
+            logfile.writeCSVCompleteThNew(filename, this.verilog_circuit.getCircuit().getName() + ".v", this.circuit.getInputs(), this.circuit.getOutputs(), 
                     this.signals_to_inject_faults,  Header , itemx_list , Integer.toString(this.unmasked_faults));
                 
      }
@@ -303,7 +300,7 @@ import writers.WriteCsvTh;
              
                for (int i = 0; i < this.threads; i++) { //Loop of simulations
                         
-                        ArrayList <Test_Item> ItemxSimulationList = new ArrayList<>();
+                        ArrayList <TestVectorInformation> ItemxSimulationList = new ArrayList<>();
                         ArrayList <Integer> inputVector = new ArrayList<>();
 
                         if((this.threads-1) == (i)){
@@ -329,11 +326,11 @@ import writers.WriteCsvTh;
                                 inputVector = this.get_Input_Vectors(ListInputVectors, j); //input Test n
                                 int SigIndex = this.sortRandomFaultInjection(); //int SigIndex = decide_Random_Signals_Contrains(Signals_CTE_ONE_ZERO);
                                 
-                                Test_Item temp = new Test_Item(inputVector, this.signals_to_inject_faults.get(SigIndex), j+1);
+                                TestVectorInformation temp = new TestVectorInformation(inputVector, this.signals_to_inject_faults.get(SigIndex), j+1);
                                 ItemxSimulationList.add(temp);
                         }
                         
-                        Logic_Simulator threadItem = new Logic_Simulator(ItemxSimulationList, this.circuit, this.cellLibrary, this.levelCircuit, start, end, this.genlib , this.circuitString); // Thread contex info
+                        LogicSimulator threadItem = new LogicSimulator(ItemxSimulationList, this.circuit, this.cellLibrary, this.levelCircuit, start, end, this.genlib , this.circuitNameStr); // Thread contex info
                         itemx_list.add(threadItem);
 
                         Runnable runnable = threadItem;
@@ -366,11 +363,11 @@ import writers.WriteCsvTh;
               
                 
                 /*Reading verilog*/
-                MappedVerilogReader verilog_circuit = new MappedVerilogReader(this.circuitString, this.cellLibrary);
+                MappedVerilogReader verilog_circuit = new MappedVerilogReader(this.circuitNameStr, this.cellLibrary);
                 this.verilog_circuit = verilog_circuit;
                 /*Circuit linked to verilog_circuit - init circuit*/
                 this.circuit = verilog_circuit.getCircuit();
-                System.out.println("    ... Reading verilog "+ " at -> " + this.circuitString  + " ... ok");
+                System.out.println("    ... Reading verilog "+ " at -> " + this.circuitNameStr  + " ... ok");
                 //System.out.println("Patterns : " + this.verilog_circuit.getGatePattern());
               
                 

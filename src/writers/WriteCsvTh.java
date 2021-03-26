@@ -27,6 +27,8 @@ import jxl.write.WritableSheet;
 import jxl.write.WritableWorkbook;
 import jxl.write.WriteException;
 import jxl.write.biff.RowsExceededException;
+import logicSimulator.LogicSimulator;
+import logicSimulator.TestVectorInformation;
 
 
 public class WriteCsvTh {
@@ -250,6 +252,181 @@ public class WriteCsvTh {
              csvWriter.flush();
              csvWriter.close();
     }
+    
+    public void writeCSVCompleteThNew(String filename, String circuitName, ArrayList <Signal> inputSignals,  ArrayList <Signal> outputSignals,  ArrayList <Signal> all_signals, String Head, ArrayList <LogicSimulator> thread_list_test, String propagated_faults) throws IOException {
+       
+        this.FileName = filename;
+        this.FileNameCsv = this.FileName + ".csv";
+        
+            
+        System.out.println("Creating .csv -> file: "+ this.FileNameCsv);
+             
+            /*
+            List<List<String>> rows = Arrays.asList(
+                 //Arrays.asList("Jean", "author", "Java"),
+                 //Arrays.asList("David", "editor", "Python"),
+                 //Arrays.asList("Scott", "editor", "Node.js")
+                 
+                  // Arrays.asList();
+             );
+            */
+            //rows = Arrays.asList("aaaaa");
+
+             FileWriter csvWriter = new FileWriter(this.FileNameCsv);
+                /*
+                addCaption(sheet, 0, 0, "Fanouts");
+                addCaption(sheet, 1, 0, "Reliability");
+                addCaption(sheet, 2, 0, "Failure Rate (1E-6)");
+                addCaption(sheet, 3, 0, "MTBF");
+                addCaption(sheet, 4, 0, "Time (ms)");
+                */
+             String newStr = "";
+             csvWriter.append("Circuit Name: ;");
+                csvWriter.append(circuitName);
+             csvWriter.append("\n");
+             
+             csvWriter.append("Input ("+ inputSignals.size() +"): ;");
+                String inputnewStr = inputSignals.toString().replace("[", "");
+                csvWriter.append(inputnewStr.replace("]", ""));
+             csvWriter.append("\n");
+             
+             csvWriter.append("Output ("+ outputSignals.size() +"): ;");
+                 String outnewStr = outputSignals.toString().replace("[", "");
+                 
+                csvWriter.append(outnewStr.replace("]", ""));
+             csvWriter.append("\n");
+             
+             csvWriter.append("internal Signals ("+ all_signals.size() +"): ;");
+                 String internalnewStr = all_signals.toString().replace("[", "");
+                 //String outnewStr2 = internalnewStr.replace(inputnewStr, "");
+                 //String outnewStr3 = outnewStr2.replace(outnewStr, "");
+                 csvWriter.append(internalnewStr.replace("]", ""));
+             csvWriter.append("\n");
+             
+             
+             csvWriter.append("\n");
+             csvWriter.append("\n");
+             csvWriter.append(Head + ";" + "Unmasked Faults");
+             csvWriter.append("\n");
+             
+             //System.out.println("Header:  " + Head);
+             //System.out.println("content: " + inputFile);
+             
+
+            String t = "";
+           
+             for (int i = 0; i < thread_list_test.size(); i++) {
+                
+                boolean flag = true;
+                
+                ArrayList <String> input_i = thread_list_test.get(i).get_inputListValuesStr();
+                
+                ArrayList <TestVectorInformation> item = thread_list_test.get(i).getThreadSimulatinArray();
+                
+                for (int x=0, y=0; x< input_i.size() && y< item.size(); x++ , y++){
+                
+                    //System.out.println("x: " + x + "  y: "+y);
+                    
+                    if((x < input_i.size()) && (y < item.size())){
+                        String s = input_i.get(x);
+                            s = s.replace("[", "");
+                            s = s.replace("]", "");
+                            s = s.replace(" ", "");
+                            s = s.replace(",", "");
+                            s = "'" + s; 
+                            
+                            String faultFree = "'" + item.get(y).getOrignalOutput(); //+ "'";
+                            String fault = "'" + item.get(y).getFaultOutput();
+                            String T = "";
+                            
+                            if(!faultFree.equals(fault))
+                                T = "FAILURE";
+                            
+                            if(flag){
+                               
+                                flag = false;
+                            }
+                            
+                           // System.out.println("T: " + i + " fault: " + item.get(y).getFaultSignal() + " - v: "+ s + " faultfree: " + faultFree + " fault: " + fault + " - " + T );
+                            //csvWriter.append(s  + ";" + item.get(y).getFaultSignal() +";" + "(" + item.get(y).getFaultSignal().getOriginalLogicValue()+ ")to(" +  item.get(y).getFaultSignal().getLogicValue() + ")" + ";"+ faultFree + ";" + fault + ";" + propagated_faults);
+                            csvWriter.append(s  + ";" + item.get(y).getFaultSignal() +";" + item.get(y).getBitFlip() + ";"+ faultFree + ";" + fault + ";" + propagated_faults);
+                            csvWriter.append("\n");
+                            propagated_faults = "";
+                    }
+                
+                }
+             }
+            
+            //String Header = "Input Signals" + ";" + "Fault Signal" + ";" + "Fault Type" + ";" + "Fault-Free Circuit Output" + ";" + "Faulty Circuit Output";
+            /*
+            Iterator<ArrayList<String>> iteratorx = outputFault.iterator();
+            Iterator<ArrayList<String>> itaratorFree = outputFreeFault.iterator();
+            
+            for (Iterator<ArrayList<String>> iterator = inputArrayList.iterator(); iterator.hasNext() && iteratorx.hasNext() && itaratorFree.hasNext();) {
+                    //ArrayList<String> next = iterator.next();
+                    ArrayList<String> input_i = iterator.next();
+                    StringBuffer inputVector = new StringBuffer();
+                 
+                    
+                    
+                    ArrayList<String> output_freeFault = itaratorFree.next();
+                    
+                    //Iterator<ArrayList<String>> iteratorfault = outputFault.iterator();
+                    //ArrayList<String> output_fault = iteratorfault.next();
+                      
+                    Iterator<ArrayList<String>> iteratorfaultSIG = signalFault.iterator();
+                    ArrayList<String> sig = iteratorfaultSIG.next();
+                      
+                    Iterator<ArrayList<String>> iteratorfaultbitFilp = signalFaultBitFlip.iterator();
+                    ArrayList<String> bitflip = iteratorfaultbitFilp.next();
+                    
+                    ArrayList<String> output_thread_i = iteratorx.next();
+                    j = 0;
+                    for (String s : input_i) {
+                            s = s.replace("[", "");
+                            s = s.replace("]", "");
+                            s = s.replace(" ", "");
+                            s = s.replace(",", "");
+                           // System.out.println(""+ s);
+                            //inputVector.append(s);
+                            //sb.append(" ");
+                            s = "'" + s;
+                            String output_free;
+                            String fault;
+                            t = "";
+                            
+                            if(j < output_freeFault.size()){
+                               output_free = "'" + output_freeFault.get(j);
+                               fault = "'" + output_thread_i.get(j);
+                               
+                               
+                               //if(output_free.equals(fault)){
+                               //    propagated_faults++;
+                              // }
+                               
+                           */
+            /*
+                               if(i == 0 ){
+                                   t = Integer.toString(propagated_faults) ;
+                               }
+                                csvWriter.append(s  +";" + sig.get(j) + ";" + bitflip.get(j) + ";"+ output_free + ";" + fault + ";" + t );
+                                csvWriter.append("\n");
+                            
+                                 System.out.println((i+1) + "-input:" + s + "'" +"; " + sig.get(j) + "; " + bitflip.get(j) + "; "+ output_free + "; " + fault);
+                            }
+                               i++;
+                               j++;
+                    }
+                     iteratorx.hasNext();
+                     itaratorFree.hasNext();
+                   
+            }
+             */
+             System.out.println("Propagated faults (SET): " + propagated_faults);
+             csvWriter.flush();
+             csvWriter.close();
+    }
+    
     
     public void writeCSVCompleteTh(String filename, String circuitName, ArrayList <Signal> inputSignals,  ArrayList <Signal> outputSignals,  ArrayList <Signal> all_signals, String Head, ArrayList <Logic_Simulator> thread_list_test, String propagated_faults) throws IOException {
        
