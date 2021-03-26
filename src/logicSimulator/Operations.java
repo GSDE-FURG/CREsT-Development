@@ -449,7 +449,7 @@ import writers.WriteCsvTh;
                 
                 this.signals_to_inject_faults = this.signalsToInjectFault(option); // Consider all signals to fault inject
                      
-                ArrayList <String> random_input_vectors =  this.calcInputTableVector(this.probCircuit.getInputs().size(), this.sampleSize);
+                ArrayList <String> random_input_vectors =  this.generateInputVector("TRUE_TABLE"); //this.calcInputTableVector(this.probCircuit.getInputs().size(), this.sampleSize);
                 ArrayList <ArrayList<Integer>> ListInputVectors =  this.splitInputPatternsInInt(random_input_vectors, this.probCircuit.getInputs().size());
                 
                 List thread_list = particionateVectorPerThread(ListInputVectors); // x - vectors per thread
@@ -565,7 +565,7 @@ import writers.WriteCsvTh;
                 
                 this.signals_to_inject_faults = this.signalsToInjectFault(option); // Consider all signals to fault inject
                      
-                ArrayList <String> random_input_vectors = generateInputVector("RANDOM");//this.calcInputTableVector(this.probCircuit.getInputs().size(), this.sampleSize);
+                ArrayList <String> random_input_vectors = generateInputVector("RANDOM"); // Generate Random Input Vectors or InputTrueTable
                 
                 ArrayList <ArrayList<Integer>> ListInputVectors =  this.splitInputPatternsInInt(random_input_vectors, this.probCircuit.getInputs().size());
                 
@@ -625,5 +625,4 @@ import writers.WriteCsvTh;
              */
      }
    
-
 }

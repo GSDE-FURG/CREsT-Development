@@ -77,6 +77,7 @@ public class mainOps{
              String relativePath = "teste/";
              //String genlib =  relativePath  + "lib_full_no_cost.genlib";
              String genlib =  relativePath  + "cadence.genlib";
+             
              mainOps experimento = new mainOps(threads, constReliability, relativePath, genlib);
              
              experimento.preparingEnviroment();
