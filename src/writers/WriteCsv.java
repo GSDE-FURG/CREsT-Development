@@ -1,7 +1,7 @@
 package writers;
 
 
-import LogicSimulator.Logic_Simulator;
+import logicSimulator.Logic_Simulator;
 import datastructures.Signal;
 import java.io.File;
 import java.io.FileWriter;

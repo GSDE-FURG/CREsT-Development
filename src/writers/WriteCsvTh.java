@@ -1,8 +1,8 @@
 package writers;
 
 
-import LogicSimulator.Test_Item;
-import LogicSimulator.Logic_Simulator;
+import logicSimulator.Test_Item;
+import logicSimulator.Logic_Simulator;
 import datastructures.Signal;
 import java.io.File;
 import java.io.FileWriter;
