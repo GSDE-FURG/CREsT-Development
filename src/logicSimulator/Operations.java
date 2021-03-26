@@ -57,7 +57,7 @@ import writers.WriteCsvTh;
              this.circuitNameStr = circuitName;
     }
     
-    public ArrayList <Signal> vectorGenerator(String option){
+    public ArrayList <Signal> signalsToInjectFault(String option){
         
         ArrayList <Signal> signalList = new ArrayList<>();
         signalList = this.circuit.getSignals();
@@ -151,36 +151,38 @@ import writers.WriteCsvTh;
         }
     }
     
-    public ArrayList<String> calcInputTableVector(int n_inputs, int numLines){
+    public ArrayList<String> vectorGenerator(int n_inputs, int numLines, String option){
          
-         //System.out.println("       - Truthtable: ");
-         ArrayList <String> vector = new ArrayList<>();
-         
-         for (int i = 0; i < numLines; i++) {
-             
-             if(i < (numLines/2)){
-                //System.out.println(i + " - " + Integer.toBinaryString(i) +" len " +Integer.toBinaryString(i).length());
-                
-                int len = Integer.toBinaryString(i).length();
-                String str = Integer.toBinaryString(i);
-                if(len < n_inputs){
-                    while(len < n_inputs){
-                        str = "0" + str;
-                        len++;
-                    }
-                }
-                
-                //System.out.println("" + (i+1) + " - " + str);
-                vector.add(str);
-             }
-             else{
-                 //System.out.println("" + (i+1) + " - " + Integer.toBinaryString(i) );
-                 vector.add(Integer.toBinaryString(i));
-             }
-         }
-         
-         //System.out.println(""+vector);
-         return vector;
+            if(option.equals("TRUETABLE")){  //Calc all inputs from true table N = 2^inputs
+                     System.out.println("       - Truthtable: ");
+                     ArrayList <String> vector = new ArrayList<>();
+
+                     for (int i = 0; i < numLines; i++) {
+
+                         if(i < (numLines/2)){
+                            //System.out.println(i + " - " + Integer.toBinaryString(i) +" len " +Integer.toBinaryString(i).length());
+
+                            int len = Integer.toBinaryString(i).length();
+                            String str = Integer.toBinaryString(i);
+                            if(len < n_inputs){
+                                while(len < n_inputs){
+                                    str = "0" + str;
+                                    len++;
+                                }
+                            }
+
+                            //System.out.println("" + (i+1) + " - " + str);
+                            vector.add(str);
+                         }
+                         else{
+                             //System.out.println("" + (i+1) + " - " + Integer.toBinaryString(i) );
+                             vector.add(Integer.toBinaryString(i));
+                         }
+                     }
+                    return vector;
+            }
+        
+         return null;
      }
    
     public ArrayList <ArrayList<Integer>> splitInputPatternsInInt(ArrayList <String> vector, int n_input){
@@ -395,12 +397,12 @@ import writers.WriteCsvTh;
                 this.sampleSize = (int) Math.pow(2, this.probCircuit.getInputs().size());  //(int) Math.pow(2, this.probCircuit.getInputs().size());
                 int N = this.sampleSize; // random_input_vectors.size();//testNumber;
                 
-                System.out.println("-   Sample size (N): " + this.sampleSize);
+                System.out.println("-   Sample size (N = 2^ENTRADAS): " + "2^"+ this.circuit.getInputs().size() + " = " + this.sampleSize);
                 
-                this.signals_to_inject_faults = this.vectorGenerator("ALL_SIGNALS"); // COnsider all signals to fault inject
+                this.signals_to_inject_faults = this.signalsToInjectFault("ALL_SIGNALS"); // Consider all signals to fault inject
                      
-                ArrayList <String> random_input_vectors =  this.calcInputTableVector(this.probCircuit.getInputs().size(), this.sampleSize);
-                ArrayList <ArrayList<Integer>> ListInputVectors =  this.splitInputPatternsInInt(random_input_vectors, this.probCircuit.getInputs().size());
+                ArrayList <String> trueTableInputVectors =  this.vectorGenerator(this.probCircuit.getInputs().size(), this.sampleSize, "TRUETABLE");
+                ArrayList <ArrayList<Integer>> ListInputVectors =  this.splitInputPatternsInInt(trueTableInputVectors, this.probCircuit.getInputs().size());
                 
                 List thread_list = particionateVectorPerThread(ListInputVectors); // x - vectors per thread
                 
