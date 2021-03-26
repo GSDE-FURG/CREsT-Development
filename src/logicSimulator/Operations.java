@@ -105,7 +105,7 @@ import writers.WriteCsvTh;
               for (int i = 0; i < signalList.size(); i++) {  
                     r.add(signalList.get(i));
               }
-               System.out.println("  - Considering all signals (input, intermediate, output): "+r.size());  
+               System.out.println("--> Considering all signals (input, intermediate, output): "+r.size());  
               return r;
                
         }
@@ -253,7 +253,7 @@ import writers.WriteCsvTh;
      
     public void writeSimpleLog(String filename, String date, String dateend, long propagateTimems) throws IOException{
         
-        System.out.println("Creating .txt -> file: " + filename);
+        ///System.out.println("Creating .txt -> file: " + filename);
         float reliability_circuit =  (float) ( 1 - ((float) this.unmasked_faults / (float) this.sampleSize));
         double lamb = - Math.log(reliability_circuit);
         this.MTBF = (1 / lamb);
@@ -385,7 +385,7 @@ import writers.WriteCsvTh;
                 this.initLevelCircuit();
                
                 /*Init ProbCircuits*/
-                 this.initProbCircuit();
+                this.initProbCircuit();
                 
                 /*Init PTMs Const*/
                 cellLib.setPTMCells2(Float.valueOf(this.reliabilityConst));
@@ -393,19 +393,19 @@ import writers.WriteCsvTh;
                
                 long loadTimeEnd = System.nanoTime();//System.currentTimeMillis();
                 long loadTime =   TimeUnit.NANOSECONDS.toMillis(loadTimeEnd - loadTimeStart);
-                System.out.println("- Load Time m(s): " + loadTime);
+                //System.out.println("- Load Time m(s): " + loadTime);
                 
                 this.sampleSize = (int) Math.pow(2, this.probCircuit.getInputs().size());  //(int) Math.pow(2, this.probCircuit.getInputs().size());
                 int N = this.sampleSize; // random_input_vectors.size();//testNumber;
                 
-                System.out.println("    - Sample size (N): " + this.sampleSize);
+                System.out.println("-   Sample size (N): " + this.sampleSize);
                 
                 this.signals_to_inject_faults = this.vectorGenerator("ALL_SIGNALS"); // COnsider all signals to fault inject
                      
                 ArrayList <String> random_input_vectors =  this.calcInputTableVector(this.probCircuit.getInputs().size(), this.sampleSize);
                 ArrayList <ArrayList<Integer>> ListInputVectors =  this.splitInputPatternsInInt(random_input_vectors, this.probCircuit.getInputs().size());
                 
-                List thread_list = particionateVectorPerThread(ListInputVectors);
+                List thread_list = particionateVectorPerThread(ListInputVectors); // x - vectors per thread
                 
                 long propagateTimeStart = System.nanoTime();
                 
@@ -422,7 +422,7 @@ import writers.WriteCsvTh;
                     thread_temp.join();
                 }
                     
-                   
+                /* Compilando os resultados - Falhas detectadas Ne*/
                 for (int i=0; i < this.itemx_list.size() ; i++) {
                     this.unmasked_faults = this.unmasked_faults +  itemx_list.get(i).getPropagatedFaults();
                 }

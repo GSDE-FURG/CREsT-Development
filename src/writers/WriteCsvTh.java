@@ -307,8 +307,8 @@ public class WriteCsvTh {
              csvWriter.append(Head + ";" + "Unmasked Faults");
              csvWriter.append("\n");
              
-             System.out.println("Header:  " + Head);
-             System.out.println("content: " + inputFile);
+             //System.out.println("Header:  " + Head);
+             //System.out.println("content: " + inputFile);
              
 
             String t = "";
