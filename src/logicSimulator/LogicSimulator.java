@@ -117,18 +117,12 @@ import signalProbability.ProbCircuit;
         }
        
         private void startSimulationFaultFree() throws IOException, WriteException{   
-            
-            
-            
+ 
             for (int i = 0; i < this.threadSimulationList.size(); i++) {
-                    //System.out.println("Index : "+ this.threadSimulationList.get(i).getSimulationIndex() + "  - vec:" + this.threadSimulationList.get(i).getinputVector());
-                    //this.insertInputVectors(cellLib, "selected", this.threadSimulationList.get(i).getinputVector());
                     this.insertInputVectors("selected", this.threadSimulationList.get(i).getinputVector());
                     this.propagateInputVectors(this.threadSimulationList.get(i).getSimulationIndex(), this.threadSimulationList.get(i).getinputVector(), this.threadSimulationList.get(i));
                     this.getPropagateFaultFreeResults( this.threadSimulationList.get(i).getinputVector(), this.threadSimulationList.get(i).getSimulationIndex(), this.threadSimulationList.get(i), i+1);
-            }
-                
-            
+            }  
         }
 
         public  ArrayList <TestVectorInformation> getThreadSimulatinArray(){
@@ -139,15 +133,6 @@ import signalProbability.ProbCircuit;
             return Integer.toString((int) this.threadID);
         }
         
-        private void PrintSpecs(){
-         System.out.println("Circuit : " + this.circuit.getName());
-         System.out.println("- Logic Gates : " + this.circuit.getGates());
-         System.out.println("- Inputs : " + this.circuit.getInputs());
-         System.out.println("- Outputs : " + this.circuit.getOutputs());
-         System.out.println("- Signals : " + this.circuit.getSignals());
-        
-     }
-     
         private void initProbCircuit() {
         if(this.circuit != null) {
             
@@ -447,37 +432,12 @@ import signalProbability.ProbCircuit;
             return this.propagated_faults;
         }
         
-        private String setBitFlip(int i){
-            String bitflip;
-            String r = "";
-           // "("+ this.threadSimulationList.get(i).getSignalOriginalValue() + ")to("+  this.threadSimulationList.get(i).getFaultSignalValue()+ ")" 
-            if(this.threadSimulationList.get(i).getSignalOriginalValue() == 0){
-                bitflip = "1";
-            }
-            else{
-                bitflip = "0";
-            }
-            
-            r = "("+ this.threadSimulationList.get(i).getSignalOriginalValue() + ")to("+ bitflip + ")";
-            
-            return r;
-            
-            
-        }
-        
         private  void insertInputVectors(String Option, ArrayList <Integer> vector){
-              //cellLib.teste();
-              
-              // ArrayList <Cell>  cells;
-               
+                   
                this.cells = this.cellLibrary.getCells();//cellLib.getCells();
-                
-                //System.out.println("VECTOR : "+ vector);
-                // - ---------------------------------------- Inserting input vector ------------------------------------------------------
-                //System.out.println("");
-               
+              
                 switch (Option){
-                       
+                    /*
                     case "random":
                         ArrayList <Signal> inputSignais = this.circuit.getInputs();
                         //System.out.println("Input Signals: " + inputSignais + " Size: " + inputSignais.size());
@@ -493,6 +453,7 @@ import signalProbability.ProbCircuit;
                         }
                        
                     break;
+                    */
                     
                     case "selected":
                         ArrayList <Signal> inputSignals = this.circuit.getInputs();
@@ -615,42 +576,7 @@ import signalProbability.ProbCircuit;
             
             // System.out.println(" ---- ENDED Simulation Printing Fault injection - ThreadID: " + this.threadID);
         }
-        
-        public ArrayList <Signal> calcInternSignals(){
-         //System.out.println("Sort Fault in the input injection");
-         ArrayList <Signal> signalList = new ArrayList<>();
-         signalList = this.circuit.getSignals();
-         
-         ArrayList <Signal> r = new ArrayList<>();
-                for (int i = 0; i < signalList.size(); i++) {
-                        if(!((this.circuit.getInputs().contains(signalList.get(i))) || (this.circuit.getOutputs().contains(signalList.get(i))))){
-                           //this.internSignals.add(signalList.get(i));
-                           r.add(signalList.get(i));
-                        }
-                    
-                }
-                //System.out.println(" --> "+ this.internSignals);  
-                //System.out.println("Signals list: "+ signalList.toString());
-         return r;
-     }
-        
-        public  void startSimulationFaultInjection_ALL_POSSIBILITIES() throws IOException, WriteException{
-             
-            System.out.println(" ---- \nALL POSSIBILITIES Start Printing Fault injection - ThreadID: " + this.threadID);
-            ArrayList <Signal> signalList = new ArrayList<>();
-            signalList =  this.calcInternSignals();
-            
-            for (int i = 0; i < this.threadSimulationList.size(); i++) {
-                this.insertInputVectors("selected", this.threadSimulationList.get(i).getinputVector());
-                for (int j = 0; j < signalList.size(); j++) {
-                        this.propagateFaultInjections(this.threadSimulationList.get(i).getSimulationIndex(), this.threadSimulationList.get(i).getinputVector(), signalList.get(i), i,  this.threadSimulationList.get(i));
-                }
-                
-                this.getFaultInjectionResults(this.threadSimulationList.get(i).getinputVector(), this.threadSimulationList.get(i).getSimulationIndex(), this.threadSimulationList.get(i));
-            }
-             this.settingFaultInjectionResults();
-        }
-        
+           
         private  boolean calculateOutputFacultInjectionGateValue(Cell cells, DepthGate gate, ArrayList <Signal> inputsSignals, Signal faultSig,  TestVectorInformation thread_item){
                 //System.out.println("inn... + " + thread_item.getItem().toString());      
                 final Map<ArrayList<Boolean>, Boolean> comb = cells.getComb();
@@ -848,16 +774,14 @@ import signalProbability.ProbCircuit;
          
          return (boolean) output;
      }    
-        
-     
+
         @Override
         public  void run() {
             try {
-                //propagateTh();
-                //getPropagateFaultFreeResults(cellLibrary, vector);
+                
                 startSimulationFaultFree();
                 startSimulationFaultInjection();
-                //printResults();
+                
             } catch (IOException ex) {
                 Logger.getLogger(Logic_Simulator.class.getName()).log(Level.SEVERE, null, ex);
             } catch (WriteException ex) {
