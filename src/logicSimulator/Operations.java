@@ -181,6 +181,30 @@ import writers.WriteCsvTh;
                      }
                     return vector;
             }
+            if(option.equals("RANDOM")){
+                    
+                int inputSignaisSize = this.circuit.getInputs().size();
+                        //System.out.println("Input Signals: " + inputSignais + " Size: " + inputSignais.size());
+                        ArrayList <String> vector = new ArrayList<>();
+                        
+                        Random gerador = new Random();
+                        String str = "";
+                        //if(numTest <= vecInput_size){
+                        for (int i = 0; i < this.sampleSize; i++) {
+                             for (int j = 0; j < inputSignaisSize; j++) {
+                                  int randomLogicValue = gerador.nextInt(2);
+                                  str = str + randomLogicValue;
+                             }
+                            // System.out.println("STR: "+str);
+
+                             vector.add(str);
+
+                             str = "";
+                           
+                          }
+                        return vector;
+       
+            }
         
          return null;
      }
@@ -401,11 +425,10 @@ import writers.WriteCsvTh;
                 
                 this.signals_to_inject_faults = this.signalsToInjectFault("ALL_SIGNALS"); // Consider all signals to fault inject
                      
-                ArrayList <String> trueTableInputVectors =  this.vectorGenerator(this.probCircuit.getInputs().size(), this.sampleSize, "TRUETABLE");
+                ArrayList <String> trueTableInputVectors =  this.vectorGenerator(this.probCircuit.getInputs().size(), this.sampleSize, "TRUETABLE"); //Não Aleatório
                 ArrayList <ArrayList<Integer>> ListInputVectors =  this.splitInputPatternsInInt(trueTableInputVectors, this.probCircuit.getInputs().size());
                 
                 List thread_list = particionateVectorPerThread(ListInputVectors); // x - vectors per thread
-                
                 long propagateTimeStart = System.nanoTime();
                 
                 /*Execução das threads*/
@@ -458,5 +481,118 @@ import writers.WriteCsvTh;
              */
      }
      
+    public void runMultithreadingMonteCarlo(int sampleSize, String signalsOption) throws IOException, Exception{
+
+                System.out.println(" ----- Monte Carlo Analysis -------");
+                long loadTimeStart = System.nanoTime();//System.currentTimeMillis();
+                
+                LocalDateTime myDateObj = LocalDateTime.now();
+                DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+                String formattedDate = myDateObj.format(myFormatObj);
+                System.out.println("    - Simulation start in : " + formattedDate);
+                System.out.println("    - Threads in execution: " + this.threads); 
+         
+                /*Reading CellLibrary*/
+                CellLibrary cellLib = new CellLibrary();
+                this.cellLibrary = cellLib;
+                this.cellLibrary.initLibrary(this.genlib);
+                System.out.println("    ... Reading Genlib " + " at -> " + this.genlib  + " ... ok");
+                //System.out.println("  - Avaliable logic gatesin this library: "+cellLib.getCells());
+              
+                
+                /*Reading verilog*/
+                MappedVerilogReader verilog_circuit = new MappedVerilogReader(this.circuitNameStr, this.cellLibrary);
+                this.verilog_circuit = verilog_circuit;
+                /*Circuit linked to verilog_circuit - init circuit*/
+                this.circuit = verilog_circuit.getCircuit();
+                System.out.println("    ... Reading verilog "+ " at -> " + this.circuitNameStr  + " ... ok");
+                //System.out.println("Patterns : " + this.verilog_circuit.getGatePattern());
+              
+                
+                
+                /* Print circuit Specs*/
+                System.out.println("\n        ------ Printing Circuit Specs: --------");
+                this.PrintSpecs();
+                System.out.println("          ---------------------------------------\n");
+                /*----------------------*/
+                
+                /*Circuit Probabilities */
+                this.initLevelCircuit();
+               
+                /*Init ProbCircuits*/
+                this.initProbCircuit();
+                
+                /*Init PTMs Const*/
+                cellLib.setPTMCells2(Float.valueOf(this.reliabilityConst));
+                cellLib.setPTMCells(new BigDecimal(this.reliabilityConst));
+               
+                long loadTimeEnd = System.nanoTime();//System.currentTimeMillis();
+                long loadTime =   TimeUnit.NANOSECONDS.toMillis(loadTimeEnd - loadTimeStart);
+                //System.out.println("- Load Time m(s): " + loadTime);
+                
+                this.sampleSize = sampleSize;//(int) Math.pow(2, this.probCircuit.getInputs().size());  //(int) Math.pow(2, this.probCircuit.getInputs().size());
+                int N = this.sampleSize; // random_input_vectors.size();//testNumber;
+                
+                System.out.println("-   Sample size (N): " + this.sampleSize);
+                
+                this.signals_to_inject_faults = this.signalsToInjectFault(signalsOption); // Consider all signals to fault inject
+                     
+                ArrayList <String> randomInputVectors =  this.vectorGenerator(this.probCircuit.getInputs().size(), this.sampleSize, "RANDOM"); //Não Aleatório
+                
+                ArrayList <ArrayList<Integer>> ListInputVectors =  this.splitInputPatternsInInt(randomInputVectors, this.probCircuit.getInputs().size());
+                
+                List thread_list = particionateVectorPerThread(ListInputVectors); // x - vectors per thread
+                long propagateTimeStart = System.nanoTime();
+                
+                /*Execução das threads*/
+                Thread thread_temp = null;
+                for (int i=0; i < thread_list.size() ; i++) {
+                    thread_temp = (Thread) thread_list.get(i);
+                    thread_temp.start();
+
+                }
+                /*Esperando termino das threads*/
+                for (int i=0; i < thread_list.size() ; i++) {
+                    thread_temp = (Thread) thread_list.get(i);
+                    thread_temp.join();
+                }
+                    
+                /* Compilando os resultados - Falhas detectadas Ne*/
+                for (int i=0; i < this.itemx_list.size() ; i++) {
+                    this.unmasked_faults = this.unmasked_faults +  itemx_list.get(i).getPropagatedFaults();
+                }
+               
+
+                long propagateTimeEnd = System.nanoTime();
+                long propagateTime =    TimeUnit.NANOSECONDS.toSeconds(propagateTimeEnd - propagateTimeStart);
+                long propagateTimems =  TimeUnit.NANOSECONDS.toMillis(propagateTimeEnd - propagateTimeStart);
+                
+             
+                LocalDateTime myDateObj2 = LocalDateTime.now();
+                DateTimeFormatter myFormatObj2 = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+                String formattedDate2 = myDateObj2.format(myFormatObj2);
+                
+             
+                
+                this.writeSimpleLog("Multithreading_Simple_Log_" +this.circuit.getName()+"_Threads-"+ this.threads +  "_TsampleSize-" + N + "_round- of ", formattedDate,  formattedDate2, propagateTime);
+               
+                this.writeCsvFileCompleteTh("Multithreading_Complete_Log_"+this.circuit.getName()+"_Theads-"+ this.threads + "_TestNumber-"+ N + "_round-"+0+" of " + 0, itemx_list);
+               
+                
+                System.out.println("\n\n----------------- Results ------------------");
+                System.out.println("Circuit: " + this.circuit.getName());
+                System.out.println("- Simulation finished at: " + formattedDate2);
+                System.out.println("- PropagatedTime (s): " + propagateTime);
+                System.out.println("- Total Vectors (N): " + N);
+                System.out.println("- Propagated fault(s) (Ne): " + this.unmasked_faults);
+                System.out.println("- Reliability: " + "(1-(" + this.unmasked_faults + "/" + N + ")) = " + 0);
+                System.out.println("- MTBF (Mean Time Between failure) : " + this.MTBF);
+                System.out.println("- Simulation TimeElapsed: " + propagateTime + " m(s)");
+                System.out.println("--------------------------------------------");
+             
+             /*
+             */
+     }
+    
 
 }

@@ -41,8 +41,13 @@ public class mainOps{
                 }
         }
         
-        public void monteCarloSimulation(){
-            
+        public void monteCarloSimulation(int sampleSize) throws Exception{
+                //Loop na simulação de circuitos 
+                for (int i = 0; i < this.circuitList.size(); i++) {
+                     Operations simulacaoMultithreading = new Operations(this.threads, this.reliabilityConst, 
+                             this.relativePath, this.genlib, this.relativePath + this.circuitList.get(i));
+                             simulacaoMultithreading.runMultithreadingMonteCarlo(sampleSize, "ALL_SIGNALS"); //ou "INTERMEDIATE" ou "INTERMEDIATE_AND_OUTPUTS" ou "INPUTS"
+                }
         }
         
         public void preparingEnviroment(){
@@ -67,12 +72,16 @@ public class mainOps{
         public static void main(String[] args) throws Exception {
             
              int threads = 2; //Numero de threads
+             int sampleSizeMonteCarlo = 8;
              String constReliability = "0.9999"; //Used for internal structures
              String relativePath = "teste/";
              String genlib =  relativePath  + "lib_full_no_cost.genlib";
              mainOps experimento = new mainOps(threads, constReliability, relativePath, genlib);
+             
              experimento.preparingEnviroment();
+             
              experimento.multithreadingSimulation();
+             experimento.monteCarloSimulation(sampleSizeMonteCarlo);
         }
 }
 
