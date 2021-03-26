@@ -1,8 +1,8 @@
 package writers;
 
 
-import logicSimulator.Test_Item;
-import logicSimulator.Logic_Simulator;
+import logicSimulator.TestVectorInformation;
+import logicSimulator.LogicSimulator;
 import datastructures.Signal;
 import java.io.File;
 import java.io.FileWriter;
@@ -428,7 +428,7 @@ public class WriteCsvTh {
     }
     
     
-    public void writeCSVCompleteTh(String filename, String circuitName, ArrayList <Signal> inputSignals,  ArrayList <Signal> outputSignals,  ArrayList <Signal> all_signals, String Head, ArrayList <Logic_Simulator> thread_list_test, String propagated_faults) throws IOException {
+    public void writeCSVCompleteTh(String filename, String circuitName, ArrayList <Signal> inputSignals,  ArrayList <Signal> outputSignals,  ArrayList <Signal> all_signals, String Head, ArrayList <LogicSimulator> thread_list_test, String propagated_faults) throws IOException {
        
         this.FileName = filename;
         this.FileNameCsv = this.FileName + ".csv";
@@ -496,7 +496,7 @@ public class WriteCsvTh {
                 
                 ArrayList <String> input_i = thread_list_test.get(i).get_inputListValuesStr();
                 
-                ArrayList <Test_Item> item = thread_list_test.get(i).getThreadSimulatinArray();
+                ArrayList <TestVectorInformation> item = thread_list_test.get(i).getThreadSimulatinArray();
                 
                 for (int x=0, y=0; x< input_i.size() && y< item.size(); x++ , y++){
                 
@@ -603,7 +603,7 @@ public class WriteCsvTh {
     }
     
     @SuppressWarnings("empty-statement")
-     public void writeCSVTh(String filename, String circuitName, ArrayList <Signal> inputSignals,  ArrayList <Signal> outputSignals,  ArrayList <Signal> all_signals, String Head, ArrayList <Logic_Simulator> thread_list_tesst_items) throws IOException {
+     public void writeCSVTh(String filename, String circuitName, ArrayList <Signal> inputSignals,  ArrayList <Signal> outputSignals,  ArrayList <Signal> all_signals, String Head, ArrayList <LogicSimulator> thread_list_tesst_items) throws IOException {
        
         this.FileName = filename;
         this.FileNameCsv = this.FileName + ".csv";
@@ -637,7 +637,7 @@ public class WriteCsvTh {
                 
                 ArrayList <String> input_i = thread_list_tesst_items.get(i).get_inputListValuesStr();
                 
-                ArrayList <Test_Item> item = thread_list_tesst_items.get(i).getThreadSimulatinArray();
+                ArrayList <TestVectorInformation> item = thread_list_tesst_items.get(i).getThreadSimulatinArray();
                 
                 for (int x=0, y=0; x< input_i.size() && y< item.size(); x++ , y++){
                 
@@ -662,7 +662,7 @@ public class WriteCsvTh {
                 }
                 
                /*
-                for ((String s : input_i) && (Test_Item t: x)) {
+                for ((String s : input_i) && (TestVectorInformation t: x)) {
                             //System.out.println( );      
                             s = s.replace("[", "");
                             s = s.replace("]", "");

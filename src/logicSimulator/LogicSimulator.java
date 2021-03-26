@@ -5,6 +5,7 @@
  */
 package logicSimulator;
 
+import logicSimulator.TestVectorInformation;
 import datastructures.Cell;
 import datastructures.CellLibrary;
 import datastructures.Circuit;
@@ -22,6 +23,7 @@ import jxl.write.WriteException;
 import levelDatastructures.DepthGate;
 import levelDatastructures.GateLevel;
 import levelDatastructures.LevelCircuit;
+import logicSimulator.LogicSimulator;
 import readers.MappedVerilogReader;
 import signalProbability.ProbCircuit;
 
@@ -783,9 +785,9 @@ import signalProbability.ProbCircuit;
                 startSimulationFaultInjection();
                 
             } catch (IOException ex) {
-                Logger.getLogger(Logic_Simulator.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(LogicSimulator.class.getName()).log(Level.SEVERE, null, ex);
             } catch (WriteException ex) {
-                Logger.getLogger(Logic_Simulator.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(LogicSimulator.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
          

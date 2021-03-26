@@ -5,6 +5,7 @@
  */
 package logicSimulator;
 
+import logicSimulator.main;
 import datastructures.CellLibrary;
 import datastructures.Circuit;
 import datastructures.Signal;
@@ -28,7 +29,7 @@ import writers.WriteCsvTh;
  *
  * @author Clayton Farias
  */
- public class Operations  extends mainOps{
+ public class Operations  extends main{
     
     private ArrayList <LogicSimulator> itemx_list = new ArrayList<>();
     private int sampleSize;
