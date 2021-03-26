@@ -1653,8 +1653,7 @@ import writers.WriteExcel;
                 System.out.println("  --- Intermediate and output Signals (total): " + r.size() );
          return r;
      }
-    
-     
+
      public ArrayList <Signal> get_all_intermediate_signals(){
          //System.out.println("Sort Fault in the input injection");
          ArrayList <Signal> signalList = new ArrayList<>();
@@ -2238,7 +2237,6 @@ import writers.WriteExcel;
         
      }
      
-   
      /**
        * Monte Carlo Evaluation for cadence_genlib 
         *Considering fault injection in Signals (all):
@@ -2477,7 +2475,7 @@ import writers.WriteExcel;
         @param interaction 
         @param id
       */
-    public void MulltiThreading__Logic_Simulator_ramdomInputs_MonteCarlo_Only_IntermediateSignals(String library, String CircuitFile, int testNumber, int interaction, int id) throws IOException, Exception{
+     public void MulltiThreading__Logic_Simulator_ramdomInputs_MonteCarlo_Only_IntermediateSignals(String library, String CircuitFile, int testNumber, int interaction, int id) throws IOException, Exception{
                 
         
         System.out.println(" ----- ONLY INTERMEDIATE SIGNALS -------");
@@ -2694,7 +2692,6 @@ import writers.WriteExcel;
                 System.out.println("Simulation TimeElapsed: " + propagateTime + " m(s)");
                 System.out.println("--------------------------------------------");
      }
-    
     
      /**
        * Monte Carlo Evaluation for any Genlib

@@ -37,7 +37,7 @@ public class mainOps{
                 for (int i = 0; i < this.circuitList.size(); i++) {
                      Operations simulacaoMultithreading = new Operations(this.threads, this.reliabilityConst, 
                              this.relativePath, this.genlib, this.relativePath + this.circuitList.get(i));
-                            simulacaoMultithreading.runMultithreadingSimulation();
+                            simulacaoMultithreading.runMultithreadingSimulation("ALL_SIGNALS"); //ou "INTERMEDIATE" ou "INTERMEDIATE_AND_OUTPUTS" ou "INPUTS"
                 }
         }
         
@@ -75,12 +75,14 @@ public class mainOps{
              int sampleSizeMonteCarlo = 8;
              String constReliability = "0.9999"; //Used for internal structures
              String relativePath = "teste/";
-             String genlib =  relativePath  + "lib_full_no_cost.genlib";
+             //String genlib =  relativePath  + "lib_full_no_cost.genlib";
+             String genlib =  relativePath  + "cadence.genlib";
              mainOps experimento = new mainOps(threads, constReliability, relativePath, genlib);
              
              experimento.preparingEnviroment();
              
-             experimento.multithreadingSimulation();
+             //experimento.multithreadingSimulation();
+             
              experimento.monteCarloSimulation(sampleSizeMonteCarlo);
         }
 }
