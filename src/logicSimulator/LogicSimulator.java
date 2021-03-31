@@ -220,7 +220,11 @@ import signalProbability.ProbCircuit;
                                 */
                             }
                             
-                            //  System.out.println("              - Gate: "+ gatesInThisLevel.get(k)  + "  type: "+ gate.getGate().getType() + "Sig: " + sig +  " output: " + sig.getOriginalLogicValue());
+                             System.out.println("              - Gate: "+ gatesInThisLevel.get(k)  
+                                     +  "  type: "+ gate.getGate().getType() 
+                                     +  "\n - Inputs: " + gate.getGate().getInputs().get(0) + " value: " + gate.getGate().getInputs().get(0).getLogicValue()
+                                     +  "\n - Inputs: " + gate.getGate().getInputs().get(1)+ " value: " + gate.getGate().getInputs().get(1).getLogicValue()
+                                     +  " \n              - output: " + sig.getOriginalLogicValue());
                         }
                     }
                }
@@ -785,9 +789,7 @@ import signalProbability.ProbCircuit;
                 startSimulationFaultFree();
                 startSimulationFaultInjection();
                 
-            } catch (IOException ex) {
-                Logger.getLogger(LogicSimulator.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (WriteException ex) {
+            } catch (IOException | WriteException ex) {
                 Logger.getLogger(LogicSimulator.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
