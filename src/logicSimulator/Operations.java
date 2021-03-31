@@ -163,28 +163,27 @@ import writers.WriteCsvTh;
              int numLines = (int) Math.pow(2 ,this.probCircuit.getInputs().size());
              int n_inputs  = this.probCircuit.getInputs().size();
              
-              for (int i = 0; i < numLines; i++) {
-             
-             if(i < (numLines/2)){
-                //System.out.println(i + " - " + Integer.toBinaryString(i) +" len " +Integer.toBinaryString(i).length());
-                
-                int len = Integer.toBinaryString(i).length();
-                String str = Integer.toBinaryString(i);
-                if(len < n_inputs){
-                    while(len < n_inputs){
-                        str = "0" + str;
-                        len++;
-                    }
+              for (int i = 0; i < numLines; i++){
+                if(i < (numLines/2)){
+                   //System.out.println(i + " - " + Integer.toBinaryString(i) +" len " +Integer.toBinaryString(i).length());
+
+                   int len = Integer.toBinaryString(i).length();
+                   String str = Integer.toBinaryString(i); //Transform in binary
+                   if(len < n_inputs){
+                       while(len < n_inputs){
+                           str = "0" + str;
+                           len++;
+                       }
+                   }
+
+                   System.out.println("" + (i+1) + " - " + str);
+                   vector.add(str);
                 }
-                
-                System.out.println("" + (i+1) + " - " + str);
-                vector.add(str);
-             }
-             else{
-                 System.out.println("" + (i+1) + " - " + Integer.toBinaryString(i) );
-                 vector.add(Integer.toBinaryString(i));
-                }
-            }
+                else{
+                    System.out.println("" + (i+1) + " - " + Integer.toBinaryString(i) );
+                    vector.add(Integer.toBinaryString(i));
+                   }
+               }
              
              
              System.out.println("TRUE TABLE: " + vector);
@@ -463,7 +462,7 @@ import writers.WriteCsvTh;
                 ArrayList <String> random_input_vectors =  this.generateInputVector("TRUE_TABLE"); //this.calcInputTableVector(this.probCircuit.getInputs().size(), this.sampleSize);
                 ArrayList <ArrayList<Integer>> ListInputVectors =  this.splitInputPatternsInInt(random_input_vectors, this.probCircuit.getInputs().size());
                 
-                System.out.println("LIST:::::: "+ ListInputVectors);
+                //System.out.println("LIST:::::: "+ ListInputVectors);
                 
                 List thread_list = particionateVectorPerThread(ListInputVectors); // x - vectors per thread
                 
