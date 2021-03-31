@@ -7,7 +7,8 @@
 # Csv and txt
 *.txt
 *.csv
-
+.v
+.blif
 # BlueJ files
 *.ctxt
 

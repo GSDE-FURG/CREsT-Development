@@ -6,7 +6,6 @@
 package logicSimulator;
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Vector;
 
 /**
  *
@@ -69,22 +68,49 @@ public class main{
                
         }
         
+     
         public static void main(String[] args) throws Exception {
             
              int threads = 2; //Numero de threads
              int sampleSizeMonteCarlo = 8;
              String constReliability = "0.9999"; //Used for internal structures
              String relativePath = "teste/";
-             //String genlib =  relativePath  + "lib_full_no_cost.genlib";
-             String genlib =  relativePath  + "cadence.genlib";
+             
+             String genlib =  relativePath  + "lib_basic_no_cost.genlib";
+            
+             //String genlib =  relativePath  + "cadence.genlib";
              
              main experimento = new main(threads, constReliability, relativePath, genlib);
              
              experimento.preparingEnviroment();
              
-             //experimento.multithreadingSimulation();
+             experimento.fooExecution();
+ 
+             //experimento.multithreadingSimulation(); //TRue Table
              
-             experimento.monteCarloSimulation(sampleSizeMonteCarlo);
+             //experimento.monteCarloSimulation(sampleSizeMonteCarlo);
         }
+            
+           public void fooExecution() throws Exception{
+               this.foo("teste/", "cadence.genlib");
+               //this.foo("Simulação Circuitos - ABC/basic/", "lib_basic_no_cost.genlib");
+               //this.foo(relativePath, genlib);
+           } 
+        
+           public void foo(String relativePath , String genlibTemp) throws Exception{
+            
+             int threads = 4; //Numero de threads
+             int sampleSizeMonteCarlo = 8;
+             String constReliability = "0.9999"; //Used for internal structures
+             //String relativePath = "teste/";
+             String genlib =  relativePath  + genlibTemp;
+            
+             main experimento_genlib = new main(threads, constReliability, relativePath, genlib);
+             experimento_genlib.preparingEnviroment(); 
+             experimento_genlib.multithreadingSimulation();
+             //experimento_genlib.monteCarloSimulation(sampleSizeMonteCarlo);
+
+        }
+        
 }
 
