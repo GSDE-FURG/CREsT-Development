@@ -394,6 +394,7 @@ import writers.WriteCsvTh;
 
                         Runnable runnable = threadItem;
                         Thread thread = new Thread(runnable);
+                        thread.setName(Integer.toString(threadItem.hashCode()));
                         thread_list.add(thread);
                              
                      }
@@ -497,9 +498,7 @@ import writers.WriteCsvTh;
                 LocalDateTime myDateObj2 = LocalDateTime.now();
                 DateTimeFormatter myFormatObj2 = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
                 String formattedDate2 = myDateObj2.format(myFormatObj2);
-                
-             
-                
+
                 this.writeSimpleLog("MonteCarlo_Simple_Log_" +this.circuit.getName()+"_Threads-"+ this.threads +  "_sampleSize-" + N, formattedDate,  formattedDate2, propagateTime);
                
                 this.writeCsvFileCompleteTh("MonteCarlo_Complete_Log_"+this.circuit.getName()+"_Theads-"+ this.threads + "_sampleSize", itemx_list);
@@ -513,7 +512,7 @@ import writers.WriteCsvTh;
                 System.out.println("- Propagated fault(s) (Ne): " + this.unmasked_faults);
                 System.out.println("- Reliability: " + "(1-(" + this.unmasked_faults + "/" + N + ")) = " + this.circuitReliaibility);
                 System.out.println("- MTBF (Mean Time Between failure) : " + this.MTBF);
-                System.out.println("- Simulation TimeElapsed: " + propagateTime + " m(s)");
+                System.out.println("- Simulation TimeElapsed: " + propagateTimems + " m(s)");
                 System.out.println("--------------------------------------------");
                 
                  System.out.println(" ----------------------------------------------------------------------------------------------------------------------------\n\n");
@@ -577,11 +576,11 @@ import writers.WriteCsvTh;
                 
                 this.signals_to_inject_faults = this.signalsToInjectFault(option); // Consider all signals to fault inject
                      
-                ArrayList <String> random_input_vectors = generateInputVector("RANDOM"); // Generate Random Input Vectors or InputTrueTable
+                ArrayList <String> random_input_vectors = this.generateInputVector("RANDOM"); // Generate Random Input Vectors or InputTrueTable
                 
                 ArrayList <ArrayList<Integer>> ListInputVectors =  this.splitInputPatternsInInt(random_input_vectors, this.probCircuit.getInputs().size());
                 
-                List thread_list = particionateVectorPerThread(ListInputVectors); // x - vectors per thread
+                List thread_list = this.particionateVectorPerThread(ListInputVectors); // x - vectors per thread
                 
                 long propagateTimeStart = System.nanoTime();
                 

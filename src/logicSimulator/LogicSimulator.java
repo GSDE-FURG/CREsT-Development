@@ -98,11 +98,11 @@ import signalProbability.ProbCircuit;
                 /*----------------------*/
                 
                 
-                /* Print circuit Specs
-                System.out.println("\n------ Printing Circuit Specs: --------");
+                /* Print circuit Specs */
+                //System.out.println("\n------ Printing Circuit Specs: --------");
                 this.PrintSpecs();
-                System.out.println("---------------------------------------\n");
-                ----------------------*/
+                //System.out.println("---------------------------------------\n");
+                
                 
                 /*Circuit Probabilities */
                 this.initLevelCircuit();
@@ -132,6 +132,7 @@ import signalProbability.ProbCircuit;
         }
         
         public String getThreadId(){
+            
             return Integer.toString((int) this.threadID);
         }
         
@@ -790,6 +791,19 @@ import signalProbability.ProbCircuit;
                 Logger.getLogger(LogicSimulator.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
+
+    private void PrintSpecs() {
+         Thread t = Thread.currentThread();
+         System.out.println("\n"
+                 + " - Thread: " +(long) Thread.currentThread().getId()//
+                 + " - Circuit: " + this.circuit.getName() 
+                 + " - Circuit Hashcode: " + this.circuit.hashCode()  
+                 + " - Signals Hashcode: " + this.circuit.getSignals().hashCode()
+                 + " - Verilog Hashcode: "  + this.verilog_circuit.hashCode()
+         );
+       
+        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
          
      }
      

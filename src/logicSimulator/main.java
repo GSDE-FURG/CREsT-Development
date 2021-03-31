@@ -31,12 +31,12 @@ public class main{
             return this.circuitList;
         }
         
-        public void multithreadingSimulation() throws Exception{
+        public void multithreadingSimulation(String Signals) throws Exception{ //ou Signals =  "ALL_SIGNALS" ou "INTERMEDIATE" ou "INTERMEDIATE_AND_OUTPUTS" ou "INPUTS"
                 //Loop na simulação de circuitos 
                 for (int i = 0; i < this.circuitList.size(); i++) {
                      Operations simulacaoMultithreading = new Operations(this.threads, this.reliabilityConst, 
                              this.relativePath, this.genlib, this.relativePath + this.circuitList.get(i));
-                            simulacaoMultithreading.runMultithreadingSimulation("ALL_SIGNALS"); //ou "INTERMEDIATE" ou "INTERMEDIATE_AND_OUTPUTS" ou "INPUTS"
+                             simulacaoMultithreading.runMultithreadingSimulation(Signals); 
                 }
         }
         
@@ -68,7 +68,6 @@ public class main{
                
         }
         
-     
         public static void main(String[] args) throws Exception {
             
              int threads = 2; //Numero de threads
@@ -107,7 +106,7 @@ public class main{
             
              main experimento_genlib = new main(threads, constReliability, relativePath, genlib);
              experimento_genlib.preparingEnviroment(); 
-             experimento_genlib.multithreadingSimulation();
+             experimento_genlib.multithreadingSimulation("ALL_SIGNALS");
              //experimento_genlib.monteCarloSimulation(sampleSizeMonteCarlo);
 
         }
