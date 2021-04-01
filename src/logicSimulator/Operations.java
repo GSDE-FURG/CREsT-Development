@@ -327,7 +327,7 @@ import writers.WriteCsvTh;
             content = content +  "Reliability (soft error): " + this.circuitReliaibility + "\n";
             //content = content +  "MTBF: " + this.MTBF + "\n\n";
            
-            content = content +  "Performance time(s): " + (propagateTimems/1000) + "\n";
+            content = content +  "Performance time(s): " + (propagateTimems) + "\n";
             
             file.write(content);
         }
@@ -579,28 +579,31 @@ import writers.WriteCsvTh;
                  
                 
                 long propagateTimeEnd = System.nanoTime();
-                long propagateTime =    TimeUnit.NANOSECONDS.toSeconds(propagateTimeEnd - propagateTimeStart);
-                long propagateTimems =  TimeUnit.NANOSECONDS.toMillis(propagateTimeEnd - propagateTimeStart);
+                //long propagateTime =    TimeUnit.NANOSECONDS.toSeconds(propagateTimeEnd - propagateTimeStart);
+                long propagateTime =  TimeUnit.NANOSECONDS.toMillis(propagateTimeEnd - propagateTimeStart);
                 
              
                 LocalDateTime myDateObj2 = LocalDateTime.now();
                 DateTimeFormatter myFormatObj2 = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
                 String formattedDate2 = myDateObj2.format(myFormatObj2);
-
-                this.writeSimpleLog("ExausticSimulation_" +this.circuit.getName()+"_Threads-"+ this.threads +  "_sampleSize-"  + "_sampleSize-" + (this.sampleSize * this.signals_to_inject_faults.size()), formattedDate,  formattedDate2, propagateTimems);
+                
+                this.sampleSize = sizeExasuticTest;
+                    
+                this.writeSimpleLog("ExausticSimulation_" +this.circuit.getName()+"_Threads-"+ this.threads +  "_sampleSize-"  + "_sampleSize-" + this.sampleSize, formattedDate,  formattedDate2, propagateTime);
                
-                this.writeCsvFileCompleteTh("ExausticSimulation_"+this.circuit.getName()+"_Theads-"+ this.threads + "_sampleSize-" + (this.sampleSize * this.signals_to_inject_faults.size()), itemx_list);
+                this.writeCsvFileCompleteTh("ExausticSimulation_"+this.circuit.getName()+"_Theads-"+ this.threads + "_sampleSize-" + this.sampleSize, itemx_list);
                
                 
                 System.out.println("\n\n----------------- Results ------------------");
                 System.out.println("Circuit: " + this.circuit.getName());
                 System.out.println("- Simulation finished at: " + formattedDate2);
-                System.out.println("- PropagatedTime (s): " + propagateTime);
-                System.out.println("- Total Vectors (N): " + (sizeExasuticTest));
+               
+                System.out.println("- Total Vectors (N): " + (this.sampleSize));
                 System.out.println("- Propagated fault(s) (Ne): " + this.unmasked_faults);
-                System.out.println("- Reliability: " + "(1-(" + this.unmasked_faults + "/" + sizeExasuticTest + ")) = " + this.circuitReliaibility);
-                //System.out.println("- MTBF (Mean Time Between failure) : " + this.MTBF);
-                System.out.println("- Simulation TimeElapsed: " + propagateTimems + " m(s)");
+                System.out.println("- Reliability: " + "(1-(" + this.unmasked_faults + "/" + this.sampleSize + ")) = " + this.circuitReliaibility);
+                 //System.out.println("- MTBF (Mean Time Between failure) : " + this.MTBF);
+                 //System.out.println("- Simulation TimeElapsed: " + propagateTimems + " m(s)");
+                System.out.println("- PropagatedTime (s): " + propagateTime);
                 System.out.println("--------------------------------------------");
                 
                 System.out.println(" ----------------------------------------------------------------------------------------------------------------------------\n\n");
