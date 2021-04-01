@@ -30,13 +30,22 @@ public class main{
         public ArrayList<String> getCircuitList(){
             return this.circuitList;
         }
-        
+
         public void multithreadingSimulation(String Signals) throws Exception{ //ou Signals =  "ALL_SIGNALS" ou "INTERMEDIATE" ou "INTERMEDIATE_AND_OUTPUTS" ou "INPUTS"
                 //Loop na simulação de circuitos 
                 for (int i = 0; i < this.circuitList.size(); i++) {
                      Operations simulacaoMultithreading = new Operations(this.threads, this.reliabilityConst, 
                              this.relativePath, this.genlib, this.relativePath + this.circuitList.get(i));
-                             simulacaoMultithreading.runMultithreadingSimulation(Signals); 
+                            // simulacaoMultithreading.runMultithreadingSimulation(Signals); 
+                }
+        }
+        
+        public void multithreadingSimulationExaustic(String Signals) throws Exception{ //ou Signals =  "ALL_SIGNALS" ou "INTERMEDIATE" ou "INTERMEDIATE_AND_OUTPUTS" ou "INPUTS"
+                //Loop na simulação de circuitos 
+                for (int i = 0; i < this.circuitList.size(); i++) {
+                     Operations simulacaoMultithreading = new Operations(this.threads, this.reliabilityConst, 
+                             this.relativePath, this.genlib, this.relativePath + this.circuitList.get(i));
+                             simulacaoMultithreading.runMultithreadingExausticSimulation(Signals); 
                 }
         }
         
@@ -90,13 +99,13 @@ public class main{
              //experimento.monteCarloSimulation(sampleSizeMonteCarlo);
         }
             
-           public void fooExecution() throws Exception{
+        public void fooExecution() throws Exception{
                this.foo("teste/", "cadence.genlib");
                //this.foo("Simulação Circuitos - ABC/basic/", "lib_basic_no_cost.genlib");
                //this.foo(relativePath, genlib);
            } 
         
-           public void foo(String relativePath , String genlibTemp) throws Exception{
+        public void foo(String relativePath , String genlibTemp) throws Exception{
             
              int threads = 4; //Numero de threads
              int sampleSizeMonteCarlo = 8;
@@ -106,7 +115,8 @@ public class main{
             
              main experimento_genlib = new main(threads, constReliability, relativePath, genlib);
              experimento_genlib.preparingEnviroment(); 
-             experimento_genlib.multithreadingSimulation("ALL_SIGNALS");
+             //experimento_genlib.multithreadingSimulation("ALL_SIGNALS");
+             experimento_genlib.multithreadingSimulationExaustic("ALL_SIGNALS");
              //experimento_genlib.monteCarloSimulation(sampleSizeMonteCarlo);
 
         }

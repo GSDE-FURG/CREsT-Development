@@ -222,9 +222,9 @@ import signalProbability.ProbCircuit;
                             
                              System.out.println("              - Gate: "+ gatesInThisLevel.get(k)  
                                      +  "  type: "+ gate.getGate().getType() 
-                                     +  "\n - Inputs: " + gate.getGate().getInputs().get(0) + " value: " + gate.getGate().getInputs().get(0).getLogicValue()
-                                     +  "\n - Inputs: " + gate.getGate().getInputs().get(1)+ " value: " + gate.getGate().getInputs().get(1).getLogicValue()
-                                     +  " \n              - output: " + sig.getOriginalLogicValue());
+                                     +  " - Inputs: " + gate.getGate().getInputs().get(0) + " value: " + gate.getGate().getInputs().get(0).getLogicValue()
+                                     +  " - Inputs: " + gate.getGate().getInputs().get(1)+ " value: " + gate.getGate().getInputs().get(1).getLogicValue()
+                                     +  "              - output: " + sig.getOriginalLogicValue());
                         }
                     }
                }

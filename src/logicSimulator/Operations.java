@@ -42,7 +42,7 @@ import writers.WriteCsvTh;
     private int unmasked_faults;
     private double MTBF;
     private long time_seconds;
-    private long circuitReliaibility;
+    private float circuitReliaibility;
     private MappedVerilogReader verilog_circuit;
     
     private ArrayList <Signal> signals_to_inject_faults = new ArrayList<>();
@@ -310,9 +310,9 @@ import writers.WriteCsvTh;
     public void writeSimpleLog(String filename, String date, String dateend, long propagateTimems) throws IOException{
         
         ///System.out.println("Creating .txt -> file: " + filename);
-        float reliability_circuit =  (float) ( 1 - ((float) this.unmasked_faults / (float) this.sampleSize));
-        double lamb = - Math.log(reliability_circuit);
-        this.MTBF = (1 / lamb);
+        //float reliability_circuit =  (float) ( 1 - ((float) this.unmasked_faults / (float) this.sampleSize));
+        //double lamb = - Math.log(reliability_circuit);
+        //this.MTBF = (1 / lamb);
         //System.out.println("MTBF : " + this.MTBF);
         String content = "";
         try (FileWriter file = new FileWriter(filename+".txt")) {
@@ -324,8 +324,8 @@ import writers.WriteCsvTh;
             content = content+  "Number of Simulations (sample): " + this.sampleSize + "\n";
             content = content+  "Number of Threads: " + this.threads + "\n";
             content = content + "Number of detected faults (Ne): " + this.unmasked_faults + "\n";
-            content = content +  "Reliability (soft error): " + reliability_circuit + "\n";
-            content = content +  "MTBF: " + this.MTBF + "\n\n";
+            content = content +  "Reliability (soft error): " + this.circuitReliaibility + "\n";
+            //content = content +  "MTBF: " + this.MTBF + "\n\n";
            
             content = content +  "Performance time(s): " + (propagateTimems/1000) + "\n";
             
@@ -403,6 +403,211 @@ import writers.WriteCsvTh;
                     
     }
     
+    public List particionateExausticVector(ArrayList <ArrayList<Integer>> ListInputVectors) throws ScriptException, Exception{
+                
+        List thread_list = new ArrayList();
+        
+                int N = this.sampleSize;
+                
+                int partition;
+                if(this.threads == 1){
+                     partition = N; //final_pos/NThreads ;
+                }
+                else{
+                    double temp;
+                    temp = Math.floor(N/this.threads); 
+                    partition =  (int) temp ;//(int) Math.round(collapsed_faults/NThreads); 
+                }
+                
+                int start = 0;
+                int end = partition;
+
+                /* In case logic gates One and Zero
+                    //ArrayList <Signal> Signals_CTE_ONE_ZERO = identificate_ONE_ZERO_CTE();  //ONLY USE WHEN ITS NOT CADENCE.GENLIB
+                    //System.out.println("LOGIC GATES consider WIRES (CTE) Can't inject fault: " + Signals_CTE_ONE_ZERO);
+               */
+             
+               for (int i = 0; i < this.threads; i++) { //Loop of simulations
+                        
+                        ArrayList <TestVectorInformation> ItemxSimulationList = new ArrayList<>();
+                        ArrayList <Integer> inputVector = new ArrayList<>();
+
+                        if((this.threads-1) == (i)){
+
+                            start = end;
+                            end = N; 
+                        }
+                        else{
+                            if(i == 0){
+                                start = 0;
+                                end = partition;
+                            }else{
+                                 start = start + partition;
+                                 end = start + partition;  
+                            }  
+
+                        }         
+                        
+                        
+                        System.out.println(" - starting thread: "+i  + " - simulate fault injection (number): " + partition);
+                        for (int j = start; j < end ; j++) {
+                                
+                            for (int aux = 0; aux < this.signals_to_inject_faults.size(); aux++) {
+                                inputVector = this.get_Input_Vectors(ListInputVectors, j); //input Test n
+                                
+                                int SigIndex = aux;//this.sortRandomFaultInjection(); //int SigIndex = decide_Random_Signals_Contrains(Signals_CTE_ONE_ZERO);
+                                
+                                TestVectorInformation temp = new TestVectorInformation(inputVector, this.signals_to_inject_faults.get(SigIndex), j+1);
+                                ItemxSimulationList.add(temp);
+                                
+                                System.out.println("Vec: " + inputVector + " Fault Signal: " +  this.signals_to_inject_faults.get(SigIndex));
+                            }
+                               
+                        }
+                        
+                        LogicSimulator threadItem = new LogicSimulator(ItemxSimulationList, this.circuit, this.cellLibrary, this.levelCircuit, start, end, this.genlib , this.circuitNameStr); // Thread contex info
+                        itemx_list.add(threadItem);
+
+                        Runnable runnable = threadItem;
+                        Thread thread = new Thread(runnable);
+                        thread.setName(Integer.toString(threadItem.hashCode()));
+                        thread_list.add(thread);
+                             
+                     }
+               
+               return thread_list;
+                    
+    }
+    
+    
+    public void runMultithreadingExausticSimulation(String option) throws IOException, Exception{ //Test All possibilities
+
+               
+                System.out.println(" ----- Multithreading Version -------");
+                long loadTimeStart = System.nanoTime();//System.currentTimeMillis();
+                
+                
+                LocalDateTime myDateObj = LocalDateTime.now();
+                DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+                String formattedDate = myDateObj.format(myFormatObj);
+                System.out.println("    - Simulation start in : " + formattedDate);
+                System.out.println("    - Threads in execution: " + this.threads); 
+         
+                /*Reading CellLibrary*/
+                CellLibrary cellLib = new CellLibrary();
+                this.cellLibrary = cellLib;
+                this.cellLibrary.initLibrary(this.genlib);
+                System.out.println("    ... Reading Genlib " + " at -> " + this.genlib  + " ... ok");
+                //System.out.println("  - Avaliable logic gatesin this library: "+cellLib.getCells());
+              
+                
+                /*Reading verilog*/
+                MappedVerilogReader verilog_circuit = new MappedVerilogReader(this.circuitNameStr, this.cellLibrary);
+                this.verilog_circuit = verilog_circuit;
+                /*Circuit linked to verilog_circuit - init circuit*/
+                this.circuit = verilog_circuit.getCircuit();
+                System.out.println("    ... Reading verilog "+ " at -> " + this.circuitNameStr  + " ... ok");
+                //System.out.println("Patterns : " + this.verilog_circuit.getGatePattern());
+              
+                
+                
+                /* Print circuit Specs*/
+                System.out.println("\n        ------ Printing Circuit Specs: --------");
+                this.PrintSpecs();
+                System.out.println("          ---------------------------------------\n");
+                /*----------------------*/
+                
+                /*Circuit Probabilities */
+                this.initLevelCircuit();
+               
+                /*Init ProbCircuits*/
+                this.initProbCircuit();
+                
+                /*Init PTMs Const*/
+                cellLib.setPTMCells2(Float.valueOf(this.reliabilityConst));
+                cellLib.setPTMCells(new BigDecimal(this.reliabilityConst));
+               
+                long loadTimeEnd = System.nanoTime();//System.currentTimeMillis();
+                long loadTime =   TimeUnit.NANOSECONDS.toMillis(loadTimeEnd - loadTimeStart);
+                //System.out.println("- Load Time m(s): " + loadTime);
+                
+                this.sampleSize = (int) Math.pow(2, this.probCircuit.getInputs().size());  //(int) Math.pow(2, this.probCircuit.getInputs().size());
+                int N = this.sampleSize; // random_input_vectors.size();//testNumber;
+                
+                int sizeExasuticTest;
+                
+              
+                System.out.println("-   Sample size (N = 2^ENTRADAS): " + "2^"+ this.circuit.getInputs().size() + " = " + this.sampleSize);
+                
+                this.signals_to_inject_faults = this.signalsToInjectFault(option); // Consider all signals to fault inject
+
+                sizeExasuticTest = (this.sampleSize * this.signals_to_inject_faults.size());
+                     
+                ArrayList <String> random_input_vectors =  this.generateInputVector("TRUE_TABLE"); //this.calcInputTableVector(this.probCircuit.getInputs().size(), this.sampleSize);
+                ArrayList <ArrayList<Integer>> ListInputVectors =  this.splitInputPatternsInInt(random_input_vectors, this.probCircuit.getInputs().size());
+                
+                //System.out.println("LIST:::::: "+ ListInputVectors);
+                
+                List thread_list = particionateExausticVector(ListInputVectors);  // TESTE ALL GATES ///particionateVectorPerThread(ListInputVectors); // x - vectors per thread
+                
+                long propagateTimeStart = System.nanoTime();
+                
+                /*Execução das threads*/
+                Thread thread_temp = null;
+                for (int i=0; i < thread_list.size() ; i++) {
+                    thread_temp = (Thread) thread_list.get(i);
+                    thread_temp.start();
+
+                }
+                /*Esperando termino das threads*/
+                for (int i=0; i < thread_list.size() ; i++) {
+                    thread_temp = (Thread) thread_list.get(i);
+                    thread_temp.join();
+                }
+                    
+                /* Compilando os resultados - Falhas detectadas Ne*/
+                for (int i=0; i < this.itemx_list.size() ; i++) {
+                    this.unmasked_faults = this.unmasked_faults +  itemx_list.get(i).getPropagatedFaults();
+                }
+                
+                /*circuit reliability SER (Soft Error Rate)*/
+                this.circuitReliaibility = (float) (1.0 - ((float) this.unmasked_faults / (float) sizeExasuticTest));
+                
+                System.out.println("-> Umasked Faults: " + this.unmasked_faults);
+                 System.out.println("-> Sample: " + sizeExasuticTest);
+                  System.out.println("-> SER : " + this.circuitReliaibility);
+                 
+                
+                long propagateTimeEnd = System.nanoTime();
+                long propagateTime =    TimeUnit.NANOSECONDS.toSeconds(propagateTimeEnd - propagateTimeStart);
+                long propagateTimems =  TimeUnit.NANOSECONDS.toMillis(propagateTimeEnd - propagateTimeStart);
+                
+             
+                LocalDateTime myDateObj2 = LocalDateTime.now();
+                DateTimeFormatter myFormatObj2 = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+                String formattedDate2 = myDateObj2.format(myFormatObj2);
+
+                this.writeSimpleLog("ExausticSimulation_" +this.circuit.getName()+"_Threads-"+ this.threads +  "_sampleSize-"  + "_sampleSize-" + (this.sampleSize * this.signals_to_inject_faults.size()), formattedDate,  formattedDate2, propagateTimems);
+               
+                this.writeCsvFileCompleteTh("ExausticSimulation_"+this.circuit.getName()+"_Theads-"+ this.threads + "_sampleSize-" + (this.sampleSize * this.signals_to_inject_faults.size()), itemx_list);
+               
+                
+                System.out.println("\n\n----------------- Results ------------------");
+                System.out.println("Circuit: " + this.circuit.getName());
+                System.out.println("- Simulation finished at: " + formattedDate2);
+                System.out.println("- PropagatedTime (s): " + propagateTime);
+                System.out.println("- Total Vectors (N): " + (sizeExasuticTest));
+                System.out.println("- Propagated fault(s) (Ne): " + this.unmasked_faults);
+                System.out.println("- Reliability: " + "(1-(" + this.unmasked_faults + "/" + sizeExasuticTest + ")) = " + this.circuitReliaibility);
+                //System.out.println("- MTBF (Mean Time Between failure) : " + this.MTBF);
+                System.out.println("- Simulation TimeElapsed: " + propagateTimems + " m(s)");
+                System.out.println("--------------------------------------------");
+                
+                System.out.println(" ----------------------------------------------------------------------------------------------------------------------------\n\n");
+             /*
+             */
+     }
+   
     public void runMultithreadingSimulation(String option) throws IOException, Exception{
 
                
