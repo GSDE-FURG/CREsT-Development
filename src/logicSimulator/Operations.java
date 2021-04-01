@@ -346,7 +346,7 @@ import writers.WriteCsvTh;
                 else{
                     double temp;
                     temp = Math.floor(N/this.threads); 
-                    partition =  (int) temp ;//(int) Math.round(collapsed_faults/NThreads); 
+                    partition =  (int) temp ;//(ints) Math.round(collapsed_faults/NThreads); 
                 }
                 
                 int start = 0;
@@ -478,7 +478,6 @@ import writers.WriteCsvTh;
                return thread_list;
                     
     }
-    
     
     public void runMultithreadingExausticSimulation(String option) throws IOException, Exception{ //Test All possibilities
 
