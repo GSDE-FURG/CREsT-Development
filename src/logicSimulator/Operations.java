@@ -137,16 +137,19 @@ import writers.WriteCsvTh;
                 
     }
     
-    public void PrintSpecs(){
+    public String PrintSpecs(){
          
          System.out.println("           Circuit Name : " + this.circuit.getName());
-        // System.out.println("- Logic Gates : " + this.circuit.getGates());
+         //System.out.println("- Logic Gates : " + this.circuit.getGates());
          System.out.println("               - Logic Gates (size): " + this.circuit.getGates().size() );
+         System.out.println("               - Levels (size): " + this.levelCircuit.getGateLevels().size());
          //System.out.println("- Inputs : " + this.circuit.getInputs());
-         System.out.println("               - Inputs : " + this.circuit.getInputs().size()  + " - " +this.circuit.getInputs());
-         System.out.println("               - Outputs : " + this.circuit.getOutputs().size() + " - " + " - " +this.circuit.getOutputs());
-         System.out.println("               - Signals : " + this.circuit.getSignals().size());
-        
+         //System.out.println("               - Inputs : " + this.circuit.getInputs().size()  + " - " +this.circuit.getInputs());
+         //System.out.println("               - Outputs : " + this.circuit.getOutputs().size() + " - " + " - " +this.circuit.getOutputs());
+         //System.out.println("               - Signals : " + this.circuit.getSignals().size());
+         String str = this.circuit.getName()+ ";" + this.circuit.getGates().size() + ";"+ this.levelCircuit.getGateLevels().size();
+         
+         return str;
      }
      
     public void initProbCircuit() {
@@ -371,9 +374,10 @@ import writers.WriteCsvTh;
                 int end = partition;
 
                 /* In case logic gates One and Zero
-                    //ArrayList <Signal> Signals_CTE_ONE_ZERO = identificate_ONE_ZERO_CTE();  //ONLY USE WHEN ITS NOT CADENCE.GENLIB
+                    //ArrayList <Signal> Signals_CTE_ONE_ZERO = identificate_ONE_ZERO_CTE();  //ONLY USE WHEN ITS NOT CADENCE.GENLIB or GenIB with ZERO ONE GATES
                     //System.out.println("LOGIC GATES consider WIRES (CTE) Can't inject fault: " + Signals_CTE_ONE_ZERO);
                */
+                
              
                for (int i = 0; i < this.threads; i++) { //Loop of simulations
                         
@@ -860,5 +864,56 @@ import writers.WriteCsvTh;
              /*
              */
      }
-   
+    
+     public String PrintCircuitSpecs() throws IOException, Exception{
+
+                //System.out.println(" ----- Monte Carlo version -------");
+                long loadTimeStart = System.nanoTime();//System.currentTimeMillis();
+                
+                LocalDateTime myDateObj = LocalDateTime.now();
+                DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+                String formattedDate = myDateObj.format(myFormatObj);
+                //System.out.println("    - Simulation start in : " + formattedDate);
+                //System.out.println("    - Threads in execution: " + this.threads); 
+         
+                /*Reading CellLibrary*/
+                CellLibrary cellLib = new CellLibrary();
+                this.cellLibrary = cellLib;
+                this.cellLibrary.initLibrary(this.genlib);
+                //System.out.println("    ... Reading Genlib " + " at -> " + this.genlib  + " ... ok");
+                //System.out.println("  - Avaliable logic gatesin this library: "+cellLib.getCells());
+              
+                
+                /*Reading verilog*/
+                MappedVerilogReader verilog_circuit = new MappedVerilogReader(this.circuitNameStr, this.cellLibrary);
+                this.verilog_circuit = verilog_circuit;
+                /*Circuit linked to verilog_circuit - init circuit*/
+                this.circuit = verilog_circuit.getCircuit();
+                //System.out.println("    ... Reading verilog "+ " at -> " + this.circuitNameStr  + " ... ok");
+                //System.out.println("Patterns : " + this.verilog_circuit.getGatePattern());
+              
+                 /*Circuit Probabilities */
+                this.initLevelCircuit();
+               
+                /*Init ProbCircuits*/
+                this.initProbCircuit();
+                
+                /*Init PTMs Const*/
+                cellLib.setPTMCells2(Float.valueOf(this.reliabilityConst));
+                cellLib.setPTMCells(new BigDecimal(this.reliabilityConst));
+               
+                
+                /* Print circuit Specs*/
+                System.out.println("\n        ------ Printing Circuit Specs: --------");
+                String str = this.PrintSpecs();
+                System.out.println("          ---------------------------------------\n");
+                /*----------------------*/
+                
+                return str;
+                
+                //System.out.println(" ----------------------------------------------------------------------------------------------------------------------");
+             /*
+             */
+     }
+    
 }
