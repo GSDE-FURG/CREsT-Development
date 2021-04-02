@@ -93,6 +93,8 @@ import writers.WriteCsvTh;
                 System.out.println("  --- Intermediate and output Signals (total): " + r.size() );
                 return r;
         
+            
+                
             case "INTERMEDIATE":
            
                 for (int i = 0; i < signalList.size(); i++) {
@@ -104,9 +106,21 @@ import writers.WriteCsvTh;
                     }
                  System.out.println("  --- Intermediate Signals (total): " + r.size() );
                  return r;
+            
+            case "INPUTS_OUTPUTS":
+           
+                for (int i = 0; i < signalList.size(); i++) {
+                            if(((this.circuit.getInputs().contains(signalList.get(i))) || (this.circuit.getOutputs().contains(signalList.get(i))))){
+
+                               r.add(signalList.get(i));
+                            }
+
+                    }
+                 System.out.println("  --- Intermediate Signals (total): " + r.size() );
+                 return r;
       
         
-         case "ALL_SIGNALS":
+            case "ALL_SIGNALS":
              
               for (int i = 0; i < signalList.size(); i++) {  
                     r.add(signalList.get(i));
@@ -592,7 +606,7 @@ import writers.WriteCsvTh;
                 
                 this.sampleSize = sizeExasuticTest;
                     
-                this.writeSimpleLog("ExausticSimulation_" +this.circuit.getName()+"_Threads-"+ this.threads +  "_sampleSize-"  + "_sampleSize-" + this.sampleSize, formattedDate,  formattedDate2, propagateTime);
+                this.writeSimpleLog("ExausticSimulation_" +this.circuit.getName()+"_Threads-"+ this.threads + "_sampleSize-" + this.sampleSize, formattedDate,  formattedDate2, propagateTime);
                
                 this.writeCsvFileCompleteTh("ExausticSimulation_"+this.circuit.getName()+"_Theads-"+ this.threads + "_sampleSize-" + this.sampleSize, itemx_list);
                

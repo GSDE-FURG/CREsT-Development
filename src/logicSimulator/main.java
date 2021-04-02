@@ -31,7 +31,7 @@ public class main{
             return this.circuitList;
         }
 
-        public void multithreadingSimulation(String Signals) throws Exception{ //ou Signals =  "ALL_SIGNALS" ou "INTERMEDIATE" ou "INTERMEDIATE_AND_OUTPUTS" ou "INPUTS"
+        public void multithreadingSimulation(String Signals) throws Exception{ //ou Signals =  "ALL_SIGNALS" ou "INTERMEDIATE" ou "INTERMEDIATE_AND_OUTPUTS" ou "INPUTS" ou "INPUTS_OUTPUTS"
                 //Loop na simulação de circuitos 
                 for (int i = 0; i < this.circuitList.size(); i++) {
                      Operations simulacaoMultithreading = new Operations(this.threads, this.reliabilityConst, 
@@ -40,21 +40,21 @@ public class main{
                 }
         }
         
-        public void multithreadingSimulationExaustic(String Signals) throws Exception{ //ou Signals =  "ALL_SIGNALS" ou "INTERMEDIATE" ou "INTERMEDIATE_AND_OUTPUTS" ou "INPUTS"
+        public void multithreadingSimulationExaustic() throws Exception{ //ou Signals =  "ALL_SIGNALS" for exaustive consider all_signals
                 //Loop na simulação de circuitos 
                 for (int i = 0; i < this.circuitList.size(); i++) {
                      Operations simulacaoMultithreading = new Operations(this.threads, this.reliabilityConst, 
                              this.relativePath, this.genlib, this.relativePath + this.circuitList.get(i));
-                             simulacaoMultithreading.runMultithreadingExausticSimulation(Signals); 
+                             simulacaoMultithreading.runMultithreadingExausticSimulation("ALL_SIGNALS"); 
                 }
         }
         
-        public void monteCarloSimulation(int sampleSize) throws Exception{
+        public void monteCarloSimulation(int sampleSize, String Signals) throws Exception{
                 //Loop na simulação de circuitos 
                 for (int i = 0; i < this.circuitList.size(); i++) {
                      Operations simulacaoMultithreading = new Operations(this.threads, this.reliabilityConst, 
                              this.relativePath, this.genlib, this.relativePath + this.circuitList.get(i));
-                             simulacaoMultithreading.runMultithreadingMonteCarlo(sampleSize, "ALL_SIGNALS"); //ou "INTERMEDIATE" ou "INTERMEDIATE_AND_OUTPUTS" ou "INPUTS"
+                             simulacaoMultithreading.runMultithreadingMonteCarlo(sampleSize, Signals); //ou Signals =  "ALL_SIGNALS" ou "INTERMEDIATE" ou "INTERMEDIATE_AND_OUTPUTS" ou "INPUTS" ou "INPUTS_OUTPUTS"
                 }
         }
         
@@ -94,9 +94,9 @@ public class main{
              
              experimento.fooExecution();
  
-             //experimento.multithreadingSimulation(); //TRue Table
+             //experimento.multithreadingSimulation("ALL_SIGNALS"); //TRue Table - //ou Signals =  "ALL_SIGNALS" ou "INTERMEDIATE" ou "INTERMEDIATE_AND_OUTPUTS" ou "INPUTS" ou "INPUTS_OUTPUTS"
              
-             //experimento.monteCarloSimulation(sampleSizeMonteCarlo);
+             //experimento.monteCarloSimulation(sampleSizeMonteCarlo, "ALL_SIGNALS"); //ou Signals =  "ALL_SIGNALS" ou "INTERMEDIATE" ou "INTERMEDIATE_AND_OUTPUTS" ou "INPUTS" ou "INPUTS_OUTPUTS"
         }
             
         public void fooExecution() throws Exception{
@@ -116,8 +116,8 @@ public class main{
              main experimento_genlib = new main(threads, constReliability, relativePath, genlib);
              experimento_genlib.preparingEnviroment(); 
              //experimento_genlib.multithreadingSimulation("ALL_SIGNALS");
-             experimento_genlib.multithreadingSimulationExaustic("INPUTS");
-             //experimento_genlib.monteCarloSimulation(sampleSizeMonteCarlo);
+             experimento_genlib.multithreadingSimulationExaustic();
+             //experimento_genlib.monteCarloSimulation(sampleSizeMonteCarlo, "ALL_SIGNALS");  //ou Signals =  "ALL_SIGNALS" ou "INTERMEDIATE" ou "INTERMEDIATE_AND_OUTPUTS" ou "INPUTS" ou "INPUTS_OUTPUTS"
 
         }
         
