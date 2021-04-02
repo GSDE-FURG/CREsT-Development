@@ -107,13 +107,13 @@ public class main{
             
              this.foo("Simulação Circuitos - ABC/min/", "lib_min_no_cost.genlib"); // 1° genlib
              
-             //this.foo("Simulação Circuitos - ABC/basic/", "lib_basic_no_cost.genlib"); // 2° genlib
+             this.foo("Simulação Circuitos - ABC/basic/", "lib_basic_no_cost.genlib"); // 2° genlib
              
-             //this.foo("Simulação Circuitos - ABC/complex/", "lib_complex_no_cost_no_xor.genlib"); // 3° genlib
+             this.foo("Simulação Circuitos - ABC/complex/", "lib_complex_no_cost_no_xor.genlib"); // 3° genlib
              
-             //this.foo("Simulação Circuitos - ABC/full/", "lib_complex_no_cost_no_xor.genlib"); // 4° genlib
+             this.foo("Simulação Circuitos - ABC/full/", "lib_full_no_cost_no_xor.genlib"); // 4° genlib
              
-            // this.foo("Simulação Circuitos - ABC/full + xor/", "lib_full_no_cost.genlib"); // 5° genlib
+             this.foo("Simulação Circuitos - ABC/full + xor/", "lib_full_no_cost.genlib"); // 5° genlib
              
                //this.foo("teste/", "cadence.genlib");
                //this.foo("Simulação Circuitos - ABC/basic/", "lib_basic_no_cost.genlib");
@@ -123,7 +123,7 @@ public class main{
         public void foo(String relativePath , String genlibTemp) throws Exception{
             
              int threads = 8; //Numero de threads
-             int sampleSizeMonteCarlo = 10;
+             int sampleSizeMonteCarlo = 10;//20000;
              String constReliability = "0.9999"; //Used for internal structures
              //String relativePath = "teste/";
              String genlib =  relativePath  + genlibTemp;
@@ -134,7 +134,7 @@ public class main{
              //experimento_genlib.multithreadingSimulationExaustic();
              //experimento_genlib
              experimento_genlib.monteCarloSimulation(sampleSizeMonteCarlo, "INTERMEDIATE");  //ou Signals =  "ALL_SIGNALS" ou "INTERMEDIATE" ou "INTERMEDIATE_AND_OUTPUTS" ou "INPUTS" ou "INPUTS_OUTPUTS"
-              experimento_genlib.monteCarloSimulation(sampleSizeMonteCarlo, "INTERMEDIATE_AND_OUTPUTS\""); 
+              experimento_genlib.monteCarloSimulation(sampleSizeMonteCarlo, "INTERMEDIATE_AND_OUTPUTS"); 
                 experimento_genlib.monteCarloSimulation(sampleSizeMonteCarlo, "ALL_SIGNALS");  //ou Signals =  "ALL_SIGNALS" ou "INTERMEDIATE" ou "INTERMEDIATE_AND_OUTPUTS" ou "INPUTS" ou "INPUTS_OUTPUTS"
 
         }

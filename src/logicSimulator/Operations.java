@@ -836,9 +836,10 @@ import writers.WriteCsvTh;
                     this.unmasked_faults = this.unmasked_faults +  itemx_list.get(i).getPropagatedFaults();
                 }
                
+                 this.circuitReliaibility = (float) (1.0 - ((float) this.unmasked_faults / (float) this.sampleSize));
 
                 /*circuit reliability SER (Soft Error Rate)*/
-                this.circuitReliaibility = (1 - (this.unmasked_faults/this.sampleSize));
+                //this.circuitReliaibility = (1 - (this.unmasked_faults/this.sampleSize));
                 
                 long propagateTimeEnd = System.nanoTime();
                 long propagateTime =    TimeUnit.NANOSECONDS.toSeconds(propagateTimeEnd - propagateTimeStart);
