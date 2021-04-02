@@ -1,6 +1,7 @@
 package writers;
 
 
+import datastructures.Circuit;
 import logicSimulator.TestVectorInformation;
 import logicSimulator.LogicSimulator;
 import datastructures.Signal;
@@ -253,7 +254,7 @@ public class WriteCsvTh {
              csvWriter.close();
     }
     
-    public void writeCSVCompleteThNew(String filename, String circuitName, ArrayList <Signal> inputSignals,  ArrayList <Signal> outputSignals,  ArrayList <Signal> all_signals, String Head, ArrayList <LogicSimulator> thread_list_test, String propagated_faults) throws IOException {
+    public void writeCSVCompleteThNew(Circuit circuit, String filename, String circuitName, ArrayList <Signal> inputSignals,  ArrayList <Signal> outputSignals,  ArrayList <Signal> all_signals, String Head, ArrayList <LogicSimulator> thread_list_test, String propagated_faults) throws IOException {
        
         this.FileName = filename;
         this.FileNameCsv = this.FileName + ".csv";
@@ -296,7 +297,14 @@ public class WriteCsvTh {
                 csvWriter.append(outnewStr.replace("]", ""));
              csvWriter.append("\n");
              
-             csvWriter.append("internal Signals ("+ all_signals.size() +"): ;");
+             
+             csvWriter.append("Circuit Signals ("+ circuit.getSignals().size() +"): ;");
+                 String signalsStr =circuit.getSignals().toString().replace("[", "");
+      
+                csvWriter.append(signalsStr.replace("]", ""));
+             csvWriter.append("\n");
+             
+             csvWriter.append("Fault Signals ("+ all_signals.size() +"): ;");
                  String internalnewStr = all_signals.toString().replace("[", "");
                  //String outnewStr2 = internalnewStr.replace(inputnewStr, "");
                  //String outnewStr3 = outnewStr2.replace(outnewStr, "");

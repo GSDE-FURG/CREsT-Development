@@ -116,7 +116,7 @@ public class main{
              main experimento_genlib = new main(threads, constReliability, relativePath, genlib);
              experimento_genlib.preparingEnviroment(); 
              //experimento_genlib.multithreadingSimulation("ALL_SIGNALS");
-             experimento_genlib.multithreadingSimulationExaustic("ALL_SIGNALS");
+             experimento_genlib.multithreadingSimulationExaustic("INPUTS");
              //experimento_genlib.monteCarloSimulation(sampleSizeMonteCarlo);
 
         }

@@ -66,44 +66,47 @@ import writers.WriteCsvTh;
         signalList = this.circuit.getSignals();
         ArrayList <Signal> r = new ArrayList<>();
         
-        if(option.equals("INPUTS")){
+        switch (option){
+            
+            case "INPUTS":
            
-            for (int i = 0; i < signalList.size(); i++) {
-                        if(!((this.circuit.getInputs().contains(signalList.get(i))))){
-                           
-                           r.add(signalList.get(i));
+                    for (int i = 0; i < signalList.size(); i++) {
+                                if(((this.circuit.getInputs().contains(signalList.get(i))))){
+
+                                   r.add(signalList.get(i));
+                                }
+
                         }
-                    
-                }
-             System.out.println("  --- Input Signals (total): " + r.size() );
-             return r;
-        }
-       
-        if(option.equals("INTERMEDIATE_AND_OUTPUTS")){
+                     System.out.println("  --- Input Signals (total): " + r.size() );
+                     return r;
+                     //break;
+            
+        
+            case "INTERMEDIATE_AND_OUTPUTS":
            
-            for (int i = 0; i < signalList.size(); i++) {
-                if(!((this.circuit.getInputs().contains(signalList.get(i))))){
-                        r.add(signalList.get(i));
-                }
-                    
-             }
-            System.out.println("  --- Intermediate and output Signals (total): " + r.size() );
-            return r;
-        }
-        if(option.equals("INTERMEDIATE")){
+                for (int i = 0; i < signalList.size(); i++) {
+                    if(!((this.circuit.getInputs().contains(signalList.get(i))))){
+                            r.add(signalList.get(i));
+                    }
+
+                 }
+                System.out.println("  --- Intermediate and output Signals (total): " + r.size() );
+                return r;
+        
+            case "INTERMEDIATE":
            
-            for (int i = 0; i < signalList.size(); i++) {
-                        if(!((this.circuit.getInputs().contains(signalList.get(i))) || (this.circuit.getOutputs().contains(signalList.get(i))))){
-                           
-                           r.add(signalList.get(i));
-                        }
-                    
-                }
-             System.out.println("  --- Intermediate Signals (total): " + r.size() );
-             return r;
+                for (int i = 0; i < signalList.size(); i++) {
+                            if(!((this.circuit.getInputs().contains(signalList.get(i))) || (this.circuit.getOutputs().contains(signalList.get(i))))){
+
+                               r.add(signalList.get(i));
+                            }
+
+                    }
+                 System.out.println("  --- Intermediate Signals (total): " + r.size() );
+                 return r;
       
-        }
-         if(option.equals("ALL_SIGNALS")){
+        
+         case "ALL_SIGNALS":
              
               for (int i = 0; i < signalList.size(); i++) {  
                     r.add(signalList.get(i));
@@ -111,10 +114,11 @@ import writers.WriteCsvTh;
                System.out.println("--> Considering all signals (input, intermediate, output): "+r.size());  
               return r;
                
+             
+         case "":
+             System.out.println("Error !!! Please insert the correct Fault Signals String");
+             break;
         }
-        
-        
-        
         return null;
                 
     }
@@ -302,7 +306,7 @@ import writers.WriteCsvTh;
             String Header = "Input Signals" + ";" + "Fault Signal" + ";" + "Fault Type" + ";" + "Fault-Free Circuit Output" + ";" + "Faulty Circuit Output";
             WriteCsvTh logfile = new WriteCsvTh();
             
-            logfile.writeCSVCompleteThNew(filename, this.verilog_circuit.getCircuit().getName() + ".v", this.circuit.getInputs(), this.circuit.getOutputs(), 
+            logfile.writeCSVCompleteThNew(this.circuit, filename, this.verilog_circuit.getCircuit().getName() + ".v", this.circuit.getInputs(), this.circuit.getOutputs(), 
                     this.signals_to_inject_faults,  Header , itemx_list , Integer.toString(this.unmasked_faults));
                 
      }
