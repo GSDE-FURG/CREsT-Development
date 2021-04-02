@@ -217,13 +217,16 @@ import writers.WriteCsvTh;
                         
                         ArrayList <String> vector = new ArrayList<>();
                         Random gerador = new Random();
-                        String str = "";
+                       
                         for (int i = 0; i < this.sampleSize; i++) {
+                             String str = "";
                              for (int j = 0; j < inputSignaisSize; j++) {
                                   //int randomLogicValue = gerador.nextInt(2);
-                                  str = str + gerador.nextInt(2);;
+                                  //str = str + "0";
+                                  str = str + gerador.nextInt(2);
                              }
                              vector.add(str);
+                             //str = "";
                           }
                     return vector;
         }
@@ -846,7 +849,7 @@ import writers.WriteCsvTh;
                 DateTimeFormatter myFormatObj2 = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
                 String formattedDate2 = myDateObj2.format(myFormatObj2);
 
-                this.writeSimpleLog(option + "_Multithreading_Simple_Log_" +this.circuit.getName()+"_Threads-"+ this.threads +  "_sampleSize-" + N, formattedDate,  formattedDate2, propagateTime);
+                this.writeSimpleLog(option + "_Multithreading_Simple_Log_" +this.circuit.getName()+"_Threads-"+ this.threads +  "_sampleSize-" + this.sampleSize, formattedDate,  formattedDate2, propagateTime);
                
                 this.writeCsvFileCompleteTh(option+"_Multithreading_Complete_Log_"+this.circuit.getName()+"_Theads-"+ this.threads + "_sampleSize", itemx_list);
   

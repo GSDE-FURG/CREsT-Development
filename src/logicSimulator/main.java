@@ -123,7 +123,7 @@ public class main{
         public void foo(String relativePath , String genlibTemp) throws Exception{
             
              int threads = 8; //Numero de threads
-             int sampleSizeMonteCarlo = 10000;
+             int sampleSizeMonteCarlo = 10;
              String constReliability = "0.9999"; //Used for internal structures
              //String relativePath = "teste/";
              String genlib =  relativePath  + genlibTemp;
