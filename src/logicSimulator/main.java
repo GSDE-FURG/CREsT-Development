@@ -57,9 +57,9 @@ public class main{
                              this.relativePath, this.genlib, this.relativePath + this.circuitList.get(i));
                              //simulacaoMultithreading.PrintCircuitSpecs();
                              //str = str + simulacaoMultithreading.PrintCircuitSpecs() + "\n";
-                             //simulacaoMultithreading.runMultithreadingMonteCarlo(sampleSize, Signals); //ou Signals =  "ALL_SIGNALS" ou "INTERMEDIATE" ou "INTERMEDIATE_AND_OUTPUTS" ou "INPUTS" ou "INPUTS_OUTPUTS"
+                             simulacaoMultithreading.runMultithreadingMonteCarlo(sampleSize, Signals); //ou Signals =  "ALL_SIGNALS" ou "INTERMEDIATE" ou "INTERMEDIATE_AND_OUTPUTS" ou "INPUTS" ou "INPUTS_OUTPUTS"
                 }
-                System.out.println("STR: " + str);
+                //System.out.println("STR: " + str);
         }
         
         public void preparingEnviroment(){
@@ -122,8 +122,8 @@ public class main{
         
         public void foo(String relativePath , String genlibTemp) throws Exception{
             
-             int threads = 4; //Numero de threads
-             int sampleSizeMonteCarlo = 20000;
+             int threads = 8; //Numero de threads
+             int sampleSizeMonteCarlo = 10000;
              String constReliability = "0.9999"; //Used for internal structures
              //String relativePath = "teste/";
              String genlib =  relativePath  + genlibTemp;
@@ -133,7 +133,9 @@ public class main{
              //experimento_genlib.multithreadingSimulation("ALL_SIGNALS");
              //experimento_genlib.multithreadingSimulationExaustic();
              //experimento_genlib
-             experimento_genlib.monteCarloSimulation(sampleSizeMonteCarlo, "ALL_SIGNALS");  //ou Signals =  "ALL_SIGNALS" ou "INTERMEDIATE" ou "INTERMEDIATE_AND_OUTPUTS" ou "INPUTS" ou "INPUTS_OUTPUTS"
+             experimento_genlib.monteCarloSimulation(sampleSizeMonteCarlo, "INTERMEDIATE");  //ou Signals =  "ALL_SIGNALS" ou "INTERMEDIATE" ou "INTERMEDIATE_AND_OUTPUTS" ou "INPUTS" ou "INPUTS_OUTPUTS"
+              experimento_genlib.monteCarloSimulation(sampleSizeMonteCarlo, "INTERMEDIATE_AND_OUTPUTS\""); 
+                experimento_genlib.monteCarloSimulation(sampleSizeMonteCarlo, "ALL_SIGNALS");  //ou Signals =  "ALL_SIGNALS" ou "INTERMEDIATE" ou "INTERMEDIATE_AND_OUTPUTS" ou "INPUTS" ou "INPUTS_OUTPUTS"
 
         }
 

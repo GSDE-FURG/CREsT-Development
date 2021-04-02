@@ -219,13 +219,14 @@ import signalProbability.ProbCircuit;
                                 }
                                 */
                             }
-                            
+                            /*
                              System.out.println("              - Gate: "+ gatesInThisLevel.get(k)  
                                      +  "  type: "+ gate.getGate().getType() 
                                      +  " - Inputs: " + gate.getGate().getInputs().get(0) + " value: " + gate.getGate().getInputs().get(0).getLogicValue()
                                      +  " - Inputs: " + gate.getGate().getInputs().get(1)+ " value: " + gate.getGate().getInputs().get(1).getLogicValue()
                                      +  "              - output: " + sig.getOriginalLogicValue());
-                        }
+                            */
+                            }
                     }
                }
                 

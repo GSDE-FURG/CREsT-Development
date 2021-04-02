@@ -197,17 +197,17 @@ import writers.WriteCsvTh;
                        }
                    }
 
-                   System.out.println("" + (i+1) + " - " + str);
+                   //System.out.println("" + (i+1) + " - " + str);
                    vector.add(str);
                 }
                 else{
-                    System.out.println("" + (i+1) + " - " + Integer.toBinaryString(i) );
+                    //System.out.println("" + (i+1) + " - " + Integer.toBinaryString(i) );
                     vector.add(Integer.toBinaryString(i));
                    }
                }
              
              
-             System.out.println("TRUE TABLE: " + vector);
+             //System.out.println("TRUE TABLE: " + vector);
              return vector;
        
         }
@@ -220,8 +220,8 @@ import writers.WriteCsvTh;
                         String str = "";
                         for (int i = 0; i < this.sampleSize; i++) {
                              for (int j = 0; j < inputSignaisSize; j++) {
-                                  int randomLogicValue = gerador.nextInt(2);
-                                  str = str + randomLogicValue;
+                                  //int randomLogicValue = gerador.nextInt(2);
+                                  str = str + gerador.nextInt(2);;
                              }
                              vector.add(str);
                           }
@@ -779,10 +779,7 @@ import writers.WriteCsvTh;
                 
                 
                 /* Print circuit Specs*/
-                System.out.println("\n        ------ Printing Circuit Specs: --------");
-                this.PrintSpecs();
-                System.out.println("          ---------------------------------------\n");
-                /*----------------------*/
+               
                 
                 /*Circuit Probabilities */
                 this.initLevelCircuit();
@@ -797,6 +794,11 @@ import writers.WriteCsvTh;
                 long loadTimeEnd = System.nanoTime();//System.currentTimeMillis();
                 long loadTime =   TimeUnit.NANOSECONDS.toMillis(loadTimeEnd - loadTimeStart);
                 //System.out.println("- Load Time m(s): " + loadTime);
+                
+                 System.out.println("\n        ------ Printing Circuit Specs: --------");
+                this.PrintSpecs();
+                System.out.println("          ---------------------------------------\n");
+                /*----------------------*/
                 
                 this.sampleSize = sampleSize; //(int) Math.pow(2, this.probCircuit.getInputs().size());  //(int) Math.pow(2, this.probCircuit.getInputs().size());
                 int N = this.sampleSize; // random_input_vectors.size();//testNumber;
@@ -844,9 +846,9 @@ import writers.WriteCsvTh;
                 DateTimeFormatter myFormatObj2 = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
                 String formattedDate2 = myDateObj2.format(myFormatObj2);
 
-                this.writeSimpleLog("Multithreading_Simple_Log_" +this.circuit.getName()+"_Threads-"+ this.threads +  "_sampleSize-" + N, formattedDate,  formattedDate2, propagateTime);
+                this.writeSimpleLog(option + "_Multithreading_Simple_Log_" +this.circuit.getName()+"_Threads-"+ this.threads +  "_sampleSize-" + N, formattedDate,  formattedDate2, propagateTime);
                
-                this.writeCsvFileCompleteTh("Multithreading_Complete_Log_"+this.circuit.getName()+"_Theads-"+ this.threads + "_sampleSize", itemx_list);
+                this.writeCsvFileCompleteTh(option+"_Multithreading_Complete_Log_"+this.circuit.getName()+"_Theads-"+ this.threads + "_sampleSize", itemx_list);
   
                 System.out.println("\n\n----------------- Results ------------------");
                 System.out.println("Circuit: " + this.circuit.getName());
