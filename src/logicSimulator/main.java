@@ -4,8 +4,15 @@
  * and open the template in the editor.
  */
 package logicSimulator;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -109,7 +116,63 @@ public class main{
              
              //experimento.monteCarloSimulation(sampleSizeMonteCarlo, "ALL_SIGNALS"); //ou Signals =  "ALL_SIGNALS" ou "INTERMEDIATE" ou "INTERMEDIATE_AND_OUTPUTS" ou "INPUTS" ou "INPUTS_OUTPUTS"
         }
-        public void readResultsInLot(String path, String filter){
+        
+        private List<String> readFile(String filename) 
+{
+                    List<String> records = new ArrayList<String>();
+                    try
+                    {
+                      BufferedReader reader = new BufferedReader(new FileReader(filename));
+                      String line;
+                      while ((line = reader.readLine()) != null)
+                      {
+                        records.add(line);
+                      }
+                      reader.close();
+                      return records;
+                    }
+                    catch (Exception e)
+                    {
+                      System.err.format("Exception occurred trying to read '%s'.", filename);
+                      e.printStackTrace();
+                      return null;
+  }
+}
+        
+        public void readEachFile(ArrayList<String> files, String path) throws IOException{
+         
+             ArrayList <String> FileContent = new ArrayList<>();
+            for (int i = 0; i < files.size(); i++) {
+                   List<String> records  = this.readFile(path + "/" +files.get(i));
+                   //System.out.println("Records: " + records);
+                  
+                        for (String x : records){
+                            if(x.contains("Number of detected faults (Ne):")){
+                                System.out.println("File: " + files.get(i) + " >"+x);
+                                FileContent.add(x);
+                            }
+                        }
+                   
+            }
+            
+            
+            try (PrintWriter pw = new PrintWriter(new FileOutputStream(path + "/" + " resultado_.txt"))) {
+                for (String club : FileContent) {
+                    pw.println(club);
+                }
+                /*
+                System.out.println(path + "/" + " resultado_.txt");
+                File file = new File(path + "/" + " resultado_.txt");
+                if(file.createNewFile()){
+                System.out.println(" File Created");
+                }else System.out.println("File  already exists");
+                 */
+            }
+           
+       
+        }
+        
+        public void readResultsInLot(String path, String filter) throws IOException{
                 
                 String[] circuitFiles;
                 File f = new File(path);
@@ -130,10 +193,21 @@ public class main{
                 for (int i = 0; i < files.size(); i++) {
                         if(files.get(i).contains(filter)){
                             System.out.println("->" + files.get(i));
+                            temp.add(files.get(i));
                         }
                 }
-                 
-            
+                
+                //List<String> records  = this.readFile(path + "/" +files.get(0));
+                //System.out.println("Records: " + records);
+                /*
+                for (String x : records){
+                    System.out.println(">"+x);
+                }
+                */
+                
+                this.readEachFile(temp, path);
+                System.out.println("------------------------------------------");
+                    
         }
         
         public void fooExecution() throws Exception{
