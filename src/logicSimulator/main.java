@@ -104,12 +104,19 @@ public class main{
              //experimento.preparingEnviroment();
              
              //experimento.fooExecution();
-             
+             /*
              experimento.readResultsInLot("Resultados - Todas as simulações - 5 bibliotecas - ISCAS85/min", "ALL_SIGNALS");
              
              experimento.readResultsInLot("Resultados - Todas as simulações - 5 bibliotecas - ISCAS85/min", "INTERMEDIATE_AND_OUTPUTS");
              
              experimento.readResultsInLot("Resultados - Todas as simulações - 5 bibliotecas - ISCAS85/min", "INTERMEDIATE_Multithreading_");
+             */
+             
+             experimento.readResultsInLot("Resultados - Todas as simulações - 5 bibliotecas - ISCAS85/basic", "ALL_SIGNALS");
+             
+             experimento.readResultsInLot("Resultados - Todas as simulações - 5 bibliotecas - ISCAS85/basic", "INTERMEDIATE_AND_OUTPUTS");
+             
+             experimento.readResultsInLot("Resultados - Todas as simulações - 5 bibliotecas - ISCAS85/basic", "INTERMEDIATE_Multithreading_");
                      
  
              //experimento.multithreadingSimulation("ALL_SIGNALS"); //TRue Table - //ou Signals =  "ALL_SIGNALS" ou "INTERMEDIATE" ou "INTERMEDIATE_AND_OUTPUTS" ou "INPUTS" ou "INPUTS_OUTPUTS"
@@ -139,27 +146,37 @@ public class main{
   }
 }
         
-        public void readEachFile(ArrayList<String> files, String path) throws IOException{
+        public void readEachFile(ArrayList<String> files, String path, String filter) throws IOException{
          
-             ArrayList <String> FileContent = new ArrayList<>();
+            ArrayList <String> FileContent = new ArrayList<>();
             for (int i = 0; i < files.size(); i++) {
                    List<String> records  = this.readFile(path + "/" +files.get(i));
                    //System.out.println("Records: " + records);
-                  
+                        
                         for (String x : records){
+                           
                             if(x.contains("Number of detected faults (Ne):")){
-                                System.out.println("File: " + files.get(i) + " >"+x);
-                                FileContent.add(x);
+                               
+                                String[] t = x.split(":");
+                                //out = files.get(i) + ";" + t[1];
+                                //System.out.println("----- +" + t[1]);
+                                String[] z = records.get(8).split(":");
+                                FileContent.add(files.get(i) + ";" + t[1] + ";" + z[1]);
+                                
+                                 System.out.println("File: " + files.get(i) + " >"+x + " t(s):" + z[1] );
                             }
+                           
                         }
                    
             }
             
             
-            try (PrintWriter pw = new PrintWriter(new FileOutputStream(path + "/" + " resultado_.txt"))) {
+                PrintWriter pw = new PrintWriter(new FileOutputStream(path + "/" + filter + "_.txt"));
                 for (String club : FileContent) {
                     pw.println(club);
                 }
+                pw.close();
+                System.out.println("ARquivo criado: " + path + "/" + filter + "_.txt" );
                 /*
                 System.out.println(path + "/" + " resultado_.txt");
                 File file = new File(path + "/" + " resultado_.txt");
@@ -167,7 +184,7 @@ public class main{
                 System.out.println(" File Created");
                 }else System.out.println("File  already exists");
                  */
-            }
+            
            
        
         }
@@ -205,7 +222,7 @@ public class main{
                 }
                 */
                 
-                this.readEachFile(temp, path);
+                this.readEachFile(temp, path, filter);
                 System.out.println("------------------------------------------");
                     
         }
