@@ -94,15 +94,48 @@ public class main{
              
              main experimento = new main(threads, constReliability, relativePath, genlib);
              
-             experimento.preparingEnviroment();
+             //experimento.preparingEnviroment();
              
-             experimento.fooExecution();
+             //experimento.fooExecution();
+             
+             experimento.readResultsInLot("Resultados - Todas as simulações - 5 bibliotecas - ISCAS85/min", "ALL_SIGNALS");
+             
+             experimento.readResultsInLot("Resultados - Todas as simulações - 5 bibliotecas - ISCAS85/min", "INTERMEDIATE_AND_OUTPUTS");
+             
+             experimento.readResultsInLot("Resultados - Todas as simulações - 5 bibliotecas - ISCAS85/min", "INTERMEDIATE_Multithreading_");
+                     
  
              //experimento.multithreadingSimulation("ALL_SIGNALS"); //TRue Table - //ou Signals =  "ALL_SIGNALS" ou "INTERMEDIATE" ou "INTERMEDIATE_AND_OUTPUTS" ou "INPUTS" ou "INPUTS_OUTPUTS"
              
              //experimento.monteCarloSimulation(sampleSizeMonteCarlo, "ALL_SIGNALS"); //ou Signals =  "ALL_SIGNALS" ou "INTERMEDIATE" ou "INTERMEDIATE_AND_OUTPUTS" ou "INPUTS" ou "INPUTS_OUTPUTS"
         }
+        public void readResultsInLot(String path, String filter){
+                
+                String[] circuitFiles;
+                File f = new File(path);
+                ArrayList <String> files = new ArrayList<>();
+                ArrayList <String> temp = new ArrayList<>();
+                circuitFiles = f.list();
+                
+                for (String pathname : circuitFiles) {
+                    if(pathname.endsWith(".txt")){ // test tipe .v
+                        //System.out.println(pathname);
+                        //circuitList.add(pathname); 
+                        //this.circuitList.add(pathname);
+                        files.add(pathname);
+                    }  
+                }
+                System.out.println("Circuits in List: " +  files);
+                
+                for (int i = 0; i < files.size(); i++) {
+                        if(files.get(i).contains(filter)){
+                            System.out.println("->" + files.get(i));
+                        }
+                }
+                 
             
+        }
+        
         public void fooExecution() throws Exception{
             
              this.foo("Simulação Circuitos - ABC/min/", "lib_min_no_cost.genlib"); // 1° genlib
@@ -123,7 +156,7 @@ public class main{
         public void foo(String relativePath , String genlibTemp) throws Exception{
             
              int threads = 8; //Numero de threads
-             int sampleSizeMonteCarlo = 10;//20000;
+             int sampleSizeMonteCarlo = 20000;
              String constReliability = "0.9999"; //Used for internal structures
              //String relativePath = "teste/";
              String genlib =  relativePath  + genlibTemp;
@@ -134,8 +167,8 @@ public class main{
              //experimento_genlib.multithreadingSimulationExaustic();
              //experimento_genlib
              experimento_genlib.monteCarloSimulation(sampleSizeMonteCarlo, "INTERMEDIATE");  //ou Signals =  "ALL_SIGNALS" ou "INTERMEDIATE" ou "INTERMEDIATE_AND_OUTPUTS" ou "INPUTS" ou "INPUTS_OUTPUTS"
-              experimento_genlib.monteCarloSimulation(sampleSizeMonteCarlo, "INTERMEDIATE_AND_OUTPUTS"); 
-                experimento_genlib.monteCarloSimulation(sampleSizeMonteCarlo, "ALL_SIGNALS");  //ou Signals =  "ALL_SIGNALS" ou "INTERMEDIATE" ou "INTERMEDIATE_AND_OUTPUTS" ou "INPUTS" ou "INPUTS_OUTPUTS"
+             experimento_genlib.monteCarloSimulation(sampleSizeMonteCarlo, "INTERMEDIATE_AND_OUTPUTS"); 
+             experimento_genlib.monteCarloSimulation(sampleSizeMonteCarlo, "ALL_SIGNALS");  //ou Signals =  "ALL_SIGNALS" ou "INTERMEDIATE" ou "INTERMEDIATE_AND_OUTPUTS" ou "INPUTS" ou "INPUTS_OUTPUTS"
 
         }
 
