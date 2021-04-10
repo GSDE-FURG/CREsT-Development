@@ -69,6 +69,19 @@ public class main{
                 //System.out.println("STR: " + str);
         }
         
+        public void monteCarloSimulation_Per_Area(int sampleSize, String Signals, int smallestGatesIncicuitsSimulation) throws Exception{
+                //Loop na simulação de circuitos 
+                String str = "";
+                for (int i = 0; i < this.circuitList.size(); i++) {
+                     Operations simulacaoMultithreading = new Operations(this.threads, this.reliabilityConst, 
+                             this.relativePath, this.genlib, this.relativePath + this.circuitList.get(i));
+                             //simulacaoMultithreading.PrintCircuitSpecs();
+                             //str = str + simulacaoMultithreading.PrintCircuitSpecs() + "\n";
+                             simulacaoMultithreading.runMultithreading_MonteCarloSample_per_Area_Analisys(sampleSize, Signals, smallestGatesIncicuitsSimulation); //ou Signals =  "ALL_SIGNALS" ou "INTERMEDIATE" ou "INTERMEDIATE_AND_OUTPUTS" ou "INPUTS" ou "INPUTS_OUTPUTS"
+                }
+                //System.out.println("STR: " + str);
+        }
+        
         public void preparingEnviroment(){
                 
                 String[] circuitFiles;
@@ -87,6 +100,12 @@ public class main{
                 System.out.println("======================\n");
                
         }
+       
+        public void fooAlot(String folderPath) throws IOException{
+
+             this.readResultsInLot(folderPath, "ALL_SIGNALS");
+             
+        }
         
         public static void main(String[] args) throws Exception {
             
@@ -101,8 +120,14 @@ public class main{
              
              main experimento = new main(threads, constReliability, relativePath, genlib);
              
-             //experimento.preparingEnviroment();
+             experimento.preparingEnviroment();
              
+             String op = "min";
+             
+             experimento.fooAlot("Resultados - Simulação - Diferentes Áreas/" + op);
+             
+             //experimento.fooExecution();
+
              //experimento.fooExecution();
              /*
              experimento.readResultsInLot("Resultados - Todas as simulações - 5 bibliotecas - ISCAS85/min", "ALL_SIGNALS");
@@ -112,12 +137,14 @@ public class main{
              experimento.readResultsInLot("Resultados - Todas as simulações - 5 bibliotecas - ISCAS85/min", "INTERMEDIATE_Multithreading_");
              */
              
+             /*
              experimento.readResultsInLot("Resultados - Todas as simulações - 5 bibliotecas - ISCAS85/basic", "ALL_SIGNALS");
              
              experimento.readResultsInLot("Resultados - Todas as simulações - 5 bibliotecas - ISCAS85/basic", "INTERMEDIATE_AND_OUTPUTS");
              
              experimento.readResultsInLot("Resultados - Todas as simulações - 5 bibliotecas - ISCAS85/basic", "INTERMEDIATE_Multithreading_");
-                     
+              
+             */
  
              //experimento.multithreadingSimulation("ALL_SIGNALS"); //TRue Table - //ou Signals =  "ALL_SIGNALS" ou "INTERMEDIATE" ou "INTERMEDIATE_AND_OUTPUTS" ou "INPUTS" ou "INPUTS_OUTPUTS"
              
@@ -145,7 +172,6 @@ public class main{
                       return null;
   }
 }
-        
         public void readEachFile(ArrayList<String> files, String path, String filter) throws IOException{
          
             ArrayList <String> FileContent = new ArrayList<>();
@@ -205,7 +231,8 @@ public class main{
                         files.add(pathname);
                     }  
                 }
-                System.out.println("Circuits in List: " +  files);
+                System.out.println("results in List: " +  files);
+                System.out.println("Size List: " +  files.size());
                 
                 for (int i = 0; i < files.size(); i++) {
                         if(files.get(i).contains(filter)){
@@ -229,15 +256,24 @@ public class main{
         
         public void fooExecution() throws Exception{
             
-             this.foo("Simulação Circuitos - ABC/min/", "lib_min_no_cost.genlib"); // 1° genlib
+             //this.foo("Simulação Circuitos - ABC/min/", "lib_min_no_cost.genlib"); // 1° genlib
              
-             this.foo("Simulação Circuitos - ABC/basic/", "lib_basic_no_cost.genlib"); // 2° genlib
+             //this.foo("Simulação Circuitos - ABC/basic/", "lib_basic_no_cost.genlib"); // 2° genlib
              
              this.foo("Simulação Circuitos - ABC/complex/", "lib_complex_no_cost_no_xor.genlib"); // 3° genlib
+
+            // this.foo("Simulação Circuitos - ABC/full/", "lib_full_no_cost_no_xor.genlib"); // 4° genlib
              
-             this.foo("Simulação Circuitos - ABC/full/", "lib_full_no_cost_no_xor.genlib"); // 4° genlib
              
-             this.foo("Simulação Circuitos - ABC/full + xor/", "lib_full_no_cost.genlib"); // 5° genlib
+             /*
+            double timeInSeconds = 1;
+            Runtime runtime = Runtime.getRuntime();
+            String a;
+            Process proc = runtime.exec("shutdown -s -t 1");
+            System.exit(0);
+            */
+             
+             //this.foo("Simulação Circuitos - ABC/full + xor/", "lib_full_no_cost.genlib"); // 5° genlib
              
                //this.foo("teste/", "cadence.genlib");
                //this.foo("Simulação Circuitos - ABC/basic/", "lib_basic_no_cost.genlib");
@@ -257,9 +293,10 @@ public class main{
              //experimento_genlib.multithreadingSimulation("ALL_SIGNALS");
              //experimento_genlib.multithreadingSimulationExaustic();
              //experimento_genlib
-             experimento_genlib.monteCarloSimulation(sampleSizeMonteCarlo, "INTERMEDIATE");  //ou Signals =  "ALL_SIGNALS" ou "INTERMEDIATE" ou "INTERMEDIATE_AND_OUTPUTS" ou "INPUTS" ou "INPUTS_OUTPUTS"
-             experimento_genlib.monteCarloSimulation(sampleSizeMonteCarlo, "INTERMEDIATE_AND_OUTPUTS"); 
-             experimento_genlib.monteCarloSimulation(sampleSizeMonteCarlo, "ALL_SIGNALS");  //ou Signals =  "ALL_SIGNALS" ou "INTERMEDIATE" ou "INTERMEDIATE_AND_OUTPUTS" ou "INPUTS" ou "INPUTS_OUTPUTS"
+             //experimento_genlib.monteCarloSimulation(sampleSizeMonteCarlo, "INTERMEDIATE");  //ou Signals =  "ALL_SIGNALS" ou "INTERMEDIATE" ou "INTERMEDIATE_AND_OUTPUTS" ou "INPUTS" ou "INPUTS_OUTPUTS"
+             //experimento_genlib.monteCarloSimulation(sampleSizeMonteCarlo, "INTERMEDIATE_AND_OUTPUTS"); 
+             
+             experimento_genlib.monteCarloSimulation_Per_Area(sampleSizeMonteCarlo, "ALL_SIGNALS", 180);  //ou Signals =  "ALL_SIGNALS" ou "INTERMEDIATE" ou "INTERMEDIATE_AND_OUTPUTS" ou "INPUTS" ou "INPUTS_OUTPUTS"
 
         }
 
