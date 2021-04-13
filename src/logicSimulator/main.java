@@ -69,6 +69,20 @@ public class main{
                 //System.out.println("STR: " + str);
         }
         
+         public void PrintCircuitsSpecs(int sampleSize, String Signals) throws Exception{
+                //Loop na simulação de circuitos 
+                String str = "";
+                for (int i = 0; i < this.circuitList.size(); i++) {
+                     Operations simulacaoMultithreading = new Operations(this.threads, this.reliabilityConst, 
+                             this.relativePath, this.genlib, this.relativePath + this.circuitList.get(i));
+                             simulacaoMultithreading.PrintCircuitSpecs();
+                             str = str + this.circuitList.get(i)+ ";" + simulacaoMultithreading.PrintCircuitSpecs() + "\n";
+                            // simulacaoMultithreading.runMultithreading_MonteCarloSample_per_Area_Analisys(sampleSize, Signals, smallestGatesIncicuitsSimulation); //ou Signals =  "ALL_SIGNALS" ou "INTERMEDIATE" ou "INTERMEDIATE_AND_OUTPUTS" ou "INPUTS" ou "INPUTS_OUTPUTS"
+                }
+                System.out.println(str);
+                System.out.println("------");
+        }
+        
         public void monteCarloSimulation_Per_Area(int sampleSize, String Signals, int smallestGatesIncicuitsSimulation) throws Exception{
                 //Loop na simulação de circuitos 
                 String str = "";
@@ -114,19 +128,23 @@ public class main{
              String constReliability = "0.9999"; //Used for internal structures
              String relativePath = "teste/";
              
-             String genlib =  relativePath  + "lib_basic_no_cost.genlib";
+             //String genlib =  relativePath  + "lib_basic_no_cost.genlib";
             
-             //String genlib =  relativePath  + "cadence.genlib";
+             String genlib =  relativePath  + "cadence.genlib";
              
              main experimento = new main(threads, constReliability, relativePath, genlib);
              
              experimento.preparingEnviroment();
              
-             String op = "min";
+            // experimento.PrintCircuitsSpecs(threads, genlib);
              
-             experimento.fooAlot("Resultados - Simulação - Diferentes Áreas/" + op);
+            
              
-             //experimento.fooExecution();
+            // String op = "full+xor";
+             
+            // experimento.fooAlot("Resultados - Simulação - Diferentes Áreas/" + op);
+             
+             experimento.fooExecutionTransistors();
 
              //experimento.fooExecution();
              /*
@@ -176,20 +194,22 @@ public class main{
          
             ArrayList <String> FileContent = new ArrayList<>();
             for (int i = 0; i < files.size(); i++) {
-                   List<String> records  = this.readFile(path + "/" +files.get(i));
+                   List<String> fileContentList  = this.readFile(path + "/" +files.get(i));
                    //System.out.println("Records: " + records);
                         
-                        for (String x : records){
+                        for (String x : fileContentList){
                            
-                            if(x.contains("Number of detected faults (Ne):")){
+                            if(x.contains("eliability (soft error):")){
                                
-                                String[] t = x.split(":");
+                                String[] softErrorRate = x.split(":");
                                 //out = files.get(i) + ";" + t[1];
                                 //System.out.println("----- +" + t[1]);
-                                String[] z = records.get(8).split(":");
-                                FileContent.add(files.get(i) + ";" + t[1] + ";" + z[1]);
+                                String[] sampleSize = fileContentList.get(4).split(":");
+                                String[] Ne = fileContentList.get(6).split(":");
+                                String[] time = fileContentList.get(8).split(":");
                                 
-                                 System.out.println("File: " + files.get(i) + " >"+x + " t(s):" + z[1] );
+                                FileContent.add(files.get(i) + ";" + sampleSize[1] + ";" + Ne[1] + ";" + softErrorRate[1] + ";" + time[1]);
+                                System.out.println("File: " + files.get(i)  +  " sample: " + sampleSize[1] + " > " + x + " t(s):" + time[1] );
                             }
                            
                         }
@@ -220,7 +240,7 @@ public class main{
                 String[] circuitFiles;
                 File f = new File(path);
                 ArrayList <String> files = new ArrayList<>();
-                ArrayList <String> temp = new ArrayList<>();
+                ArrayList <String> filtered_files = new ArrayList<>();
                 circuitFiles = f.list();
                 
                 for (String pathname : circuitFiles) {
@@ -237,7 +257,7 @@ public class main{
                 for (int i = 0; i < files.size(); i++) {
                         if(files.get(i).contains(filter)){
                             System.out.println("->" + files.get(i));
-                            temp.add(files.get(i));
+                            filtered_files.add(files.get(i));
                         }
                 }
                 
@@ -249,18 +269,65 @@ public class main{
                 }
                 */
                 
-                this.readEachFile(temp, path, filter);
+                this.readEachFile(filtered_files, path, filter);
                 System.out.println("------------------------------------------");
                     
         }
         
+        public void fooExecutionTransistors() throws Exception{
+            
+             //this.fooTransistors("Simulação Circuitos - ABC/min/", "lib_min_no_cost.genlib"); // 1° genlib
+             
+            //this.fooTransistors("Simulação Circuitos - ABC/basic/", "lib_basic_no_cost.genlib"); // 2° genlib
+             
+            //this.fooTransistors("Simulação Circuitos - ABC/complex/", "lib_complex_no_cost_no_xor.genlib"); // 3° genlib
+
+             //this.fooTransistors("Simulação Circuitos - ABC/full/", "lib_full_no_cost_no_xor.genlib"); // 4° genlib
+             
+             this.fooTransistors("Simulação Circuitos - ABC/full + xor/", "lib_full_no_cost.genlib"); // 5° genlib
+             
+             
+             /*
+            double timeInSeconds = 1;
+            Runtime runtime = Runtime.getRuntime();
+            String a;
+            Process proc = runtime.exec("shutdown -s -t 1");
+            System.exit(0);
+            */
+             
+             //this.foo("Simulação Circuitos - ABC/full + xor/", "lib_full_no_cost.genlib"); // 5° genlib
+             
+               //this.foo("teste/", "cadence.genlib");
+               //this.foo("Simulação Circuitos - ABC/basic/", "lib_basic_no_cost.genlib");
+               //this.foo(relativePath, genlib);
+           } 
+        public void fooTransistors(String relativePath , String genlibTemp) throws Exception{
+            
+             int threads = 8; //Numero de threads
+             int sampleSizeMonteCarlo = 20000;
+             String constReliability = "0.9999"; //Used for internal structures
+             //String relativePath = "teste/";
+             String genlib =  relativePath  + genlibTemp;
+            
+             main experimento_genlib = new main(threads, constReliability, relativePath, genlib);
+             experimento_genlib.preparingEnviroment(); 
+             //experimento_genlib.multithreadingSimulation("ALL_SIGNALS");
+             //experimento_genlib.multithreadingSimulationExaustic();
+             //experimento_genlib
+             //experimento_genlib.monteCarloSimulation(sampleSizeMonteCarlo, "INTERMEDIATE");  //ou Signals =  "ALL_SIGNALS" ou "INTERMEDIATE" ou "INTERMEDIATE_AND_OUTPUTS" ou "INPUTS" ou "INPUTS_OUTPUTS"
+             //experimento_genlib.monteCarloSimulation(sampleSizeMonteCarlo, "INTERMEDIATE_AND_OUTPUTS"); 
+             experimento_genlib.PrintCircuitsSpecs(threads, genlib);
+             //experimento_genlib.monteCarloSimulation_Per_Area(sampleSizeMonteCarlo, "ALL_SIGNALS", 180);  //ou Signals =  "ALL_SIGNALS" ou "INTERMEDIATE" ou "INTERMEDIATE_AND_OUTPUTS" ou "INPUTS" ou "INPUTS_OUTPUTS"
+
+        }
+        
         public void fooExecution() throws Exception{
             
-             //this.foo("Simulação Circuitos - ABC/min/", "lib_min_no_cost.genlib"); // 1° genlib
+             this.foo("Simulação Circuitos - ABC/min/", "lib_min_no_cost.genlib"); // 1° genlib
              
              //this.foo("Simulação Circuitos - ABC/basic/", "lib_basic_no_cost.genlib"); // 2° genlib
              
-             this.foo("Simulação Circuitos - ABC/complex/", "lib_complex_no_cost_no_xor.genlib"); // 3° genlib
+             ///this.foo("Simulação Circuitos - ABC/complex/", "lib_complex_no_cost_no_xor.genlib"); // 3° genlib
 
             // this.foo("Simulação Circuitos - ABC/full/", "lib_full_no_cost_no_xor.genlib"); // 4° genlib
              

@@ -151,6 +151,28 @@ import writers.WriteCsvTh;
          
          return str;
      }
+      public String PrintTransistorsNumber(){
+         
+         System.out.println("           Circuit Name : " + this.circuit.getName());
+         //System.out.println("- Logic Gates : " + this.circuit.getGates());
+         System.out.println("               - Logic Gates (size): " + this.circuit.getGates().size() );
+         System.out.println("               - Levels (size): " + this.levelCircuit.getGateLevels().size());
+         
+          System.out.println("Gates: ");
+          int transitorCount = 0;
+          for (int i = 0; i < this.circuit.getGates().size(); i++) {
+               //System.out.println("Gates: " + this.circuit.getGates().get(i).getType() +  " ("+  this.circuit.getGates().get(i)+")" + "  - input(size): " + this.circuit.getGates().get(i).getInputs().size());
+               transitorCount = transitorCount + (2 * this.circuit.getGates().get(i).getInputs().size());
+          }
+          System.out.println("Transistor Count: " + transitorCount);
+         //System.out.println("- Inputs : " + this.circuit.getInputs());
+         //System.out.println("               - Inputs : " + this.circuit.getInputs().size()  + " - " +this.circuit.getInputs());
+         //System.out.println("               - Outputs : " + this.circuit.getOutputs().size() + " - " + " - " +this.circuit.getOutputs());
+         //System.out.println("               - Signals : " + this.circuit.getSignals().size());
+        // String str = this.circuit.getName()+ ";" + this.circuit.getGates().size() + ";"+ this.levelCircuit.getGateLevels().size();
+         
+         return Integer.toString(transitorCount);
+     }
      
     public void initProbCircuit() {
         if(this.circuit != null) {
@@ -880,7 +902,6 @@ import writers.WriteCsvTh;
              */
      }
     
-     
     public void runMultithreadingMonteCarlo(int sampleSize, String option) throws IOException, Exception{
 
                 System.out.println(" ----- Monte Carlo version -------");
@@ -1041,6 +1062,9 @@ import writers.WriteCsvTh;
                 /* Print circuit Specs*/
                 System.out.println("\n        ------ Printing Circuit Specs: --------");
                 String str = this.PrintSpecs();
+                
+                str =  this.PrintTransistorsNumber();
+                
                 System.out.println("          ---------------------------------------\n");
                 /*----------------------*/
                 
