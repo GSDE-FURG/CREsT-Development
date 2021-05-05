@@ -75,10 +75,11 @@ public class main{
                 for (int i = 0; i < this.circuitList.size(); i++) {
                      Operations simulacaoMultithreading = new Operations(this.threads, this.reliabilityConst, 
                              this.relativePath, this.genlib, this.relativePath + this.circuitList.get(i));
-                             simulacaoMultithreading.PrintCircuitSpecs();
+                             //simulacaoMultithreading.PrintCircuitSpecs();
                              str = str + this.circuitList.get(i)+ ";" + simulacaoMultithreading.PrintCircuitSpecs() + "\n";
                             // simulacaoMultithreading.runMultithreading_MonteCarloSample_per_Area_Analisys(sampleSize, Signals, smallestGatesIncicuitsSimulation); //ou Signals =  "ALL_SIGNALS" ou "INTERMEDIATE" ou "INTERMEDIATE_AND_OUTPUTS" ou "INPUTS" ou "INPUTS_OUTPUTS"
                 }
+                System.out.println("------");
                 System.out.println(str);
                 System.out.println("------");
         }
@@ -328,9 +329,10 @@ public class main{
             
             this.foo("testar/", "cadence.genlib");
             
-            /*
+            
              this.foo("Simulação Circuitos - ABC/min/", "lib_min_no_cost.genlib"); // 1° genlib
              
+             /*
              this.foo("Simulação Circuitos - ABC/basic/", "lib_basic_no_cost.genlib"); // 2° genlib
              
              this.foo("Simulação Circuitos - ABC/complex/", "lib_complex_no_cost_no_xor.genlib"); // 3° genlib

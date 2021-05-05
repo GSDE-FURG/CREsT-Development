@@ -17,6 +17,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
@@ -230,24 +231,57 @@ import writers.WriteCsvTh;
          System.out.println("           Circuit Name : " + this.circuit.getName());
          //System.out.println("- Logic Gates : " + this.circuit.getGates());
          System.out.println("               - Logic Gates (size): " + this.circuit.getGates().size() );
-         System.out.println("               - Levels (size): " + this.levelCircuit.getGateLevels().size());
+         ///System.out.println("               - Levels (size): " + this.levelCircuit.getGateLevels().size());
          
          ArrayList <gate_counter> temp = new ArrayList<>();
+         
+         temp.add(new gate_counter("ZERO", 0));	
+         temp.add(new gate_counter("ONE", 0));	
+         temp.add(new gate_counter("BUF", 0));
+         temp.add(new gate_counter("INV", 0));
+         
+         temp.add(new gate_counter("NOR2", 0));
+         temp.add(new gate_counter("NOR3", 0));
+         temp.add(new gate_counter("NOR4", 0));
+         temp.add(new gate_counter("NAND2", 0));
+         
+         temp.add(new gate_counter("NAND3", 0));
+         temp.add(new gate_counter("NAND4", 0));
+         temp.add(new gate_counter("OAI21", 0));
+         temp.add(new gate_counter("OAI211", 0));
+        
+         temp.add(new gate_counter("OAI22", 0));
+         temp.add(new gate_counter("OAI221", 0));
+         temp.add(new gate_counter("OAI222", 0));
+         temp.add(new gate_counter("AOI21", 0));
+         
+         temp.add(new gate_counter("AOI211", 0));
+         temp.add(new gate_counter("AOI22", 0));
+         temp.add(new gate_counter("AOI221", 0));
+         temp.add(new gate_counter("AOI222", 0));
+         
+          temp.add(new gate_counter("XOR2", 0));
+				
+
          
          for(Gate i: this.circuit.getGates()) {
              //System.out.println("-" + i.getType());
              
              if(searchGateInList(i.getType().toString(), temp) == false){ // Adicionar a lista
-                 gate_counter novo_gate = new gate_counter(i.getType().toString(), 1);
+                 gate_counter novo_gate = new gate_counter(i.getType().toString(), 0);
                  temp.add(novo_gate);
              }
              
          }
          
-         System.out.println("Lista completa: ");
+         System.out.println("- Lista completa: ");
          int c = 0;
+         String result = "\n";
+         
+           
          for(gate_counter item: temp){
-             System.out.println(item.get_gate_type() + " " + item.get_gate_counter());
+             //System.out.println(item.get_gate_type() + " " + item.get_gate_counter());
+             result = result + item.get_gate_type() + ";" + item.get_gate_counter() + "\n";
              c = c + item.get_gate_counter();
          }
          
@@ -257,7 +291,7 @@ import writers.WriteCsvTh;
              System.out.println("!!!! Erro número de gates divergente: c:" + c + "  circ: " + this.circuit.getGates().size());
          }
          
-         return null;
+         return result;
      
      }
      
@@ -1150,9 +1184,9 @@ import writers.WriteCsvTh;
                 
                 /* Print circuit Specs*/
                 System.out.println("\n        ------ Printing Circuit Specs: --------");
-                String str = this.PrintSpecs();
+                //String str = this.PrintSpecs();
                 
-                str =  this.PrintGatesCounter(); //this.PrintTransistorsNumber();
+                String str =  this.PrintGatesCounter(); //this.PrintTransistorsNumber();
                 
                 System.out.println("          ---------------------------------------\n");
                 /*----------------------*/
