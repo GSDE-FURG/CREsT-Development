@@ -285,7 +285,9 @@ import writers.WriteCsvTh;
            
          for(gate_counter item: temp){
              //System.out.println(item.get_gate_type() + " " + item.get_gate_counter());
-             result = result + item.get_gate_type() + ";" + item.get_gate_counter() + "\n";
+             //result = result + item.get_gate_type() + ";" + item.get_gate_counter() + "\n";
+             
+             result = result +item.get_gate_counter() + "\n";
              c = c + item.get_gate_counter();
          }
          
