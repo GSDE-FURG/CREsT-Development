@@ -327,7 +327,7 @@ public class main{
         
         public void fooExecution() throws Exception{
             
-            this.foo("testar/", "cadence.genlib");
+            //this.foo("testar/", "cadence.genlib");
             
             
              this.foo("Simulação Circuitos - ABC/min/", "lib_min_no_cost.genlib"); // 1° genlib

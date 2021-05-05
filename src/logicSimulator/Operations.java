@@ -267,16 +267,20 @@ import writers.WriteCsvTh;
          for(Gate i: this.circuit.getGates()) {
              //System.out.println("-" + i.getType());
              
-             if(searchGateInList(i.getType().toString(), temp) == false){ // Adicionar a lista
+            /* if(searchGateInList(i.getType().toString(), temp) == false){ // Adicionar a lista
                  gate_counter novo_gate = new gate_counter(i.getType().toString(), 0);
                  temp.add(novo_gate);
              }
-             
+             */
+             if(searchGateInList(i.getType().toString(), temp) == false)
+             {
+                 System.out.println("ERROR !!!!");
+             }
          }
          
          System.out.println("- Lista completa: ");
          int c = 0;
-         String result = "\n";
+         String result = "\n" + this.circuit.getName() + ";" + this.circuit.getGates().size() +  "\n";
          
            
          for(gate_counter item: temp){
