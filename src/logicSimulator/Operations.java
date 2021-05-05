@@ -5,9 +5,11 @@
  */
 package logicSimulator;
 
+import datastructures.Cell;
 import logicSimulator.main;
 import datastructures.CellLibrary;
 import datastructures.Circuit;
+import datastructures.Gate;
 import datastructures.Signal;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -29,6 +31,9 @@ import writers.WriteCsvTh;
  *
  * @author Clayton Farias
  */
+
+
+
  public class Operations  extends main{
     
     private ArrayList <LogicSimulator> itemx_list = new ArrayList<>();
@@ -137,11 +142,36 @@ import writers.WriteCsvTh;
                 
     }
     
+    public class gate_counter{
+            String type;
+            int counter;
+
+        public gate_counter(String type, int counter) {
+            this.type = type;
+            this.counter = counter;
+        }
+        
+        public int get_gate_counter(){
+            return this.counter;
+        }
+        
+        public String get_gate_type(){
+            return this.type;
+        }
+        
+        public void update_count(){
+            this.counter++;
+        }
+        
+       
+            
+    }
+    
     public String PrintSpecs(){
          
          System.out.println("           Circuit Name : " + this.circuit.getName());
          //System.out.println("- Logic Gates : " + this.circuit.getGates());
-         System.out.println("               - Logic Gates (size): " + this.circuit.getGates().size() );
+         System.out.println("               - Logic Gates (size): " + this.levelCircuit.getGates().size());
          System.out.println("               - Levels (size): " + this.levelCircuit.getGateLevels().size());
          //System.out.println("- Inputs : " + this.circuit.getInputs());
          //System.out.println("               - Inputs : " + this.circuit.getInputs().size()  + " - " +this.circuit.getInputs());
@@ -149,9 +179,10 @@ import writers.WriteCsvTh;
          //System.out.println("               - Signals : " + this.circuit.getSignals().size());
          String str = this.circuit.getName()+ ";" + this.circuit.getGates().size() + ";"+ this.levelCircuit.getGateLevels().size();
          
-         return str;
+         return "";
      }
-      public String PrintTransistorsNumber(){
+    
+    public String PrintTransistorsNumber(){
          
          System.out.println("           Circuit Name : " + this.circuit.getName());
          //System.out.println("- Logic Gates : " + this.circuit.getGates());
@@ -163,8 +194,11 @@ import writers.WriteCsvTh;
           for (int i = 0; i < this.circuit.getGates().size(); i++) {
                //System.out.println("Gates: " + this.circuit.getGates().get(i).getType() +  " ("+  this.circuit.getGates().get(i)+")" + "  - input(size): " + this.circuit.getGates().get(i).getInputs().size());
                transitorCount = transitorCount + (2 * this.circuit.getGates().get(i).getInputs().size());
+             
           }
           System.out.println("Transistor Count: " + transitorCount);
+          
+           System.out.println(" -> " + this.circuit.getGates().get(0).getType());
          //System.out.println("- Inputs : " + this.circuit.getInputs());
          //System.out.println("               - Inputs : " + this.circuit.getInputs().size()  + " - " +this.circuit.getInputs());
          //System.out.println("               - Outputs : " + this.circuit.getOutputs().size() + " - " + " - " +this.circuit.getOutputs());
@@ -173,6 +207,61 @@ import writers.WriteCsvTh;
          
          return Integer.toString(transitorCount);
      }
+    
+    public boolean searchGateInList(String x, ArrayList <gate_counter> arraylist){
+        
+        for(int i = 0; i < arraylist.size(); i++){
+            //temp = arraylist.get(i);
+            if(arraylist.get(i).get_gate_type().equals(x)){
+                //System.out.println("Achou -> " + x);
+                arraylist.get(i).update_count();
+                //System.out.println("Atualizar -> " + x +  "   c: " + arraylist.get(i).get_gate_counter());
+                return true;
+            }
+            
+        }
+        
+        
+        return false;
+        
+    }
+    
+     public String PrintGatesCounter(){
+         System.out.println("           Circuit Name : " + this.circuit.getName());
+         //System.out.println("- Logic Gates : " + this.circuit.getGates());
+         System.out.println("               - Logic Gates (size): " + this.circuit.getGates().size() );
+         System.out.println("               - Levels (size): " + this.levelCircuit.getGateLevels().size());
+         
+         ArrayList <gate_counter> temp = new ArrayList<>();
+         
+         for(Gate i: this.circuit.getGates()) {
+             //System.out.println("-" + i.getType());
+             
+             if(searchGateInList(i.getType().toString(), temp) == false){ // Adicionar a lista
+                 gate_counter novo_gate = new gate_counter(i.getType().toString(), 1);
+                 temp.add(novo_gate);
+             }
+             
+         }
+         
+         System.out.println("Lista completa: ");
+         int c = 0;
+         for(gate_counter item: temp){
+             System.out.println(item.get_gate_type() + " " + item.get_gate_counter());
+             c = c + item.get_gate_counter();
+         }
+         
+         if(c == this.circuit.getGates().size()){
+             System.out.println("OK NUMERO DE GATES CORRETO: " + c);
+         }else{
+             System.out.println("!!!! Erro número de gates divergente: c:" + c + "  circ: " + this.circuit.getGates().size());
+         }
+         
+         return null;
+     
+     }
+     
+    
      
     public void initProbCircuit() {
         if(this.circuit != null) {
@@ -1063,7 +1152,7 @@ import writers.WriteCsvTh;
                 System.out.println("\n        ------ Printing Circuit Specs: --------");
                 String str = this.PrintSpecs();
                 
-                str =  this.PrintTransistorsNumber();
+                str =  this.PrintGatesCounter(); //this.PrintTransistorsNumber();
                 
                 System.out.println("          ---------------------------------------\n");
                 /*----------------------*/

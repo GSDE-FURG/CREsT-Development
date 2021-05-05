@@ -144,9 +144,11 @@ public class main{
              
             // experimento.fooAlot("Resultados - Simulação - Diferentes Áreas/" + op);
              
-             experimento.fooExecutionTransistors();
+             //experimento.fooExecutionTransistors();
+             
+            
 
-             //experimento.fooExecution();
+             experimento.fooExecution();
              /*
              experimento.readResultsInLot("Resultados - Todas as simulações - 5 bibliotecas - ISCAS85/min", "ALL_SIGNALS");
              
@@ -301,6 +303,7 @@ public class main{
                //this.foo("Simulação Circuitos - ABC/basic/", "lib_basic_no_cost.genlib");
                //this.foo(relativePath, genlib);
            } 
+      
         public void fooTransistors(String relativePath , String genlibTemp) throws Exception{
             
              int threads = 8; //Numero de threads
@@ -323,14 +326,17 @@ public class main{
         
         public void fooExecution() throws Exception{
             
+            this.foo("testar/", "cadence.genlib");
+            
+            /*
              this.foo("Simulação Circuitos - ABC/min/", "lib_min_no_cost.genlib"); // 1° genlib
              
-             //this.foo("Simulação Circuitos - ABC/basic/", "lib_basic_no_cost.genlib"); // 2° genlib
+             this.foo("Simulação Circuitos - ABC/basic/", "lib_basic_no_cost.genlib"); // 2° genlib
              
-             ///this.foo("Simulação Circuitos - ABC/complex/", "lib_complex_no_cost_no_xor.genlib"); // 3° genlib
+             this.foo("Simulação Circuitos - ABC/complex/", "lib_complex_no_cost_no_xor.genlib"); // 3° genlib
 
-            // this.foo("Simulação Circuitos - ABC/full/", "lib_full_no_cost_no_xor.genlib"); // 4° genlib
-             
+             this.foo("Simulação Circuitos - ABC/full/", "lib_full_no_cost_no_xor.genlib"); // 4° genlib
+            */
              
              /*
             double timeInSeconds = 1;
@@ -363,7 +369,8 @@ public class main{
              //experimento_genlib.monteCarloSimulation(sampleSizeMonteCarlo, "INTERMEDIATE");  //ou Signals =  "ALL_SIGNALS" ou "INTERMEDIATE" ou "INTERMEDIATE_AND_OUTPUTS" ou "INPUTS" ou "INPUTS_OUTPUTS"
              //experimento_genlib.monteCarloSimulation(sampleSizeMonteCarlo, "INTERMEDIATE_AND_OUTPUTS"); 
              
-             experimento_genlib.monteCarloSimulation_Per_Area(sampleSizeMonteCarlo, "ALL_SIGNALS", 180);  //ou Signals =  "ALL_SIGNALS" ou "INTERMEDIATE" ou "INTERMEDIATE_AND_OUTPUTS" ou "INPUTS" ou "INPUTS_OUTPUTS"
+             experimento_genlib.PrintCircuitsSpecs(1, "ALL_SIGNALS");
+             //experimento_genlib.monteCarloSimulation_Per_Area(sampleSizeMonteCarlo, "ALL_SIGNALS", 180);  //ou Signals =  "ALL_SIGNALS" ou "INTERMEDIATE" ou "INTERMEDIATE_AND_OUTPUTS" ou "INPUTS" ou "INPUTS_OUTPUTS"
 
         }
 
