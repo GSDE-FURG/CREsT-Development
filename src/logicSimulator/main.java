@@ -63,7 +63,15 @@ public class main{
                 ArrayList <Integer> N = new ArrayList<>();
                 //c1355         c1908           c2670           c3540           c432            c499            c5315           c6288           c7552           c880
                 // Min N.add(20353);	N.add(19557);	N.add(33793);	N.add(43664);	N.add(10973);	N.add(20353);	N.add(66834);	N.add(123588);	N.add(88712);	N.add(13341);
-                // Min N.add(20353);	N.add(19557);	N.add(33793);	N.add(43664);	N.add(10973);	N.add(20353);	N.add(66834);	N.add(123588);	N.add(88712);	N.add(13341);
+                
+                /*Basic N.add(18988);   N.add(16765);   N.add(25985);   N.add(39434);	 N.add(8739);	 N.add(18988);	 N.add(51993);	 N.add(117352);	 N.add(727540);	  N.add(10673);*/
+                
+               /// COmplex N.add(19009);	N.add(19226);	N.add(26357);	N.add(35277);	N.add(8863);	N.add(17664);	N.add(54051);	//N.add(111984);	//N.add(77284);	 N.add(10435);
+                
+               /* Full */ /* N.add(20250);	N.add(19319);	N.add(25395);	N.add(35349);	N.add(8470);	N.add(19091);*/	 /*N.add(51931);*/ //N.add(131768); N.add(79269); // N.add(9908);
+               
+                
+               /* Full + XOR  N.add(9887);	 N.add(11159);	 N.add(22044);	 N.add(30168);	 N.add(8129);	 N.add(9887);	 N.add(39810);*/	//N.add(64545);  N.add(52938); // N.add(8739);
                 
                 if(N.size() == this.circuitList.size()){
                 for (int i = 0; i < this.circuitList.size(); i++) {
@@ -171,7 +179,8 @@ public class main{
              
             
 
-             experimento.fooExecution();
+             //experimento.fooExecution(); //Aqui
+             
              /*
              experimento.readResultsInLot("Resultados - Todas as simulações - 5 bibliotecas - ISCAS85/min", "ALL_SIGNALS");
              
@@ -183,12 +192,18 @@ public class main{
              /*
              experimento.readResultsInLot("Resultados - Todas as simulações - 5 bibliotecas - ISCAS85/basic", "ALL_SIGNALS");
              
+             
              experimento.readResultsInLot("Resultados - Todas as simulações - 5 bibliotecas - ISCAS85/basic", "INTERMEDIATE_AND_OUTPUTS");
              
              experimento.readResultsInLot("Resultados - Todas as simulações - 5 bibliotecas - ISCAS85/basic", "INTERMEDIATE_Multithreading_");
               
              */
  
+             
+             // experimento.readResultsInLot("Resultados - Todas as simulações - 5 bibliotecas - ISCAS85/complex", "ALL_SIGNALS");
+              //experimento.readResultsInLot("Resultados - Todas as simulações - 5 bibliotecas - ISCAS85/full", "ALL_SIGNALS");
+              
+              experimento.readResultsInLot("Resultados - Todas as simulações - 5 bibliotecas - ISCAS85/full+xor", "ALL_SIGNALS");
              //experimento.multithreadingSimulation("ALL_SIGNALS"); //TRue Table - //ou Signals =  "ALL_SIGNALS" ou "INTERMEDIATE" ou "INTERMEDIATE_AND_OUTPUTS" ou "INPUTS" ou "INPUTS_OUTPUTS"
              
              //experimento.monteCarloSimulation(sampleSizeMonteCarlo, "ALL_SIGNALS"); //ou Signals =  "ALL_SIGNALS" ou "INTERMEDIATE" ou "INTERMEDIATE_AND_OUTPUTS" ou "INPUTS" ou "INPUTS_OUTPUTS"
@@ -309,7 +324,7 @@ public class main{
 
              //this.fooTransistors("Simulação Circuitos - ABC/full/", "lib_full_no_cost_no_xor.genlib"); // 4° genlib
              
-             this.fooTransistors("Simulação Circuitos - ABC/full + xor/", "lib_full_no_cost.genlib"); // 5° genlib
+            // this.fooTransistors("Simulação Circuitos - ABC/full + xor/", "lib_full_no_cost.genlib"); // 5° genlib
              
              
              /*
@@ -320,7 +335,7 @@ public class main{
             System.exit(0);
             */
              
-             //this.foo("Simulação Circuitos - ABC/full + xor/", "lib_full_no_cost.genlib"); // 5° genlib
+             this.foo("Simulação Circuitos - ABC/full + xor/", "lib_full_no_cost.genlib"); // 5° genlib
              
                //this.foo("teste/", "cadence.genlib");
                //this.foo("Simulação Circuitos - ABC/basic/", "lib_basic_no_cost.genlib");
@@ -352,14 +367,13 @@ public class main{
             //this.foo("testar/", "cadence.genlib");
             
             
-             this.foo("Simulação Circuitos - ABC/min/", "lib_min_no_cost.genlib"); // 1° genlib
+             //this.foo("Simulação Circuitos - ABC/min/", "lib_min_no_cost.genlib"); // 1° genlib
+          
+             this.foo("Simulação Circuitos - ABC/basic/", "lib_basic_no_cost.genlib"); // 2° genlib
              
-             
-             //this.foo("Simulação Circuitos - ABC/basic/", "lib_basic_no_cost.genlib"); // 2° genlib
-             
-            // this.foo("Simulação Circuitos - ABC/complex/", "lib_complex_no_cost_no_xor.genlib"); // 3° genlib
+             //this.foo("Simulação Circuitos - ABC/complex/", "lib_complex_no_cost_no_xor.genlib"); // 3° genlib
 
-            //this.foo("Simulação Circuitos - ABC/full/", "lib_full_no_cost_no_xor.genlib"); // 4° genlib
+             //this.foo("Simulação Circuitos - ABC/full/", "lib_full_no_cost_no_xor.genlib"); // 4° genlib
             
              
              /*
