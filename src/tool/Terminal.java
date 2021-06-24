@@ -57,7 +57,11 @@ class TestTerminal {
             //term.executeCommand("read_verilog c17v3_fritz.v");
             //term.executeCommand("read_verilog c432_cadence.v");
             //term.executeCommand("read_verilog c20_cadence.v");
-            term.executeCommand("read_verilog c6288_cadence.v");
+            term.executeCommand("read_verilog inv_serie.v"); 
+            term.executeCommand("ptm_big_decimal 0.9999");
+            
+              term.executeCommand("read_verilog inv_paralelo.v"); 
+            term.executeCommand("ptm_big_decimal 0.9999");
             //term.executeCommand("read_verilog twoInvOneAnd.v");
             //term.executeCommand("init_level");
 

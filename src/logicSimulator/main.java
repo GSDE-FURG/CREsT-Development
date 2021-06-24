@@ -26,13 +26,74 @@ public class main{
         String relativePath;
         String genlib;
         
-
+        
+        
         public main(int threads, String reliabilityConst, String relativePath, String genlib) {
             this.threads = threads;
             this.reliabilityConst = reliabilityConst;
             this.relativePath = relativePath;
             this.genlib = genlib;
         }
+        
+        
+         public static void main(String[] args) throws Exception {
+            
+             int threads = 2; //Numero de threads
+             int sampleSizeMonteCarlo = 8;
+             String constReliability = "0.9999"; //Used for internal structures
+             String relativePath = "test/";
+             
+             //String genlib =  relativePath  + "lib_basic_no_cost.genlib";
+            
+             String genlib =  relativePath  + "cadence.genlib";
+             
+             main experimento = new main(threads, constReliability, relativePath, genlib);
+             
+             experimento.preparingEnviroment();
+             
+            // experimento.PrintCircuitsSpecs(threads, genlib);
+             
+            //experimento.multithreadingSimulationExaustic();
+             experimento.multithreadingSimulation("ALL_SIGNALS");
+             
+            // String op = "full+xor";
+             
+            // experimento.fooAlot("Resultados - Simulação - Diferentes Áreas/" + op);
+             
+             //experimento.fooExecutionTransistors();
+             
+            
+
+             //experimento.fooExecution(); //Aqui
+             
+             /*
+             experimento.readResultsInLot("Resultados - Todas as simulações - 5 bibliotecas - ISCAS85/min", "ALL_SIGNALS");
+             
+             experimento.readResultsInLot("Resultados - Todas as simulações - 5 bibliotecas - ISCAS85/min", "INTERMEDIATE_AND_OUTPUTS");
+             
+             experimento.readResultsInLot("Resultados - Todas as simulações - 5 bibliotecas - ISCAS85/min", "INTERMEDIATE_Multithreading_");
+             */
+             
+             /*
+             experimento.readResultsInLot("Resultados - Todas as simulações - 5 bibliotecas - ISCAS85/basic", "ALL_SIGNALS");
+             
+             
+             experimento.readResultsInLot("Resultados - Todas as simulações - 5 bibliotecas - ISCAS85/basic", "INTERMEDIATE_AND_OUTPUTS");
+             
+             experimento.readResultsInLot("Resultados - Todas as simulações - 5 bibliotecas - ISCAS85/basic", "INTERMEDIATE_Multithreading_");
+              
+             */
+ 
+             
+             // experimento.readResultsInLot("Resultados - Todas as simulações - 5 bibliotecas - ISCAS85/complex", "ALL_SIGNALS");
+              //experimento.readResultsInLot("Resultados - Todas as simulações - 5 bibliotecas - ISCAS85/full", "ALL_SIGNALS");
+              
+              //experimento.readResultsInLot("Resultados - Todas as simulações - 5 bibliotecas - ISCAS85/full+xor", "ALL_SIGNALS");
+             //experimento.multithreadingSimulation("ALL_SIGNALS"); //TRue Table - //ou Signals =  "ALL_SIGNALS" ou "INTERMEDIATE" ou "INTERMEDIATE_AND_OUTPUTS" ou "INPUTS" ou "INPUTS_OUTPUTS"
+             
+             //experimento.monteCarloSimulation(sampleSizeMonteCarlo, "ALL_SIGNALS"); //ou Signals =  "ALL_SIGNALS" ou "INTERMEDIATE" ou "INTERMEDIATE_AND_OUTPUTS" ou "INPUTS" ou "INPUTS_OUTPUTS"
+        }
+      
         
         public ArrayList<String> getCircuitList(){
             return this.circuitList;
@@ -43,7 +104,7 @@ public class main{
                 for (int i = 0; i < this.circuitList.size(); i++) {
                      Operations simulacaoMultithreading = new Operations(this.threads, this.reliabilityConst, 
                              this.relativePath, this.genlib, this.relativePath + this.circuitList.get(i));
-                            // simulacaoMultithreading.runMultithreadingSimulation(Signals); 
+                            simulacaoMultithreading.runMultithreadingSimulation(Signals); 
                 }
         }
         
@@ -152,63 +213,7 @@ public class main{
              
         }
         
-        public static void main(String[] args) throws Exception {
-            
-             int threads = 2; //Numero de threads
-             int sampleSizeMonteCarlo = 8;
-             String constReliability = "0.9999"; //Used for internal structures
-             String relativePath = "teste/";
-             
-             //String genlib =  relativePath  + "lib_basic_no_cost.genlib";
-            
-             String genlib =  relativePath  + "cadence.genlib";
-             
-             main experimento = new main(threads, constReliability, relativePath, genlib);
-             
-             experimento.preparingEnviroment();
-             
-            // experimento.PrintCircuitsSpecs(threads, genlib);
-             
-            
-             
-            // String op = "full+xor";
-             
-            // experimento.fooAlot("Resultados - Simulação - Diferentes Áreas/" + op);
-             
-             //experimento.fooExecutionTransistors();
-             
-            
-
-             //experimento.fooExecution(); //Aqui
-             
-             /*
-             experimento.readResultsInLot("Resultados - Todas as simulações - 5 bibliotecas - ISCAS85/min", "ALL_SIGNALS");
-             
-             experimento.readResultsInLot("Resultados - Todas as simulações - 5 bibliotecas - ISCAS85/min", "INTERMEDIATE_AND_OUTPUTS");
-             
-             experimento.readResultsInLot("Resultados - Todas as simulações - 5 bibliotecas - ISCAS85/min", "INTERMEDIATE_Multithreading_");
-             */
-             
-             /*
-             experimento.readResultsInLot("Resultados - Todas as simulações - 5 bibliotecas - ISCAS85/basic", "ALL_SIGNALS");
-             
-             
-             experimento.readResultsInLot("Resultados - Todas as simulações - 5 bibliotecas - ISCAS85/basic", "INTERMEDIATE_AND_OUTPUTS");
-             
-             experimento.readResultsInLot("Resultados - Todas as simulações - 5 bibliotecas - ISCAS85/basic", "INTERMEDIATE_Multithreading_");
-              
-             */
- 
-             
-             // experimento.readResultsInLot("Resultados - Todas as simulações - 5 bibliotecas - ISCAS85/complex", "ALL_SIGNALS");
-              //experimento.readResultsInLot("Resultados - Todas as simulações - 5 bibliotecas - ISCAS85/full", "ALL_SIGNALS");
-              
-              experimento.readResultsInLot("Resultados - Todas as simulações - 5 bibliotecas - ISCAS85/full+xor", "ALL_SIGNALS");
-             //experimento.multithreadingSimulation("ALL_SIGNALS"); //TRue Table - //ou Signals =  "ALL_SIGNALS" ou "INTERMEDIATE" ou "INTERMEDIATE_AND_OUTPUTS" ou "INPUTS" ou "INPUTS_OUTPUTS"
-             
-             //experimento.monteCarloSimulation(sampleSizeMonteCarlo, "ALL_SIGNALS"); //ou Signals =  "ALL_SIGNALS" ou "INTERMEDIATE" ou "INTERMEDIATE_AND_OUTPUTS" ou "INPUTS" ou "INPUTS_OUTPUTS"
-        }
-        
+         
         private List<String> readFile(String filename) 
 {
                     List<String> records = new ArrayList<String>();
