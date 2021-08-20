@@ -240,22 +240,36 @@ public class Commands {
         System.out.println("MC_Sample: "+ mc_sample);
         
         /* Chamar a muinha ferramenta */
+        
          int threads = 2; //Numero de threads
          int sampleSizeMonteCarlo = Integer.parseInt(mc_sample);
          String constReliability = "0.9999"; //Used for internal structures
          
          
-         String[] arrOfStr = circuit.split("/", 2);
          
-         String relativePath = "/" + arrOfStr[0];
+        // String[] arrOfStr = circuit.split("/", 2);
          
-         System.out.println("Path: " + relativePath);
-         
-        logicSimulator.main experimento = new logicSimulator.main(threads, constReliability, relativePath, genlib);
         
-        experimento.preparingEnviromentSingleFile(circuit);
-        //
-        experimento.multithreadingSimulation("ALL_SIGNALS");
+          ///String relativePath = "/" + arrOfStr[0];
+         // String relativePath = "abc/" ;
+                  
+        // genlib = "abc/" + "cadence.genlib";
+          
+             
+         constReliability = "0.9999"; //Used for internal structures
+         String relativePath = "abc/";
+             
+             //String genlib =  relativePath  + "lib_basic_no_cost.genlib";
+            
+             genlib =  relativePath  + "cadence.genlib";
+             
+             main experimento = new main(threads, constReliability, relativePath, genlib);
+             
+             experimento.preparingEnviromentSingleFile(circuit);
+             
+            experimento.monteCarloSimulation(sampleSizeMonteCarlo, "ALL_SIGNALS");
+            
+            System.out.println("FMR: " + experimento.getFMR());
         
     }
     
@@ -265,6 +279,7 @@ public class Commands {
         
         
         try {
+            
             
             Terminal.getInstance().initCircuit(path);            
             Terminal.getInstance().initLevelCircuit();

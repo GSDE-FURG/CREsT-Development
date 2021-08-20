@@ -25,6 +25,7 @@ public class main{
         String reliabilityConst;
         String relativePath;
         String genlib;
+        float FMR;
         
         
         
@@ -33,8 +34,11 @@ public class main{
             this.reliabilityConst = reliabilityConst;
             this.relativePath = relativePath;
             this.genlib = genlib;
+            this.FMR = 0;
         }
-        
+        public float getFMR(){
+            return this.FMR;
+        }
         
          public static void main(String[] args) throws Exception {
             
@@ -56,7 +60,8 @@ public class main{
              //experimento.PrintCircuitsSpecs(threads, genlib);
              
             //experimento.multithreadingSimulationExaustic();
-           experimento.multithreadingSimulation("ALL_SIGNALS");
+           //experimento.multithreadingSimulation("ALL_SIGNALS");
+            experimento.monteCarloSimulation(sampleSizeMonteCarlo, "ALL_SIGNALS");
              
             // String op = "full+xor";
              
@@ -158,9 +163,12 @@ public class main{
                              //simulacaoMultithreading.PrintCircuitSpecs();
                              //str = str + simulacaoMultithreading.PrintCircuitSpecs() + "\n";
                              simulacaoMultithreading.runMultithreadingMonteCarlo(sampleSize, Signals); //ou Signals =  "ALL_SIGNALS" ou "INTERMEDIATE" ou "INTERMEDIATE_AND_OUTPUTS" ou "INPUTS" ou "INPUTS_OUTPUTS"
+                             this.FMR = simulacaoMultithreading.getFRM();
                 }
                 //System.out.println("STR: " + str);
         }
+        
+        
         
          public void PrintCircuitsSpecs(int sampleSize, String Signals) throws Exception{
                 //Loop na simulação de circuitos 

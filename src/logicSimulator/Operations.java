@@ -1070,7 +1070,7 @@ import writers.WriteCsvTh;
                 System.out.println("    ... Reading Genlib " + " at -> " + this.genlib  + " ... ok");
                 //System.out.println("  - Avaliable logic gatesin this library: "+cellLib.getCells());
               
-                
+                 System.out.println("    ... Reading verilog "+ " at -> " + this.circuitNameStr  + " ... ok");
                 /*Reading verilog*/
                 MappedVerilogReader verilog_circuit = new MappedVerilogReader(this.circuitNameStr, this.cellLibrary);
                 this.verilog_circuit = verilog_circuit;
@@ -1169,7 +1169,13 @@ import writers.WriteCsvTh;
                 System.out.println(" ----------------------------------------------------------------------------------------------------------------------");
              /*
              */
+             
+            
      }
+    
+    public float getFRM(){
+     return this.circuitReliaibility;
+    }
     
     public String PrintCircuitSpecs() throws IOException, Exception{
 
