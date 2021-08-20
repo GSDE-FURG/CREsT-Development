@@ -270,6 +270,8 @@ public class Commands {
             experimento.monteCarloSimulation(sampleSizeMonteCarlo, "ALL_SIGNALS");
             
             System.out.println("FMR: " + experimento.getFMR());
+            
+             Terminal.getInstance().terminalOutput("Circuit FMR: " + experimento.getFMR());
         
     }
     
