@@ -140,6 +140,10 @@ public class Commands {
     public Commands() {
         
         helpTree.put("clear", "Clear terminal's window");
+        
+        /* clayton new command*/
+        helpTree.put("mc_fault_injection", "Output the Fault Mask Rate (FMR - Logical Masking circuits topology) using the Statistical Monte Carlo Simulation");
+        
         helpTree.put("help", "Show this message!!!");
         //helpTree.put("get_sonf_reliability", "Print the reliability value based on SONF PTM method");
         helpTree.put("print_gates", "Output circuit types based on readed verilog");
@@ -225,6 +229,15 @@ public class Commands {
     public void ReadGenlib(String filename) throws IOException, ScriptException {
         //String path = CommonOps.getWorkPath(this) + "abc" + File.separator + filename;                             
         String path = CommonOps.getWorkPath(this) + filename;                             
+        Terminal.getInstance().initLibrary(path);        
+    }
+    
+    public void Mc_Fault_injection(String genlib, String circuit, String mc_sample) throws IOException, ScriptException {
+        //String path = CommonOps.getWorkPath(this) + "abc" + File.separator + filename;
+        System.out.println("Genlib: "+ genlib);
+           System.out.println("Circuit: "+ circuit);
+              System.out.println("MC_Sample: "+ mc_sample);
+        String path = CommonOps.getWorkPath(this) + genlib;                             
         Terminal.getInstance().initLibrary(path);        
     }
     

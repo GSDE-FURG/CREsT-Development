@@ -94,7 +94,7 @@ class TerminalWrapper {
 
             try {
                 cmd = parser.parse(options, args);
-
+                 //System.out.println(options);
                 if(cmd.hasOption("help")) {
                     formatter.printHelp("VetoresCriticos", options);
                     System.exit(1);
@@ -152,7 +152,7 @@ class TerminalWrapper {
             //term.executeCommand("read_genlib lib_full_no_cost.genlib");
             //term.executeCommand("read_custom_matrix 45nm.txt");
             /*Commite antes da reunião */
-            //term.executeCommand("read_genlib cadence_schiv.genlib");
+            term.executeCommand("read_genlib cadence_schiv.genlib");
             //term.executeCommand("read_genlib 22-1.genlib");
             //term.executeCommand("read_verilog c17_cadence.v");
             //term.executeCommand("read_verilog c17v3_fritz.v");

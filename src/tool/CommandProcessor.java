@@ -109,8 +109,7 @@ class CommandProcessor {
                     Terminal.getInstance().terminalOutput("Please use just \"help\"!!!");
                 }     
                 break;
-                
-                
+              
             case "print_gates":
                 if(argument.isEmpty()) {
                     cmd.PrintCircuitGates();
@@ -400,6 +399,31 @@ class CommandProcessor {
             case "foo":
                 cmd.Foo();
                 break;
+               
+                
+             case "mc_fault_injection":
+                if(argument.isEmpty()) {
+                    Terminal.getInstance().terminalOutput("usage: mc_fault_injection <filename.genlib> <verilogfile.v> <monte_carlo_sample> or \"--help\"");
+                } else if(help) {
+                    Terminal.getInstance().terminalOutput(cmd.getHelpDesc(mainCommand));
+                    Terminal.getInstance().terminalOutput("usage: mc_fault_injection <filename.genlib> <verilogfile.v> <monte_carlo_sample> or \"--help\"");
+                } else {
+                    boolean success = false;
+                    try {
+                       cmd.Mc_Fault_injection(splittedCommand.get(1), splittedCommand.get(2),splittedCommand.get(3));
+                        success = true;
+                    } catch (IOException | ScriptException e) {                        
+                        Terminal.getInstance().terminalOutput("## ERRO ##");
+                        Terminal.getInstance().terminalOutput(e.getMessage());
+                        Terminal.getInstance().terminalOutput("## ERRO ##");
+                    } finally {
+                        if(success) {
+                            Terminal.getInstance().terminalOutput("File \"" + splittedCommand.get(1) + "\" successfully processed!!");
+                        }
+                    }
+                }
+             break;
+                
             case "foo2":
                 cmd.Foo2();
                 break;
