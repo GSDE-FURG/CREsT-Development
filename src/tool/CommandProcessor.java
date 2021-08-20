@@ -401,7 +401,8 @@ class CommandProcessor {
                 break;
                
                 
-             case "mc_fault_injection":
+             case "mc":
+             //case "mc_fault_injection":
                 if(argument.isEmpty()) {
                     Terminal.getInstance().terminalOutput("usage: mc_fault_injection <filename.genlib> <verilogfile.v> <monte_carlo_sample> or \"--help\"");
                 } else if(help) {
@@ -418,7 +419,8 @@ class CommandProcessor {
                         Terminal.getInstance().terminalOutput("## ERRO ##");
                     } finally {
                         if(success) {
-                            Terminal.getInstance().terminalOutput("File \"" + splittedCommand.get(1) + "\" successfully processed!!");
+                            Terminal.getInstance().terminalOutput("Genlib File \"" + splittedCommand.get(1) + "\" successfully processed!!");
+                             Terminal.getInstance().terminalOutput("verilog File \"" + splittedCommand.get(2) + "\" successfully processed!!");
                         }
                     }
                 }

@@ -51,10 +51,12 @@ public class main{
              
              experimento.preparingEnviroment();
              
-            // experimento.PrintCircuitsSpecs(threads, genlib);
+            
+             
+             //experimento.PrintCircuitsSpecs(threads, genlib);
              
             //experimento.multithreadingSimulationExaustic();
-            experimento.multithreadingSimulation("ALL_SIGNALS");
+           experimento.multithreadingSimulation("ALL_SIGNALS");
              
             // String op = "full+xor";
              
@@ -203,6 +205,14 @@ public class main{
                     }  
                 }
                 System.out.println("Circuits in List: " +  this.circuitList);
+                System.out.println("======================\n");
+               
+        }
+        
+          public void preparingEnviromentSingleFile(String circuit){
+                
+                this.circuitList.add(circuit);
+                System.out.println("Circuits in analysis: " +  this.circuitList);
                 System.out.println("======================\n");
                
         }

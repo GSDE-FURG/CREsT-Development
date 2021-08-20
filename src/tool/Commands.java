@@ -73,6 +73,7 @@ import javax.script.ScriptException;
 import levelDatastructures.DepthGate;
 import levelDatastructures.GateLevel;
 import levelDatastructures.InterLevel;
+import logicSimulator.main;
 import manipulator.CircuitFactory;
 import manipulator.SPRController;
 import ops.PTMOps2;
@@ -232,13 +233,30 @@ public class Commands {
         Terminal.getInstance().initLibrary(path);        
     }
     
-    public void Mc_Fault_injection(String genlib, String circuit, String mc_sample) throws IOException, ScriptException {
+    public void Mc_Fault_injection(String genlib, String circuit, String mc_sample) throws IOException, ScriptException, Exception {
         //String path = CommonOps.getWorkPath(this) + "abc" + File.separator + filename;
         System.out.println("Genlib: "+ genlib);
-           System.out.println("Circuit: "+ circuit);
-              System.out.println("MC_Sample: "+ mc_sample);
-        String path = CommonOps.getWorkPath(this) + genlib;                             
-        Terminal.getInstance().initLibrary(path);        
+        System.out.println("Circuit: "+ circuit);
+        System.out.println("MC_Sample: "+ mc_sample);
+        
+        /* Chamar a muinha ferramenta */
+         int threads = 2; //Numero de threads
+         int sampleSizeMonteCarlo = Integer.parseInt(mc_sample);
+         String constReliability = "0.9999"; //Used for internal structures
+         
+         
+         String[] arrOfStr = circuit.split("/", 2);
+         
+         String relativePath = "/" + arrOfStr[0];
+         
+         System.out.println("Path: " + relativePath);
+         
+        logicSimulator.main experimento = new logicSimulator.main(threads, constReliability, relativePath, genlib);
+        
+        experimento.preparingEnviromentSingleFile(circuit);
+        //
+        experimento.multithreadingSimulation("ALL_SIGNALS");
+        
     }
     
     public void ReadVerilog(String filename) throws IOException, Exception {

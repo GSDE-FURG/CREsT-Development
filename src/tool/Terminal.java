@@ -147,25 +147,42 @@ class TerminalWrapper {
             term.open(0, 0, 820, 700);
             
             // FOR DEV
-            //Robot r = new Robot();
-            //term.executeCommand("read_genlib cadence.genlib");
+            
+            Robot r = new Robot();
+            
+            
+            
+            //term.executeCommand("read_genlib /abc/cadence.genlib");
+            
+           
             //term.executeCommand("read_genlib lib_full_no_cost.genlib");
             //term.executeCommand("read_custom_matrix 45nm.txt");
             /*Commite antes da reunião */
-            term.executeCommand("read_genlib cadence_schiv.genlib");
-            //term.executeCommand("read_genlib 22-1.genlib");
+            //term.executeCommand("read_genlib cadence_schiv.genlib");
+            //term.executeCommand("read_genlib abc/22-1.genli");
             //term.executeCommand("read_verilog c17_cadence.v");
-            //term.executeCommand("read_verilog c17v3_fritz.v");
+            //term.executeCommand("read_verilog /abc/c17v3_fritz.v");
             //term.executeCommand("read_verilog c432_cadence.v");
             //term.executeCommand("read_verilog c20_cadence.v");
             //term.executeCommand("read_verilog c6288_cadence.v");
             //term.executeCommand("read_verilog twoInvOneAnd.v");
             //term.executeCommand("init_level");
-
+             //term.executeCommand("clear");
+           // mc_fault_injection abc/c17v3_fritz.v abc/cadence.genlib
+           // term.executeCommand("help");
+            //term.executeCommand("spr");
             //term.executeCommand("clear");
-            //r.keyPress(KeyEvent.VK_ENTER);
-            //r.keyRelease(KeyEvent.VK_ENTER);
+            
+           // r.keyPress(KeyEvent.VK_ENTER);
+           // r.keyRelease(KeyEvent.VK_ENTER);
+            
+            //System.out.println(term.getCircuit());
             // ##########
+            
+             term.executeCommand("clear");
+            r.keyPress(KeyEvent.VK_ENTER);
+            r.keyRelease(KeyEvent.VK_ENTER);
+            
         }        
     }
 
