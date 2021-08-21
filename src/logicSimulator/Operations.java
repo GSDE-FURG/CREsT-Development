@@ -686,8 +686,13 @@ import writers.WriteCsvTh;
          
                 /*Reading CellLibrary*/
                 CellLibrary cellLib = new CellLibrary();
+                
+                System.out.println("1");
                 this.cellLibrary = cellLib;
+                System.out.println("2");
                 this.cellLibrary.initLibrary(this.genlib);
+                System.out.println("3"
+                        + "");
                 System.out.println("    ... Reading Genlib " + " at -> " + this.genlib  + " ... ok");
                 //System.out.println("  - Avaliable logic gatesin this library: "+cellLib.getCells());
               
@@ -1063,10 +1068,13 @@ import writers.WriteCsvTh;
                 System.out.println("    - Simulation start in : " + formattedDate);
                 System.out.println("    - Threads in execution: " + this.threads); 
          
-                /*Reading CellLibrary*/
+                /*Reading CellLibrary*/System.out.println("1");
                 CellLibrary cellLib = new CellLibrary();
+                System.out.println("2");
                 this.cellLibrary = cellLib;
+                System.out.println("3");
                 this.cellLibrary.initLibrary(this.genlib);
+                System.out.println("4");
                 System.out.println("    ... Reading Genlib " + " at -> " + this.genlib  + " ... ok");
                 //System.out.println("  - Avaliable logic gatesin this library: "+cellLib.getCells());
               

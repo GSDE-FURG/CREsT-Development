@@ -156,6 +156,11 @@ public class main{
         
         public void monteCarloSimulation(int sampleSize, String Signals) throws Exception{
                 //Loop na simulação de circuitos 
+                System.out.println("Path: " +this.relativePath);
+                 System.out.println("Genlib: " +this.genlib);
+                   System.out.println("Circuit: " +this.circuitList);
+                
+                
                 String str = "";
                 for (int i = 0; i < this.circuitList.size(); i++) {
                      Operations simulacaoMultithreading = new Operations(this.threads, this.reliabilityConst, 

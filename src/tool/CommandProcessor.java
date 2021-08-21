@@ -401,7 +401,7 @@ class CommandProcessor {
                 break;
                
                 
-             case "mc":
+            case "mc":
              //case "mc_fault_injection":
                 if(argument.isEmpty()) {
                     Terminal.getInstance().terminalOutput("usage: mc_fault_injection <filename.genlib> <verilogfile.v> <monte_carlo_sample> or \"--help\"");
@@ -424,7 +424,36 @@ class CommandProcessor {
                         }
                     }
                 }
+            break;
+            
+            case "read_script":
+             //case "mc_fault_injection":
+                if(argument.isEmpty()) {
+                    Terminal.getInstance().terminalOutput("usage: read_script <script_file.txt> \n inside script_file.txt: <filename.genlib> <monte_carlo_sample> \n <verilogfile_1.v> \n <verilogfile_n.v>");
+                } else if(help) {
+                    Terminal.getInstance().terminalOutput(cmd.getHelpDesc(mainCommand));
+                    Terminal.getInstance().terminalOutput("usage: read_script <script_file.txt> \n inside script_file.txt: <filename.genlib> <monte_carlo_sample> \n <verilogfile_1.v> \n <verilogfile_n.v>");
+             
+                } else {
+                    boolean success = false;
+                    try {
+                       cmd.Read_Scrip_Mc_Fault_injection(splittedCommand.get(1));
+                        success = true;
+                    } catch (IOException | ScriptException e) {                        
+                        Terminal.getInstance().terminalOutput("## ERRO ##");
+                        Terminal.getInstance().terminalOutput(e.getMessage());
+                        Terminal.getInstance().terminalOutput("## ERRO ##");
+                    } finally {
+                        if(success) {
+                             
+                            Terminal.getInstance().terminalOutput("Genlib File \"" + splittedCommand.get(1) + "\" successfully processed!!");
+                             //Terminal.getInstance().terminalOutput("verilog File \"" + splittedCommand.get(2) + "\" successfully processed!!");
+                        }
+                    }
+                }
              break;
+             
+             
                 
             case "foo2":
                 cmd.Foo2();
