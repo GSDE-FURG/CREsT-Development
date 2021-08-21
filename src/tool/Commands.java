@@ -272,7 +272,8 @@ public class Commands {
             System.out.println("FMR: " + experimento.getFMR());
             
             
-             Terminal.getInstance().terminalOutput("Simulation results: " + experimento.getFMR());
+             Terminal.getInstance().terminalOutput("Simulation results"
+                     + ": " + experimento.getFMR());
         
     }
     
