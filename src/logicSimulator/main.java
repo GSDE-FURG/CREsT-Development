@@ -25,7 +25,7 @@ public class main{
         String reliabilityConst;
         String relativePath;
         String genlib;
-        float FMR;
+        String OUTPUT_INFO;
         
         
         
@@ -34,10 +34,10 @@ public class main{
             this.reliabilityConst = reliabilityConst;
             this.relativePath = relativePath;
             this.genlib = genlib;
-            this.FMR = 0;
+            this.OUTPUT_INFO = "";
         }
-        public float getFMR(){
-            return this.FMR;
+        public String getFMR(){
+            return this.OUTPUT_INFO;
         }
         
          public static void main(String[] args) throws Exception {
@@ -163,7 +163,7 @@ public class main{
                              //simulacaoMultithreading.PrintCircuitSpecs();
                              //str = str + simulacaoMultithreading.PrintCircuitSpecs() + "\n";
                              simulacaoMultithreading.runMultithreadingMonteCarlo(sampleSize, Signals); //ou Signals =  "ALL_SIGNALS" ou "INTERMEDIATE" ou "INTERMEDIATE_AND_OUTPUTS" ou "INPUTS" ou "INPUTS_OUTPUTS"
-                             this.FMR = simulacaoMultithreading.getFRM();
+                             this.OUTPUT_INFO = simulacaoMultithreading.getFRM();
                 }
                 //System.out.println("STR: " + str);
         }

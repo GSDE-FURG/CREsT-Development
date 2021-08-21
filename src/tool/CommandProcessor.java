@@ -419,7 +419,7 @@ class CommandProcessor {
                         Terminal.getInstance().terminalOutput("## ERRO ##");
                     } finally {
                         if(success) {
-                            Terminal.getInstance().terminalOutput("Genlib File \"" + splittedCommand.get(1) + "\" successfully processed!!");
+                             Terminal.getInstance().terminalOutput("Genlib File \"" + splittedCommand.get(1) + "\" successfully processed!!");
                              Terminal.getInstance().terminalOutput("verilog File \"" + splittedCommand.get(2) + "\" successfully processed!!");
                         }
                     }

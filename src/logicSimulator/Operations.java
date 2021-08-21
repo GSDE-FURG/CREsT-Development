@@ -1165,7 +1165,7 @@ import writers.WriteCsvTh;
                 System.out.println("- Simulation TimeElapsed: " + propagateTime + " m(s)");
                 System.out.println("--------------------------------------------");
              
-                
+                this.sampleSize = N;
                 System.out.println(" ----------------------------------------------------------------------------------------------------------------------");
              /*
              */
@@ -1173,8 +1173,15 @@ import writers.WriteCsvTh;
             
      }
     
-    public float getFRM(){
-     return this.circuitReliaibility;
+    public String getFRM(){
+        //float FMR, int sample, int unmasked_faults, long propagatedTime
+        String result;
+        
+        result = "-Circuit: " + this.circuit.getName() + " \n";
+        result = result + "-MC Sample: " + this.sampleSize + "\n";
+        result = result + "-Detected Faults: " + this.unmasked_faults + "\n";
+        result = result + "-FMR: " + "(1-(" + this.unmasked_faults + "/" + this.sampleSize + ")) = " + this.circuitReliaibility + "\n";
+        return result;
     }
     
     public String PrintCircuitSpecs() throws IOException, Exception{

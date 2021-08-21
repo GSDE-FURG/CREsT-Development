@@ -272,7 +272,7 @@ public class Commands {
             System.out.println("FMR: " + experimento.getFMR());
             
             
-             Terminal.getInstance().terminalOutput("Circuit FMR: " + experimento.getFMR());
+             Terminal.getInstance().terminalOutput("Simulation results: " + experimento.getFMR());
         
     }
     
