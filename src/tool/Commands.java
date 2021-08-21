@@ -269,7 +269,8 @@ public class Commands {
              
             experimento.monteCarloSimulation(sampleSizeMonteCarlo, "ALL_SIGNALS");
             
-            System.out.println("FMR: " + experimento.getFMR());
+            System.out.println("Simulation results:\n"
+                    + experimento.getFMR());
             
             
              Terminal.getInstance().terminalOutput("Simulation results"

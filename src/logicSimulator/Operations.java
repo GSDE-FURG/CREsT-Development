@@ -515,7 +515,7 @@ import writers.WriteCsvTh;
             content = content+  "Number of Simulations (sample): " + this.sampleSize + "\n";
             content = content+  "Number of Threads: " + this.threads + "\n";
             content = content + "Number of detected faults (Ne): " + this.unmasked_faults + "\n";
-            content = content +  "Reliability (soft error): " + this.circuitReliaibility + "\n";
+            content = content +  "FMR (soft error): " + this.circuitReliaibility + "\n";
             //content = content +  "MTBF: " + this.MTBF + "\n\n";
            
             content = content +  "Performance time(s): " + (propagateTimems) + "\n";
@@ -1041,7 +1041,7 @@ import writers.WriteCsvTh;
                 System.out.println("- PropagatedTime (s): " + propagateTime);
                 System.out.println("- Total Vectors (N): " + N);
                 System.out.println("- Propagated fault(s) (Ne): " + this.unmasked_faults);
-                System.out.println("- Reliability: " + "(1-(" + this.unmasked_faults + "/" + N + ")) = " + this.circuitReliaibility);
+                System.out.println("- FMR: " + "(1-(" + this.unmasked_faults + "/" + N + ")) = " + this.circuitReliaibility);
                 System.out.println("- MTBF (Mean Time Between failure) : " + this.MTBF);
                 System.out.println("- Simulation TimeElapsed: " + propagateTime + " m(s)");
                 System.out.println("--------------------------------------------");
@@ -1160,14 +1160,16 @@ import writers.WriteCsvTh;
                 System.out.println("- PropagatedTime (s): " + propagateTime);
                 System.out.println("- Total Vectors (N): " + N);
                 System.out.println("- Propagated fault(s) (Ne): " + this.unmasked_faults);
-                System.out.println("- Reliability: " + "(1-(" + this.unmasked_faults + "/" + N + ")) = " + this.circuitReliaibility);
+                System.out.println("- FMR: " + "(1-(" + this.unmasked_faults + "/" + N + ")) = " + this.circuitReliaibility);
                 System.out.println("- MTBF (Mean Time Between failure) : " + this.MTBF);
-                System.out.println("- Simulation TimeElapsed: " + propagateTime + " m(s)");
+                System.out.println("- Simulation TimeElapsed: " + propagateTimems
+                        + " m(s)");
                 System.out.println("--------------------------------------------");
              
                 this.sampleSize = N;
                 System.out.println(" ----------------------------------------------------------------------------------------------------------------------");
              /*
+                
              */
              
             
@@ -1177,10 +1179,10 @@ import writers.WriteCsvTh;
         //float FMR, int sample, int unmasked_faults, long propagatedTime
         String result;
         
-        result = "-Circuit: " + this.circuit.getName() + " \n";
-        result = result + "-MC Sample: " + this.sampleSize + "\n";
-        result = result + "-Detected Faults: " + this.unmasked_faults + "\n";
-        result = result + "-FMR: " + "(1-(" + this.unmasked_faults + "/" + this.sampleSize + ")) = " + this.circuitReliaibility + "\n";
+        result = "\n         Circuit: " + this.circuit.getName() + " \n";
+        result = result + "         MC Sample: " + this.sampleSize + "\n";
+        result = result + "         Detected Faults: " + this.unmasked_faults + "\n";
+        result = result + "         FMR (Fault Mask Rate): " + this.circuitReliaibility + "\n";
         return result;
     }
     
