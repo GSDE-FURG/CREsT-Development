@@ -38,3 +38,5 @@ nbbuild/
 dist/
 nbdist/
 .nb-gradle/
+c17.v
+cadence.genlib

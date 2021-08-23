@@ -401,8 +401,9 @@ class CommandProcessor {
                 break;
                
                 
-            case "mc":
-             //case "mc_fault_injection":
+                
+            //case "mc":
+            case "mc_fault_injection":
                 if(argument.isEmpty()) {
                     Terminal.getInstance().terminalOutput("usage: mc_fault_injection <filename.genlib> <verilogfile.v> <monte_carlo_sample> or \"--help\"");
                 } else if(help) {
