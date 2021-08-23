@@ -437,7 +437,7 @@ class CommandProcessor {
                 } else {
                     boolean success = false;
                     try {
-                       cmd.Read_Scrip_Mc_Fault_injection(splittedCommand.get(1));
+                        cmd.Read_Scrip_Mc_Fault_injection(splittedCommand.get(1));
                         success = true;
                     } catch (IOException | ScriptException e) {                        
                         Terminal.getInstance().terminalOutput("## ERRO ##");
@@ -445,9 +445,9 @@ class CommandProcessor {
                         Terminal.getInstance().terminalOutput("## ERRO ##");
                     } finally {
                         if(success) {
-                             
-                            Terminal.getInstance().terminalOutput("Genlib File \"" + splittedCommand.get(1) + "\" successfully processed!!");
-                             //Terminal.getInstance().terminalOutput("verilog File \"" + splittedCommand.get(2) + "\" successfully processed!!");
+                             Terminal.getInstance().terminalOutput("Simulation successfully processed!!");
+                            //Terminal.getInstance().terminalOutput("Genlib File \"" + splittedCommand.get(1) + "\" successfully processed!!");
+                            //Terminal.getInstance().terminalOutput("verilog File \"" + splittedCommand.get(2) + "\" successfully processed!!");
                         }
                     }
                 }

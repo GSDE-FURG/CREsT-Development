@@ -280,8 +280,16 @@ public class Commands {
         
     }
     
+    
+    /** Method for run FMR analysis in lot circuits with same genlib
+    * @author Clayton Farias
+    * @version 1.0
+    * @since Realise in Integration with main framework
+    * @param script_file
+    */
     public void Read_Scrip_Mc_Fault_injection(String script_file) throws IOException, ScriptException, Exception {
-        int threads = 2; //Numero de threads
+        
+        int threads = 4; //Numero de threads
         //String path = CommonOps.getWorkPath(this) + "abc" + File.separator + filename;
        
         /*
@@ -289,13 +297,7 @@ public class Commands {
             System.out.println("Circuit: "+ circuit);
             System.out.println("MC_Sample: "+ mc_sample);
         */
-        
-        /* Chamar a muinha ferramenta */
-        
-         
-         //int sampleSizeMonteCarlo = Integer.parseInt(mc_sample);
-         
-          
+   
         List<String> records = new ArrayList<>();
    
         try (BufferedReader reader = new BufferedReader(new FileReader(script_file))) {
@@ -307,44 +309,27 @@ public class Commands {
             }
         }
                   
-         System.out.println("File: " + records);
-         System.out.println("Line 1: " + records.get(0));
+         //System.out.println("File: " + records);
+         //System.out.println("Line 1: " + records.get(0));
 
          try {
-             
-             
              String[] arrOfStr = records.get(0).split(" ", 3);
-             
-              System.out.println("arr: " +arrOfStr + " size: " +arrOfStr.length);
-            //System.out.println("1: " + records);
-           
              for (int i = 0; i < arrOfStr.length; i++) {
                  System.out.println("- :" + arrOfStr[i]);
              }
              
             String relativePath = arrOfStr[0] ;//"";//"abc/";
-            //System.out.println("2: " + records);
             String genlib = arrOfStr[1];
-
             String sampleSizeMonteCarlo = arrOfStr[2];
-
             String constReliability = "0.9999"; //Used for internal structures
-       
-             System.out.println("Out First");
-        
-        
-            System.out.println("Path: " + relativePath);
-            System.out.println("Genlib: "+ genlib);
+              
+            //System.out.println("Path: " + relativePath);
+            //System.out.println("Genlib: "+ genlib);
             //System.out.println("Circuit: "+ circuit);
-            System.out.println("MC_Sample: "+ sampleSizeMonteCarlo);
-        
-        
-       
-         for (int i = 1; i < records.size(); i++) {
+            //System.out.println("MC_Sample: "+ sampleSizeMonteCarlo);
+
+            for (int i = 1; i < records.size(); i++) {
              
-              File temp;
-              
-              
                 String circuit = records.get(i);
                 String complete_file = relativePath + circuit;
                 
@@ -353,70 +338,25 @@ public class Commands {
                 File tmpDir = new File(relativePath + circuit);
                 boolean exists = tmpDir.exists();
                 if (exists){
-                    System.out.println("        - File ok !");
-              
-           
-            
-               //genlib =  relativePath  + "cadence.genlib";
-             
-                //System.out.println("circuit: " + circuit + " genlib : " + genlib);
-                
-                main experimento = new main(threads, constReliability, relativePath, relativePath+genlib);
-             
-                
-                experimento.preparingEnviromentSingleFile(circuit);
-             
-                experimento.monteCarloSimulation(Integer.parseInt(sampleSizeMonteCarlo), "ALL_SIGNALS");
-            
-                System.out.println("Simulation results:\n"
-                    + experimento.getFMR());
-            
-            
-                Terminal.getInstance().terminalOutput("Simulation results"
-                     + ": " + experimento.getFMR());
-                }
+                     System.out.println("        - File ok !");
+                     //System.out.println("circuit: " + circuit + " genlib : " + genlib);
+                     Terminal.getInstance().terminalOutput(" - Genlib File " + genlib + " read ..." );
+                     Terminal.getInstance().terminalOutput(" - Verilog File " + circuit + " read ..." );
+                     main experimento = new main(threads, constReliability, relativePath, relativePath+genlib);
+                     experimento.preparingEnviromentSingleFile(circuit);
+                     experimento.monteCarloSimulation(Integer.parseInt(sampleSizeMonteCarlo), "ALL_SIGNALS");
+                     System.out.println("Simulation results:\n" + experimento.getFMR());
+                     Terminal.getInstance().terminalOutput(experimento.getFMR());
+
+                 }
                 else{
                     System.out.println("x - Error file not exist : " +complete_file);
                 }
-        
-         }
+            }
          
           } catch (Exception e) {
              System.out.println("OPS ERROR !!!!");
         }
-        
-         /*
-         String[] circuitFiles;
-                File f = new File(path);
-                ArrayList <String> files = new ArrayList<>();
-                ArrayList <String> filtered_files = new ArrayList<>();
-                circuitFiles = f.list();
-                
-                for (String pathnam
-         e : circuitFiles) {
-                    if(pathname.endsWith(".txt")){ // test tipe .v
-                        //System.out.println(pathname);
-                        //circuitList.add(pathname); 
-                        //this.circuitList.add(pathname);
-                        files.add(pathname);
-                    }  
-                }
-                System.out.println("results in List: " +  files);
-                System.out.println("Size List: " +  files.size());
-         
-         */
-        // String[] arrOfStr = circuit.split("/", 2);
-         
-        
-          ///String relativePath = "/" + arrOfStr[0];
-         // String relativePath = "abc/" ;
-                  
-        // genlib = "abc/" + "cadence.genlib";
-          
-       
-         
-            
-            
     }
     
    

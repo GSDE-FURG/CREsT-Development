@@ -1180,10 +1180,12 @@ import writers.WriteCsvTh;
                 DateTimeFormatter myFormatObj2 = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
                 String formattedDate2 = myDateObj2.format(myFormatObj2);
 
+                this.Performance_Time = "Simulation started at: " + formattedDate + " and finished at: " + formattedDate2;
                 this.writeSimpleLog(option + "_MonteCarlo_Simple_Log_" +this.circuit.getName()+"_Threads-"+ this.threads +  "_sampleSize-" + this.sampleSize, formattedDate,  formattedDate2, propagateTime);
                
                 this.writeCsvFileCompleteTh(option+"_MonteCarlo_Complete_Log_"+this.circuit.getName()+"_Theads-"+ this.threads + "_sampleSize"+ this.sampleSize, itemx_list);
   
+                
                 System.out.println("\n\n----------------- Results ------------------");
                 System.out.println("Circuit: " + this.circuit.getName());
                 System.out.println("- Simulation started at: " + formattedDate + " and finished at: "+ formattedDate2); //formattedDate
@@ -1212,7 +1214,7 @@ import writers.WriteCsvTh;
         String result;
         
         result = "\n";
-        result = result + "         "+this.Performance_Time + "\n"; 
+        result = result + "         " + this.Performance_Time + "\n"; 
         result = result + "         Circuit: " + this.circuit.getName() + " \n";
         result = result + "         Simulation Sample (Monte Carlo = N): " + this.sampleSize + "\n";
         result = result + "         Detected Faults (Ne): " + this.unmasked_faults + "\n";
