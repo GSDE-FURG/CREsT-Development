@@ -50,6 +50,7 @@ import writers.WriteCsvTh;
     private long time_seconds;
     private float circuitReliaibility;
     private MappedVerilogReader verilog_circuit;
+    private String Performance_Time;
     
     private ArrayList <Signal> signals_to_inject_faults = new ArrayList<>();
     private final ArrayList <String> inputListValues = new ArrayList<>();
@@ -509,16 +510,36 @@ import writers.WriteCsvTh;
         try (FileWriter file = new FileWriter(filename+".txt")) {
             
             
-            content = "Date/hour: "  + date + "\n";      
-            content = content + "Date/hour (end):d "+ dateend + "\n\n";
+            content = "Started at Date/hour: "  + date + " and finished at: " + dateend  + "\n\n";      
+            //content = content + "Date/hour (finished): "+ dateend + "\n\n";
             content = content + "Circuit: " + this.circuit.getName() + "\n";
-            content = content+  "Number of Simulations (sample): " + this.sampleSize + "\n";
+            content = content+  "Number of Simulations (sample size = N): " + this.sampleSize + "\n";
             content = content+  "Number of Threads: " + this.threads + "\n";
             content = content + "Number of detected faults (Ne): " + this.unmasked_faults + "\n";
-            content = content +  "FMR (soft error): " + this.circuitReliaibility + "\n";
+            content = content + "Fault Mask Rate (FMR): "+ " 1 - Ne/N = (1-(" + this.unmasked_faults + "/" + this.sampleSize + ")) = " + this.circuitReliaibility + "\n";
             //content = content +  "MTBF: " + this.MTBF + "\n\n";
            
             content = content +  "Performance time(s): " + (propagateTimems) + "\n";
+            
+            
+            /*
+            
+              System.out.println("\n\n----------------- Results ------------------");
+                System.out.println("Circuit: " + this.circuit.getName());
+                System.out.println("- Simulation started at: " + formattedDate + " and finished at: "+ formattedDate2); //formattedDate
+                
+               // System.out.println("- PropagatedTime (s): " + propagateTime);
+                System.out.println("- Sample Size (N): " + N);
+                System.out.println("- Number of detected faults (Ne): " + this.unmasked_faults);
+                System.out.println("- Fault Mask Rate (FMR): " + " 1 - Ne/N = (1-(" + this.unmasked_faults + "/" + N + ")) = " + this.circuitReliaibility);
+                //System.out.println("- MTBF (Mean Time Between failure) : " + this.MTBF);
+                System.out.println("- Simulation TimeElapsed: " + propagateTime
+                        + "(s)");
+                
+                System.out.println("--------------------------------------------");
+            
+            */
+            
             
             file.write(content);
         }
@@ -902,6 +923,7 @@ import writers.WriteCsvTh;
                 DateTimeFormatter myFormatObj2 = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
                 String formattedDate2 = myDateObj2.format(myFormatObj2);
                 
+                this.Performance_Time = "Simulation started at: " + formattedDate + " and finished at: " + formattedDate2;
 
                 this.writeSimpleLog("MonteCarlo_Simple_Log_" +this.circuit.getName()+"_Threads-"+ this.threads +  "_sampleSize-" + N, formattedDate,  formattedDate2, propagateTime);
                
@@ -920,8 +942,8 @@ import writers.WriteCsvTh;
                 System.out.println("- Sample (N): " + N);
                 System.out.println("- Detected faults (Ne): " + this.unmasked_faults);
                 System.out.println("- Fault Masking Rate (FMR): " + "(1-(" + this.unmasked_faults + "/" + N + ")) = " + this.circuitReliaibility);
-               // System.out.println("- MTBF (Mean Time Between failure) : " + this.MTBF);
-               System.out.println("- Simulation TimeElapsed: " + propagateTime + "(s)");
+                // System.out.println("- MTBF (Mean Time Between failure) : " + this.MTBF);
+                System.out.println("- Simulation TimeElapsed: " + propagateTime + "(s)");
                 System.out.println("--------------------------------------------");
                 
                  System.out.println(" ----------------------------------------------------------------------------------------------------------------------------\n\n");
@@ -1070,11 +1092,11 @@ import writers.WriteCsvTh;
          
                 /*Reading CellLibrary*/System.out.println("1");
                 CellLibrary cellLib = new CellLibrary();
-                System.out.println("2");
+                //System.out.println("2");
                 this.cellLibrary = cellLib;
-                System.out.println("3");
+                //System.out.println("3");
                 this.cellLibrary.initLibrary(this.genlib);
-                System.out.println("4");
+                //System.out.println("4");
                 System.out.println("    ... Reading Genlib " + " at -> " + this.genlib  + " ... ok");
                 //System.out.println("  - Avaliable logic gatesin this library: "+cellLib.getCells());
               
@@ -1164,14 +1186,16 @@ import writers.WriteCsvTh;
   
                 System.out.println("\n\n----------------- Results ------------------");
                 System.out.println("Circuit: " + this.circuit.getName());
-                System.out.println("- Simulation finished at: " + formattedDate2);
-                System.out.println("- PropagatedTime (s): " + propagateTime);
-                System.out.println("- Total Vectors (N): " + N);
+                System.out.println("- Simulation started at: " + formattedDate + " and finished at: "+ formattedDate2); //formattedDate
+                
+               // System.out.println("- PropagatedTime (s): " + propagateTime);
+                System.out.println("- Sample Size (N): " + N);
                 System.out.println("- Propagated fault(s) (Ne): " + this.unmasked_faults);
-                System.out.println("- FMR: " + "(1-(" + this.unmasked_faults + "/" + N + ")) = " + this.circuitReliaibility);
-                System.out.println("- MTBF (Mean Time Between failure) : " + this.MTBF);
-                System.out.println("- Simulation TimeElapsed: " + propagateTimems
-                        + " m(s)");
+                System.out.println("- Fault Mask Rate (FMR): " + " 1 - Ne/N = (1-(" + this.unmasked_faults + "/" + N + ")) = " + this.circuitReliaibility);
+                //System.out.println("- MTBF (Mean Time Between failure) : " + this.MTBF);
+                System.out.println("- Simulation TimeElapsed: " + propagateTime
+                        + "(s)");
+                
                 System.out.println("--------------------------------------------");
              
                 this.sampleSize = N;
@@ -1187,15 +1211,18 @@ import writers.WriteCsvTh;
         //float FMR, int sample, int unmasked_faults, long propagatedTime
         String result;
         
-        result = "\n         Circuit: " + this.circuit.getName() + " \n";
-        result = result + "         MC Sample: " + this.sampleSize + "\n";
-        result = result + "         Detected Faults: " + this.unmasked_faults + "\n";
-        result = result + "         FMR (Fault Mask Rate): " + this.circuitReliaibility + "\n";
+        result = "\n";
+        result = result + "         "+this.Performance_Time + "\n"; 
+        result = result + "         Circuit: " + this.circuit.getName() + " \n";
+        result = result + "         Simulation Sample (Monte Carlo = N): " + this.sampleSize + "\n";
+        result = result + "         Detected Faults (Ne): " + this.unmasked_faults + "\n";
+        result = result + "         Fault Mask Rate (FMR): " + this.circuitReliaibility + "\n";
         return result;
     }
     
     public String PrintCircuitSpecs() throws IOException, Exception{
 
+        
                 //System.out.println(" ----- Monte Carlo version -------");
                 long loadTimeStart = System.nanoTime();//System.currentTimeMillis();
                 

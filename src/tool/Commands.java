@@ -353,13 +353,13 @@ public class Commands {
                 File tmpDir = new File(relativePath + circuit);
                 boolean exists = tmpDir.exists();
                 if (exists){
-                    System.out.println(complete_file + " ok !");
+                    System.out.println("        - File ok !");
               
            
             
                //genlib =  relativePath  + "cadence.genlib";
              
-                System.out.println("circuit: " + circuit + " genlib : " + genlib);
+                //System.out.println("circuit: " + circuit + " genlib : " + genlib);
                 
                 main experimento = new main(threads, constReliability, relativePath, relativePath+genlib);
              
@@ -376,8 +376,7 @@ public class Commands {
                      + ": " + experimento.getFMR());
                 }
                 else{
-                    System.out.println("File not exist : " +complete_file
-                    );
+                    System.out.println("x - Error file not exist : " +complete_file);
                 }
         
          }

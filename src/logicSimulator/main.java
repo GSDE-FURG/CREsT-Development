@@ -42,8 +42,9 @@ public class main{
         
          public static void main(String[] args) throws Exception {
             
-             int threads = 2; //Numero de threads
-             int sampleSizeMonteCarlo = 8;
+             int threads = 8; //Numero de threads
+             int sampleSizeMonteCarlo = 2000;
+                     
              String constReliability = "0.9999"; //Used for internal structures
              String relativePath = "test/";
              
