@@ -122,6 +122,8 @@ public class main{
                      Operations simulacaoMultithreading = new Operations(this.threads, this.reliabilityConst, 
                              this.relativePath, this.genlib, this.relativePath + this.circuitList.get(i));
                              simulacaoMultithreading.runMultithreadingExausticSimulation("ALL_SIGNALS"); 
+                             this.OUTPUT_INFO = simulacaoMultithreading.getFRM("Sample (N = "
+                                     + "2^Signals * Gates)");
                 }
         }
         
@@ -169,7 +171,7 @@ public class main{
                              //simulacaoMultithreading.PrintCircuitSpecs();
                              //str = str + simulacaoMultithreading.PrintCircuitSpecs() + "\n";
                              simulacaoMultithreading.runMultithreadingMonteCarlo(sampleSize, Signals); //ou Signals =  "ALL_SIGNALS" ou "INTERMEDIATE" ou "INTERMEDIATE_AND_OUTPUTS" ou "INPUTS" ou "INPUTS_OUTPUTS"
-                             this.OUTPUT_INFO = simulacaoMultithreading.getFRM();
+                             this.OUTPUT_INFO = simulacaoMultithreading.getFRM(" Sample(Monte Carlo = N)");
                 }
                 //System.out.println("STR: " + str);
         }

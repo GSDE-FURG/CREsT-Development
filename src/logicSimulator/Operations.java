@@ -695,7 +695,7 @@ import writers.WriteCsvTh;
     public void runMultithreadingExausticSimulation(String option) throws IOException, Exception{ //Test All possibilities
 
                
-                System.out.println(" ----- Multithreading Version -------");
+                System.out.println(" ----- Exaustive Simulation Version -------");
                 long loadTimeStart = System.nanoTime();//System.currentTimeMillis();
                 
                 
@@ -708,9 +708,9 @@ import writers.WriteCsvTh;
                 /*Reading CellLibrary*/
                 CellLibrary cellLib = new CellLibrary();
                 
-                System.out.println("1");
+               // System.out.println("1");
                 this.cellLibrary = cellLib;
-                System.out.println("2");
+               // System.out.println("2");
                 this.cellLibrary.initLibrary(this.genlib);
                 System.out.println("3"
                         + "");
@@ -730,9 +730,10 @@ import writers.WriteCsvTh;
                 
                 /* Print circuit Specs*/
                 System.out.println("\n        ------ Printing Circuit Specs: --------");
-                     this.PrintSpecsThesis();
+                     //this.PrintSpecsThesis();
                 System.out.println("          ---------------------------------------\n");
                 /*----------------------*/
+                
                 
                 /*Circuit Probabilities */
                 this.initLevelCircuit();
@@ -752,7 +753,6 @@ import writers.WriteCsvTh;
                 int N = this.sampleSize; // random_input_vectors.size();//testNumber;
                 
                 int sizeExasuticTest;
-                
               
                 System.out.println("-   Sample size (N = 2^ENTRADAS): " + "2^"+ this.circuit.getInputs().size() + " = " + this.sampleSize);
                 
@@ -814,15 +814,16 @@ import writers.WriteCsvTh;
                 System.out.println("\n\n----------------- Results ------------------");
                 System.out.println("Circuit: " + this.circuit.getName());
                 System.out.println("- Simulation finished at: " + formattedDate2);
-               
-                System.out.println("- Total Vectors (N): " + (this.sampleSize));
-                System.out.println("- Detected Faults (Ne): " + this.unmasked_faults);
+                //System.out.println("- PropagatedTime (s): " + propagateTime);
+                System.out.println("- Sample (N): " + this.sampleSize);
+                System.out.println("- Detected faults (Ne): " + this.unmasked_faults);
                 System.out.println("- Fault Masking Rate (FMR): " + "(1-(" + this.unmasked_faults + "/" + this.sampleSize + ")) = " + this.circuitReliaibility);
-                 //System.out.println("- MTBF (Mean Time Between failure) : " + this.MTBF);
-                 //System.out.println("- Simulation TimeElapsed: " + propagateTimems + " m(s)");
-                System.out.println("- PropagatedTime (s): " + propagateTime);
+                // System.out.println("- MTBF (Mean Time Between failure) : " + this.MTBF);
+                System.out.println("- Simulation TimeElapsed: " + propagateTime + "(s)");
                 System.out.println("--------------------------------------------");
                 
+                this.Performance_Time = "Simulation started at: " + formattedDate + " and finished at: " + formattedDate2;
+               
                 System.out.println(" ----------------------------------------------------------------------------------------------------------------------------\n\n");
              /*
              */
@@ -1180,7 +1181,7 @@ import writers.WriteCsvTh;
                 DateTimeFormatter myFormatObj2 = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
                 String formattedDate2 = myDateObj2.format(myFormatObj2);
 
-                this.Performance_Time = "Simulation started at: " + formattedDate + " and finished at: " + formattedDate2;
+                
                 this.writeSimpleLog(option + "_MonteCarlo_Simple_Log_" +this.circuit.getName()+"_Threads-"+ this.threads +  "_sampleSize-" + this.sampleSize, formattedDate,  formattedDate2, propagateTime);
                
                 this.writeCsvFileCompleteTh(option+"_MonteCarlo_Complete_Log_"+this.circuit.getName()+"_Theads-"+ this.threads + "_sampleSize"+ this.sampleSize, itemx_list);
@@ -1199,7 +1200,7 @@ import writers.WriteCsvTh;
                         + "(s)");
                 
                 System.out.println("--------------------------------------------");
-             
+                this.Performance_Time = "Simulation started at: " + formattedDate + " and finished at: " + formattedDate2;
                 this.sampleSize = N;
                 System.out.println(" ----------------------------------------------------------------------------------------------------------------------");
              /*
@@ -1209,14 +1210,16 @@ import writers.WriteCsvTh;
             
      }
     
-    public String getFRM(){
+    public String getFRM(String identification){
+        
         //float FMR, int sample, int unmasked_faults, long propagatedTime
         String result;
         
         result = "\n";
         result = result + "         " + this.Performance_Time + "\n"; 
-        result = result + "         Circuit: " + this.circuit.getName() + " \n";
-        result = result + "         Simulation Sample (Monte Carlo = N): " + this.sampleSize + "\n";
+        result = result + "         Circuit: " + this.circuit.getName() + " \n";  //+ " P(I): " + this.circuit.getInputs().size() + " Gates: " + this.circuit.getGates().size() +
+        result = result + "         Signals: " + this.circuit.getSignals().size() + " - Gates: " + this.circuit.getGates().size() + " \n";
+        result = result + "         Simulation " + identification + " : " + this.sampleSize + "\n";
         result = result + "         Detected Faults (Ne): " + this.unmasked_faults + "\n";
         result = result + "         Fault Mask Rate (FMR): " + this.circuitReliaibility + "\n";
         return result;
