@@ -30,9 +30,11 @@ hs_err_pid*
 /build/*
 
 #Netbeans ignores
+/nbproject
 /nbproject/private/
 /nbproject/Makefile-*.mk
 /nbproject/Package-*.bash
+
 build/
 nbbuild/
 dist/
@@ -40,3 +42,5 @@ nbdist/
 .nb-gradle/
 c17.v
 cadence.genlib
+
+GSDE-Circuit-Development.iml
