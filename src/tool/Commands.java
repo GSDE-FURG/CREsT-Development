@@ -145,7 +145,8 @@ public class Commands {
         
         /* clayton new command*/
         helpTree.put("mc_fault_injection", "Output the Fault Mask Rate (FMR - Logical Masking circuits topology) using the Statistical Monte Carlo Simulation");
-        helpTree.put("mc_multiple_fault_injection", "Output the Fault Mask Rate (FMR - Logical Masking circuits topology) using the Statistical Monte Carlo Simulation For Multiple Fault Injection");
+        helpTree.put("mc_multiple_fault_injection",
+                "Output the FMR using the Statistical Monte Carlo Simulation For Multiple Fault Injection");
         
         helpTree.put("help", "Show this message!!!");
         //helpTree.put("get_sonf_reliability", "Print the reliability value based on SONF PTM method");
@@ -331,7 +332,102 @@ public class Commands {
            
         
     }
-    
+
+    public void Monte_Carlo_Multiple_Fault_injection(String genlib, String circuit, String Base, String order, String frequency) throws IOException, ScriptException, Exception {
+        //String path = CommonOps.getWorkPath(this) + "abc" + File.separator + filename;
+        System.out.println("Multiple Transient Fault Injection At Random Sites Chip Die Area");
+        System.out.println("Genlib: "+ genlib);
+        System.out.println("Circuit: "+ circuit);
+        System.out.println("Order: "+ order);
+
+        /* Chamar a minha ferramenta */
+
+        int threads = 4; //Numero de threads
+        int sampleSizeMonteCarlo = (int) (Math.pow(Integer.parseInt(Base), Integer.parseInt(order)) * Integer.parseInt(frequency));// Integer.parseInt(order);
+        String constReliability = "0.9999"; //Used for internal structures
+
+        System.out.println("Sample Size: " + sampleSizeMonteCarlo);
+        System.out.println("Base: " + Base + "  Order: " + order  + "  Frequency: " + frequency
+        );
+
+        //String[] arrOfStr = circuit.split("/", 2);
+
+
+        ///String relativePath = "/" + arrOfStr[0];
+        // String relativePath = "abc/" ;
+
+        // genlib = "abc/" + "cadence.genlib";
+
+
+        constReliability = "0.9999"; //Used for internal structures
+        // String relativePath = "abc/";
+        String relativePath = "";
+        try {
+            String[] textoSeparado = genlib.split("/");
+            String[] circ = circuit.split("/");
+
+            for (int i = 0; i < textoSeparado.length - 1; i++) {
+                relativePath = relativePath + textoSeparado[i] + "/";
+            }
+
+            this.relative_path = relativePath;
+            this.genlib = textoSeparado[textoSeparado.length-1];
+            this.circuit_analysis = circ[circ.length-1];
+
+        } catch (Exception e) {
+
+            System.out.println("Error... ");
+            this.relative_path = "";
+            this.circuit_analysis = circuit;
+            this.genlib = genlib;
+        }
+
+
+
+
+
+        //String genlib =  relativePath  + "lib_basic_no_cost.genlib";
+
+        //genlib =  relativePath  + "cadence.genlib";
+        File tmpDir = new File(circuit);
+        boolean exists = tmpDir.exists();
+
+        File genDir = new File(genlib);
+        boolean exists2 = genDir.exists();
+
+        if (exists && exists2){
+            System.out.println(" ------ In"
+                    + "side -------");
+            System.out.println("Relative Path: " + relativePath);
+            System.out.println("Genlib : " + genlib);
+            System.out.println("Genlib Texto Separado: " + this.relative_path);
+
+            main experimento = new main(threads, constReliability, relativePath, this.relative_path  + this.genlib);
+
+            experimento.preparingEnviromentSingleFile(this.circuit_analysis);
+
+
+            experimento.monteCarloSimulation(sampleSizeMonteCarlo, "ALL_SIGNALS");
+
+            System.out.println("Simulation results:\n"
+
+                    + experimento.getFMR());
+
+
+
+            Terminal.getInstance().terminalOutput("Simulation results with " + threads + " threads "
+                    + ": " + experimento.getFMR());
+        }
+
+        else{
+            System.out.println("File or genlib not exist : " + circuit + "   -  " + genlib);
+        }
+
+
+
+    }
+
+
     public void Exaustive_Fault_injection(String genlib, String circuit, String flag) throws IOException, ScriptException, Exception {
         //String path = CommonOps.getWorkPath(this) + "abc" + File.separator + filename;
         System.out.println("Exaustive Simulation ....");

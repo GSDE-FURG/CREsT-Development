@@ -46,7 +46,7 @@ public class main{
              int sampleSizeMonteCarlo = 2000;
                      
              String constReliability = "0.9999"; //Used for internal structures
-             String relativePath = "test/";
+             String relativePath = "teste/";
              
              //String genlib =  relativePath  + "lib_basic_no_cost.genlib";
             
@@ -63,6 +63,8 @@ public class main{
             //experimento.multithreadingSimulationExaustic();
            //experimento.multithreadingSimulation("ALL_SIGNALS");
             experimento.monteCarloSimulation(sampleSizeMonteCarlo, "ALL_SIGNALS");
+
+
              
             // String op = "full+xor";
              

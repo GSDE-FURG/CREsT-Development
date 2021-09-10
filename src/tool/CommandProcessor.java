@@ -401,48 +401,17 @@ class CommandProcessor {
                 break;
 
             /* Clayton */
-            case "mcmf":
-            //case "mc_multiple_fault_injection":
-                if(argument.isEmpty()) {
-                  //  Terminal.getInstance().terminalOutput("usage: mc_fault_injection <filename.genlib> <verilogfile.v> <monte_carlo_sample> or \"--help\"");
-                   Terminal.getInstance().terminalOutput("usage: mc_multiple_fault_injection <filename.genlib> <verilogfile.v> -mcmf <base> <order_size> <frequency> \"--help\"");
-                } else if(help) {
-                    
-                    Terminal.getInstance().terminalOutput(cmd.getHelpDesc(mainCommand));
-                    Terminal.getInstance().terminalOutput("usage: mc_multiple_fault_injection <filename.genlib> <verilogfile.v> -mcmf <base> <order_size> <frequency>");
-                } else {
-                    boolean success = false;
-                    try {
-                       //String x = splittedCommand.get(3);
-                        System.out.println("3 positon : " + splittedCommand.get(3) + "size : " + splittedCommand.size());
-                           if((splittedCommand.get(3).equals("-mcmf"))){
-                                cmd.Monte_Carlo_Fault_injection(splittedCommand.get(1), splittedCommand.get(2),splittedCommand.get(4)); // MC 20000
-                                success = true;
 
-                            }
-                        success = false;
-                    } catch (IOException | ScriptException e) {                        
-                        Terminal.getInstance().terminalOutput("## ERRO ##");
-                        Terminal.getInstance().terminalOutput(e.getMessage());
-                        Terminal.getInstance().terminalOutput("## ERRO ##");
-                    } finally {
-                        if(success) {
-                             Terminal.getInstance().terminalOutput("Genlib File \"" + splittedCommand.get(1) + "\" successfully processed!!");
-                             Terminal.getInstance().terminalOutput("verilog File \"" + splittedCommand.get(2) + "\" successfully processed!!");
-                        }
-                    }
-                }
-            break;
 
-            //case "mc":
-            case "mc_fault_injection":
+            case "mc":
+            //case "mc_fault_injection":
                 if(argument.isEmpty()) {
                     //  Terminal.getInstance().terminalOutput("usage: mc_fault_injection <filename.genlib> <verilogfile.v> <monte_carlo_sample> or \"--help\"");
-                    Terminal.getInstance().terminalOutput("usage: mc_fault_injection <filename.genlib> <verilogfile.v> -mc <monte_carlo_sample> or -exaustive \"--help\"");
+                    Terminal.getInstance().terminalOutput("usage: mc_fault_injection <filename.genlib> <verilogfile.v> -mc <monte_carlo_sample> or  -mcmf <base> <order_size> <frequency> or -exaustive \"--help\"");
                 } else if(help) {
 
                     Terminal.getInstance().terminalOutput(cmd.getHelpDesc(mainCommand));
-                    Terminal.getInstance().terminalOutput("usage: mc_fault_injection <filename.genlib> <verilogfile.v> <monte_carlo_sample> or mc_fault_injection <filename.genlib> <verilogfile.v> -exaustive \"--help\"");
+                    Terminal.getInstance().terminalOutput("usage: mc_fault_injection <filename.genlib> <verilogfile.v> <monte_carlo_sample> or mc_fault_injection <filename.genlib> <verilogfile.v> or  -mcmf <base> <order_size> <frequency> -exaustive \"--help\"");
                 } else {
                     boolean success = false;
                     try {
@@ -456,6 +425,11 @@ class CommandProcessor {
                         }else{
                             if((splittedCommand.get(3).equals("-mc"))){
                                 cmd.Monte_Carlo_Fault_injection(splittedCommand.get(1), splittedCommand.get(2),splittedCommand.get(4)); // MC 20000
+                                success = true;
+                            }
+                            if((splittedCommand.get(3).equals("-mcmf"))){
+                                System.out.println("->>>>>>>>> Inside Multiple Fault injection .....");
+                                cmd.Monte_Carlo_Multiple_Fault_injection(splittedCommand.get(1), splittedCommand.get(2),splittedCommand.get(4), splittedCommand.get(5), splittedCommand.get(6)); // MC 20000
                                 success = true;
                             }
                         }
