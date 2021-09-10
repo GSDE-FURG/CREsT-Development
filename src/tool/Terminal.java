@@ -152,7 +152,7 @@ class TerminalWrapper {
             Robot r = new Robot();
             
             
-            
+            //TEste
             //term.executeCommand("read_genlib /abc/cadence.genlib");
             
            
