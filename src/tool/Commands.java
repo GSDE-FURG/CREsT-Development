@@ -145,6 +145,7 @@ public class Commands {
         
         /* clayton new command*/
         helpTree.put("mc_fault_injection", "Output the Fault Mask Rate (FMR - Logical Masking circuits topology) using the Statistical Monte Carlo Simulation");
+        helpTree.put("mc_multiple_fault_injection", "Output the Fault Mask Rate (FMR - Logical Masking circuits topology) using the Statistical Monte Carlo Simulation For Multiple Fault Injection");
         
         helpTree.put("help", "Show this message!!!");
         //helpTree.put("get_sonf_reliability", "Print the reliability value based on SONF PTM method");
