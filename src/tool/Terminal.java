@@ -284,7 +284,8 @@ class TerminalWrapper {
 
 
 
-public class Terminal {
+public class
+Terminal {
     private final JFrame frm = new JFrame("GSDE - Circuit Benchmarker App");
     private final JTextArea txtArea = new JTextArea();
     //private final JEditorPane txtArea = new JEditorPane("text/html", "");
