@@ -65,58 +65,15 @@ class TerminalWrapper {
             * 
             * 
             */
-
-
-            Options options = new Options();
-
-            Option indataset = new Option("id", "indataset", true, "input dataset path");
-            indataset.setRequired(false);        
-            options.addOption(indataset);
-
-
-            Option output = new Option("o", "output", true, "output file name");
-            output.setRequired(false);
-            options.addOption(output);
-
-            Option inputvector = new Option("iv", "invector", true, "input vector (big)int format");
-            inputvector.setRequired(false);
-            options.addOption(inputvector);
-
-            Option range = new Option("rg", "range", true, "range for input vector (big)int format");
-            range.setRequired(false);
-            options.addOption(range);
-
-            Option help = new Option("h", "help", false, "show this message");
-            help.setRequired(false);
-            options.addOption(help);
-
-            Option mc = new Option("mc", "MC_SET", true, "show this message");
-            mc.setRequired(true);
-            options.addOption(mc);
-
-            Option mcfi = new Option("mc_fault_injection", "MC_SET", true, "show this message");
-            mcfi.setRequired(true);
-            options.addOption(mcfi);
-                
-
-            CommandLineParser parser = new DefaultParser();
-            HelpFormatter formatter = new HelpFormatter();
-            CommandLine cmd;
-
-            //System.out.println(options);
-
-
-            CommandLine dcmd = parser.parse(options, args);
-            System.out.println(parser.toString());
-
-            if(dcmd.hasOption("mc")) {
+             /* Clayton */
+            if(args.length > 3 && (args[3].equals("-mc") || args[3].equals("-exaustive"))) {
 
                 System.out.println("INSIDE IF....");
-                System.out.println("2: " + dcmd);
+                //System.out.println("2: " + dcmd);
 
-                String x = dcmd.getOptionValue("mc_fault_injection");
+                //String x = dcmd.getOptionValue("mc_fault_injection");
 
-                System.out.println("Args: " + x);
+                // System.out.println("Args: " + x);
 
                 String genlib = "";
                 String circuit = "";
@@ -153,73 +110,179 @@ class TerminalWrapper {
                 Robot r = new Robot();
                 //term.executeCommand();
                 if(flag.equals("-mc")){
-                    System.out.println("INSIDE -mc");
+                    System.out.println("INSIDE -mc: " + sample);
                     term.executeCommand("mc_fault_injection" + " " + genlib + " " + circuit + " " + flag + " " + sample);
 
                 }
                 else{
                     System.out.println("INSIDE -exaustive");
-                    term.executeCommand("mc_fault_injection" + " " + genlib + " " + circuit + " " + flag);
+                    term.executeCommand("mc_fault_injection" + " " + genlib + " " + circuit + " " + "-exaustive");
                 }
 
                 r.keyPress(KeyEvent.VK_ENTER);
                 r.keyRelease(KeyEvent.VK_ENTER);
 
-            }else {
-                try {
-                    cmd = parser.parse(options, args);
-                    System.out.println(parser);
-                    System.out.println(mc.getValue());
-                    if (cmd.hasOption("help")) {
-                        formatter.printHelp("VetoresCriticos", options);
-                        System.exit(1);
+
+            }
+
+            else {
+
+
+                Options options = new Options();
+
+                Option indataset = new Option("id", "indataset", true, "input dataset path");
+                indataset.setRequired(false);
+                options.addOption(indataset);
+
+
+                Option output = new Option("o", "output", true, "output file name");
+                output.setRequired(false);
+                options.addOption(output);
+
+                Option inputvector = new Option("iv", "invector", true, "input vector (big)int format");
+                inputvector.setRequired(false);
+                options.addOption(inputvector);
+
+                Option range = new Option("rg", "range", true, "range for input vector (big)int format");
+                range.setRequired(false);
+                options.addOption(range);
+
+                Option help = new Option("h", "help", false, "show this message");
+                help.setRequired(false);
+                options.addOption(help);
+
+                Option mc = new Option("mc", "MC_SET", true, "show this message");
+                mc.setRequired(true);
+                options.addOption(mc);
+
+                Option mcfi = new Option("mc_fault_injection", "MC_SET", true, "show this message");
+                mcfi.setRequired(true);
+                options.addOption(mcfi);
+
+
+                CommandLineParser parser = new DefaultParser();
+                HelpFormatter formatter = new HelpFormatter();
+                CommandLine cmd;
+
+                //System.out.println(options);
+
+
+                //CommandLine dcmd = parser.parse(options, args);
+                System.out.println(parser.toString());
+
+                //if(dcmd.hasOption("mc")) {
+                if (args[3].equals("-mc")) {
+
+                    System.out.println("INSIDE IF....");
+                    //System.out.println("2: " + dcmd);
+
+                    //String x = dcmd.getOptionValue("mc_fault_injection");
+
+                    // System.out.println("Args: " + x);
+
+                    String genlib = "";
+                    String circuit = "";
+
+                    String flag = "";
+                    String sample = "";
+
+                    int size = args.length;
+
+                    System.out.println("Size: " + size);
+
+                    switch (size) {
+                        case (5): //MC Fault Injection
+                            genlib = args[1];
+                            circuit = args[2];
+                            flag = args[3];
+                            sample = args[4];
+                            break;
+
+                        case (4): //Exaustive
+                            genlib = args[1];
+                            circuit = args[2];
+                            flag = args[3];
+                            break;
+                    }
+
+                    System.out.println("Flag : " + flag);
+
+
+                    Terminal term = Terminal.getInstance();
+                    term.open(0, 0, 820, 700);
+
+                    // FOR DEV
+                    Robot r = new Robot();
+                    //term.executeCommand();
+                    if (flag.equals("-mc")) {
+                        System.out.println("INSIDE -mc: " + sample);
+                        term.executeCommand("mc_fault_injection" + " " + genlib + " " + circuit + " " + flag + " " + sample);
+
                     } else {
-                        String inputDatasetPath = cmd.getOptionValue("indataset");
-                        String outputFilePath = cmd.getOptionValue("output");
-                        String inVector = cmd.getOptionValue("invector");
+                        System.out.println("INSIDE -exaustive");
+                        term.executeCommand("mc_fault_injection" + " " + genlib + " " + circuit + " " + "-exaustive");
+                    }
 
-                        ProbCircuit pCircuit = initLibraryAndCircuit();
+                    r.keyPress(KeyEvent.VK_ENTER);
+                    r.keyRelease(KeyEvent.VK_ENTER);
 
-                        ArrayList<String> vectorsAndReliabilities = new ArrayList<>();
 
-                        if (cmd.hasOption("indataset")) {
-                            vectorsAndReliabilities = getReliabilitiesFromDataset(pCircuit, inputDatasetPath);
+                } else {
+                    try {
+                        cmd = parser.parse(options, args);
+                        System.out.println(parser);
+                        System.out.println(mc.getValue());
+                        if (cmd.hasOption("help")) {
+                            formatter.printHelp("VetoresCriticos", options);
+                            System.exit(1);
                         } else {
-                            if (cmd.hasOption("range") && (cmd.hasOption("invector"))) {
-                                int rangeValue = Integer.parseInt(cmd.getOptionValue("range"));
-                                BigInteger v = new BigInteger(inVector);
-                                for (int i = 0; i < rangeValue; i++) {
-                                    vectorsAndReliabilities.add(getSPRReliabilityVector(pCircuit, v));
-                                    v = v.add(BigInteger.ONE);
-                                }
+                            String inputDatasetPath = cmd.getOptionValue("indataset");
+                            String outputFilePath = cmd.getOptionValue("output");
+                            String inVector = cmd.getOptionValue("invector");
+
+                            ProbCircuit pCircuit = initLibraryAndCircuit();
+
+                            ArrayList<String> vectorsAndReliabilities = new ArrayList<>();
+
+                            if (cmd.hasOption("indataset")) {
+                                vectorsAndReliabilities = getReliabilitiesFromDataset(pCircuit, inputDatasetPath);
                             } else {
-                                if (cmd.hasOption("invector")) {
-                                    vectorsAndReliabilities.add(getSPRReliabilityVector(pCircuit, new BigInteger(inVector)));
+                                if (cmd.hasOption("range") && (cmd.hasOption("invector"))) {
+                                    int rangeValue = Integer.parseInt(cmd.getOptionValue("range"));
+                                    BigInteger v = new BigInteger(inVector);
+                                    for (int i = 0; i < rangeValue; i++) {
+                                        vectorsAndReliabilities.add(getSPRReliabilityVector(pCircuit, v));
+                                        v = v.add(BigInteger.ONE);
+                                    }
+                                } else {
+                                    if (cmd.hasOption("invector")) {
+                                        vectorsAndReliabilities.add(getSPRReliabilityVector(pCircuit, new BigInteger(inVector)));
+                                    }
+                                }
+                            }
+
+
+                            if (!vectorsAndReliabilities.isEmpty()) {
+                                if (cmd.hasOption("output")) {
+                                    writeResult(outputFilePath, vectorsAndReliabilities);
+                                } else {
+                                    for (String vectorsAndReliability : vectorsAndReliabilities) {
+                                        System.out.println(vectorsAndReliability);
+                                    }
                                 }
                             }
                         }
 
 
-                        if (!vectorsAndReliabilities.isEmpty()) {
-                            if (cmd.hasOption("output")) {
-                                writeResult(outputFilePath, vectorsAndReliabilities);
-                            } else {
-                                for (String vectorsAndReliability : vectorsAndReliabilities) {
-                                    System.out.println(vectorsAndReliability);
-                                }
-                            }
-                        }
+                    } catch (ParseException e) {
+                        System.out.println(e.getMessage());
+                        formatter.printHelp("VetoresCriticos", options);
+
+                        System.exit(1);
                     }
 
 
-                } catch (ParseException e) {
-                    System.out.println(e.getMessage());
-                    formatter.printHelp("VetoresCriticos", options);
-
-                    System.exit(1);
                 }
-
-
             }
         } else {
             Terminal term = Terminal.getInstance();        
