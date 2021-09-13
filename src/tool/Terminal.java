@@ -93,6 +93,10 @@ class TerminalWrapper {
             Option mc = new Option("mc", "MC_SET", true, "show this message");
             mc.setRequired(true);
             options.addOption(mc);
+
+            Option mcfi = new Option("mc_fault_injection", "MC_SET", true, "show this message");
+            mcfi.setRequired(true);
+            options.addOption(mcfi);
                 
 
             CommandLineParser parser = new DefaultParser();
@@ -106,11 +110,61 @@ class TerminalWrapper {
             System.out.println(parser.toString());
 
             if(dcmd.hasOption("mc")) {
+
                 System.out.println("INSIDE IF....");
                 System.out.println("2: " + dcmd);
 
-                String x = dcmd.getOptionValue("mc");
-                System.out.println("X: " + x);
+                String x = dcmd.getOptionValue("mc_fault_injection");
+
+                System.out.println("Args: " + x);
+
+                String genlib = "";
+                String circuit = "";
+
+                String flag = "";
+                String sample = "";
+
+                int size = args.length;
+
+                System.out.println("Size: " + size);
+
+                switch (size){
+                    case (5): //MC Fault Injection
+                        genlib = args[1];
+                        circuit = args[2];
+                        flag = args[3];
+                        sample = args[4];
+                        break;
+
+                    case(4): //Exaustive
+                        genlib = args[1];
+                        circuit = args[2];
+                        flag = args[3];
+                        break;
+                }
+
+                System.out.println("Flag : " + flag);
+
+
+                Terminal term = Terminal.getInstance();
+                term.open(0, 0, 820, 700);
+
+                // FOR DEV
+                Robot r = new Robot();
+                //term.executeCommand();
+                if(flag.equals("-mc")){
+                    System.out.println("INSIDE -mc");
+                    term.executeCommand("mc_fault_injection" + " " + genlib + " " + circuit + " " + flag + " " + sample);
+
+                }
+                else{
+                    System.out.println("INSIDE -exaustive");
+                    term.executeCommand("mc_fault_injection" + " " + genlib + " " + circuit + " " + flag);
+                }
+
+                r.keyPress(KeyEvent.VK_ENTER);
+                r.keyRelease(KeyEvent.VK_ENTER);
+
             }else {
                 try {
                     cmd = parser.parse(options, args);

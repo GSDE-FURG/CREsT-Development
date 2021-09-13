@@ -404,13 +404,14 @@ class CommandProcessor {
             /* Clayton */
 
 
-            case "mc":
-            //case "mc_fault_injection":
+            //case "mc":
+
+            case "mc_fault_injection":
                 /* Testing block  */
 
                 System.out.println("Command: " + splittedCommand);
 
-
+                /*
                 splittedCommand.add(1, "teste/cadence.genlib");
                 splittedCommand.add(2, "teste/c.v");
                 splittedCommand.add(3, "-mcmf");
@@ -422,6 +423,7 @@ class CommandProcessor {
 
                 argument = "-";
 
+                *q/
 
 
                 /* */
