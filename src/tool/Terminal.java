@@ -89,62 +89,84 @@ class TerminalWrapper {
             Option help = new Option("h", "help", false, "show this message");
             help.setRequired(false);
             options.addOption(help);
+
+            Option mc = new Option("mc", "MC_SET", true, "show this message");
+            mc.setRequired(true);
+            options.addOption(mc);
                 
 
             CommandLineParser parser = new DefaultParser();
             HelpFormatter formatter = new HelpFormatter();
             CommandLine cmd;
 
-            try {
-                cmd = parser.parse(options, args);
-                 //System.out.println(options);
-                if(cmd.hasOption("help")) {
-                    formatter.printHelp("VetoresCriticos", options);
-                    System.exit(1);
-                } else {
-                    String inputDatasetPath = cmd.getOptionValue("indataset");
-                    String outputFilePath = cmd.getOptionValue("output");
-                    String inVector = cmd.getOptionValue("invector");                
+            //System.out.println(options);
 
-                    ProbCircuit pCircuit = initLibraryAndCircuit();
 
-                    ArrayList<String> vectorsAndReliabilities = new ArrayList<>();
+            CommandLine dcmd = parser.parse(options, args);
+            System.out.println(parser.toString());
 
-                    if(cmd.hasOption("indataset")) {
-                        vectorsAndReliabilities = getReliabilitiesFromDataset(pCircuit, inputDatasetPath);                                        
+            if(dcmd.hasOption("mc")) {
+                System.out.println("INSIDE IF....");
+                System.out.println("2: " + dcmd);
+
+                String x = dcmd.getOptionValue("mc");
+                System.out.println("X: " + x);
+            }else {
+                try {
+                    cmd = parser.parse(options, args);
+                    System.out.println(parser);
+                    System.out.println(mc.getValue());
+                    if (cmd.hasOption("help")) {
+                        formatter.printHelp("VetoresCriticos", options);
+                        System.exit(1);
                     } else {
-                        if(cmd.hasOption("range") && (cmd.hasOption("invector"))) {
-                            int rangeValue = Integer.parseInt(cmd.getOptionValue("range"));
-                            BigInteger v = new BigInteger(inVector);
-                            for (int i = 0; i < rangeValue; i++) {
-                                vectorsAndReliabilities.add(getSPRReliabilityVector(pCircuit, v));
-                                v = v.add(BigInteger.ONE);
-                            }
+                        String inputDatasetPath = cmd.getOptionValue("indataset");
+                        String outputFilePath = cmd.getOptionValue("output");
+                        String inVector = cmd.getOptionValue("invector");
+
+                        ProbCircuit pCircuit = initLibraryAndCircuit();
+
+                        ArrayList<String> vectorsAndReliabilities = new ArrayList<>();
+
+                        if (cmd.hasOption("indataset")) {
+                            vectorsAndReliabilities = getReliabilitiesFromDataset(pCircuit, inputDatasetPath);
                         } else {
-                            if (cmd.hasOption("invector")) {                      
-                                vectorsAndReliabilities.add(getSPRReliabilityVector(pCircuit, new BigInteger(inVector)));
+                            if (cmd.hasOption("range") && (cmd.hasOption("invector"))) {
+                                int rangeValue = Integer.parseInt(cmd.getOptionValue("range"));
+                                BigInteger v = new BigInteger(inVector);
+                                for (int i = 0; i < rangeValue; i++) {
+                                    vectorsAndReliabilities.add(getSPRReliabilityVector(pCircuit, v));
+                                    v = v.add(BigInteger.ONE);
+                                }
+                            } else {
+                                if (cmd.hasOption("invector")) {
+                                    vectorsAndReliabilities.add(getSPRReliabilityVector(pCircuit, new BigInteger(inVector)));
+                                }
                             }
-                        }                     
+                        }
+
+
+                        if (!vectorsAndReliabilities.isEmpty()) {
+                            if (cmd.hasOption("output")) {
+                                writeResult(outputFilePath, vectorsAndReliabilities);
+                            } else {
+                                for (String vectorsAndReliability : vectorsAndReliabilities) {
+                                    System.out.println(vectorsAndReliability);
+                                }
+                            }
+                        }
                     }
 
-                    if(!vectorsAndReliabilities.isEmpty()) {
-                        if(cmd.hasOption("output")) {
-                            writeResult(outputFilePath, vectorsAndReliabilities);
-                        } else {
-                            for (String vectorsAndReliability : vectorsAndReliabilities) {
-                                System.out.println(vectorsAndReliability);
-                            }
-                        }                    
-                    }                 
-                    }            
-            } catch (ParseException e) {
-                System.out.println(e.getMessage());
-                formatter.printHelp("VetoresCriticos", options);
 
-                System.exit(1);
-            }    
-            
-            
+                } catch (ParseException e) {
+                    System.out.println(e.getMessage());
+                    formatter.printHelp("VetoresCriticos", options);
+
+                    System.exit(1);
+                }
+
+
+            }
         } else {
             Terminal term = Terminal.getInstance();        
             term.open(0, 0, 820, 700);
@@ -152,8 +174,8 @@ class TerminalWrapper {
             // FOR DEV
             
             Robot r = new Robot();
-            
-            
+
+            System.out.println("..................");
             //TEste
             //term.executeCommand("read_genlib /abc/cadence.genlib");
             
@@ -182,7 +204,7 @@ class TerminalWrapper {
             //System.out.println(term.getCircuit());
             // ##########
             
-             term.executeCommand("clear");
+            // term.executeCommand("clear");
             r.keyPress(KeyEvent.VK_ENTER);
             r.keyRelease(KeyEvent.VK_ENTER);
             
