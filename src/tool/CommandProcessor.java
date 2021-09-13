@@ -423,6 +423,7 @@ class CommandProcessor {
                 argument = "-";
 
 
+
                 /* */
 
                 if(argument.isEmpty()) {

@@ -65,14 +65,15 @@ class TerminalWrapper {
             * 
             * 
             */
-            
+
+
             Options options = new Options();
 
             Option indataset = new Option("id", "indataset", true, "input dataset path");
             indataset.setRequired(false);        
             options.addOption(indataset);
 
-            
+
             Option output = new Option("o", "output", true, "output file name");
             output.setRequired(false);
             options.addOption(output);

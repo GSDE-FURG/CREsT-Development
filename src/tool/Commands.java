@@ -333,7 +333,7 @@ public class Commands {
         
     }
 
-    public void Monte_Carlo_Multiple_Fault_injection(String genlib, String circuit, String Base, String order, String frequency) throws IOException, ScriptException, Exception {
+    public void Monte_Carlo_Multiple_Fault_injection(String genlib, String circuit, String base, String order, String frequency) throws IOException, ScriptException, Exception {
         //String path = CommonOps.getWorkPath(this) + "abc" + File.separator + filename;
         System.out.println("Multiple Transient Fault Injection At Random Sites Chip Die Area");
         System.out.println("Genlib: "+ genlib);
@@ -343,12 +343,11 @@ public class Commands {
         /* Chamar a minha ferramenta */
 
         int threads = 4; //Numero de threads
-        int sampleSizeMonteCarlo = (int) (Math.pow(Integer.parseInt(Base), Integer.parseInt(order)) * Integer.parseInt(frequency));// Integer.parseInt(order);
+        int sampleSizeMonteCarlo = (int) (Math.pow(Integer.parseInt(base), Integer.parseInt(order)) * Integer.parseInt(frequency));// Integer.parseInt(order);
         String constReliability = "0.9999"; //Used for internal structures
 
         System.out.println("Sample Size: " + sampleSizeMonteCarlo);
-        System.out.println("Base: " + Base + "  Order: " + order  + "  Frequency: " + frequency
-        );
+        System.out.println("base: " + base + "  Order: " + order  + "  Frequency: " + frequency);
 
         //String[] arrOfStr = circuit.split("/", 2);
 
@@ -407,11 +406,9 @@ public class Commands {
             experimento.preparingEnviromentSingleFile(this.circuit_analysis);
 
 
-            experimento.monteCarloSimulation(sampleSizeMonteCarlo, "ALL_SIGNALS");
+            experimento.multipleFaultmonteCarloSimulation(Integer.parseInt(base), Integer.parseInt(order), Integer.parseInt(frequency), sampleSizeMonteCarlo, "ALL_SIGNALS");
 
-            System.out.println("Simulation results:\n"
-
-                    + experimento.getFMR());
+            System.out.println("Simulation results:\n" + experimento.getFMR());
 
 
 

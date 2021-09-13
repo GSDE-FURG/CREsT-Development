@@ -177,10 +177,29 @@ public class main{
                 }
                 //System.out.println("STR: " + str);
         }
+
+        public void multipleFaultmonteCarloSimulation(int base, int order, int frequency, int sampleSize, String Signals) throws Exception{
+
+                System.out.println("Multiple Fault Injection : " + sampleSize);
+                System.out.println("Path: " +this.relativePath);
+                System.out.println("Genlib: " +this.genlib);
+                System.out.println("Circuit: " +this.circuitList);
+
+
+                String str = "";
+                for (int i = 0; i < this.circuitList.size(); i++) {
+                    Operations simulacaoMultithreading = new Operations(this.threads, this.reliabilityConst, this.relativePath, this.genlib, this.relativePath + this.circuitList.get(i));
+                    //simulacaoMultithreading.PrintCircuitSpecs();
+                    //str = str + simulacaoMultithreading.PrintCircuitSpecs() + "\n";
+                    simulacaoMultithreading.runMultipleFaultInjectionMultithreadingMonteCarlo(base, order, frequency,sampleSize, Signals); //ou Signals =  "ALL_SIGNALS" ou "INTERMEDIATE" ou "INTERMEDIATE_AND_OUTPUTS" ou "INPUTS" ou "INPUTS_OUTPUTS"
+                    this.OUTPUT_INFO = simulacaoMultithreading.getFRM(" Sample(Monte Carlo = N)");
+                }
+                //System.out.println("STR: " + str);
+    }
         
         
         
-         public void PrintCircuitsSpecs(int sampleSize, String Signals) throws Exception{
+        public void PrintCircuitsSpecs(int sampleSize, String Signals) throws Exception{
                 //Loop na simulação de circuitos 
                 String str = "";
                 for (int i = 0; i < this.circuitList.size(); i++) {
@@ -227,7 +246,7 @@ public class main{
                
         }
         
-          public void preparingEnviromentSingleFile(String circuit){
+        public void preparingEnviromentSingleFile(String circuit){
                 
                 this.circuitList.add(circuit);
                 System.out.println("Circuits in analysis: " +  this.circuitList);
