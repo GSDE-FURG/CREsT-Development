@@ -72,6 +72,7 @@ class TerminalWrapper {
             indataset.setRequired(false);        
             options.addOption(indataset);
 
+            
             Option output = new Option("o", "output", true, "output file name");
             output.setRequired(false);
             options.addOption(output);

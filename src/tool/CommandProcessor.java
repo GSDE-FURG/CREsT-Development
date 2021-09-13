@@ -397,6 +397,7 @@ class CommandProcessor {
                 cmd.PrintPath();
                 break;
             case "foo":
+
                 cmd.Foo();
                 break;
 
@@ -405,6 +406,25 @@ class CommandProcessor {
 
             case "mc":
             //case "mc_fault_injection":
+                /* Testing block  */
+
+                System.out.println("Command: " + splittedCommand);
+
+
+                splittedCommand.add(1, "teste/cadence.genlib");
+                splittedCommand.add(2, "teste/c.v");
+                splittedCommand.add(3, "-mcmf");
+                splittedCommand.add(4, "10");
+                splittedCommand.add(5, "2");
+                splittedCommand.add(6, "1");
+
+                System.out.println("Command: " + splittedCommand);
+
+                argument = "-";
+
+
+                /* */
+
                 if(argument.isEmpty()) {
                     //  Terminal.getInstance().terminalOutput("usage: mc_fault_injection <filename.genlib> <verilogfile.v> <monte_carlo_sample> or \"--help\"");
                     Terminal.getInstance().terminalOutput("usage: mc_fault_injection <filename.genlib> <verilogfile.v> -mc <monte_carlo_sample> or  -mcmf <base> <order_size> <frequency> or -exaustive \"--help\"");
@@ -416,7 +436,7 @@ class CommandProcessor {
                     boolean success = false;
                     try {
                         //String x = splittedCommand.get(3);
-                        System.out.println("3 posiiton : " +
+                        System.out.println("3 position : " +
                                 splittedCommand.get(3) + "size : " + splittedCommand.size());
                         if((splittedCommand.size() <= 4) && (splittedCommand.get(3).equals("-exaustive"))){
                             System.out.println("Inside Exaustive");
