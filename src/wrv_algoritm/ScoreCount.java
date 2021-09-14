@@ -58,10 +58,10 @@ public class ScoreCount implements RunScore {
         for (int i = 0; i < vector.length(); i++) {
             ProbSignal probSignal = inputs.get(i);
             if (vector.charAt(i) == CHAR_ONE) {
-                probSignal.setLogicValue(true);
+                probSignal.setLogicValue2(true);
                 probSignal.setFol(true);
             } else {
-                probSignal.setLogicValue(false);
+                probSignal.setLogicValue2(false);
                 probSignal.setFol(false);
             }
         }
@@ -73,10 +73,10 @@ public class ScoreCount implements RunScore {
                 ProbGate pGate = pGateLevel.getProbGates().get(j);
                 ArrayList<Boolean> comb = new ArrayList<>();
                 for (ProbSignal probSignal : pGate.getpInputs()) {
-                    comb.add(probSignal.getLogicValue());
+                    comb.add(probSignal.getLogicValue2());
                 }
                 for (ProbSignal probSignal : pGate.getpOutputs()) {                    
-                    probSignal.setLogicValue(pGate.getType().getCombination(comb));
+                    probSignal.setLogicValue2(pGate.getType().getCombination(comb));
                     probSignal.setFol(pGate.getType().getCombination(comb));
                 }
             }
@@ -129,7 +129,7 @@ public class ScoreCount implements RunScore {
 //                    }
 //                }
 //                for (ProbSignal po : circuit.getProbOutputs()) {
-//                    if (po.getFol() == po.getLogicValue()) {
+//                    if (po.getFol() == po.getLogicValue2()) {
 //                        criticalSignal = false;
 //                    } else {
 //                        criticalSignal = true;
@@ -158,7 +158,7 @@ public class ScoreCount implements RunScore {
             //verifica se signal é crítico
             //analisando os outros sinais de entrada da porta lógica
             for (ProbSignal s : copySignals) {                
-                if (type.toUpperCase().contains("AND") && !s.getLogicValue() || type.toUpperCase().contains("OR") && s.getLogicValue()) {
+                if (type.toUpperCase().contains("AND") && !s.getLogicValue2() || type.toUpperCase().contains("OR") && s.getLogicValue2()) {
                     criticalSignal = false;
                     break;
                 }

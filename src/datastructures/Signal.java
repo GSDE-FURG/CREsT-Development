@@ -19,7 +19,13 @@ public class Signal {
     private int logicValue;
     private boolean logicValueBoolean;
     private int originalSignalValue;
-    
+
+    /*Marcio*/
+    //valor lógico incorreto
+    private boolean fol;
+    //valor lógico esperado
+    private boolean logicValue2;
+
     /*clayton*/
     private boolean signalVisited;
     private ArrayList <Object> signalOutputPath = new ArrayList<>();
@@ -185,5 +191,22 @@ public class Signal {
     
     public String toString() {
         return this.id;
+    }
+
+    /*Marcio*/
+    public boolean getLogicValue2() {
+        return logicValue2;
+    }
+
+    public void setLogicValue2(boolean logicValue2) {
+        this.logicValue2 = logicValue2;
+    }
+
+    public boolean getFol() {
+        return fol;
+    }
+
+    public void setFol(boolean fol) {
+        this.fol = fol;
     }
 }
