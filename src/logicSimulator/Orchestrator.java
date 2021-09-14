@@ -613,7 +613,7 @@ import writers.WriteCsvTh;
 
     }
 
-    public List particionateMultipletransientFaultInjectionVectorPerThread(ArrayList <ArrayList<Integer>> ListInputVectors, int period, int frequency) throws ScriptException, Exception{
+    public List particionateMultipletransientFaultInjectionVectorPerThread(ArrayList <ArrayList<Integer>> ListInputVectors,int period, int order, int frequency) throws ScriptException, Exception{
 
         System.out.println("\n\n         +++++++    Dev mode  ++++++");
         System.out.println("Period = " +period);
@@ -676,6 +676,14 @@ import writers.WriteCsvTh;
                     int SigIndex = this.sortRandomFaultInjection(); //int SigIndex = decide_Random_Signals_Contrains(Signals_CTE_ONE_ZERO);
 
                     TestVectorInformation temp = new TestVectorInformation(inputVector, this.signals_to_inject_faults.get(SigIndex), j + 1);
+
+
+                    for (int k = 1 ; k < order; k ++){
+                        System.out.println(" xxxxxx Injection MTF number : " + k);
+                        temp.setMultipleTransientFaultInjection( this.signals_to_inject_faults.get(this.sortRandomFaultInjection()));
+                            System.out.println(" - faultSig list random choose : " + temp.get_MTF_FaultSignal_List() );
+                    }
+
                     ItemxSimulationList.add(temp);
 
                 }
@@ -1361,7 +1369,7 @@ import writers.WriteCsvTh;
 
         ArrayList <ArrayList<Integer>> ListInputVectors =  this.splitInputPatternsInInt(random_input_vectors, this.probCircuit.getInputs().size());
 
-        List thread_list = this.particionateMultipletransientFaultInjectionVectorPerThread(ListInputVectors, period, frequency); // x - vectors per thread
+        List thread_list = this.particionateMultipletransientFaultInjectionVectorPerThread(ListInputVectors, period, order, frequency); // x - vectors per thread
 
         long propagateTimeStart = System.nanoTime();
 

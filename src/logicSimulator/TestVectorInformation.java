@@ -60,11 +60,16 @@ public class TestVectorInformation {
             
         }
 
-     public void setMultipleFaultInjection(Signal faultSignal){
+     public ArrayList <Signal> get_MTF_FaultSignal_List (){
+        return this.MTF_FaultSignal_List;
+     }
+
+     public void setMultipleTransientFaultInjection(Signal faultSignal){
 
         if(this.MTF == false)
         {
                 this.MTF = true;
+                this.MTF_FaultSignal_List.add(this.faultSignals);
                 this.MTF_FaultSignal_List.add(faultSignal);
         }
         else
@@ -74,7 +79,6 @@ public class TestVectorInformation {
 
      }
 
-    
      public void setThreadID(long id){
          this.threadID = id;
      }
