@@ -310,6 +310,7 @@ class TerminalWrapper {
      * 
      */
     
+    
     private static String getSPRReliabilityVector(ProbCircuit pCircuit, BigInteger vector) {        
         InputVector inputV = new InputVector(vector);
         String result = "" + vector + ";" + SPROpsChuloMedio.getSPRReliability(pCircuit, inputV, 30);
