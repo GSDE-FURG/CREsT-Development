@@ -28,7 +28,7 @@ import readers.MappedVerilogReader;
 import signalProbability.ProbCircuit;
 
 /**
- * teste
+ * teste2
  * @author clayt
  */
 
