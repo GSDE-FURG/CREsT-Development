@@ -8,10 +8,8 @@ package tool;
 import datastructures.Cell;
 import datastructures.CellLibrary;
 import datastructures.Circuit;
-import datastructures.CustomMatrix;
 import datastructures.CustomMatrixLibrary;
 import datastructures.Gate;
-import datastructures.InputVector;
 import datastructures.Signal;
 import java.io.BufferedReader;
 
@@ -33,20 +31,15 @@ import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.BitSet;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -57,18 +50,11 @@ import ops.CommonOps;
 import static ops.CommonOps.getKronecker;
 import static ops.CommonOps.getMultipliedMatrix;
 import static ops.CommonOps.matrixPrint;
-import static ops.CommonOps.getCombVectors;
-import static ops.CommonOps.inherentReliability;
 import static ops.CommonOps.getITM;
-import static ops.OperartionCounters.getTotalOperationsSerialPTM;
 import static ops.CommonOps.sortByValue;
 
 
-import static ops.SPROps.getSPRReliability;
-
 import ops.PTMOps;
-
-import ops.SerialPTMOps;
 
 import javax.script.ScriptException;
 import levelDatastructures.DepthGate;
@@ -83,35 +69,25 @@ import ops.SPROps;
 import ops.SPROpsChuloMedio;
 import ops.SPROpsFloat;
 import ops.SerialPTMOpsFloat;
-import ops.OperartionCounters;
 import ops.SPRMultiPassV2BigDecimalOps;
 import ops.SPRMultiPassV2Ops;
 import ops.SerialPTMOpsFloatOptized;
 
 import readers.ReadTxt;
-import schivittz.Grafo;
-import schivittz.Interface;
-import static schivittz.Interface.mostraPTM;
-import schivittz.LeArquivo;
 import signalProbability.ProbCircuit;
 import signalProbability.ProbGate;
-import signalProbability.ProbGateLevel;
-import signalProbability.ProbInterLevel;
 import signalProbability.ProbSignal;
 
 
 import writers.GenlibWriter;
 import writers.VerilogWriter;
 import writers.WriteFile;
-import static ops.CommonOps.getFailureRate;
+
 import static ops.CommonOps.getMTBF;
-import static ops.CommonOps.getFIT;
-import static ops.CommonOps.inherentReliabilityFloat;
+
 import ops.FanoutOps;
 import ops.SPRMultiPassV3Ops;
 import readers.CustomMatrixReader;
-import readers.MappedVerilogReader;
-import tool.Portas;
 
 /**
  *
@@ -333,9 +309,9 @@ public class Commands {
         
     }
 
-    public void Monte_Carlo_Multiple_Fault_injection(String genlib, String circuit, String base, String order, String frequency) throws IOException, ScriptException, Exception {
+    public void Monte_Carlo_Multiple_Transient_Fault_Injection(String genlib, String circuit, String base, String order, String frequency) throws IOException, ScriptException, Exception {
         //String path = CommonOps.getWorkPath(this) + "abc" + File.separator + filename;
-        System.out.println("Multiple Transient Fault Injection At Random Sites Chip Die Area");
+        System.out.println("Multiple Transient Fault Injection random at Chip Die Areas");
         System.out.println("Genlib: "+ genlib);
         System.out.println("Circuit: "+ circuit);
         System.out.println("Order: "+ order);
@@ -406,7 +382,7 @@ public class Commands {
             experimento.preparingEnviromentSingleFile(this.circuit_analysis);
 
 
-            experimento.multipleFaultmonteCarloSimulation(Integer.parseInt(base), Integer.parseInt(order), Integer.parseInt(frequency), sampleSizeMonteCarlo, "ALL_SIGNALS");
+            experimento.monteCarloSimulationMultipleTransientFaults(Integer.parseInt(base), Integer.parseInt(order), Integer.parseInt(frequency), sampleSizeMonteCarlo, "ALL_SIGNALS");
 
             System.out.println("Simulation results:\n" + experimento.getFMR());
 

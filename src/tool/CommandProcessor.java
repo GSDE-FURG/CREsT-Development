@@ -9,11 +9,8 @@ package tool;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Timer;
 import java.util.TimerTask;
 import javax.script.ScriptException;
-
-import java.util.concurrent.TimeUnit;
 
 /**
  *
@@ -455,7 +452,7 @@ class CommandProcessor {
                             }
                             if((splittedCommand.get(3).equals("-mcmtf"))){
                                 System.out.println("Dev Mode  ->>>>>>>>> Inside Multiple Fault injection .....");
-                                cmd.Monte_Carlo_Multiple_Fault_injection(splittedCommand.get(1), splittedCommand.get(2),splittedCommand.get(4), splittedCommand.get(5), splittedCommand.get(6)); // MC 20000
+                                cmd.Monte_Carlo_Multiple_Transient_Fault_Injection(splittedCommand.get(1), splittedCommand.get(2),splittedCommand.get(4), splittedCommand.get(5), splittedCommand.get(6)); // MC 20000
                                 success = true;
                             }
                         }

@@ -5,8 +5,6 @@
  */
 package logicSimulator;
 
-import datastructures.Cell;
-import logicSimulator.main;
 import datastructures.CellLibrary;
 import datastructures.Circuit;
 import datastructures.Gate;
@@ -17,7 +15,6 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
@@ -35,7 +32,7 @@ import writers.WriteCsvTh;
 
 
 
- public class Operations  extends main{
+ public class Orchestrator extends main{
     
     private ArrayList <LogicSimulator> itemx_list = new ArrayList<>();
     private int sampleSize;
@@ -60,7 +57,7 @@ import writers.WriteCsvTh;
     private final ArrayList <ArrayList<String>> SignalFault = new ArrayList<>();
     private final ArrayList <ArrayList<String>> SignalFaultBitFlip = new ArrayList<>();
 
-    public Operations(int threads, String reliabilityConst, String relativePath, String genlib, String circuitName) {
+    public Orchestrator(int threads, String reliabilityConst, String relativePath, String genlib, String circuitName) {
             super(threads, reliabilityConst, relativePath, genlib);
 
              this.cellLibrary = new CellLibrary();
@@ -616,9 +613,13 @@ import writers.WriteCsvTh;
 
     }
 
-    public List particionateMultipleFaultInjectionVectorPerThread(ArrayList <ArrayList<Integer>> ListInputVectors) throws ScriptException, Exception{
+    public List particionateMultipletransientFaultInjectionVectorPerThread(ArrayList <ArrayList<Integer>> ListInputVectors, int period, int frequency) throws ScriptException, Exception{
+
+        System.out.println("\n\n         +++++++    Dev mode  ++++++");
+        System.out.println("Period = " +period);
 
         List thread_list = new ArrayList();
+        int count_frequency = 0;
 
         int N = this.sampleSize;
 
@@ -647,7 +648,6 @@ import writers.WriteCsvTh;
             ArrayList <Integer> inputVector = new ArrayList<>();
             //System.out.println("Start: " + start + " End: " + end);
             if((this.threads-1) == (i)){
-
                 start = end;
                 end = N;
             }
@@ -666,11 +666,25 @@ import writers.WriteCsvTh;
             System.out.println(" - starting thread: "+i  + " - simulate fault injection (number): " + partition);
             for (int j = start; j < end ; j++) {
 
-                inputVector = this.get_Input_Vectors(ListInputVectors, j); //input Test n
-                int SigIndex = this.sortRandomFaultInjection(); //int SigIndex = decide_Random_Signals_Contrains(Signals_CTE_ONE_ZERO);
+                if(count_frequency == period){
+                    System.out.println("  \n   --------> MTF Injection : " + period);
+                    // Inject multiple fault order
+                    count_frequency = 0;
+                    inputVector = this.get_Input_Vectors(ListInputVectors, j); //input Test n
+                    int SigIndex = this.sortRandomFaultInjection(); //int SigIndex = decide_Random_Signals_Contrains(Signals_CTE_ONE_ZERO);
 
-                TestVectorInformation temp = new TestVectorInformation(inputVector, this.signals_to_inject_faults.get(SigIndex), j+1);
-                ItemxSimulationList.add(temp);
+                    TestVectorInformation temp = new TestVectorInformation(inputVector, this.signals_to_inject_faults.get(SigIndex), j + 1);
+                    ItemxSimulationList.add(temp);
+
+                }
+                else {
+                    count_frequency++;
+                    inputVector = this.get_Input_Vectors(ListInputVectors, j); //input Test n
+                    int SigIndex = this.sortRandomFaultInjection(); //int SigIndex = decide_Random_Signals_Contrains(Signals_CTE_ONE_ZERO);
+
+                    TestVectorInformation temp = new TestVectorInformation(inputVector, this.signals_to_inject_faults.get(SigIndex), j + 1);
+                    ItemxSimulationList.add(temp);
+                }
             }
 
             LogicSimulator threadItem = new LogicSimulator(ItemxSimulationList, this.circuit, this.cellLibrary, this.levelCircuit, start, end, this.genlib , this.circuitNameStr); // Thread contex info
@@ -1284,7 +1298,7 @@ import writers.WriteCsvTh;
 
     public void runMultipleFaultInjectionMultithreadingMonteCarlo(int base, int order, int frequency, int sampleSize, String option) throws IOException, Exception{
 
-        System.out.println(" ----- Multiple Fault Injection Monte Carlo version -------");
+        System.out.println(" ----- Monte Carlo version  for Multiple Transient Fault Injection -------");
         long loadTimeStart = System.nanoTime();//System.currentTimeMillis();
 
         LocalDateTime myDateObj = LocalDateTime.now();
@@ -1315,10 +1329,6 @@ import writers.WriteCsvTh;
         //System.out.println("Patterns : " + this.verilog_circuit.getGatePattern());
 
 
-
-        /* Print circuit Specs*/
-
-
         /*Circuit Probabilities */
         this.initLevelCircuit();
 
@@ -1340,7 +1350,7 @@ import writers.WriteCsvTh;
 
         this.sampleSize = sampleSize; //(int) Math.pow(2, this.probCircuit.getInputs().size());  //(int) Math.pow(2, this.probCircuit.getInputs().size());
         int N = this.sampleSize; // random_input_vectors.size();//testNumber;
-
+        int period =  (int) Math.pow(base, order);
         System.out.println("-  (input) Sample size = " + this.sampleSize);
 
         this.signals_to_inject_faults = this.signalsToInjectFault(option); // Consider all signals to fault inject
@@ -1349,7 +1359,7 @@ import writers.WriteCsvTh;
 
         ArrayList <ArrayList<Integer>> ListInputVectors =  this.splitInputPatternsInInt(random_input_vectors, this.probCircuit.getInputs().size());
 
-        List thread_list = this.particionateMultipleFaultInjectionVectorPerThread(ListInputVectors); // x - vectors per thread
+        List thread_list = this.particionateMultipletransientFaultInjectionVectorPerThread(ListInputVectors, period, frequency); // x - vectors per thread
 
         long propagateTimeStart = System.nanoTime();
 
