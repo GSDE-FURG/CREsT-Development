@@ -10,7 +10,7 @@ import java.util.ArrayList;
 
 /**
  *
- * @author clayt
+ * @author clayton
  */
 public class TestVectorInformation {
     
@@ -52,6 +52,7 @@ public class TestVectorInformation {
             
             
         }
+
     
      public void setThreadID(long id){
          this.threadID = id;
