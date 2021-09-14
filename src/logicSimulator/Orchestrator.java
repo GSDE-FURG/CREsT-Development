@@ -667,9 +667,11 @@ import writers.WriteCsvTh;
             for (int j = start; j < end ; j++) {
 
                 if(count_frequency == period){
+
                     System.out.println("  \n   --------> MTF Injection : " + period);
                     // Inject multiple fault order
                     count_frequency = 0;
+
                     inputVector = this.get_Input_Vectors(ListInputVectors, j); //input Test n
                     int SigIndex = this.sortRandomFaultInjection(); //int SigIndex = decide_Random_Signals_Contrains(Signals_CTE_ONE_ZERO);
 

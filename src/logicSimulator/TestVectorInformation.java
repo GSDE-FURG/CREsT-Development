@@ -23,6 +23,9 @@ public class TestVectorInformation {
     private int faultSignalValue;
     private int index;
     private long threadID;
+
+    private boolean MTF;
+    private ArrayList<Signal> MTF_FaultSignal_List;
     
     public TestVectorInformation(ArrayList <Integer> inputVector, Signal faultSignal, int input_pos) {
             this.faultSignals = faultSignal;
@@ -31,6 +34,10 @@ public class TestVectorInformation {
             this.index = input_pos;
             this.threadID = 0;
             this.allfaultSignals = new ArrayList<>();
+
+            /* new */
+            this.MTF = false;
+            this.MTF_FaultSignal_List = new ArrayList<>();
             
     }
     
@@ -52,6 +59,20 @@ public class TestVectorInformation {
             
             
         }
+
+     public void setMultipleFaultInjection(Signal faultSignal){
+
+        if(this.MTF == false)
+        {
+                this.MTF = true;
+                this.MTF_FaultSignal_List.add(faultSignal);
+        }
+        else
+        {
+                this.MTF_FaultSignal_List.add(faultSignal);
+        }
+
+     }
 
     
      public void setThreadID(long id){
