@@ -66,9 +66,11 @@ class TerminalWrapper {
             * 
             */
              /* Clayton */
-            if(args.length > 3 && (args[3].equals("-mc") || args[3].equals("-exaustive"))) {
+            if(args.length > 3 && (args[3].equals("-mc") || args[3].equals("-exaustive") ||  args[3].equals("-mcmtf")))
 
-                System.out.println("INSIDE IF....");
+            {
+
+                //System.out.println("INSIDE IF....");
                 //System.out.println("2: " + dcmd);
 
                 //String x = dcmd.getOptionValue("mc_fault_injection");
@@ -77,15 +79,28 @@ class TerminalWrapper {
 
                 String genlib = "";
                 String circuit = "";
-
                 String flag = "";
                 String sample = "";
 
+                String order = "", base = "", frequency = "";
+
                 int size = args.length;
 
-                System.out.println("Size: " + size);
+                //System.out.println("Size: " + size);
 
                 switch (size){
+
+                    case (7): //MC Fault Injection
+                        genlib = args[1];
+                        circuit = args[2];
+                        flag = args[3];
+                        //sample = args[4];
+                        base  = args[4];
+                        order = args[5];
+                        frequency = args[6];
+
+                        break;
+
                     case (5): //MC Fault Injection
                         genlib = args[1];
                         circuit = args[2];
@@ -121,7 +136,7 @@ class TerminalWrapper {
 
                     case ("-mcmtf"):
                         System.out.println("- Multiple Event Transient (SET) -mcmtf: " + sample);
-                        term.executeCommand("mc_fault_injection" + " " + genlib + " " + circuit + " " + flag + " " + sample);
+                        term.executeCommand("mc_fault_injection" + " " + genlib + " " + circuit + " " + flag + " " + base + " " + order + " " + frequency);
                         break;
 
                     case ("-exaustive"):
@@ -131,22 +146,6 @@ class TerminalWrapper {
 
 
                 }
-
-
-
-
-                /*
-                if(flag.equals("-mc")){
-                    System.out.println("INSIDE -mc: " + sample);
-                    term.executeCommand("mc_fault_injection" + " " + genlib + " " + circuit + " " + flag + " " + sample);
-
-                }
-                else{
-                    System.out.println("INSIDE -exaustive");
-                    term.executeCommand("mc_fault_injection" + " " + genlib + " " + circuit + " " + "-exaustive");
-                }
-                */
-
 
                 r.keyPress(KeyEvent.VK_ENTER);
                 r.keyRelease(KeyEvent.VK_ENTER);

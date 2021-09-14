@@ -428,6 +428,8 @@ class CommandProcessor {
 
                 /* */
 
+                System.out.println("- CommandProcessor : " + splittedCommand);
+
                 if(argument.isEmpty()) {
                     //  Terminal.getInstance().terminalOutput("usage: mc_fault_injection <filename.genlib> <verilogfile.v> <monte_carlo_sample> or \"--help\"");
                     Terminal.getInstance().terminalOutput("usage: mc_fault_injection <filename.genlib> <verilogfile.v> -mc <monte_carlo_sample> or  -mcmf <base> <order_size> <frequency> or -exaustive \"--help\"");
@@ -439,10 +441,11 @@ class CommandProcessor {
                     boolean success = false;
                     try {
                         //String x = splittedCommand.get(3);
-                        System.out.println("3 position : " +
-                                splittedCommand.get(3) + "size : " + splittedCommand.size());
+                        //System.out.println("3 position : " +
+                        //       splittedCommand.get(3) + "size : " + splittedCommand.size());
+
                         if((splittedCommand.size() <= 4) && (splittedCommand.get(3).equals("-exaustive"))){
-                            System.out.println("Inside Exaustive");
+                            //System.out.println("Inside Exaustive");
                             cmd.Exaustive_Fault_injection(splittedCommand.get(1), splittedCommand.get(2), splittedCommand.get(3)); // Exaustive Simulation
                             success = true;
                         }else{
@@ -450,8 +453,8 @@ class CommandProcessor {
                                 cmd.Monte_Carlo_Fault_injection(splittedCommand.get(1), splittedCommand.get(2),splittedCommand.get(4)); // MC 20000
                                 success = true;
                             }
-                            if((splittedCommand.get(3).equals("-mcmf"))){
-                                System.out.println("->>>>>>>>> Inside Multiple Fault injection .....");
+                            if((splittedCommand.get(3).equals("-mcmtf"))){
+                                System.out.println("Dev Mode  ->>>>>>>>> Inside Multiple Fault injection .....");
                                 cmd.Monte_Carlo_Multiple_Fault_injection(splittedCommand.get(1), splittedCommand.get(2),splittedCommand.get(4), splittedCommand.get(5), splittedCommand.get(6)); // MC 20000
                                 success = true;
                             }
