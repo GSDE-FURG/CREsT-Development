@@ -102,13 +102,40 @@ class TerminalWrapper {
 
                 System.out.println("Flag : " + flag);
 
-
                 Terminal term = Terminal.getInstance();
                 term.open(0, 0, 820, 700);
 
                 // FOR DEV
                 Robot r = new Robot();
                 //term.executeCommand();
+
+
+
+                switch (flag) {
+
+                    case ("-mc"):
+
+                        System.out.println("- Single Event Transient (SET) -mc: " + sample);
+                        term.executeCommand("mc_fault_injection" + " " + genlib + " " + circuit + " " + flag + " " + sample);
+                        break;
+
+                    case ("-mcmtf"):
+                        System.out.println("- Multiple Event Transient (SET) -mcmtf: " + sample);
+                        term.executeCommand("mc_fault_injection" + " " + genlib + " " + circuit + " " + flag + " " + sample);
+                        break;
+
+                    case ("-exaustive"):
+                        System.out.println("- Exaustive Simulation Single Event Transient (SET) -exaustive: " + sample);
+                        term.executeCommand("mc_fault_injection" + " " + genlib + " " + circuit + " " + flag + " " + sample);
+                        break;
+
+
+                }
+
+
+
+
+                /*
                 if(flag.equals("-mc")){
                     System.out.println("INSIDE -mc: " + sample);
                     term.executeCommand("mc_fault_injection" + " " + genlib + " " + circuit + " " + flag + " " + sample);
@@ -118,6 +145,8 @@ class TerminalWrapper {
                     System.out.println("INSIDE -exaustive");
                     term.executeCommand("mc_fault_injection" + " " + genlib + " " + circuit + " " + "-exaustive");
                 }
+                */
+
 
                 r.keyPress(KeyEvent.VK_ENTER);
                 r.keyRelease(KeyEvent.VK_ENTER);
@@ -164,70 +193,7 @@ class TerminalWrapper {
                 HelpFormatter formatter = new HelpFormatter();
                 CommandLine cmd;
 
-                //System.out.println(options);
 
-
-                //CommandLine dcmd = parser.parse(options, args);
-                System.out.println(parser.toString());
-
-                //if(dcmd.hasOption("mc")) {
-                if (args[3].equals("-mc")) {
-
-                    System.out.println("INSIDE IF....");
-                    //System.out.println("2: " + dcmd);
-
-                    //String x = dcmd.getOptionValue("mc_fault_injection");
-
-                    // System.out.println("Args: " + x);
-
-                    String genlib = "";
-                    String circuit = "";
-
-                    String flag = "";
-                    String sample = "";
-
-                    int size = args.length;
-
-                    System.out.println("Size: " + size);
-
-                    switch (size) {
-                        case (5): //MC Fault Injection
-                            genlib = args[1];
-                            circuit = args[2];
-                            flag = args[3];
-                            sample = args[4];
-                            break;
-
-                        case (4): //Exaustive
-                            genlib = args[1];
-                            circuit = args[2];
-                            flag = args[3];
-                            break;
-                    }
-
-                    System.out.println("Flag : " + flag);
-
-
-                    Terminal term = Terminal.getInstance();
-                    term.open(0, 0, 820, 700);
-
-                    // FOR DEV
-                    Robot r = new Robot();
-                    //term.executeCommand();
-                    if (flag.equals("-mc")) {
-                        System.out.println("INSIDE -mc: " + sample);
-                        term.executeCommand("mc_fault_injection" + " " + genlib + " " + circuit + " " + flag + " " + sample);
-
-                    } else {
-                        System.out.println("INSIDE -exaustive");
-                        term.executeCommand("mc_fault_injection" + " " + genlib + " " + circuit + " " + "-exaustive");
-                    }
-
-                    r.keyPress(KeyEvent.VK_ENTER);
-                    r.keyRelease(KeyEvent.VK_ENTER);
-
-
-                } else {
                     try {
                         cmd = parser.parse(options, args);
                         System.out.println(parser);
@@ -283,7 +249,7 @@ class TerminalWrapper {
 
 
                 }
-            }
+
         } else {
             Terminal term = Terminal.getInstance();        
             term.open(0, 0, 820, 700);
@@ -292,8 +258,7 @@ class TerminalWrapper {
             
             Robot r = new Robot();
 
-            System.out.println("..................");
-            //TEste
+
             //term.executeCommand("read_genlib /abc/cadence.genlib");
             
            

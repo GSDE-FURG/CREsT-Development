@@ -40,9 +40,9 @@ public class main{
             return this.OUTPUT_INFO;
         }
         
-         public static void main(String[] args) throws Exception {
+        public static void main(String[] args) throws Exception {
             
-             int threads = 8; //Numero de threads
+             int threads = 8; //Número de threads
              int sampleSizeMonteCarlo = 2000;
                      
              String constReliability = "0.9999"; //Used for internal structures
