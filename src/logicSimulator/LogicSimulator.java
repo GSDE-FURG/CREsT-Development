@@ -10,16 +10,12 @@ import datastructures.CellLibrary;
 import datastructures.Circuit;
 import datastructures.Signal;
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Map;
-import java.util.Random;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.annotation.processing.SupportedSourceVersion;
-import javax.lang.model.SourceVersion;
 import javax.script.ScriptException;
 import jxl.write.WriteException;
 import levelDatastructures.DepthGate;
@@ -37,8 +33,8 @@ import signalProbability.ProbCircuit;
  public class LogicSimulator implements Runnable{
 
         private long threadID;
-        private String inputStr;
-        private String outputStr;
+        //private String inputStr;
+        //private String outputStr;
         private final int startPos;
         private final int endPosition;
         private int propagated_faults;
@@ -692,29 +688,31 @@ import signalProbability.ProbCircuit;
         return pos > -1;
     }
 
-    private  boolean calculateOutputFacultInjectionGateValueV2(Cell cells, DepthGate gate, ArrayList <Signal> inputsSignals, ArrayList <Signal> faultSig2, TestVectorInformation thread_item){
+    private  boolean calculateOutputFacultInjectionGateValueV2(Cell cells, DepthGate gate, ArrayList <Signal> inputsSignals, ArrayList <Signal> MTFfaultSignalList, TestVectorInformation thread_item){
         //System.out.println("inn... + " + thread_item.getItem().toString());
         final Map<ArrayList<Boolean>, Boolean> comb = cells.getComb();
         final ArrayList <Boolean> input = new ArrayList<>();
         final ArrayList <Integer> signals = new ArrayList<>();
         Signal faultSig;
 
-        ArrayList <Signal> faultSig2temp = new ArrayList<>(faultSig2);
+        //ArrayList <Signal> faultSig2temp = new ArrayList<>(MTFfaultSignalList);
 
         for (int index = 0; index < inputsSignals.size(); index++) { // Input Signals index
 
-                int pos = getFaultSignalPosition(faultSig2temp, inputsSignals.get(index), index, thread_item);
+                int pos = getFaultSignalPosition(MTFfaultSignalList, inputsSignals.get(index), index, thread_item);
 
-                //faultSig = faultSig2.get(pos);  //Pos in the fault list
+                //faultSig = MTFfaultSignalList.get(pos);  //Pos in the fault list
 
                 //System.out.println("Fault Signal MTF : " + faultSig + "   - " + thread_item.get_MTF_FaultSignal_List());
 
-               if (decision(pos) && thread_item.get_MTF_flag()) { //bit-flip
+               if (decision(pos) && thread_item.get_MTF_flag() && MTFfaultSignalList.size()>1) { //bit-flip
 
-                   faultSig = faultSig2temp.get(pos);  //Pos in the fault list
-                   faultSig2temp.remove(faultSig);
+                  // faultSig = faultSig2temp.get(pos);  //Pos in the fault list
+                   faultSig = MTFfaultSignalList.get(pos);
                    // if (inputsSignals.get(index).getId().equals(faultSig.getId()) && decision(pos) && thread_item.get_MTF_flag()) { //bit-flip
-                    System.out.println("        - Falha In + " + faultSig + "  removed from  " + thread_item.get_MTF_FaultSignal_List() + "  "+ thread_item.getSimulationIndex());
+                    System.out.println("        - FaultSignal + " + faultSig + " new list: " + MTFfaultSignalList + "    removed from  " + thread_item.get_MTF_FaultSignal_List() + "  "+ thread_item.getSimulationIndex());
+                    //faultSig2temp.remove(faultSig2temp.get(pos));
+                    //MTFfaultSignalList.remove(faultSig2temp.get(pos));
                     //System.out.println("entrou");
                     if (inputsSignals.get(index).getOriginalLogicValue() == 0) { //Efetua o bitflip
                         thread_item.getFaultSignal().setOriginalLogicValue(0);
@@ -833,6 +831,7 @@ import signalProbability.ProbCircuit;
 
         }
 
+        //System.out.println("        END ROUND- FaultSignal + " + " new list: " + faultSig2temp + "    removed from  " + thread_item.get_MTF_FaultSignal_List() + "  "+ thread_item.getSimulationIndex());
 
         return (boolean) output;
     }

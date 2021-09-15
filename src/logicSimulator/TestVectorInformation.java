@@ -26,6 +26,7 @@ public class TestVectorInformation {
 
     private boolean MTF;
     private ArrayList<Signal> MTF_FaultSignal_List;
+    private ArrayList<Signal> MTF_FaultSignal_List_Base;
     
     public TestVectorInformation(ArrayList <Integer> inputVector, Signal faultSignal, int input_pos) {
             this.faultSignals = faultSignal;
@@ -41,6 +42,7 @@ public class TestVectorInformation {
             this.MTF = false;
             this.MTF_FaultSignal_List = new ArrayList<>();
             this.MTF_FaultSignal_List.add(faultSignal);
+            this.MTF_FaultSignal_List_Base = new ArrayList<>(this.MTF_FaultSignal_List);
             
     }
     
@@ -67,9 +69,16 @@ public class TestVectorInformation {
         return this.MTF_FaultSignal_List;
      }
 
-     public boolean get_MTF_flag(){
+    public ArrayList <Signal> get_MTF_FaultSignal_List_Base (){
+        return this.MTF_FaultSignal_List_Base;
+    }
+
+
+    public boolean get_MTF_flag(){
         return this.MTF;
      }
+
+
 
      public void setMultipleTransientFaultInjection(Signal faultSignal){
 
