@@ -19,6 +19,8 @@ import java.util.List;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 import javax.script.ScriptException;
+import javax.swing.border.Border;
+
 import jxl.write.WriteException;
 import levelDatastructures.LevelCircuit;
 import readers.MappedVerilogReader;
@@ -496,6 +498,22 @@ import writers.WriteCsvTh;
 
      }
 
+    public void writeCsvFileCompleteThMTF(String filename, ArrayList <LogicSimulator> itemx_list) throws IOException, WriteException{
+
+        //System.out.println("Creating Complete log .....");
+        ArrayList <Signal> outputSignals = this.circuit.getOutputs();
+        ArrayList <Signal> inputSignals = this.circuit.getInputs();
+
+
+        String Header = "Input Signals" + ";" + "Fault Signal" + ";" + "Fault Type" + ";" + "Fault-Free Circuit Output" + ";" + "Faulty Circuit Output";
+        WriteCsvTh logfile = new WriteCsvTh();
+
+        logfile.writeCSVCompleteThNewMTF(this.circuit, filename, this.verilog_circuit.getCircuit().getName() + ".v", this.circuit.getInputs(), this.circuit.getOutputs(),
+                this.signals_to_inject_faults,  Header , itemx_list , Integer.toString(this.unmasked_faults));
+
+    }
+
+
     public void writeSimpleLog(String filename, String date, String dateend, long propagateTimems) throws IOException{
 
         ///System.out.println("Creating .txt -> file: " + filename);
@@ -541,6 +559,54 @@ import writers.WriteCsvTh;
             file.write(content);
         }
      }
+
+    public void writeSimpleLogMTF(String filename, String date, String dateend, long propagateTimems, int order, int period, int frequency) throws IOException{
+
+        ///System.out.println("Creating .txt -> file: " + filename);
+        //float reliability_circuit =  (float) ( 1 - ((float) this.unmasked_faults / (float) this.sampleSize));
+        //double lamb = - Math.log(reliability_circuit);
+        //this.MTBF = (1 / lamb);
+        //System.out.println("MTBF : " + this.MTBF);
+        String content = "";
+        try (FileWriter file = new FileWriter(filename+".txt")) {
+
+
+            content = "Started at Date/hour: "  + date + " and finished at: " + dateend  + "\n\n";
+            //content = content + "Date/hour (finished): "+ dateend + "\n\n";
+            content = content + "Circuit: " + this.circuit.getName() + "\n";
+            content = content+  "Number of Simulations (sample size = N): " + this.sampleSize + "\n";
+            content = content+  "For each  (" + period + ") faults happens a Multiple Transient Fault (" + order + ") with frequency: (" + frequency + ") - Sample = " + this.sampleSize + "\n";
+            content = content+  "Number of Threads: " + this.threads + "\n";
+            content = content + "Number of detected faults (Ne): " + this.unmasked_faults + "\n";
+            content = content + "Fault Mask Rate (FMR): "+ " 1 - Ne/N = (1-(" + this.unmasked_faults + "/" + this.sampleSize + ")) = " + this.circuitReliaibility + "\n";
+            //content = content +  "MTBF: " + this.MTBF + "\n\n";
+
+            content = content +  "Performance time(s): " + (propagateTimems) + "\n";
+
+
+            /*
+
+              System.out.println("\n\n----------------- Results ------------------");
+                System.out.println("Circuit: " + this.circuit.getName());
+                System.out.println("- Simulation started at: " + formattedDate + " and finished at: "+ formattedDate2); //formattedDate
+
+               // System.out.println("- PropagatedTime (s): " + propagateTime);
+                System.out.println("- Sample Size (N): " + N);
+                System.out.println("- Number of detected faults (Ne): " + this.unmasked_faults);
+                System.out.println("- Fault Mask Rate (FMR): " + " 1 - Ne/N = (1-(" + this.unmasked_faults + "/" + N + ")) = " + this.circuitReliaibility);
+                //System.out.println("- MTBF (Mean Time Between failure) : " + this.MTBF);
+                System.out.println("- Simulation TimeElapsed: " + propagateTime
+                        + "(s)");
+
+                System.out.println("--------------------------------------------");
+
+            */
+
+
+            file.write(content);
+        }
+    }
+
 
     public List particionateVectorPerThread(ArrayList <ArrayList<Integer>> ListInputVectors) throws ScriptException, Exception{
 
@@ -1449,9 +1515,9 @@ import writers.WriteCsvTh;
         String formattedDate2 = myDateObj2.format(myFormatObj2);
 
 
-        this.writeSimpleLog(option + "_MonteCarlo_Simple_Log_" +this.circuit.getName()+"_Threads-"+ this.threads +  "_sampleSize-" + this.sampleSize, formattedDate,  formattedDate2, propagateTime);
+        this.writeSimpleLogMTF(option + "_MonteCarlo_Simple_Log_" +this.circuit.getName()+"_Threads-"+ this.threads +  "_sampleSize-" + this.sampleSize, formattedDate,  formattedDate2, propagateTime, order, period, frequency);
 
-        this.writeCsvFileCompleteTh(option+"_MonteCarlo_Complete_Log_"+this.circuit.getName()+"_Theads-"+ this.threads + "_sampleSize"+ this.sampleSize, itemx_list);
+        this.writeCsvFileCompleteThMTF(option+"_MonteCarlo_Complete_Log_"+this.circuit.getName()+"_Theads-"+ this.threads + "_sampleSize"+ this.sampleSize, itemx_list);
 
 
         System.out.println("\n\n----------------- Results ------------------");

@@ -301,22 +301,22 @@ import signalProbability.ProbCircuit;
             
             for (int s = 0; s < signalsOutput.size(); s++) { //All outputs to str   
                 
-                if(this.circuit.getOutputs().get(s).getId().equals(thread_item.getFaultSignal().getId())){
+                if(this.circuit.getOutputs().get(s).getId().equals(thread_item.getFaultSignal().getId())){  //Inject in output sognal BItflip
                      
                      if(this.circuit.getOutputs().get(s).getLogicValueBoolean()){ //Bitflip output signal 
                           int flag = 0;
                           //this.circuit.getOutputs().get(s).setLogicValue(0);
                           outputInjection = outputInjection + 0;
-                         //System.out.println("0: Vec: " + thread_item.getinputVector() + "     "+ this.circuit.getOutputs().get(s) + " Output: Expect(" + this.circuit.getOutputs().get(s).getLogicValue()+ ")" 
-                          //         + " Boolean :(" + this.circuit.getOutputs().get(s).getLogicValueBoolean()+ ")" );
+                         System.out.println("0: Vec: " + thread_item.getinputVector() + "     "+ this.circuit.getOutputs().get(s) + " Output: Expect(" + this.circuit.getOutputs().get(s).getLogicValue()+ ")"
+                                   + " Boolean :(" + this.circuit.getOutputs().get(s).getLogicValueBoolean()+ ")" );
                           
                      }else{
                           int flag = 1;
                           //this.circuit.getOutputs().get(s).setLogicValue(0);
                           outputInjection = outputInjection +  1;
                           
-                         // System.out.println("1: Vec: " + thread_item.getinputVector() + "     "+ this.circuit.getOutputs().get(s) + " Output: Expect(" + this.circuit.getOutputs().get(s).getLogicValue()+ ")" 
-                         //          + " Boolean :(" + this.circuit.getOutputs().get(s).getLogicValueBoolean()+ ")" );
+                          System.out.println("1: Vec: " + thread_item.getinputVector() + "     "+ this.circuit.getOutputs().get(s) + " Output: Expect(" + this.circuit.getOutputs().get(s).getLogicValue()+ ")"
+                                   + " Boolean :(" + this.circuit.getOutputs().get(s).getLogicValueBoolean()+ ")" );
                         
                      }
                     
