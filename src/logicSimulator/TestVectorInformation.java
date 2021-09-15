@@ -36,8 +36,11 @@ public class TestVectorInformation {
             this.allfaultSignals = new ArrayList<>();
 
             /* new */
+
+
             this.MTF = false;
             this.MTF_FaultSignal_List = new ArrayList<>();
+            this.MTF_FaultSignal_List.add(faultSignal);
             
     }
     
@@ -69,9 +72,8 @@ public class TestVectorInformation {
         if(this.MTF == false)
         {
                 this.MTF = true;
-                this.MTF_FaultSignal_List.add(this.faultSignals);
+                //this.MTF_FaultSignal_List.add(this.faultSignals);
                 this.MTF_FaultSignal_List.add(faultSignal);
-
 
         }
         else

@@ -613,6 +613,37 @@ import writers.WriteCsvTh;
 
     }
 
+    public int sortExclusiveFaultIndex(ArrayList <Integer> SigIndexList, TestVectorInformation temp ){
+
+        boolean flag = true;
+
+        while(flag){
+
+            int new_pos = this.sortRandomFaultInjection();
+
+            if(!SigIndexList.contains(new_pos)){
+                System.out.println(" New position Founded : " +  this.signals_to_inject_faults.get(new_pos) + "   faultList:" + temp.get_MTF_FaultSignal_List() + "     complete signalslist: " + this.signals_to_inject_faults );
+                flag = false;
+                return new_pos;
+            }
+            else{
+                System.out.println(" Alread exist in faultlist : " + this.signals_to_inject_faults.get(new_pos) +  "     list: " + temp.get_MTF_FaultSignal_List());
+            }
+
+            /*
+            if(new_pos != used){
+                flag = false;
+                return new_pos;
+            }
+            */
+
+
+
+        }
+
+        return  -1;
+    }
+
     public List particionateMultipletransientFaultInjectionVectorPerThread(ArrayList <ArrayList<Integer>> ListInputVectors,int period, int order, int frequency) throws ScriptException, Exception{
 
         System.out.println("\n\n         +++++++    Dev mode  ++++++");
@@ -666,22 +697,31 @@ import writers.WriteCsvTh;
             System.out.println(" - starting thread: "+i  + " - simulate fault injection (number): " + partition);
             for (int j = start; j < end ; j++) {
 
-                if(count_frequency == period){
+                if(count_frequency == (period-1)){
 
-                    System.out.println("  \n   --------> MTF Injection : " + period);
+                    System.out.println("  \n   --------> MTF Injection : " + period + "  j: " + j );
                     // Inject multiple fault order
                     count_frequency = 0;
 
                     inputVector = this.get_Input_Vectors(ListInputVectors, j); //input Test n
+
                     int SigIndex = this.sortRandomFaultInjection(); //int SigIndex = decide_Random_Signals_Contrains(Signals_CTE_ONE_ZERO);
 
                     TestVectorInformation temp = new TestVectorInformation(inputVector, this.signals_to_inject_faults.get(SigIndex), j + 1);
 
+                    ArrayList <Integer> SigIndexList = new ArrayList<Integer>();
+
+                    SigIndexList.add(SigIndex);
+
+                   // temp.set_MTBF_flag();
 
                     for (int k = 1 ; k < order; k ++){
                         System.out.println(" xxxxxx Injection MTF number : " + k);
-                        temp.setMultipleTransientFaultInjection( this.signals_to_inject_faults.get(this.sortRandomFaultInjection()));
-                            System.out.println(" - faultSig list random choose : " + temp.get_MTF_FaultSignal_List() );
+                        //temp.setMultipleTransientFaultInjection( this.signals_to_inject_faults.get( this.sortRandomFaultInjection()));
+                        int new_pos = sortExclusiveFaultIndex(SigIndexList, temp);
+                        temp.setMultipleTransientFaultInjection( this.signals_to_inject_faults.get(new_pos));
+
+                        System.out.println(" - faultSig list random choose : " + temp.get_MTF_FaultSignal_List() );
                     }
 
                     ItemxSimulationList.add(temp);
@@ -689,6 +729,7 @@ import writers.WriteCsvTh;
                 }
                 else {
                     count_frequency++;
+
                     inputVector = this.get_Input_Vectors(ListInputVectors, j); //input Test n
                     int SigIndex = this.sortRandomFaultInjection(); //int SigIndex = decide_Random_Signals_Contrains(Signals_CTE_ONE_ZERO);
 
@@ -705,10 +746,12 @@ import writers.WriteCsvTh;
             thread.setName(Integer.toString(threadItem.hashCode()));
             thread_list.add(thread);
 
+            System.out.println("            \n                  - Thread id: " + threadItem.getThreadId() + "  Simulation Size: " + threadItem.getThreadSimulatinArray().size() + "  MTF: " + ItemxSimulationList.size());
+
+
         }
 
         return thread_list;
-
     }
 
     public List particionateExausticVector(ArrayList <ArrayList<Integer>> ListInputVectors) throws ScriptException, Exception{
