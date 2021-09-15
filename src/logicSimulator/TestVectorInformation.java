@@ -67,6 +67,10 @@ public class TestVectorInformation {
         return this.MTF_FaultSignal_List;
      }
 
+     public boolean get_MTF_flag(){
+        return this.MTF;
+     }
+
      public void setMultipleTransientFaultInjection(Signal faultSignal){
 
         if(this.MTF == false)
