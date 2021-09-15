@@ -579,7 +579,8 @@ import signalProbability.ProbCircuit;
                     //gate.getGate().getType()
                     //System.out.println("              - Gate: "+ gatesInThisLevel.get(k)  + "  type: "+ gate.getGate().getType());
 
-                    boolean gateResult = this.calculateOutputFacultInjectionGateValueV2(gate.getGate().getType(), gate, gate.getGate().getInputs(), thread_item.get_MTF_FaultSignal_List(), thread_item);  //Method calc the output from the gate cal bitflip
+                    Signal fault = null;
+                    boolean gateResult = this.calculateOutputFacultInjectionGateValueV2(gate.getGate().getType(), gate, gate.getGate().getInputs(), thread_item.get_MTF_FaultSignal_List(), fault, thread_item);  //Method calc the output from the gate cal bitflip
 
                     for (int s = 0; s < gate.getGate().getOutputs().size(); s++) {
 
@@ -668,7 +669,7 @@ import signalProbability.ProbCircuit;
             this.settingFaultInjectionResults();
         }
 
-    private int getFaultSignalPosition(ArrayList <Signal> List, Signal inputSignal, int index, TestVectorInformation thread_item){
+        private int getFaultSignalPosition(ArrayList <Signal> List, Signal inputSignal, int index, TestVectorInformation thread_item){
 
             for(int i=0; i < List.size(); i++)
             {
@@ -684,11 +685,11 @@ import signalProbability.ProbCircuit;
            // return false;
     }
 
-    private boolean decision(int pos){
+        private boolean decision(int pos){
         return pos > -1;
     }
 
-    private  boolean calculateOutputFacultInjectionGateValueV2(Cell cells, DepthGate gate, ArrayList <Signal> inputsSignals, ArrayList <Signal> MTFfaultSignalList, TestVectorInformation thread_item){
+        private  boolean calculateOutputFacultInjectionGateValueV2(Cell cells, DepthGate gate, ArrayList <Signal> inputsSignals, ArrayList <Signal> MTFfaultSignalList, Signal fault, TestVectorInformation thread_item){
         //System.out.println("inn... + " + thread_item.getItem().toString());
         final Map<ArrayList<Boolean>, Boolean> comb = cells.getComb();
         final ArrayList <Boolean> input = new ArrayList<>();
@@ -709,12 +710,16 @@ import signalProbability.ProbCircuit;
 
                   // faultSig = faultSig2temp.get(pos);  //Pos in the fault list
                    faultSig = MTFfaultSignalList.get(pos);
-                   // if (inputsSignals.get(index).getId().equals(faultSig.getId()) && decision(pos) && thread_item.get_MTF_flag()) { //bit-flip
-                    System.out.println("        - FaultSignal + " + faultSig + " new list: " + MTFfaultSignalList + "    removed from  " + thread_item.get_MTF_FaultSignal_List() + "  "+ thread_item.getSimulationIndex());
+
+                    // if (inputsSignals.get(index).getId().equals(faultSig.getId()) && decision(pos) && thread_item.get_MTF_flag()) { //bit-flip
+
+                   System.out.println("        - FaultSignal + " + faultSig + " new list: " + MTFfaultSignalList + "    removed from  " + thread_item.get_MTF_FaultSignal_List() + "  "+ thread_item.getSimulationIndex());
+
                     //faultSig2temp.remove(faultSig2temp.get(pos));
                     //MTFfaultSignalList.remove(faultSig2temp.get(pos));
                     //System.out.println("entrou");
                     if (inputsSignals.get(index).getOriginalLogicValue() == 0) { //Efetua o bitflip
+
                         thread_item.getFaultSignal().setOriginalLogicValue(0);
                         thread_item.getFaultSignal().setLogicValue(1);
                         thread_item.getFaultSignal().setLogicValueBoolean(Boolean.TRUE);
@@ -729,6 +734,12 @@ import signalProbability.ProbCircuit;
 
                         thread_item.setSignalOriginalValue(thread_item.getFaultSignal().getOriginalLogicValue());
                         thread_item.setFaultSignalValue(thread_item.getFaultSignal().getLogicValue());
+
+
+                        /* SET Bitflip for multiple fault*/
+                        thread_item.get_MTF_FaultSignal_List().get(pos).setOriginalLogicValue(0);
+                        thread_item.get_MTF_FaultSignal_List().get(pos).setLogicValue(1);
+                        thread_item.get_MTF_FaultSignal_List().get(pos).setLogicValueBoolean(Boolean.TRUE);
 
 
                                 /*
@@ -768,8 +779,17 @@ import signalProbability.ProbCircuit;
                         thread_item.setSignalOriginalValue(thread_item.getFaultSignal().getOriginalLogicValue());
                         thread_item.setFaultSignalValue(thread_item.getFaultSignal().getLogicValue());
 
+                        /* New block*/
+                        /* SET Bitflip for multiple fault*/
+                        thread_item.get_MTF_FaultSignal_List().get(pos).setOriginalLogicValue(1);
+                        thread_item.get_MTF_FaultSignal_List().get(pos).setLogicValue(0);
+                        thread_item.get_MTF_FaultSignal_List().get(pos).setLogicValueBoolean(Boolean.FALSE);
+
                     }
-                    // System.out.println(" -> fault injected (" + faultSig + ")" +  " - O(v):"+inputsSignals.get(index).getOriginalLogicValue() + "  N(v):"+inputsSignals.get(index).getLogicValue());
+                    System.out.println("\n -> fault injected (" + faultSig + ")" +  " - Original(v):"+inputsSignals.get(index).getOriginalLogicValue() + "  New(v):"+inputsSignals.get(index).getLogicValue() + "  - FaultList" + thread_item.get_MTF_FaultSignal_List() + " - ID: " + thread_item.getSimulationIndex()
+                            + "  \n         threaditemFaultList: " + thread_item.get_MTF_FaultSignal_List().get(pos)
+                            + " O(v):" + thread_item.get_MTF_FaultSignal_List().get(pos).getOriginalLogicValue()
+                            + " N(v):" + thread_item.get_MTF_FaultSignal_List().get(pos).getLogicValue());
                 }
 
                 signals.add(inputsSignals.get(index).getLogicValue());
@@ -836,8 +856,7 @@ import signalProbability.ProbCircuit;
         return (boolean) output;
     }
 
-
-    private  boolean calculateOutputFacultInjectionGateValue(Cell cells, DepthGate gate, ArrayList <Signal> inputsSignals, Signal faultSig,  TestVectorInformation thread_item){
+        private  boolean calculateOutputFacultInjectionGateValue(Cell cells, DepthGate gate, ArrayList <Signal> inputsSignals, Signal faultSig,  TestVectorInformation thread_item){
                 //System.out.println("inn... + " + thread_item.getItem().toString());      
                 final Map<ArrayList<Boolean>, Boolean> comb = cells.getComb();
                 final ArrayList <Boolean> input = new ArrayList<>();
@@ -1047,7 +1066,7 @@ import signalProbability.ProbCircuit;
             }
         }
 
-    private void PrintSpecs() {
+        private void PrintSpecs() {
          Thread t = Thread.currentThread();
          System.out.println("\n"
                  + " - Thread: " +(long) Thread.currentThread().getId()//
