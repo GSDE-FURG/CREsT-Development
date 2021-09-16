@@ -633,6 +633,85 @@ import signalProbability.ProbCircuit;
 
     }
 
+        private  void propagateMultipleFaultInjectionsV2(Signal faultSig, TestVectorInformation thread_item) throws IOException, WriteException{
+
+        this.threadID = (long) Thread.currentThread().getId();
+
+        //System.out.println("-> Propagating testNumber(" + testNumber + ")" + " - at Thread_ID - " + this.threadID );
+        //System.out.println("  Vector: " + vector);
+
+        ArrayList <GateLevel> gatesLevels = this.levelCircuit.getGateLevels();
+
+
+
+        for (int j = 0; j < gatesLevels.size(); j++) {
+
+            ArrayList <Object> gatesInThisLevel = gatesLevels.get(j).getGates();
+
+            for (int k = 0; k < gatesInThisLevel.size(); k++) {
+                String AwnsString = gatesInThisLevel.get(k).getClass().toString();
+                //System.out.println("Aws: "+ AwnsString);
+                if(AwnsString.equals("class levelDatastructures.DepthGate")){
+                    Object object = gatesInThisLevel.get(k);
+                    final DepthGate gate = (DepthGate) object;
+                    //gate.getGate().getType()
+                    //System.out.println("              - Gate: "+ gatesInThisLevel.get(k)  + "  type: "+ gate.getGate().getType());
+
+                    Signal fault = null;
+                    boolean gateResult = this.calculateOutputFacultInjectionGateValueV2(gate.getGate().getType(), gate, gate.getGate().getInputs(), thread_item.get_MTF_FaultSignal_List(), fault, thread_item);  //Method calc the output from the gate cal bitflip
+
+                    for (int s = 0; s < gate.getGate().getOutputs().size(); s++) {
+
+                        Signal sig = gate.getGate().getOutputs().get(s);
+
+                        if(gateResult == true){  //Gate Output
+                            gate.getGate().getOutputs().get(s).setOriginalLogicValue(1);
+                            gate.getGate().getOutputs().get(s).setLogicValue(1);
+                            gate.getGate().getOutputs().get(s).setLogicValueBoolean(Boolean.TRUE);
+
+
+
+                            if(sig.getId().equals(faultSig.getId())){
+                                // System.out.println("@ "+faultSig+" Sig EQUAL "+sig);
+                                faultSig.setOriginalLogicValue(1);
+                                faultSig.setLogicValue(0); // bitfip
+                                faultSig.setLogicValueBoolean(Boolean.FALSE);
+
+                                thread_item.setSignalOriginalValue(1);
+                                thread_item.setFaultSignalValue(0);
+
+
+                            }
+
+                        }
+                        else{
+                            gate.getGate().getOutputs().get(s).setOriginalLogicValue(0);
+                            gate.getGate().getOutputs().get(s).setLogicValue(0);
+                            gate.getGate().getOutputs().get(s).setLogicValueBoolean(Boolean.FALSE);
+
+
+
+                            if(sig.getId().equals(faultSig.getId())){
+                                // System.out.println("@ "+faultSig+" Sig EQUAL "+sig);
+                                faultSig.setOriginalLogicValue(0);
+                                faultSig.setLogicValue(1); // bitfip
+                                faultSig.setLogicValueBoolean(Boolean.TRUE);
+
+                                thread_item.setSignalOriginalValue(0);
+                                thread_item.setFaultSignalValue(1);
+                            }
+
+
+                        }
+                    }
+
+                }
+            }
+        }
+
+    }
+
+
         public  void startSimulationFaultInjection() throws IOException, WriteException{
 
             for (int i = 0; i < this.threadSimulationList.size(); i++) {
@@ -668,6 +747,52 @@ import signalProbability.ProbCircuit;
 
             this.settingFaultInjectionResults();
         }
+
+        public  void startSimulationFaultInjectionV2() throws IOException, WriteException{
+
+            for (int i = 0; i < this.threadSimulationList.size(); i++) {
+
+                this.insertInputVectors("selected", this.threadSimulationList.get(i).getinputVector());
+                //this.propagateFaultInjections(this.threadSimulationList.get(i).getSimulationIndex(), this.threadSimulationList.get(i).getinputVector(), this.threadSimulationList.get(i).getFaultSignal(), i,  this.threadSimulationList.get(i));
+
+                this.propagateMultipleFaultInjectionsV2(this.threadSimulationList.get(i).getFaultSignal(), this.threadSimulationList.get(i));
+
+
+                this.getFaultInjectionResults(this.threadSimulationList.get(i).getinputVector(), this.threadSimulationList.get(i).getSimulationIndex(), this.threadSimulationList.get(i));
+
+
+                /*
+                this.insertInputVectors("selected", this.threadSimulationList.get(i).getinputVector());
+
+                if(this.threadSimulationList.get(i).get_MTF_flag() && this.threadSimulationList.get(i).get_MTF_FaultSignal_List().size()>1){
+                    System.out.println("Detected MTF inside Logic Simulator...");
+                    this.propagateMultipleFaultInjections(this.threadSimulationList.get(i).getSimulationIndex(), this.threadSimulationList.get(i).getinputVector(), this.threadSimulationList.get(i).getFaultSignal(), i,  this.threadSimulationList.get(i));
+                    //PropagateFaultV2
+                }
+                else{
+                    this.propagateFaultInjections(this.threadSimulationList.get(i).getSimulationIndex(), this.threadSimulationList.get(i).getinputVector(), this.threadSimulationList.get(i).getFaultSignal(), i,  this.threadSimulationList.get(i));
+                }
+                this.getFaultInjectionResults(this.threadSimulationList.get(i).getinputVector(), this.threadSimulationList.get(i).getSimulationIndex(), this.threadSimulationList.get(i));
+                */
+
+
+                //this.insertInputVectors("selected", this.threadSimulationList.get(i).getinputVector());
+                //this.propagateFaultInjections(this.threadSimulationList.get(i).getSimulationIndex(), this.threadSimulationList.get(i).getinputVector(), this.threadSimulationList.get(i).getFaultSignal(), i,  this.threadSimulationList.get(i));
+                //this.getFaultInjectionResults(this.threadSimulationList.get(i).getinputVector(), this.threadSimulationList.get(i).getSimulationIndex(), this.threadSimulationList.get(i));
+
+                /*
+                if(i == (this.threadSimulationList.size()/2)){
+                     LocalDateTime myDateObj = LocalDateTime.now();
+                        DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+                        String formattedDate = myDateObj.format(myFormatObj);
+                     System.out.println("->" + formattedDate + " HALF Simulation test ended: " + this.threadID + "   size: "+this.threadSimulationList.size());
+                }
+                */
+
+        }
+
+        this.settingFaultInjectionResults();
+    }
 
         private int getFaultSignalPosition(ArrayList <Signal> List, Signal inputSignal, int index, TestVectorInformation thread_item){
 
@@ -1059,7 +1184,8 @@ import signalProbability.ProbCircuit;
             try {
                 
                 startSimulationFaultFree();
-                startSimulationFaultInjection();
+                //startSimulationFaultInjection();
+                startSimulationFaultInjectionV2();
                 
             } catch (IOException | WriteException ex) {
                 Logger.getLogger(LogicSimulator.class.getName()).log(Level.SEVERE, null, ex);
