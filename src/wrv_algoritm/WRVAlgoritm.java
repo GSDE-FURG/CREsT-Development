@@ -19,6 +19,7 @@ import java.util.Set;
 import signalProbability.ProbCircuit;
 import signalProbability.ProbSignal;
 import tool.Terminal;
+import datastructures.InputVector;
 
 /**
  *
@@ -295,7 +296,8 @@ public class WRVAlgoritm {
         int searchSpace = (int) Math.pow(2, length);
         int lengthInput = unDeterminedBits + determinedBits.size();
         for (int i = 0; i < searchSpace; i++) {
-            InputVector inputVector = new InputVector(new BigInteger(String.valueOf(i)));
+            InputVector inputVector = new InputVector
+                    (new BigInteger(String.valueOf(i)));
             int count = determinedBits.size();
             char[] inputVectorChar = inputVector.getValueToChar();
             char[] searchInputVector = new char[lengthInput];

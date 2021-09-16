@@ -20,6 +20,7 @@ import signalProbability.ProbGate;
 import signalProbability.ProbGateLevel;
 import signalProbability.ProbSignal;
 import tool.Terminal;
+import datastructures.InputVector;
 
 /**
  *

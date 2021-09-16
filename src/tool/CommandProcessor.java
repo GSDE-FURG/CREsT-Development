@@ -86,7 +86,64 @@ class CommandProcessor {
                     Terminal.getInstance().terminalOutput("Please use the arg \"--help\" or just \"clear\"!!!");
                 }
                 break;
-                            
+            /* Marcio */
+            case "create-subcircuit":
+                if (argument.isEmpty()) {
+                    cmd.createSubCircuits();
+                } else if (help) {
+                    Terminal.getInstance().terminalOutput(cmd.getHelpDesc(mainCommand));
+                }
+                break;
+
+            case "print_wrv":
+                if (argument.isEmpty()) {
+                    Terminal.getInstance().terminalOutput("Please use the arg \"--help\"");
+                } else if (help) {
+                    Terminal.getInstance().terminalOutput(cmd.getHelpDesc(mainCommand));
+                } else {
+                    cmd.getWorstReliabilityVector(argument);
+                }
+                break;
+
+            case "print_ordered_gates":
+                if (argument.isEmpty()) {
+                    Terminal.getInstance().terminalOutput("Please use the arg \"--help\"");
+                } else if (help) {
+                    Terminal.getInstance().terminalOutput(cmd.getHelpDesc(mainCommand));
+                } else {
+                    cmd.getOrderedGates(argument, argument2);
+                }
+                break;
+
+            case "execute_score_count":
+                if (argument.isEmpty()) {
+                    cmd.executeScoreCount();
+                } else if (help) {
+                    Terminal.getInstance().terminalOutput(cmd.getHelpDesc(mainCommand));
+                }
+                break;
+
+            case "print_cost_area":
+                if (argument.isEmpty()) {
+                    Terminal.getInstance().terminalOutput("Please use the arg \"--help\"");
+                } else if (help) {
+                    Terminal.getInstance().terminalOutput(cmd.getHelpDesc(mainCommand));
+                } else {
+                    cmd.getAreaCostWithTMR(argument, argument2);
+                }
+                break;
+
+            case "print_improvement_gates":
+                if (argument.isEmpty()) {
+                    Terminal.getInstance().terminalOutput("Please use the arg \"--help\"");
+                } else if (help) {
+                    Terminal.getInstance().terminalOutput(cmd.getHelpDesc(mainCommand));
+                } else {
+                    cmd.getReliabilityByImprovementGate(argument, argument2);
+                }
+                break;
+
+            /* ---- */
             
             case "get_sonf_reliability":
                 if(argument.isEmpty()) {

@@ -18,17 +18,17 @@ import tool.Terminal;
  *
  * @author Marcio
  */
-public class InputVector {
+public class InputVector_OLD {
 
     private static final char CHAR_ONE = '1';
     private static final char CHAR_ZERO = '0';
     private final BigInteger value;
 
-    public InputVector(BigInteger value) {
+    public InputVector_OLD(BigInteger value) {
        this.value = value;
     }
 
-    public InputVector(char[] value) {
+    public InputVector_OLD(char[] value) {
         String bin = String.valueOf(value);        
         this.value = new BigInteger(bin, 2);
     }
@@ -61,8 +61,8 @@ public class InputVector {
     //ou seja, a diferença entre eles é de um bit.
     //recebe como parâmetro de entrada as posições dos bits que já estão determinados 
     //portanto, não vai alterar
-    public List<InputVector> getNeighbors(Set<Integer> determinedBits) {
-        List<InputVector> listNeighbors = new ArrayList<>();
+    public List<InputVector_OLD> getNeighbors(Set<Integer> determinedBits) {
+        List<InputVector_OLD> listNeighbors = new ArrayList<>();
         char[] currentValue = this.getValueToChar();
         for (int i = 0; i < currentValue.length; i++) {
             if (!determinedBits.contains(i)) {
@@ -72,7 +72,7 @@ public class InputVector {
                 } else {
                     tempValue[i] = CHAR_ONE;
                 }               
-                InputVector neighbor = new InputVector(tempValue);
+                InputVector_OLD neighbor = new InputVector_OLD(tempValue);
                 listNeighbors.add(neighbor);
             }
         }

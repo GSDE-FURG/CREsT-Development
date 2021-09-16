@@ -5,14 +5,11 @@
  */
 package tool;
 
-import datastructures.Cell;
-import datastructures.CellLibrary;
-import datastructures.Circuit;
-import datastructures.CustomMatrixLibrary;
-import datastructures.Gate;
-import datastructures.Signal;
+import datastructures.*;
+
 import java.io.BufferedReader;
 
+import datastructures.InputVector;
 import levelDatastructures.LevelCircuit;
 
 import java.io.File;
@@ -88,6 +85,7 @@ import static ops.CommonOps.getMTBF;
 import ops.FanoutOps;
 import ops.SPRMultiPassV3Ops;
 import readers.CustomMatrixReader;
+import wrv_algoritm.*;
 
 /**
  *
@@ -4900,6 +4898,71 @@ public class Commands {
     
     public void PrintPath(){
         Terminal.getInstance().terminalOutput(System.getProperty("user.dir"));
+    }
+
+    /* Marcio */
+    public void createSubCircuits() {
+        Utils.createSubCircuits();
+    }
+
+    public void getOrderedGates(String q, String newQ){
+        //obter uma lista de portas em ordem crítica
+        Utils.getOrderedGates(q, newQ);
+    }
+
+    public void getOrderedGatesByWRV(InputVector iv, String q, String newQ) {
+        //obter uma lista de portas em ordem crítica do vetor crítico
+        Utils.orderedGatesByWRV(iv, q, newQ);
+    }
+
+    public void getReliabilityByImprovementGate(String q, String newQ) {
+        //melhoria da confiabilidade do circuito ao proteger as portas críticas
+        Map<ProbGate, BigDecimal> orderedGates = Utils.getOrderedGates(q, newQ);
+        List<ProbGate> listGates = new ArrayList<>(orderedGates.keySet());
+        Utils.getReliabilityByImprovementGate(listGates, q, newQ);
+    }
+
+    public void getWorstReliabilityVector(String q) {
+
+        final long startTime = System.currentTimeMillis();
+        //configura o método SPR para executar os cálculos de confiabilidade
+        RunScore runScore = new ScoreBySPR(new BigDecimal(q));
+        //cria o algoritmo para identificação do vetor crítico
+        //passando o método de cálculo
+        WRVAlgoritm wrvalg = new WRVAlgoritm(runScore);
+        //executa o algoritmo
+        //retorna um InputVector
+        wrvalg.execute();
+
+        final long endTime = System.currentTimeMillis();
+
+        String timeConsup = "## TIME CONSUPTION ## ==> " + Long.toString((endTime - startTime)/1000) + " secs";
+        System.out.println(timeConsup);
+
+
+
+    }
+
+    public void getAreaCostWithTMR(String q, String newQ) {
+        //obtem a quantidade de portas ao aplicar um TMR no circuito
+        Map<ProbGate, BigDecimal> orderedGates = Utils.getOrderedGates(q, newQ);
+        Utils.getAreaCostWithTMR(orderedGates);
+    }
+
+    public void executeScoreCount() {
+        RunScore runScore = new ScoreCount();
+        ProbCircuit circuit = Terminal.getInstance().getProbCircuit();
+        ArrayList<ProbSignal> inputs = circuit.getProbInputs();
+        int inputLength;
+        if (inputs.size() > 24) {
+            inputLength = (int) Math.pow(2, 24);
+        } else {
+            inputLength = (int) Math.pow(2, inputs.size());
+        }
+        for (int i = 0; i < inputLength; i++) {
+            InputVector iv = new InputVector(new BigInteger(String.valueOf(i), 10));
+            System.out.println(i + ";" + iv.getBinaryString() + ";" + runScore.execute(iv).getScore());
+        }
     }
     
 }

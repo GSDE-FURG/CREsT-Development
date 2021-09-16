@@ -13,6 +13,7 @@ import signalProbability.ProbCircuit;
 import signalProbability.ProbGate;
 import signalProbability.ProbSignal;
 import tool.Terminal;
+import datastructures.InputVector;
 
 /**
  *
