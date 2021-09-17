@@ -140,6 +140,17 @@ public class TestVectorInformation {
      public String getOrignalOutput(){
         return this.outputFreeFault;
     }
+
+    public int getPositionFaultSignalInMTFList(Signal f){
+
+        for (int i = 0; i < this.MTF_FaultSignal_List.size(); i++) {
+            if(this.MTF_FaultSignal_List.get(i).getId().equals(f.getId())){
+                System.out.println("\n SIG founded: " + f.getId()  +" ~ " + this.getSimulationIndex());
+                return i;
+            }
+        }
+        return -1;
+    }
     
      public Object getItem(){
         System.out.println("This: "+ this.faultSignals);
