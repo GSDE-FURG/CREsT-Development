@@ -46,7 +46,9 @@ public class TestVectorInformation {
             this.MTF_FaultSignal_List_Base = new ArrayList<>(this.MTF_FaultSignal_List);
 
             this.MTF_FaultSignal_List_Extended = new ArrayList<>();
-            this.MTF_FaultSignal_List_Extended.add(new SignalExtendedProperties(faultSignal));
+            SignalExtendedProperties x = new SignalExtendedProperties();
+            x.setSignal(faultSignal);
+            this.MTF_FaultSignal_List_Extended.add(x);
             
     }
     
@@ -87,19 +89,20 @@ public class TestVectorInformation {
     }
 
      public void setMultipleTransientFaultInjection(Signal faultSignal){
-
+         SignalExtendedProperties x = new SignalExtendedProperties();
+         x.setSignal(faultSignal);
         if(this.MTF == false)
         {
                 this.MTF = true;
                 //this.MTF_FaultSignal_List.add(this.faultSignals);
                 this.MTF_FaultSignal_List.add(faultSignal);
-                this.MTF_FaultSignal_List_Extended.add(new SignalExtendedProperties(faultSignal));
+                this.MTF_FaultSignal_List_Extended.add(x);
 
         }
         else
         {
                 this.MTF_FaultSignal_List.add(faultSignal);
-                this.MTF_FaultSignal_List_Extended.add(new SignalExtendedProperties(faultSignal));
+                this.MTF_FaultSignal_List_Extended.add(x);
         }
         //this.MTF_FaultSignal_List_Extended.add(new SignalExtendedProperties(faultSignal));
 
