@@ -94,6 +94,7 @@ public abstract class Utils {
                         out.getDestiny().remove(null);
                     }
                 }
+                //FIXME deixar o local pra onde vão os arquivos mais dinâmico
                 String filename = "abc/" + circuit.getName() + "/" + subCircuit.getName() + ".v";
                 VerilogWriter writer = new VerilogWriter(filename, subCircuit);                
                 for (Signal o : outsCorretion) {
