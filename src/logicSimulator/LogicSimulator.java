@@ -767,7 +767,7 @@ import signalProbability.ProbCircuit;
                             //Falta adicionar as informações de bitflip a threaddtem
                             //verificar os logs depois
 
-                            if(sig.getId().equals(faultSig.getId())){
+                            if(sig.getId().equals(faultSig.getId())){ // Aqui vai mudar !!!!!
                                 // System.out.println("@ "+faultSig+" Sig EQUAL "+sig);
                                 faultSig.setOriginalLogicValue(1);
                                 faultSig.setLogicValue(0); // bitfip
@@ -787,7 +787,7 @@ import signalProbability.ProbCircuit;
 
 
 
-                            if(sig.getId().equals(faultSig.getId())){
+                            if(sig.getId().equals(faultSig.getId())){ // Aqui vai mudar
                                 // System.out.println("@ "+faultSig+" Sig EQUAL "+sig);
                                 faultSig.setOriginalLogicValue(0);
                                 faultSig.setLogicValue(1); // bitfip
