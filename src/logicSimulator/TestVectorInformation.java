@@ -145,7 +145,7 @@ public class TestVectorInformation {
 
         for (int i = 0; i < this.MTF_FaultSignal_List.size(); i++) {
             if(this.MTF_FaultSignal_List.get(i).getId().equals(f.getId())){
-                System.out.println("\n SIG founded: " + f.getId()  +" ~ " + this.getSimulationIndex());
+                //System.out.println("\n SIG founded: " + f.getId()  +" ~ " + this.getSimulationIndex());
                 return i;
             }
         }

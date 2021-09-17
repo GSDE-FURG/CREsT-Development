@@ -1247,16 +1247,21 @@ import signalProbability.ProbCircuit;
         for (int index = 0; index < inputsSignals.size(); index++) {
 
             // Bloco para decisão se é ou não sinal da lista de falhas
+
             Signal faultSig = null ;//thread_item.getPositionFaultSignalInMTFList(inputsSignals.get(index));
 
-            int pos = thread_item.getPositionFaultSignalInMTFList(inputsSignals.get(index));
+            int pos = thread_item.getPositionFaultSignalInMTFList(inputsSignals.get(index)); //identifica se o sinal de entrada (index) está na lista de sinais a serem injetadas as falhas
 
-            if(pos > -1 ){
-                faultSig = thread_item.get_MTF_FaultSignal_List().get(pos);
-                if(inputsSignals.get(index).getId().equals(faultSig.getId()) && (pos > -1)){ //bit-flip
+            if(pos > -1 ){ // Identifica se a posição na lista de falhas esta vazia (pos>-1)
+
+                faultSig = thread_item.get_MTF_FaultSignal_List().get(pos); // Atribui faultSig a sua posição na lista de falhas
+
+                //if(inputsSignals.get(index).getId().equals(faultSig.getId()) && (pos > -1)){ //Compara o sinal novamente com sinais de entrada e aplica o bit-flip
                     // System.out.println("Falha In");
                     //System.out.println("entrou");
-                    if(inputsSignals.get(index).getOriginalLogicValue() == 0){ //Efetua o bitflip
+                    System.out.println("--- - - -- -- - - - - -  -- FOUNDED SIG: " + thread_item.get_MTF_FaultSignal_List().get(pos) + "  list: " + thread_item.get_MTF_FaultSignal_List() + "  index: " + thread_item.getSimulationIndex() );
+
+                    if(inputsSignals.get(index).getOriginalLogicValue() == 0){ //Efetua o bitflip para sinal com valor 0 original
 
                         thread_item.getFaultSignal().setOriginalLogicValue(0);
                         thread_item.getFaultSignal().setLogicValue(1);
@@ -1314,7 +1319,7 @@ import signalProbability.ProbCircuit;
 
                     }
                     // System.out.println(" -> fault injected (" + faultSig + ")" +  " - O(v):"+inputsSignals.get(index).getOriginalLogicValue() + "  N(v):"+inputsSignals.get(index).getLogicValue());
-                }
+                //}
             }
 
 
