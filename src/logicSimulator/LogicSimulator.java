@@ -764,7 +764,7 @@ import signalProbability.ProbCircuit;
                             gate.getGate().getOutputs().get(s).setLogicValue(1);
                             gate.getGate().getOutputs().get(s).setLogicValueBoolean(Boolean.TRUE);
 
-
+                            //Falta adicionar as informações de bitflip a classe threaddItem
 
                             if(sig.getId().equals(faultSig.getId())){
                                 // System.out.println("@ "+faultSig+" Sig EQUAL "+sig);
@@ -794,6 +794,7 @@ import signalProbability.ProbCircuit;
 
                                 thread_item.setSignalOriginalValue(0);
                                 thread_item.setFaultSignalValue(1);
+
                             }
 
 
