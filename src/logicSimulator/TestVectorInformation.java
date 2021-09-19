@@ -7,6 +7,8 @@ package logicSimulator;
 
 import datastructures.Signal;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  *
@@ -25,9 +27,10 @@ public class TestVectorInformation {
     private long threadID;
 
     private boolean MTF;
-    private ArrayList<Signal> MTF_FaultSignal_List;
-    private ArrayList<Signal> MTF_FaultSignal_List_Base;
-    private ArrayList<SignalExtendedProperties> MTF_FaultSignal_List_Extended;
+    private ArrayList <Signal> MTF_FaultSignal_List;
+    private List <Signal> MTF_FaultSignal_List_thd = Collections.synchronizedList(new ArrayList<Signal>());
+    private ArrayList <Signal> MTF_FaultSignal_List_Base;
+    private ArrayList <SignalExtendedProperties> MTF_FaultSignal_List_Extended;
     
     public TestVectorInformation(ArrayList <Integer> inputVector, Signal faultSignal, int input_pos) {
             this.faultSignals = faultSignal;
@@ -42,8 +45,10 @@ public class TestVectorInformation {
 
             this.MTF = false;
             this.MTF_FaultSignal_List = new ArrayList<>();
+            this.MTF_FaultSignal_List_thd.add(faultSignal);
             this.MTF_FaultSignal_List.add(faultSignal);
             this.MTF_FaultSignal_List_Base = new ArrayList<>(this.MTF_FaultSignal_List);
+
 
             this.MTF_FaultSignal_List_Extended = new ArrayList<>();
             SignalExtendedProperties x = new SignalExtendedProperties();
@@ -71,9 +76,17 @@ public class TestVectorInformation {
             
         }
 
-     public ArrayList <Signal> get_MTF_FaultSignal_List (){
+    public List<Signal> getMTF_FaultSignal_List_thd() {
+        return this.MTF_FaultSignal_List_thd;
+    }
+
+    public ArrayList <Signal> get_MTF_FaultSignal_List (){
         return this.MTF_FaultSignal_List;
      }
+
+    public List <Signal> get_MTF_FaultSignal_List_thd (){
+        return this.MTF_FaultSignal_List_thd;
+    }
 
     public ArrayList <Signal> get_MTF_FaultSignal_List_Base (){
         return this.MTF_FaultSignal_List_Base;
@@ -100,6 +113,7 @@ public class TestVectorInformation {
                 this.MTF_FaultSignal_List.add(faultSignal);
                 this.MTF_FaultSignal_List_Extended.add(x);
 
+
         }
         else
         {
@@ -107,7 +121,7 @@ public class TestVectorInformation {
                 this.MTF_FaultSignal_List_Extended.add(x);
         }
         //this.MTF_FaultSignal_List_Extended.add(new SignalExtendedProperties(faultSignal));
-
+        this.MTF_FaultSignal_List_thd.add(faultSignal);
      }
 
      public void setThreadID(long id){

@@ -329,7 +329,7 @@ public class WriteCsvTh {
                 
                 ArrayList <String> input_i = thread_list_test.get(i).get_inputListValuesStr();
                 
-                ArrayList <TestVectorInformation> item = thread_list_test.get(i).getThreadSimulatinArray();
+                List <TestVectorInformation> item = thread_list_test.get(i).getThreadSimulatinArray();
                 
                 for (int x=0, y=0; x< input_i.size() && y< item.size(); x++ , y++){
                 
@@ -511,7 +511,7 @@ public class WriteCsvTh {
 
             ArrayList <String> input_i = thread_list_test.get(i).get_inputListValuesStr();
 
-            ArrayList <TestVectorInformation> item = thread_list_test.get(i).getThreadSimulatinArray();
+            List <TestVectorInformation> item = thread_list_test.get(i).getThreadSimulatinArray();
 
             for (int x=0, y=0; x< input_i.size() && y< item.size(); x++ , y++){
 
@@ -692,7 +692,7 @@ public class WriteCsvTh {
                 
                 ArrayList <String> input_i = thread_list_test.get(i).get_inputListValuesStr();
                 
-                ArrayList <TestVectorInformation> item = thread_list_test.get(i).getThreadSimulatinArray();
+                List <TestVectorInformation> item = thread_list_test.get(i).getThreadSimulatinArray();
                 
                 for (int x=0, y=0; x< input_i.size() && y< item.size(); x++ , y++){
                 
@@ -833,7 +833,8 @@ public class WriteCsvTh {
                 
                 ArrayList <String> input_i = thread_list_tesst_items.get(i).get_inputListValuesStr();
                 
-                ArrayList <TestVectorInformation> item = thread_list_tesst_items.get(i).getThreadSimulatinArray();
+
+                List <TestVectorInformation> item = thread_list_tesst_items.get(i).getThreadSimulatinArray();
                 
                 for (int x=0, y=0; x< input_i.size() && y< item.size(); x++ , y++){
                 

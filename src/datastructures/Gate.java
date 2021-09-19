@@ -197,11 +197,22 @@ public class Gate {
         return o;
     }
 
+
+
     /*Clayton*/
     public String getOutputsValuesToString() {
         String o = "";
         for (int i = 0; i < this.getOutputs().size(); i++) {
             o = o + this.getOutputs().get(i).getLogicValue() + " - ";
+        }
+        return o;
+    }
+
+    /*Clayton*/
+    public String getOutputsOriginalValuesToString() {
+        String o = "";
+        for (int i = 0; i < this.getOutputs().size(); i++) {
+            o = o + this.getOutputs().get(i).getOriginalLogicValue() + " - ";
         }
         return o;
     }
