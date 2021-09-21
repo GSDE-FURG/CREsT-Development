@@ -1653,20 +1653,29 @@ public class Commands {
     }
     
     public void Foo4() throws IOException, Exception {
+
+        System.out.println("Mamae");
         
         String[] circuits = {"c3540_lib_full_no_cost_no_xor.v",
                              "c3540_lib_full_no_cost.v"};
         
         System.out.println("Mamae");
-        Terminal.getInstance().executeCommand("read_genlib files/genlibs/lib_full_no_cost.genlib");
+
+        Terminal.getInstance().executeCommand("read_genlib abc/Matheus/1-minimal_no_cost.genlib");
+        Terminal.getInstance().executeCommand("read_custom_matrix 45nm.txt");
+
+        //Terminal.getInstance().executeCommand("read_verilog abc/Matheus/memory_control_minimal_no_cost.v");
+        Terminal.getInstance().executeCommand("read_verilog abc/Matheus/arbiter_round_robin_minimal_no_cost.v");
         CellLibrary cellLib = Terminal.getInstance().getCellLibrary();
-        
+        ProbCircuit pCircuit = Terminal.getInstance().getProbCircuit();
+        System.out.println(pCircuit);
+        /*
         for (String c : circuits) {
             ProbCircuit pCircuit = new CircuitFactory(Terminal.getInstance().getCellLibrary(), "files/mappeds/" + c).getProbCircuit();
             SPRController controller = new SPRController(pCircuit, cellLib);
             //System.out.println(CommonOps.getMTBFBigInt(controller.getReliability(new BigDecimal("0.99999802495"))));        
             System.out.println(CommonOps.getMTBFBigInt(controller.getReliability(new BigDecimal("0.999991145814062"))));        
-        }
+        }*/
         
                       
         
