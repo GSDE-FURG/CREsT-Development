@@ -82,6 +82,31 @@ public class TestVectorInformation {
             
         }
 
+    public String getBitFlipMTF(){
+
+        String bitflip;
+        String r = "";
+
+        for (int i = 0; i < this.get_MTF_FaultSignal_List_thd().size(); i++) {
+            r = r + this.get_MTF_FaultSignal_List_thd().get(i).getSignalBitflip() + " " + this.get_MTF_FaultSignal_List_thd().get(i).getLogicValueBoolean() ;
+        }
+        /*
+        if(this.originalSignalValue == 0){
+            bitflip = "1";
+        }
+        else{
+            bitflip = "0";
+        }
+
+        r = "("+ this.originalSignalValue + ")to("+ bitflip + ")";
+        */
+
+
+        return r;
+
+
+    }
+
     public synchronized List<Signal> getMTF_FaultSignal_List_thd() {
         return this.MTF_FaultSignal_List_thd;
     }

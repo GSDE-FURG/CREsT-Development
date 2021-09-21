@@ -93,6 +93,11 @@ public class Signal {
         return "O(" + this.originalSignalValue + ") - N(" + this.getLogicValue() + ") - Boolean: " + this.getLogicValueBoolean();
         //return id;
     }
+    public synchronized String getSignalBitflip() {
+
+        return "(" + this.originalSignalValue + " to " + this.getLogicValue() + ") ";
+        //return id;
+    }
 
     public synchronized void setVisited(){
         this.signalVisited = true;

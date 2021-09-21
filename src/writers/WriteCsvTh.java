@@ -518,10 +518,13 @@ public class WriteCsvTh {
                 //System.out.println("x: " + x + "  y: "+y);
 
                 /*new block*/
+                /*
                 if(item.get(y).get_MTF_flag()){
                     System.out.println("\n\n------------------------------------------ Vec: " + item.get(y).getinputVector() + " Output: " + item.get(y).getOrignalOutput()  +
                              " FaultOutput: " + item.get(y).getFaultOutput()  + "  -> " + item.get(y).get_MTF_FaultSignal_List());
                 }
+                */
+
 
                 if((x < input_i.size()) && (y < item.size())){
                     String s = input_i.get(x);
@@ -545,7 +548,7 @@ public class WriteCsvTh {
 
                     // System.out.println("T: " + i + " fault: " + item.get(y).getFaultSignal() + " - v: "+ s + " faultfree: " + faultFree + " fault: " + fault + " - " + T );
                     //csvWriter.append(s  + ";" + item.get(y).getFaultSignal() +";" + "(" + item.get(y).getFaultSignal().getOriginalLogicValue()+ ")to(" +  item.get(y).getFaultSignal().getLogicValue() + ")" + ";"+ faultFree + ";" + fault + ";" + propagated_faults);
-                    csvWriter.append(s  + ";" + item.get(y).getFaultSignal() +";" + item.get(y).getBitFlip() + ";"+ faultFree + ";" + fault + ";" + propagated_faults);
+                    csvWriter.append(s  + ";" + item.get(y).get_MTF_FaultSignal_List_thd() +";" + item.get(y).getBitFlipMTF() + ";"+ faultFree + ";" + fault + ";" + propagated_faults);
                     csvWriter.append("\n");
                     propagated_faults = "";
                 }
