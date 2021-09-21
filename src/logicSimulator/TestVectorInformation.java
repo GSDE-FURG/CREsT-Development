@@ -191,6 +191,16 @@ public class TestVectorInformation {
         }
         return -1;
     }
+    public int getPositionFaultSignalInMTFListThd(Signal f){
+
+        for (int i = 0; i < this.get_MTF_FaultSignal_List_thd().size(); i++) {
+            if(this.get_MTF_FaultSignal_List_thd().get(i).getId().equals(f.getId())){
+                //System.out.println("\n SIG founded: " + f.getId()  +" ~ " + this.getSimulationIndex());
+                return i;
+            }
+        }
+        return -1;
+    }
     
      public Object getItem(){
         System.out.println("This: "+ this.faultSignals);

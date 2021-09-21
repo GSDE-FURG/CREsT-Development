@@ -88,6 +88,12 @@ public class Signal {
         return id;
     }
 
+    public synchronized String getSignalOriginalAndNewValue() {
+
+        return "O(" + this.originalSignalValue + ") - N(" + this.getLogicValue() + ") - Boolean: " + this.getLogicValueBoolean();
+        //return id;
+    }
+
     public synchronized void setVisited(){
         this.signalVisited = true;
     }
