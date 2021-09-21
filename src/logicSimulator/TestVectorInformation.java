@@ -29,8 +29,8 @@ public class TestVectorInformation {
     private boolean MTF;
     private ArrayList <Signal> MTF_FaultSignal_List;
     private List <Signal> MTF_FaultSignal_List_thd = Collections.synchronizedList(new ArrayList<Signal>());
-    private ArrayList <Signal> MTF_FaultSignal_List_Base;
-    private ArrayList <SignalExtendedProperties> MTF_FaultSignal_List_Extended;
+    //private ArrayList <Signal> MTF_FaultSignal_List_Base;
+    //private ArrayList <SignalExtendedProperties> MTF_FaultSignal_List_Extended;
     
     public TestVectorInformation(ArrayList <Integer> inputVector, Signal faultSignal, int input_pos) {
             this.faultSignals = faultSignal;
@@ -47,13 +47,13 @@ public class TestVectorInformation {
             this.MTF_FaultSignal_List = new ArrayList<>();
             this.MTF_FaultSignal_List_thd.add(faultSignal);
             this.MTF_FaultSignal_List.add(faultSignal);
-            this.MTF_FaultSignal_List_Base = new ArrayList<>(this.MTF_FaultSignal_List);
+            //this.MTF_FaultSignal_List_Base = new ArrayList<>(this.MTF_FaultSignal_List);
 
 
-            this.MTF_FaultSignal_List_Extended = new ArrayList<>();
-            SignalExtendedProperties x = new SignalExtendedProperties();
-            x.setSignal(faultSignal);
-            this.MTF_FaultSignal_List_Extended.add(x);
+            //this.MTF_FaultSignal_List_Extended = new ArrayList<>();
+            //SignalExtendedProperties x = new SignalExtendedProperties();
+            //x.setSignal(faultSignal);
+            //this.MTF_FaultSignal_List_Extended.add(x);
             
     }
     
@@ -89,18 +89,22 @@ public class TestVectorInformation {
         return this.MTF_FaultSignal_List_thd;
     }
 
+    /*
     public ArrayList <Signal> get_MTF_FaultSignal_List_Base (){
         return this.MTF_FaultSignal_List_Base;
     }
-
+    */
 
     public boolean get_MTF_flag(){
         return this.MTF;
      }
 
+     /*
     public ArrayList <SignalExtendedProperties> getMTF_FaultSignal_List_Extended(){
         return this.MTF_FaultSignal_List_Extended;
     }
+    */
+
 
 
      public void setMultipleTransientFaultInjection(Signal faultSignal){
@@ -112,14 +116,14 @@ public class TestVectorInformation {
                 this.MTF = true;
                 //this.MTF_FaultSignal_List.add(this.faultSignals);
                 this.MTF_FaultSignal_List.add(faultSignal);
-                this.MTF_FaultSignal_List_Extended.add(x);
+                //this.MTF_FaultSignal_List_Extended.add(x);
 
 
         }
         else
         {
                 this.MTF_FaultSignal_List.add(faultSignal);
-                this.MTF_FaultSignal_List_Extended.add(x);
+                //this.MTF_FaultSignal_List_Extended.add(x);
         }
         //this.MTF_FaultSignal_List_Extended.add(new SignalExtendedProperties(faultSignal));
         this.MTF_FaultSignal_List_thd.add(faultSignal);
