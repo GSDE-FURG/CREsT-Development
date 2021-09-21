@@ -64,6 +64,7 @@ import signalProbability.ProbCircuit;
         private final ArrayList <String> faultSignalBitFlipArray = new ArrayList<>();
 
         private int tempIndex;
+        private String mode;
 
         public LogicSimulator(ArrayList <TestVectorInformation> threadSimulationList, Circuit circuit, CellLibrary cellLibrary, LevelCircuit levelCircuit, int start, int end, String genlib, String circuitFilePath) throws IOException, ScriptException, Exception{
        
@@ -312,6 +313,7 @@ import signalProbability.ProbCircuit;
                      
                      if(this.circuit.getOutputs().get(s).getLogicValueBoolean()){ //Bitflip output signal 
                           int flag = 0;
+
                           //this.circuit.getOutputs().get(s).setLogicValue(0);
                           outputInjection = outputInjection + 0;
                           /*
@@ -338,18 +340,18 @@ import signalProbability.ProbCircuit;
                 // outputInjection = outputInjection + signalsOutput.get(s).getOriginalLogicValue(); 
                //  System.out.println("           - Gate: " + signalsOutput.get(s).getOrigin() + " (" + signalsOutput.get(s).getOrigin().getType() + ") - Output: "+ signalsOutput.get(s) + " - Logic value: "+ signalsOutput.get(s).getLogicValue() + " [" + signalsOutput.get(s).getLogicValueBoolean() + "]" );             
                 //System.out.println("free - Gate: " + signalsOutput.get(s).getOrigin() + " (" + signalsOutput.get(s).getOrigin().getType() + ") - Output: "+ signalsOutput.get(s) + " - Logic value: "+ signalsOutput.get(s).getOriginalLogicValue() + " [" + signalsOutput.get(s).getLogicValueBoolean() + "]" );             
-                outFree = outFree + this.circuit.getOutputs().get(s).getOriginalLogicValue()
+                //outFree = outFree + this.circuit.getOutputs().get(s).getOriginalLogicValue()
 
-                ;
+                //;
             }
 
-            /*
+
             String O = vector.toString();
             String fO = O.replace("[", "");
             fO = fO.replace(",", "");
             fO = fO.replace("]", "");
             fO = fO.replace(" ", "");
-            */
+
             //String S = Integer.toString(id_num);
             //int o = Integer.parseInt(rO);
             
@@ -357,7 +359,8 @@ import signalProbability.ProbCircuit;
             
             //this.linkedQueueFault.add(outputInjection);
             //System.out.println(vector + " OUT INJECTON: " + outputInjection);
-            System.out.println( testNumber  +" Input Vector: "+ vector + "    faultSig: " + thread_item.get_MTF_FaultSignal_List_thd() + " expected(" + outFree +")  RealOutput: " + outputInjection + " -> ID:" + this.threadID);
+            //System.out.println( testNumber  +" Input Vector: "+ vector + "    faultSig: " + thread_item.get_MTF_FaultSignal_List_thd() + " expected(" + thread_item.getOrignalOutput() +")  RealOutput: " + outputInjection + " -> ID:" + this.threadID);
+            System.out.println("'"+fO + "';'" + thread_item.getOrignalOutput() +";'" + outputInjection + ";" + thread_item.get_MTF_FaultSignal_List_thd() + ";" + thread_item.getSimulationIndex());
 
 
             thread_item.setFaultOutput(outputInjection);
@@ -539,7 +542,7 @@ import signalProbability.ProbCircuit;
 
                     for (int j = 0; j < thd.getMTF_FaultSignal_List_thd().size(); j++) {
                             if(this.circuit.getInputs().get(i).getId().equals(thd.get_MTF_FaultSignal_List_thd().get(j).getId())){
-                                System.out.println(" InputSetted Founded: " +  thd.get_MTF_FaultSignal_List_thd().get(j).getId() +" thd: "+ thd.getSimulationIndex());
+                                //System.out.println(" InputSetted Founded: " +  thd.get_MTF_FaultSignal_List_thd().get(j).getId() +" thd: "+ thd.getSimulationIndex());
                                 thd.get_MTF_FaultSignal_List_thd().get(j).setOriginalLogicValue(vector.get(i));
                                 //thd.get_MTF_FaultSignal_List_thd().get(j).setLogicValue(vector.get(i));
                             }
@@ -1522,7 +1525,13 @@ import signalProbability.ProbCircuit;
          
          return (boolean) output;
      }    
-          
+
+
+     public void setMode(String mode_var){
+            this.mode = mode_var;
+
+        }
+
         private  boolean calculateFaultFreeOutputGateValue(Cell cells, DepthGate gate,ArrayList <Signal> inputsSignals){
                       
                 Map<ArrayList<Boolean>, Boolean> comb = cells.getComb();
@@ -1594,18 +1603,37 @@ import signalProbability.ProbCircuit;
 
         @Override
         public  void run() {
-            try {
-                
-                startSimulationFaultFree();
-                //startSimulationFaultInjection();
 
-                startSimulationFaultInjectionV2();
-                
-            } catch (IOException | WriteException ex) {
-                Logger.getLogger(LogicSimulator.class.getName()).log(Level.SEVERE, null, ex);
+            switch (this.mode){
+
+                case ("Single"):
+                    System.out.println("Single Transient Event - SET");
+                    try {
+                        startSimulationFaultFree();
+                        startSimulationFaultInjection();
+                        //startSimulationFaultInjectionV2();
+
+                    } catch (IOException | WriteException ex) {
+                        Logger.getLogger(LogicSimulator.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+
+                    break;
+
+
+                case ("Multiple"):
+                    System.out.println("Multiple Transient Event - SET");
+                    try {
+                        startSimulationFaultFree();
+                        startSimulationFaultInjectionV2();
+                    } catch (IOException | WriteException ex) {
+                        Logger.getLogger(LogicSimulator.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                    break;
             }
-        }
 
+
+
+        }
         private void PrintSpecs() {
          Thread t = Thread.currentThread();
          System.out.println("\n"

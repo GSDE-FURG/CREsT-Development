@@ -666,6 +666,7 @@ import writers.WriteCsvTh;
                         }
 
                         LogicSimulator threadItem = new LogicSimulator(ItemxSimulationList, this.circuit, this.cellLibrary, this.levelCircuit, start, end, this.genlib , this.circuitNameStr); // Thread contex info
+                        threadItem.setMode("Single");
                         itemx_list.add(threadItem);
 
                         Runnable runnable = threadItem;
@@ -805,6 +806,7 @@ import writers.WriteCsvTh;
             }
 
             LogicSimulator threadItem = new LogicSimulator(ItemxSimulationList, this.circuit, this.cellLibrary, this.levelCircuit, start, end, this.genlib , this.circuitNameStr); // Thread contex info
+            threadItem.setMode("Multiple");
             itemx_list.add(threadItem);
 
             Runnable runnable = threadItem;
@@ -883,6 +885,7 @@ import writers.WriteCsvTh;
                         }
 
                         LogicSimulator threadItem = new LogicSimulator(ItemxSimulationList, this.circuit, this.cellLibrary, this.levelCircuit, start, end, this.genlib , this.circuitNameStr); // Thread contex info
+                        threadItem.setMode("Single");
                         itemx_list.add(threadItem);
 
                         Runnable runnable = threadItem;
