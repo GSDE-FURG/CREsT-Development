@@ -1426,7 +1426,7 @@ import signalProbability.ProbCircuit;
 
                         String newInputThdOri = "  --- Ori_Thd(v): " + thread_item.getMTF_FaultSignal_List_thd().get(pos).getOriginalLogicValue();
                         String newInputThd = "  New_Thd(v): " + thread_item.getMTF_FaultSignal_List_thd().get(pos).getLogicValue();
-                        System.err.println(thread_item.getinputVector() + "  Tipo 0 Original bit 0 to 1>  id: " + thread_item.getSimulationIndex()+" v2 ERROR threadItem  2 :" + oriInput + oriInputNew + newInputThdOri  + " =  " + newInputThd );
+                        System.err.println(thread_item.getinputVector() + "  Tipo 0 Original bit 0 to 1>  id: " + thread_item.getSimulationIndex() +" v2 ERROR threadItem  2 :" + oriInput + oriInputNew + newInputThdOri  + " =  " + newInputThd );
                     }
 
                     if((1
