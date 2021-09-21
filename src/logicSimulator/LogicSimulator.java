@@ -729,7 +729,7 @@ import signalProbability.ProbCircuit;
 
         ArrayList <GateLevel> gatesLevels = this.levelCircuit.getGateLevels();
 
-        String track_operations = thread_item.getSimulationIndex() + " -  Fault List: " + thread_item.get_MTF_FaultSignal_List_thd() + "\n";
+        String track_operations = thread_item.getSimulationIndex() + " -  Fault List: " + thread_item.get_MTF_FaultSignal_List_thd() + "    " + thread_item.getinputVector() +  "\n";
         String outGates = "";
         this.inGate = "";
 
@@ -764,7 +764,7 @@ import signalProbability.ProbCircuit;
 
                         Signal sig = gate.getGate().getOutputs().get(s);
 
-                        track_operations = track_operations + "inputSigs: " + gate.getGate().getInputs() + " GATE: [" + gate.getGate().getId() + "] OutputSigs: " + gate.getGate().getOutputs();
+                        track_operations = track_operations + "inputSigs: " + gate.getGate().getInputs() + " Gate: [" + gate.getGate().getId() + "] OutputSigs: " + gate.getGate().getOutputs();
 
                         if(gateResult == true){  // Set the gate output's from gateResult after search to apply fault injection if signal its in the fault list
 
@@ -859,16 +859,29 @@ import signalProbability.ProbCircuit;
                         }
                     }
 
-                    track_operations = track_operations + " values: " + gate.getGate().getInputsValuesToString() +
+                    track_operations = track_operations +  " in: [" + gate.getGate().getInputsValuesToString() + "]" +
                             //"  faultSig: " + faultSig.getId() + " value Ori - New: " + faultSig.getOriginalLogicValue() + " " + faultSig.getLogicValue()
-                             "  ||  threadItem faultSig: " +  thread_item.get_MTF_FaultSignal_List_thd().get(this.tempIndex).getId()
+                            " outPropageted: (" + gate.getGate().getOutputsValuesToString()
+                            + ") free: " + gate.getGate().getOutputsOriginalValuesToString() + inGate + outGates +
+
+                            "  ||  threadItem faultSig: " +  thread_item.get_MTF_FaultSignal_List_thd().get(this.tempIndex).getId()
                             + "  value Ori - New: " +  thread_item.get_MTF_FaultSignal_List_thd().get(this.tempIndex).getOriginalLogicValue()
                             + " " +  thread_item.get_MTF_FaultSignal_List_thd().get(this.tempIndex).getLogicValue()
                             + " || " +
-                            " GATE: " + gate.getGate().getId() + "  OutputSignalGate: " + gate.getGate().getOutputs() + " value propag: " + gate.getGate().getOutputsValuesToString()
-                            + " free: " + gate.getGate().getOutputsOriginalValuesToString() + inGate + outGates
+                            /*
+                            " inputs_value: " + gate.getGate().getInputsValuesToString() +
+                            //"  faultSig: " + faultSig.getId() + " value Ori - New: " + faultSig.getOriginalLogicValue() + " " + faultSig.getLogicValue()
+                            "-> GATE: " + gate.getGate().getId() + "  OutSignalGate: " + gate.getGate().getOutputs() + " value propag: concat(" + gate.getGate().getOutputsValuesToString()
+                            + ") free: " + gate.getGate().getOutputsOriginalValuesToString() + inGate + outGates +
 
-                            + "\n";
+                            "  ||  threadItem faultSig: " +  thread_item.get_MTF_FaultSignal_List_thd().get(this.tempIndex).getId()
+                            + "  value Ori - New: " +  thread_item.get_MTF_FaultSignal_List_thd().get(this.tempIndex).getOriginalLogicValue()
+                            + " " +  thread_item.get_MTF_FaultSignal_List_thd().get(this.tempIndex).getLogicValue()
+                            + " || " +
+
+                            */
+
+                             "\n";
 
                     /* Debug Mode */
 
