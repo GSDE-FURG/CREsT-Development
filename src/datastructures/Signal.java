@@ -84,14 +84,15 @@ public class Signal {
      *
      * @return String - Signal ID
      */
-    public String getId() {
+    public synchronized String getId() {
         return id;
     }
-    
-    public void setVisited(){
+
+    public synchronized void setVisited(){
         this.signalVisited = true;
     }
-    public boolean getVisited(){
+
+    public synchronized boolean getVisited(){
         return this.signalVisited;
     }
     
@@ -105,23 +106,27 @@ public class Signal {
     }
     
     /*Clayton Farias - Setting Logic value */
-    public void setLogicValueBoolean(Boolean logicValue){
+    public synchronized void setLogicValueBoolean(Boolean logicValue){
         this.logicValueBoolean = logicValue;
     }
-    
-    public void setLogicValue(int logicValue){
+
+    public synchronized void setLogicValue(int logicValue){
         this.logicValue = logicValue;
+
+        //this.setVisited();
     }
-    
-    public void setOriginalLogicValue(int logicValue){
+
+    public synchronized void setOriginalLogicValue(int logicValue){
         this.originalSignalValue = logicValue;
+
+
     }
-    
-     public int getOriginalLogicValue(){
+
+    public synchronized int getOriginalLogicValue(){
         return this.originalSignalValue;
     }
-    
-    public int getLogicValue(){
+
+    public synchronized int getLogicValue(){
         return this.logicValue;
     }
     

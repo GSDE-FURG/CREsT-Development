@@ -9,6 +9,7 @@ import datastructures.Signal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  *
@@ -27,8 +28,11 @@ public class TestVectorInformation {
     private long threadID;
 
     private boolean MTF;
-    private ArrayList <Signal> MTF_FaultSignal_List;
-    private List <Signal> MTF_FaultSignal_List_thd = Collections.synchronizedList(new ArrayList<Signal>());
+    private final  ArrayList <Signal> MTF_FaultSignal_List;
+
+    private final List <Signal> MTF_FaultSignal_List_thd = Collections.synchronizedList(new ArrayList<Signal>());
+
+    public ConcurrentHashMap <String, Signal>  MTF_Fault_LIST_thd = new ConcurrentHashMap<>();
     //private ArrayList <Signal> MTF_FaultSignal_List_Base;
     //private ArrayList <SignalExtendedProperties> MTF_FaultSignal_List_Extended;
     
@@ -47,6 +51,8 @@ public class TestVectorInformation {
             this.MTF_FaultSignal_List = new ArrayList<>();
             this.MTF_FaultSignal_List_thd.add(faultSignal);
             this.MTF_FaultSignal_List.add(faultSignal);
+
+            this.MTF_Fault_LIST_thd.put(faultSignal.getId(), faultSignal);
             //this.MTF_FaultSignal_List_Base = new ArrayList<>(this.MTF_FaultSignal_List);
 
 
@@ -76,7 +82,7 @@ public class TestVectorInformation {
             
         }
 
-    public List<Signal> getMTF_FaultSignal_List_thd() {
+    public synchronized List<Signal> getMTF_FaultSignal_List_thd() {
         return this.MTF_FaultSignal_List_thd;
     }
 
@@ -85,7 +91,7 @@ public class TestVectorInformation {
         return this.MTF_FaultSignal_List;
      }
 
-    public List <Signal> get_MTF_FaultSignal_List_thd (){
+    public synchronized List <Signal> get_MTF_FaultSignal_List_thd (){
         return this.MTF_FaultSignal_List_thd;
     }
 
@@ -126,7 +132,8 @@ public class TestVectorInformation {
                 //this.MTF_FaultSignal_List_Extended.add(x);
         }
         //this.MTF_FaultSignal_List_Extended.add(new SignalExtendedProperties(faultSignal));
-        this.MTF_FaultSignal_List_thd.add(faultSignal);
+            this.MTF_FaultSignal_List_thd.add(faultSignal);
+         this.MTF_Fault_LIST_thd.put(faultSignal.getId(), faultSignal);
      }
 
      public void setThreadID(long id){

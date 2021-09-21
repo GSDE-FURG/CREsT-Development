@@ -305,7 +305,7 @@ import signalProbability.ProbCircuit;
             ArrayList <Signal> signalsOutput = this.circuit.getOutputs();
             
             String outputInjection = "";
-            
+            String outFree = "";
             for (int s = 0; s < signalsOutput.size(); s++) { //All outputs to str   
                 
                 if(this.circuit.getOutputs().get(s).getId().equals(thread_item.getFaultSignal().getId())){  //Inject in output sognal BItflip
@@ -314,17 +314,20 @@ import signalProbability.ProbCircuit;
                           int flag = 0;
                           //this.circuit.getOutputs().get(s).setLogicValue(0);
                           outputInjection = outputInjection + 0;
-                         System.out.println("0: Vec: " + thread_item.getinputVector() + "     "+ this.circuit.getOutputs().get(s) + " Output: Expect(" + this.circuit.getOutputs().get(s).getLogicValue()+ ")"
+                          /*
+                          System.out.println("0: Vec: " + thread_item.getinputVector() + "     "+ this.circuit.getOutputs().get(s) + " Output: Expect(" + this.circuit.getOutputs().get(s).getLogicValue()+ ")"
                                    + " Boolean :(" + this.circuit.getOutputs().get(s).getLogicValueBoolean()+ ")" );
+                                   */
+
                           
                      }else{
                           int flag = 1;
                           //this.circuit.getOutputs().get(s).setLogicValue(0);
                           outputInjection = outputInjection +  1;
-                          
+                          /*
                           System.out.println("1: Vec: " + thread_item.getinputVector() + "     "+ this.circuit.getOutputs().get(s) + " Output: Expect(" + this.circuit.getOutputs().get(s).getLogicValue()+ ")"
                                    + " Boolean :(" + this.circuit.getOutputs().get(s).getLogicValueBoolean()+ ")" );
-                        
+                            */
                      }
                     
                      
@@ -335,7 +338,11 @@ import signalProbability.ProbCircuit;
                 // outputInjection = outputInjection + signalsOutput.get(s).getOriginalLogicValue(); 
                //  System.out.println("           - Gate: " + signalsOutput.get(s).getOrigin() + " (" + signalsOutput.get(s).getOrigin().getType() + ") - Output: "+ signalsOutput.get(s) + " - Logic value: "+ signalsOutput.get(s).getLogicValue() + " [" + signalsOutput.get(s).getLogicValueBoolean() + "]" );             
                 //System.out.println("free - Gate: " + signalsOutput.get(s).getOrigin() + " (" + signalsOutput.get(s).getOrigin().getType() + ") - Output: "+ signalsOutput.get(s) + " - Logic value: "+ signalsOutput.get(s).getOriginalLogicValue() + " [" + signalsOutput.get(s).getLogicValueBoolean() + "]" );             
+                outFree = outFree + this.circuit.getOutputs().get(s).getOriginalLogicValue()
+
+                ;
             }
+
             /*
             String O = vector.toString();
             String fO = O.replace("[", "");
@@ -350,10 +357,12 @@ import signalProbability.ProbCircuit;
             
             //this.linkedQueueFault.add(outputInjection);
             //System.out.println(vector + " OUT INJECTON: " + outputInjection);
-           
+            System.out.println( testNumber  +" Input Vector: "+ vector + "    faultSig: " + thread_item.get_MTF_FaultSignal_List_thd() + " expected(" + outFree +")  RealOutput: " + outputInjection + " -> ID:" + this.threadID);
+
+
             thread_item.setFaultOutput(outputInjection);
 
-            //System.out.println(" --->> Fault (" + testNumber  +") Input Vector: "+ vector + "  Output: " + outputInjection + " -> ID:" + this.threadID);
+           // System.out.println( testNumber  +") Input Vector: "+ vector + "  Output: " + outputInjection + " -> ID:" + this.threadID);
             
            
      }
@@ -492,7 +501,62 @@ import signalProbability.ProbCircuit;
               
      }
 
-        private  void propagateFaultInjections(int testNumber, ArrayList <Integer> vector, Signal faultSig, int index, TestVectorInformation thread_item) throws IOException, WriteException{
+        private  void insertInputVectorsMTF(String Option, ArrayList <Integer> vector, TestVectorInformation thd){
+
+        this.cells = this.cellLibrary.getCells();//cellLib.getCells();
+
+        switch (Option){
+                    /*
+                    case "random":
+                        ArrayList <Signal> inputSignais = this.circuit.getInputs();
+                        //System.out.println("Input Signals: " + inputSignais + " Size: " + inputSignais.size());
+
+                        Random gerador = new Random();
+                        //vetor de entrada aleatório
+                        for (int i = 0; i < inputSignais.size(); i++) {
+                                int randomLogicValue = gerador.nextInt(2);
+                                //inputSignais.get(i).setLogicValue(randomLogicValue); //old
+                                this.circuit.getInputs().get(i).setLogicValue(randomLogicValue);
+                                this.circuit.getInputs().get(i).setOriginalLogicValue(vector.get(i));
+                               // System.out.println(inputSignais.get(i)+" : '"+inputSignais.get(i).getLogicValue()+"'");
+                        }
+
+                    break;
+                    */
+
+            case "selected":
+                ArrayList <Signal> inputSignals = this.circuit.getInputs();
+                // System.out.println("Selected vector" + vector + " - Input Signals: " + inputSignals + " Size: " + inputSignals.size());
+
+                //Random gerador = new Random();
+                //vetor de entrada aleatório
+
+                for (int i = 0; i < inputSignals.size(); i++) {
+                    //int randomLogicValue = gerador.nextInt(2);
+                    //inputSignals.get(i).setLogicValue(vector.get(i));
+                    this.circuit.getInputs().get(i).setLogicValue(vector.get(i));
+                    this.circuit.getInputs().get(i).setOriginalLogicValue(vector.get(i));
+
+                    for (int j = 0; j < thd.getMTF_FaultSignal_List_thd().size(); j++) {
+                            if(this.circuit.getInputs().get(i).getId().equals(thd.get_MTF_FaultSignal_List_thd().get(j).getId())){
+                                System.out.println(" InputSetted Founded: " +  thd.get_MTF_FaultSignal_List_thd().get(j).getId() +" thd: "+ thd.getSimulationIndex());
+                                thd.get_MTF_FaultSignal_List_thd().get(j).setOriginalLogicValue(vector.get(i));
+                                //thd.get_MTF_FaultSignal_List_thd().get(j).setLogicValue(vector.get(i));
+                            }
+                    }
+                    //System.out.println(inputSignals.get(i)+" : '"+inputSignals.get(i).getLogicValue()+"'");
+                }
+                break;
+
+        }
+
+
+
+
+    }
+
+
+    private  void propagateFaultInjections(int testNumber, ArrayList <Integer> vector, Signal faultSig, int index, TestVectorInformation thread_item) throws IOException, WriteException{
            
              this.threadID = (long) Thread.currentThread().getId();
            
@@ -766,6 +830,7 @@ import signalProbability.ProbCircuit;
 
                         Signal sig = gate.getGate().getOutputs().get(s);
 
+
                         track_operations = track_operations + "inputSigs: " + gate.getGate().getInputs() + " Gate: [" + gate.getGate().getId() + "] OutputSigs: " + gate.getGate().getOutputs();
 
                         if(gateResult == true){  // Set the gate output's from gateResult after search to apply fault injection if signal its in the fault list
@@ -782,38 +847,21 @@ import signalProbability.ProbCircuit;
 
                             if(sig.getId().equals(faultSig.getId())){ // Define o bitflip 1 to 0
                                 //Compara a saida da porta logica com faultsignal
-                                // System.out.println("@ "+faultSig+" Sig EQUAL "+sig);
 
 
                                 outGates = outGates + " OUTGATE ****** 1 to 0 FAULTSIGNAL IDENTIFICADO " + faultSig.getId() + "  posFaultList: " + this.tempIndex;
 
-                                //faultSig.setOriginalLogicValue(1);
-                                //faultSig.setLogicValue(0); // bitfip
-                                //faultSig.setLogicValueBoolean(Boolean.FALSE);
 
-                                //thread_item.get_MTF_FaultSignal_List_thd().get(this.tempIndex).setOriginalLogicValue(1);
+
+                                thread_item.get_MTF_FaultSignal_List_thd().get(this.tempIndex).setOriginalLogicValue(1);
                                 thread_item.get_MTF_FaultSignal_List_thd().get(this.tempIndex).setLogicValue(0);
                                 thread_item.get_MTF_FaultSignal_List_thd().get(this.tempIndex).setLogicValueBoolean(Boolean.FALSE);
+
+
 
                                 outGates = outGates + " xxxx " +
                                         "" +
                                         "O(v): " + thread_item.get_MTF_FaultSignal_List_thd().get(this.tempIndex).getOriginalLogicValue() + " N(v): " + thread_item.get_MTF_FaultSignal_List_thd().get(this.tempIndex).getLogicValue();
-
-
-
-                                /*
-                                thread_item.setSignalOriginalValue(1);
-                                thread_item.setFaultSignalValue(0);
-                                */
-
-
-
-                                /* Armazenar o sinal falho na estrutura SignalExtended*/
-                                /*
-                                thread_item.getMTF_FaultSignal_List_Extended().get(this.tempIndex).setOrignalValueExtended(1);
-                                thread_item.getMTF_FaultSignal_List_Extended().get(this.tempIndex).setFaultValueExtended(0); //aplica o bitflip
-                                thread_item.getMTF_FaultSignal_List_Extended().get(this.tempIndex).setFaultValueBoolean(Boolean.FALSE);
-                                */
 
                             }
 
@@ -831,29 +879,17 @@ import signalProbability.ProbCircuit;
 
                                 // System.out.println("@ "+faultSig+" Sig EQUAL "+sig);
                                 outGates = outGates + "  OUTGATE ****** 0 to 1 FAULTSIGNAL IDENTIFICADO " + faultSig.getId() + "  posFaultList: " + this.tempIndex;
-                                //faultSig.setOriginalLogicValue(0);
-                                //faultSig.setLogicValue(1); // bitfip
-                                //faultSig.setLogicValueBoolean(Boolean.TRUE);
 
 
-                                //thread_item.get_MTF_FaultSignal_List_thd().get(this.tempIndex).setOriginalLogicValue(0);
+                                thread_item.get_MTF_FaultSignal_List_thd().get(this.tempIndex).setOriginalLogicValue(0);
                                 thread_item.get_MTF_FaultSignal_List_thd().get(this.tempIndex).setLogicValue(1);
                                 thread_item.get_MTF_FaultSignal_List_thd().get(this.tempIndex).setLogicValueBoolean(Boolean.TRUE);
 
+
+
+
                                 outGates = outGates + " xxx O(v): " + thread_item.get_MTF_FaultSignal_List_thd().get(this.tempIndex).getOriginalLogicValue() + " N(v): " + thread_item.get_MTF_FaultSignal_List_thd().get(this.tempIndex).getLogicValue();
 
-
-                                 /*
-                                thread_item.setSignalOriginalValue(0);
-                                thread_item.setFaultSignalValue(1);
-                                */
-
-                                /* Armazenar o sinal falho na estrutura SignalExtended*/
-                                /*
-                                thread_item.getMTF_FaultSignal_List_Extended().get(this.tempIndex).setOrignalValueExtended(0);
-                                thread_item.getMTF_FaultSignal_List_Extended().get(this.tempIndex).setFaultValueExtended(1); //aplica o bitflip
-                                thread_item.getMTF_FaultSignal_List_Extended().get(this.tempIndex).setFaultValueBoolean(Boolean.TRUE);
-                                */
                             }
 
                         }
@@ -867,7 +903,8 @@ import signalProbability.ProbCircuit;
                             "  ||  threadItem faultSig: " +  thread_item.get_MTF_FaultSignal_List_thd().get(this.tempIndex).getId()
                             + "  value Ori - New: " +  thread_item.get_MTF_FaultSignal_List_thd().get(this.tempIndex).getOriginalLogicValue()
                             + " " +  thread_item.get_MTF_FaultSignal_List_thd().get(this.tempIndex).getLogicValue()
-                            + " || " +
+                            + " || "
+                            +
                             /*
                             " inputs_value: " + gate.getGate().getInputsValuesToString() +
                             //"  faultSig: " + faultSig.getId() + " value Ori - New: " + faultSig.getOriginalLogicValue() + " " + faultSig.getLogicValue()
@@ -944,7 +981,9 @@ import signalProbability.ProbCircuit;
 
             for (int i = 0; i < this.threadSimulationList.size(); i++) {
 
-                this.insertInputVectors("selected", this.threadSimulationList.get(i).getinputVector());
+                //this.insertInputVectors("selected", this.threadSimulationList.get(i).getinputVector());
+                this.insertInputVectorsMTF("selected", this.threadSimulationList.get(i).getinputVector(), this.threadSimulationList.get(i));
+
                 //this.propagateFaultInjections(this.threadSimulationList.get(i).getSimulationIndex(), this.threadSimulationList.get(i).getinputVector(), this.threadSimulationList.get(i).getFaultSignal(), i,  this.threadSimulationList.get(i));
 
                 //this.propagateMultipleFaultInjectionsV2(this.threadSimulationList.get(i).getFaultSignal(), this.threadSimulationList.get(i));
@@ -1174,251 +1213,6 @@ import signalProbability.ProbCircuit;
         return (boolean) output;
     }
 
-        private  boolean calculateOutputFacultInjectionGateValueMultipleFaultInjection(Cell cells, DepthGate gate, ArrayList <Signal> inputsSignals, TestVectorInformation thread_item){
-        //System.out.println("inn... + " + thread_item.getItem().toString());
-        final Map<ArrayList<Boolean>, Boolean> comb = cells.getComb();
-        final ArrayList <Boolean> input = new ArrayList<>();
-        final ArrayList <Integer> signals = new ArrayList<>();
-
-        for (int index = 0; index < inputsSignals.size(); index++) {
-
-            // Bloco para decisão se é ou não sinal da lista de falhas
-
-            Signal faultSig = null ;//thread_item.getPositionFaultSignalInMTFList(inputsSignals.get(index));
-
-            int pos = thread_item.getPositionFaultSignalInMTFList(inputsSignals.get(index)); //identifica se o sinal de entrada (index) está na lista de sinais a serem injetadas as falhas
-
-            /*
-            if((pos > -1) && (thread_item.getMTF_FaultSignal_List_Extended().get(pos).getPassed() == true)) {
-                System.out.println(" " +
-                        "TRUE " +
-                        "--- - - -- -- - - - -  -- FOUNDED SIG: " + thread_item.get_MTF_FaultSignal_List().get(pos) + "   O(v): " + thread_item.get_MTF_FaultSignal_List().get(pos).getOriginalLogicValue() + " New: " + thread_item.get_MTF_FaultSignal_List().get(pos).getLogicValue()
-                        + "  flag SignalExtended:  " + thread_item.getMTF_FaultSignal_List_Extended().get(pos).getSignal().getId() + "  O(v): "+  thread_item.getMTF_FaultSignal_List_Extended().get(pos).getOriginalLogicValue() + " New: " + thread_item.getMTF_FaultSignal_List_Extended().get(pos).getLogicValue()
-                        + " - " + thread_item.getMTF_FaultSignal_List_Extended().get(pos).getPassed() + "  list: " + thread_item.get_MTF_FaultSignal_List() + "  index: " + thread_item.getSimulationIndex());
-            }
-            */
-
-
-            if((pos > -1) && (!thread_item.getMTF_FaultSignal_List_Extended().get(pos).getPassed())){ // Identifica se a posição na lista de falhas esta vazia (pos>-1) e se ja passou por essa falha
-
-                faultSig = thread_item.get_MTF_FaultSignal_List().get(pos); // Atribui faultSig a sua posição na lista de falhas
-
-                    //if(inputsSignals.get(index).getId().equals(faultSig.getId()) && (pos > -1)){ //Compara o sinal novamente com sinais de entrada e aplica o bit-flip
-                    // System.out.println("Falha In");
-                    //System.out.println("entrou");
-                    //System.out.println("--- - - -- -- - -FIrST -  - - -  -- FOUNDED SIG: " + thread_item.get_MTF_FaultSignal_List().get(pos) + " flag SignalExtended:  "+  thread_item.getMTF_FaultSignal_List_Extended().get(pos).getSignal().getId() + " - " + thread_item.getMTF_FaultSignal_List_Extended().get(pos).getPassed() +  "  list: " + thread_item.get_MTF_FaultSignal_List() + "  index: " + thread_item.getSimulationIndex() );
-
-
-
-                thread_item.getMTF_FaultSignal_List_Extended().get(pos).setPassed();
-                this.tempIndex = pos;
-
-                    if(inputsSignals.get(index).getOriginalLogicValue() == 0){ //Efetua o bitflip para sinal com valor 0 original
-
-                        //Só é preciso os inputSignals values
-                        inputsSignals.get(index).setOriginalLogicValue(0);
-                        inputsSignals.get(index).setLogicValue(1);
-                        inputsSignals.get(index).setLogicValueBoolean(Boolean.TRUE);
-
-                        //desnecessário
-                        /*
-                        thread_item.getFaultSignal().setOriginalLogicValue(0);
-                        thread_item.getFaultSignal().setLogicValue(1);
-                        thread_item.getFaultSignal().setLogicValueBoolean(Boolean.TRUE);
-                        */
-
-
-                        /*
-                        faultSig.setOriginalLogicValue(0);
-                        faultSig.setLogicValue(1);
-                        faultSig.setLogicValueBoolean(Boolean.TRUE);
-                        */
-
-                        //desnecessário
-                        /*
-                        thread_item.setSignalOriginalValue(0);
-                        thread_item.setFaultSignalValue(1);
-                        */
-
-                        //OK depois reforçado
-                        thread_item.get_MTF_FaultSignal_List().get(pos).setOriginalLogicValue(inputsSignals.get(index).getOriginalLogicValue());
-                        thread_item.get_MTF_FaultSignal_List().get(pos).setLogicValue(inputsSignals.get(index).getLogicValue());
-                        thread_item.get_MTF_FaultSignal_List().get(pos).setLogicValueBoolean(Boolean.TRUE);
-
-                        thread_item.getMTF_FaultSignal_List_Extended().get(pos).setOrignalValueExtended(thread_item.get_MTF_FaultSignal_List().get(pos).getOriginalLogicValue());
-                        thread_item.getMTF_FaultSignal_List_Extended().get(pos).setFaultValueExtended(thread_item.get_MTF_FaultSignal_List().get(pos).getLogicValue());
-                        thread_item.getMTF_FaultSignal_List_Extended().get(pos).setFaultValueBoolean(thread_item.get_MTF_FaultSignal_List().get(pos).getLogicValueBoolean());
-
-
-                        //desnecessário
-                        /*
-                        thread_item.getMTF_FaultSignal_List_Extended().get(pos).getSignal().setOriginalLogicValue(inputsSignals.get(index).getOriginalLogicValue() );
-                        thread_item.getMTF_FaultSignal_List_Extended().get(pos).getSignal().setLogicValue(inputsSignals.get(index).getLogicValue());
-                        thread_item.getMTF_FaultSignal_List_Extended().get(pos).getSignal().setLogicValueBoolean(Boolean.TRUE);
-                        */
-
-                                /*
-                                thread_item.setSignalOriginalValue(0);
-                                thread_item.setFaultSignalValue(1);
-
-                                inputsSignals.get(index).setLogicValue(1);
-                                inputsSignals.get(index).setLogicValueBoolean(Boolean.TRUE);
-                                */
-
-                        /* thread item */
-                                /*
-                                 thread_item.getFaultSignal().setOriginalLogicValue(0);
-                                 thread_item.getFaultSignal().setLogicValue(1);
-                                 thread_item.getFaultSignal().setLogicValueBoolean(Boolean.TRUE);
-                                */
-
-                        /*Fault Sig*/
-                                /*
-                                faultSig.setOriginalLogicValue(0);
-                                 faultSig.setLogicValue(1);
-                                 faultSig.setLogicValueBoolean(Boolean.TRUE);
-                                 */
-                    }
-                    else{
-
-                        //Importante
-                        inputsSignals.get(index).setOriginalLogicValue(1);
-                        inputsSignals.get(index).setLogicValue(0);
-                        inputsSignals.get(index).setLogicValueBoolean(Boolean.FALSE);
-
-                        //desnecessário
-                        /*
-                        thread_item.getFaultSignal().setOriginalLogicValue(1);
-                        thread_item.getFaultSignal().setLogicValue(0);
-                        thread_item.getFaultSignal().setLogicValueBoolean(Boolean.FALSE);
-                        */
-
-
-                        /*
-                        faultSig.setOriginalLogicValue(1);
-                        faultSig.setLogicValue(0);
-                        faultSig.setLogicValueBoolean(Boolean.FALSE);
-                        */
-
-                        /*
-                        //desnecessário
-                        thread_item.setSignalOriginalValue(1);
-                        thread_item.setFaultSignalValue(0);
-                        */
-
-                        //depois reforçar
-                        thread_item.get_MTF_FaultSignal_List().get(pos).setOriginalLogicValue(inputsSignals.get(index).getOriginalLogicValue());
-                        thread_item.get_MTF_FaultSignal_List().get(pos).setLogicValue(inputsSignals.get(index).getLogicValue());
-                        thread_item.get_MTF_FaultSignal_List().get(pos).setLogicValueBoolean(Boolean.FALSE);
-
-                        thread_item.getMTF_FaultSignal_List_Extended().get(pos).setOrignalValueExtended(thread_item.get_MTF_FaultSignal_List().get(pos).getOriginalLogicValue());
-                        thread_item.getMTF_FaultSignal_List_Extended().get(pos).setFaultValueExtended(thread_item.get_MTF_FaultSignal_List().get(pos).getLogicValue());
-                        thread_item.getMTF_FaultSignal_List_Extended().get(pos).setFaultValueBoolean(thread_item.get_MTF_FaultSignal_List().get(pos).getLogicValueBoolean());
-
-                        //desnecessário
-                        /*
-                        thread_item.getMTF_FaultSignal_List_Extended().get(pos).getSignal().setOriginalLogicValue(1);
-                        thread_item.getMTF_FaultSignal_List_Extended().get(pos).getSignal().setLogicValue(inputsSignals.get(index).getLogicValue());
-                        thread_item.getMTF_FaultSignal_List_Extended().get(pos).getSignal().setLogicValueBoolean(Boolean.FALSE);
-                        */
-
-                    }
-
-
-                if((inputsSignals.get(index).getOriginalLogicValue() != thread_item.getMTF_FaultSignal_List_Extended().get(pos).getOrignalValueExtended())
-                || (inputsSignals.get(index).getLogicValue() !=  thread_item.getMTF_FaultSignal_List_Extended().get(pos).getFaultValueExtended())){
-
-                    String oriInput = "Sig: " + inputsSignals.get(index) + " Ori(v): " + inputsSignals.get(index).getOriginalLogicValue();
-                    String oriInputNew = "  New(v): " + inputsSignals.get(index).getLogicValue() + "  ";
-
-
-                    String newInputThdOri = "  Ori_Thd(v): " + thread_item.getMTF_FaultSignal_List_Extended().get(pos).getOrignalValueExtended();
-                    String newInputThd = "  New_Thd(v): " + thread_item.getMTF_FaultSignal_List_Extended().get(pos).getFaultValueExtended();
-                    System.err.println(thread_item.getSimulationIndex()+" xx " +
-                            "" +
-                            "" +
-                            "ERROR threadItem  2 :" + oriInput + oriInputNew + newInputThdOri  + " =  " + newInputThd );
-                }
-
-
-                    // System.out.println(" -> fault injected (" + faultSig + ")" +  " - O(v):"+inputsSignals.get(index).getOriginalLogicValue() + "  N(v):"+inputsSignals.get(index).getLogicValue());
-                //}
-                /*
-                if(thread_item.get_MTF_FaultSignal_List().size() > 1){
-                    System.err.println(thread_item.get_MTF_FaultSignal_List()+ " " +
-                            "Double " +
-                            "--- - - -- -- - - - -  -- FOUNDED SIG: " + thread_item.get_MTF_FaultSignal_List().get(pos) + "   O(v): " + thread_item.get_MTF_FaultSignal_List().get(pos).getOriginalLogicValue() + " New: " + thread_item.get_MTF_FaultSignal_List().get(pos).getLogicValue()
-                            + "  flag SignalExtended:  " + thread_item.getMTF_FaultSignal_List_Extended().get(pos).getSignal().getId() + "  O(v): "+  thread_item.getMTF_FaultSignal_List_Extended().get(pos).getOriginalLogicValue() + " New: " + thread_item.getMTF_FaultSignal_List_Extended().get(pos).getLogicValue()
-                            + " - " + thread_item.getMTF_FaultSignal_List_Extended().get(pos).getPassed() + "  list: " + thread_item.get_MTF_FaultSignal_List() + "  index: " + thread_item.getSimulationIndex());
-
-                }
-                */
-
-            }
-
-
-
-            signals.add(inputsSignals.get(index).getLogicValue());
-
-            if(inputsSignals.get(index).getLogicValue() == 0){
-                input.add(Boolean.FALSE);
-            }
-            if(inputsSignals.get(index).getLogicValue() == 1){
-                input.add(Boolean.TRUE);
-            }
-        }
-
-
-        //System.out.println("                                Input
-            // Signal: " + inputsSignals + " v: "+input);
-        Object output = "stuck";
-
-        String r = "";
-
-        String gate_temp = gate.getGate().getType().toString();
-        //System.out.println("Gate: " + gate_temp);
-
-        if(gate_temp.equals("ZERO")){
-            //System.out.println("  OPS ------------------------------ ZERO    " + gate_temp );
-            r = "0";
-            //boolean saida =
-            return Boolean.FALSE;
-        }
-        if(gate_temp.equals("ONE")){
-            //System.out.println("  OPS ------------------------------ OONE    " + gate_temp );
-            r = "1";
-            //boolean saida =
-            return Boolean.TRUE;
-        }
-        for (Map.Entry<ArrayList<Boolean>, Boolean> entry : comb.entrySet()){
-            if(entry.getKey().equals(input)){
-                //System.out.println("Input Finded: " + entry.getKey() + " output " + entry.getValue());
-                //Gate k = null;
-                boolean x = entry.getValue();
-                output = entry.getValue();
-                r = "";//output.toString();
-                if(x == true){
-                    r = "1";
-
-                }
-                if(x == false){
-                    r = "0";
-                }
-
-            }
-        }
-        if(!output.equals("stuck")){
-            //System.out.println("               Gate: " + gate.getGate() + "(" +cells.getName() + ") inputSignals: " + gate.getGate().getInputs() + " -> values: "  + signals + " ~ " + input  + " -> Output " + gate.getGate().getOutputs() + " is: " + r + " ["+ output +"] ------ \n");
-        }else{
-            System.err.println("ERROR stuck !!!!! o: "+output + "  GATE: " + gate.getGate() + "  type: " + gate.getGate().getType());
-        }
-
-
-
-
-        return (boolean) output;
-    }
-
         // return signals logic value
         private boolean convertGatesInputsToBoolean(Map<ArrayList<Boolean>, Boolean> comb, ArrayList <Boolean> input, DepthGate gate){
 
@@ -1460,7 +1254,8 @@ import signalProbability.ProbCircuit;
 
         //Compara os sinais da lista de falhas com sinais de entrada da porta lógica
     private  boolean calculateOutputFacultInjectionGateValueMultipleFaultInjectionV2NEWMODE(Cell cells, DepthGate gate, ArrayList <Signal> inputsSignals, TestVectorInformation thread_item, String track_operations){
-        //System.out.println("inn... + " + thread_item.getItem().toString());
+
+            //System.out.println("inn... + " + thread_item.getItem().toString());
         final Map<ArrayList<Boolean>, Boolean> comb = cells.getComb(); // Calculate the gate output
         final ArrayList <Boolean> input = new ArrayList<>();
         //final ArrayList <Integer> signals = new ArrayList<>();
@@ -1472,120 +1267,101 @@ import signalProbability.ProbCircuit;
 
             int pos = thread_item.getPositionFaultSignalInMTFList(inputsSignals.get(index)); //identifica se o sinal de entrada (index) está na lista de sinais a serem injetadas as falhas
 
-            if((pos > -1) && (!thread_item.getMTF_FaultSignal_List_Extended().get(pos).getPassed())){ // Identifica se a posição na lista de falhas esta vazia (pos>-1) e se ja passou por essa falha
-                int value;
-                //faultSig = thread_item.get_MTF_FaultSignal_List().get(pos); // Atribui faultSig a sua posição na lista de falhas
+            if((pos > -1)){ // Identifica se a posição na lista de falhas esta vazia (pos>-1) e se ja passou por essa falha
 
-                //if(inputsSignals.get(index).getId().equals(faultSig.getId()) && (pos > -1)){ //Compara o sinal novamente com sinais de entrada e aplica o bit-flip
-                    // System.out.println("Falha In");
-                    //System.out.println("entrou");
-                    //System.out.println("--- - - -- -- - -FIrST -  - - -  -- FOUNDED SIG: " + thread_item.get_MTF_FaultSignal_List().get(pos) + " flag SignalExtended:  "+  thread_item.getMTF_FaultSignal_List_Extended().get(pos).getSignal().getId() + " - " + thread_item.getMTF_FaultSignal_List_Extended().get(pos).getPassed() +  "  list: " + thread_item.get_MTF_FaultSignal_List() + "  index: " + thread_item.getSimulationIndex() );
-
-
-                thread_item.getMTF_FaultSignal_List_Extended().get(pos).setPassed();
                 this.tempIndex = pos;
 
-                if(inputsSignals.get(index).getOriginalLogicValue() == 0){ //Efetua o bitflip para sinal com valor 0 original
-                    value = 0;
-                    //Só é preciso os inputSignals values
+                if((inputsSignals.get(index).getOriginalLogicValue() == 0) && (thread_item.getMTF_FaultSignal_List_thd().get(pos).getId().equals(inputsSignals.get(index).getId()))){ //Efetua o bitflip para sinal com valor 0 original
+
                     inputsSignals.get(index).setOriginalLogicValue(0);
                     inputsSignals.get(index).setLogicValue(1);
                     inputsSignals.get(index).setLogicValueBoolean(Boolean.TRUE);
 
-                    //OK depois reforçado
-                    /*
-                    thread_item.get_MTF_FaultSignal_List().get(pos).setOriginalLogicValue(inputsSignals.get(index).getOriginalLogicValue());
-                    thread_item.get_MTF_FaultSignal_List().get(pos).setLogicValue(inputsSignals.get(index).getLogicValue());
-                    thread_item.get_MTF_FaultSignal_List().get(pos).setLogicValueBoolean(Boolean.TRUE);
-
-                    thread_item.getMTF_FaultSignal_List_Extended().get(pos).setOrignalValueExtended(thread_item.get_MTF_FaultSignal_List().get(pos).getOriginalLogicValue());
-                    thread_item.getMTF_FaultSignal_List_Extended().get(pos).setFaultValueExtended(thread_item.get_MTF_FaultSignal_List().get(pos).getLogicValue());
-                    thread_item.getMTF_FaultSignal_List_Extended().get(pos).setFaultValueBoolean(thread_item.get_MTF_FaultSignal_List().get(pos).getLogicValueBoolean());
-                    */
-
                     thread_item.get_MTF_FaultSignal_List_thd().get(pos).setOriginalLogicValue(0);
                     thread_item.get_MTF_FaultSignal_List_thd().get(pos).setLogicValue(1);
                     thread_item.get_MTF_FaultSignal_List_thd().get(pos).setLogicValueBoolean(Boolean.TRUE);
+
+
+
                     track_operations = track_operations + "  input ****** 0 to 1 FAULT INPUT SIGNAL IDENTIFICADO ["
                             +  thread_item.get_MTF_FaultSignal_List_thd().get(pos).getId()
                             + "]  Ori: " +  thread_item.get_MTF_FaultSignal_List_thd().get(pos).getOriginalLogicValue()
                             + " New: " +  thread_item.get_MTF_FaultSignal_List_thd().get(pos).getLogicValue() +"  posFaultList: " + pos + "  ~ ";
 
 
+                    // IF case to development and see possible errors
+                    if((0 != thread_item.getMTF_FaultSignal_List_thd().get(pos).getOriginalLogicValue())){
+
+                        String oriInput = "Sig: " + inputsSignals.get(index) + " Ori(v): " + inputsSignals.get(index).getOriginalLogicValue();
+                        String oriInputNew = "  New(v): " + inputsSignals.get(index).getLogicValue() + "  end inputs";
+
+                        String newInputThdOri = "  --- Ori_Thd(v): " + thread_item.getMTF_FaultSignal_List_thd().get(pos).getOriginalLogicValue();
+                        String newInputThd = "  New_Thd(v): " + thread_item.getMTF_FaultSignal_List_thd().get(pos).getLogicValue();
+                        System.err.println("Tipo 0 Original bit 0 to 1>  id: " + thread_item.getSimulationIndex()+" v2 ERROR threadItem  2 :" + oriInput + oriInputNew + newInputThdOri  + " =  " + newInputThd );
+                    }
+
+                    if((1
+                            != thread_item.getMTF_FaultSignal_List_thd().get(pos).getLogicValue())){
+
+                        String oriInput = "Sig: " + inputsSignals.get(index) + " Ori(v): " + inputsSignals.get(index).getOriginalLogicValue();
+                        String oriInputNew = "  New(v): " + inputsSignals.get(index).getLogicValue() + "  end inputs";
+
+                        String newInputThdOri = "   ~~~~ Ori_Thd(v): " + thread_item.getMTF_FaultSignal_List_thd().get(pos).getOriginalLogicValue();
+                        String newInputThd = "  New_Thd(v): " + thread_item.getMTF_FaultSignal_List_thd().get(pos).getLogicValue();
+                        System.err.println("Tipo 0 Logical bit 0 to 1> id: " + thread_item.getSimulationIndex()+" v2 ERROR threadItem  2 :" + oriInput + oriInputNew + newInputThdOri  + " =  " + newInputThd );
+                    }
+
+
                 }
-                else{
-                    value = 1;
-                    //Importante
+                if((inputsSignals.get(index).getOriginalLogicValue() ==  1) && (thread_item.getMTF_FaultSignal_List_thd().get(pos).getId().equals(inputsSignals.get(index).getId()))){
+
+
                     inputsSignals.get(index).setOriginalLogicValue(1);
                     inputsSignals.get(index).setLogicValue(0);
                     inputsSignals.get(index).setLogicValueBoolean(Boolean.FALSE);
 
-                    /*
-                    //depois reforçar
-                    thread_item.get_MTF_FaultSignal_List().get(pos).setOriginalLogicValue(inputsSignals.get(index).getOriginalLogicValue());
-                    thread_item.get_MTF_FaultSignal_List().get(pos).setLogicValue(inputsSignals.get(index).getLogicValue());
-                    thread_item.get_MTF_FaultSignal_List().get(pos).setLogicValueBoolean(Boolean.FALSE);
-
-                    thread_item.getMTF_FaultSignal_List_Extended().get(pos).setOrignalValueExtended(thread_item.get_MTF_FaultSignal_List().get(pos).getOriginalLogicValue());
-                    thread_item.getMTF_FaultSignal_List_Extended().get(pos).setFaultValueExtended(thread_item.get_MTF_FaultSignal_List().get(pos).getLogicValue());
-                    thread_item.getMTF_FaultSignal_List_Extended().get(pos).setFaultValueBoolean(thread_item.get_MTF_FaultSignal_List().get(pos).getLogicValueBoolean());
-                    */
-
                     thread_item.get_MTF_FaultSignal_List_thd().get(pos).setOriginalLogicValue(1);
                     thread_item.get_MTF_FaultSignal_List_thd().get(pos).setLogicValue(0);
                     thread_item.get_MTF_FaultSignal_List_thd().get(pos).setLogicValueBoolean(Boolean.FALSE);
+
                     track_operations = track_operations + "  input ****** 1 to 0 FAULT INPUT SIGNAL IDENTIFICADO ["
                             +  thread_item.get_MTF_FaultSignal_List_thd().get(pos).getId()
                             + "]  Ori: "
                             +  thread_item.get_MTF_FaultSignal_List_thd().get(pos).getOriginalLogicValue()
                             + " New: " +  thread_item.get_MTF_FaultSignal_List_thd().get(pos).getLogicValue() +"  posFaultList: " + pos + " ~ ";
+
+
+
+                    // IF case to development and see possible errors
+                    if((1 != thread_item.getMTF_FaultSignal_List_thd().get(pos).getOriginalLogicValue())){
+
+                        String oriInput = "Sig: " + inputsSignals.get(index) + " Ori(v): " + inputsSignals.get(index).getOriginalLogicValue();
+                        String oriInputNew = "  New(v): " + inputsSignals.get(index).getLogicValue() + "  end inputs";
+
+
+                        String newInputThdOri = "  --- Ori_Thd(v): " + thread_item.getMTF_FaultSignal_List_thd().get(pos).getOriginalLogicValue();
+                        String newInputThd = "  New_Thd(v): " + thread_item.getMTF_FaultSignal_List_thd().get(pos).getLogicValue();
+                        System.err.println("Tipo 1 Original bit 1 to 0>  id: " + thread_item.getSimulationIndex()+" v2 ERROR threadItem  2 :" + oriInput + oriInputNew + newInputThdOri  + " =  " + newInputThd );
+                    }
+
+                    if((0
+                            != thread_item.getMTF_FaultSignal_List_thd().get(pos).getLogicValue())){
+
+                        String oriInput = "Sig: " + inputsSignals.get(index) + " Ori(v): " + inputsSignals.get(index).getOriginalLogicValue();
+                        String oriInputNew = "  New(v): " + inputsSignals.get(index).getLogicValue() + "  end inputs";
+
+
+                        String newInputThdOri = "   ~~~~ Ori_Thd(v): " + thread_item.getMTF_FaultSignal_List_thd().get(pos).getOriginalLogicValue();
+                        String newInputThd = "  New_Thd(v): " + thread_item.getMTF_FaultSignal_List_thd().get(pos).getLogicValue();
+                        System.err.println("Tipo 1 Logical bit 1 to 0> id: " + thread_item.getSimulationIndex()+" v2 ERROR threadItem  2 :" + oriInput + oriInputNew + newInputThdOri  + " =  " + newInputThd );
+                    }
+
                 }
 
 
                 this.inGate = track_operations;
 
-
-                // IF case to development and see possible errors
-                if((value != thread_item.getMTF_FaultSignal_List_thd().get(pos).getOriginalLogicValue())){
-
-                    String oriInput = "Sig: " + inputsSignals.get(index) + " Ori(v): " + inputsSignals.get(index).getOriginalLogicValue();
-                    String oriInputNew = "  New(v): " + inputsSignals.get(index).getLogicValue() + "  end inputs";
-
-
-                    String newInputThdOri = "  --- Ori_Thd(v): " + thread_item.getMTF_FaultSignal_List_thd().get(pos).getOriginalLogicValue();
-                    String newInputThd = "  New_Thd(v): " + thread_item.getMTF_FaultSignal_List_thd().get(pos).getLogicValue();
-                    System.err.println("Tipo 1 Original>  id: " + thread_item.getSimulationIndex()+" v2 ERROR threadItem  2 :" + oriInput + oriInputNew + newInputThdOri  + " =  " + newInputThd );
-                }
-
-                if(( inputsSignals.get(index).getLogicValue()
-                        != thread_item.getMTF_FaultSignal_List_thd().get(pos).getLogicValue())){
-
-                    String oriInput = "Sig: " + inputsSignals.get(index) + " Ori(v): " + inputsSignals.get(index).getOriginalLogicValue();
-                    String oriInputNew = "  New(v): " + inputsSignals.get(index).getLogicValue() + "  end inputs";
-
-
-                    String newInputThdOri = "   ~~~~ Ori_Thd(v): " + thread_item.getMTF_FaultSignal_List_thd().get(pos).getOriginalLogicValue();
-                    String newInputThd = "  New_Thd(v): " + thread_item.getMTF_FaultSignal_List_thd().get(pos).getLogicValue();
-                    System.err.println("Tipo 2 Logical> id: " + thread_item.getSimulationIndex()+" v2 ERROR threadItem  2 :" + oriInput + oriInputNew + newInputThdOri  + " =  " + newInputThd );
-                }
-
-
-                // System.out.println(" -> fault injected (" + faultSig + ")" +  " - O(v):"+inputsSignals.get(index).getOriginalLogicValue() + "  N(v):"+inputsSignals.get(index).getLogicValue());
-                //}
-                /*
-                if(thread_item.get_MTF_FaultSignal_List().size() > 1){
-                    System.err.println(thread_item.get_MTF_FaultSignal_List()+ " " +
-                            "Double " +
-                            "--- - - -- -- - - - -  -- FOUNDED SIG: " + thread_item.get_MTF_FaultSignal_List().get(pos) + "   O(v): " + thread_item.get_MTF_FaultSignal_List().get(pos).getOriginalLogicValue() + " New: " + thread_item.get_MTF_FaultSignal_List().get(pos).getLogicValue()
-                            + "  flag SignalExtended:  " + thread_item.getMTF_FaultSignal_List_Extended().get(pos).getSignal().getId() + "  O(v): "+  thread_item.getMTF_FaultSignal_List_Extended().get(pos).getOriginalLogicValue() + " New: " + thread_item.getMTF_FaultSignal_List_Extended().get(pos).getLogicValue()
-                            + " - " + thread_item.getMTF_FaultSignal_List_Extended().get(pos).getPassed() + "  list: " + thread_item.get_MTF_FaultSignal_List() + "  index: " + thread_item.getSimulationIndex());
-                }
-                */
-
             }
-
-                //signals.add(inputsSignals.get(index).getLogicValue());
-
                 if(inputsSignals.get(index).getLogicValue() == 0){
                     input.add(Boolean.FALSE);  //Store input to another arrayList
                 }
