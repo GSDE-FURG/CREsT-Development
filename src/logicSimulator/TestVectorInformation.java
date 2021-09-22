@@ -139,9 +139,9 @@ public class TestVectorInformation {
 
 
      public void setMultipleTransientFaultInjection(Signal faultSignal){
-         SignalExtendedProperties x = new SignalExtendedProperties();
-         x.setSignal(faultSignal);
-         System.out.println(x.getSignal().getId());
+         //SignalExtendedProperties x = new SignalExtendedProperties();
+         //x.setSignal(faultSignal);
+         //System.out.println(x.getSignal().getId());
         if(this.MTF == false)
         {
                 this.MTF = true;
