@@ -95,7 +95,7 @@ public class Signal {
     }
     public synchronized String getSignalBitflip() {
 
-        return "(" + this.originalSignalValue + " to " + this.getLogicValue() + ") ";
+        return "(" + this.originalSignalValue + " to " + this.logicValue + ") ";
         //return id;
     }
 

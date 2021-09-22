@@ -139,7 +139,7 @@ import signalProbability.ProbCircuit;
         private void startSimulationFaultFreeMTF() throws IOException, WriteException{
 
             for (int i = 0; i < this.threadSimulationList.size(); i++) {
-                this.insertInputVectorsMTF("selected", this.threadSimulationList.get(i).getinputVector(), threadSimulationList.get(i));
+                this.insertInputVectors("selected", this.threadSimulationList.get(i).getinputVector());
                 this.propagateInputVectorsMTF(this.threadSimulationList.get(i).getSimulationIndex(), this.threadSimulationList.get(i).getinputVector(), this.threadSimulationList.get(i));
                 this.getPropagateFaultFreeResults( this.threadSimulationList.get(i).getinputVector(), this.threadSimulationList.get(i).getSimulationIndex(), this.threadSimulationList.get(i), i+1);
             }
@@ -757,7 +757,7 @@ import signalProbability.ProbCircuit;
 
                 //Random gerador = new Random();
                 //vetor de entrada aleatório
-                System.out.println("INPUTS: " + inputSignals);
+                //System.out.println("INPUTS: " + inputSignals);
                 for (int i = 0; i < inputSignals.size(); i++) {
                     //int randomLogicValue = gerador.nextInt(2);
                     //inputSignals.get(i).setLogicValue(vector.get(i));
@@ -775,7 +775,7 @@ import signalProbability.ProbCircuit;
                     int pos =  thread_item.getPositionFaultSignalInMTFListThd(inputSignals.get(i));
                     if(pos > -1){
                         thread_item.get_MTF_FaultSignal_List_thd().get(pos).setOriginalLogicValue(vector.get(i));
-                        thread_item.get_MTF_FaultSignal_List_thd().get(pos).setLogicValue(vector.get(i));
+                        //thread_item.get_MTF_FaultSignal_List_thd().get(pos).setLogicValue(vector.get(i));
                     }
 
                     //System.out.println(inputSignals.get(i)+" : '"+inputSignals.get(i).getLogicValue()+"'");
@@ -1234,7 +1234,8 @@ import signalProbability.ProbCircuit;
             this.settingFaultInjectionResults();
         }
 
-        public  void startSimulationMultipleFaultInjection() throws IOException, WriteException{
+        public  void
+        startSimulationMultipleFaultInjection() throws IOException, WriteException{
 
             for (int i = 0; i < this.threadSimulationList.size(); i++) {
 
@@ -1852,7 +1853,7 @@ import signalProbability.ProbCircuit;
 
                 if(pos > -1){
                     thread_item.get_MTF_FaultSignal_List_thd().get(pos).setOriginalLogicValue(0);
-                    thread_item.get_MTF_FaultSignal_List_thd().get(pos).setLogicValue(0);
+                    ///thread_item.get_MTF_FaultSignal_List_thd().get(pos).setLogicValue(0);
                 }
             }
             if(inputsSignals.get(index).getLogicValue() == 1){
@@ -1862,7 +1863,7 @@ import signalProbability.ProbCircuit;
 
                 if(pos > -1){
                     thread_item.get_MTF_FaultSignal_List_thd().get(pos).setOriginalLogicValue(1);
-                    thread_item.get_MTF_FaultSignal_List_thd().get(pos).setLogicValue(1);
+                    //thread_item.get_MTF_FaultSignal_List_thd().get(pos).setLogicValue(1);
                 }
                 }
             }
