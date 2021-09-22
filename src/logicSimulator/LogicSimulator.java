@@ -135,6 +135,7 @@ import signalProbability.ProbCircuit;
             }  
         }
 
+
         private void startSimulationFaultFreeMTF() throws IOException, WriteException{
 
             for (int i = 0; i < this.threadSimulationList.size(); i++) {
@@ -273,7 +274,7 @@ import signalProbability.ProbCircuit;
                     DepthGate gate = (DepthGate) object;
                     //gate.getGate().getType()
                     //System.out.println("              - Gate: "+ gatesInThisLevel.get(k)  + "  type: "+ gate.getGate().getType());
-                    boolean outputGate = this.calculateFaultFreeOutputGateValue(gate.getGate().getType(), gate, gate.getGate().getInputs());  //Method calc the output from the gate
+                    boolean outputGate = this.calculateFaultFreeOutputGateValueMTF(gate.getGate().getType(), gate, gate.getGate().getInputs(), thread_item);  //Method calc the output from the gate
 
 
                     for (int s = 0; s < gate.getGate().getOutputs().size(); s++) {
@@ -727,7 +728,7 @@ import signalProbability.ProbCircuit;
               
      }
 
-        private  void insertInputVectorsMTF(String Option, ArrayList <Integer> vector, TestVectorInformation thd){
+        private  void insertInputVectorsMTF(String Option, ArrayList <Integer> vector, TestVectorInformation thread_item){
 
         this.cells = this.cellLibrary.getCells();//cellLib.getCells();
 
@@ -756,20 +757,27 @@ import signalProbability.ProbCircuit;
 
                 //Random gerador = new Random();
                 //vetor de entrada aleatório
-
+                System.out.println("INPUTS: " + inputSignals);
                 for (int i = 0; i < inputSignals.size(); i++) {
                     //int randomLogicValue = gerador.nextInt(2);
                     //inputSignals.get(i).setLogicValue(vector.get(i));
                     this.circuit.getInputs().get(i).setLogicValue(vector.get(i));
                     this.circuit.getInputs().get(i).setOriginalLogicValue(vector.get(i));
-
+                    /*
                     for (int j = 0; j < thd.getMTF_FaultSignal_List_thd().size(); j++) {
                             if(this.circuit.getInputs().get(i).getId().equals(thd.get_MTF_FaultSignal_List_thd().get(j).getId())){ // Search for input signal in MultipleFaultList
                                 //System.out.println(" InputSetted Founded: " +  thd.get_MTF_FaultSignal_List_thd().get(j).getId() +" thd: "+ thd.getSimulationIndex());
                                 thd.get_MTF_FaultSignal_List_thd().get(j).setOriginalLogicValue(vector.get(i));
-                                //thd.get_MTF_FaultSignal_List_thd().get(j).setLogicValue(vector.get(i));
+                                thd.get_MTF_FaultSignal_List_thd().get(j).setLogicValue(vector.get(i));
                             }
                     }
+                    */
+                    int pos =  thread_item.getPositionFaultSignalInMTFListThd(inputSignals.get(i));
+                    if(pos > -1){
+                        thread_item.get_MTF_FaultSignal_List_thd().get(pos).setOriginalLogicValue(vector.get(i));
+                        thread_item.get_MTF_FaultSignal_List_thd().get(pos).setLogicValue(vector.get(i));
+                    }
+
                     //System.out.println(inputSignals.get(i)+" : '"+inputSignals.get(i).getLogicValue()+"'");
                 }
                 break;
@@ -1498,6 +1506,7 @@ import signalProbability.ProbCircuit;
 
                 if((inputsSignals.get(index).getOriginalLogicValue() == 0) && (thread_item.getMTF_FaultSignal_List_thd().get(pos).getId().equals(inputsSignals.get(index).getId()))){ //Efetua o bitflip para sinal com valor 0 original
                     /* Here is applied the bitflip on gate input signals 0 to 1 *Signals present in MultipleFaultList*/
+
                     //inputsSignals.get(index).setOriginalLogicValue(0);
                     inputsSignals.get(index).setLogicValue(1);
                     inputsSignals.get(index).setLogicValueBoolean(Boolean.TRUE);
@@ -1823,9 +1832,97 @@ import signalProbability.ProbCircuit;
                
          
          return (boolean) output;
-     }    
+     }
 
-        @Override
+    private  boolean calculateFaultFreeOutputGateValueMTF(Cell cells, DepthGate gate,ArrayList <Signal> inputsSignals, TestVectorInformation thread_item){
+
+        Map<ArrayList<Boolean>, Boolean> comb = cells.getComb();
+        ArrayList <Boolean> input = new ArrayList<>();
+        ArrayList <Integer> signals = new ArrayList<>();
+        for (int index = 0; index < inputsSignals.size(); index++) {
+
+
+            signals.add(inputsSignals.get(index).getLogicValue());
+
+            if(inputsSignals.get(index).getLogicValue() == 0){
+                input.add(Boolean.FALSE);
+
+                int pos = thread_item.getPositionFaultSignalInMTFListThd(inputsSignals.get(index)); //identifica se o sinal de entrada (index) está na lista de sinais a serem injetadas as falhas
+
+                if(pos > -1){
+                    thread_item.get_MTF_FaultSignal_List_thd().get(pos).setOriginalLogicValue(0);
+                    thread_item.get_MTF_FaultSignal_List_thd().get(pos).setLogicValue(0);
+                }
+            }
+            if(inputsSignals.get(index).getLogicValue() == 1){
+                input.add(Boolean.TRUE);
+
+                int pos = thread_item.getPositionFaultSignalInMTFListThd(inputsSignals.get(index)); //identifica se o sinal de entrada (index) está na lista de sinais a serem injetadas as falhas
+
+                if(pos > -1){
+                    thread_item.get_MTF_FaultSignal_List_thd().get(pos).setOriginalLogicValue(1);
+                    thread_item.get_MTF_FaultSignal_List_thd().get(pos).setLogicValue(1);
+                }
+                }
+            }
+
+
+
+
+        //System.out.println("                                Input Signal: " + inputsSignals + " v: "+input);
+        Object output = "stuck";
+
+        String r = "";
+
+
+        String gate_temp = gate.getGate().getType().toString();
+        //System.out.println("Gate: " + gate_temp);
+
+        if(gate_temp.equals("ZERO")){
+            //System.out.println("  OPS ------------------------------ ZERO    " + gate_temp );
+            r = "0";
+            //boolean saida =
+            return Boolean.FALSE;
+        }
+        if(gate_temp.equals("ONE")){
+            //System.out.println("  OPS ------------------------------ OONE    " + gate_temp );
+            r = "1";
+            //boolean saida =
+            return Boolean.TRUE;
+        }
+
+        for (Map.Entry<ArrayList<Boolean>, Boolean> entry : comb.entrySet()){
+            if(entry.getKey().equals(input)){
+                //System.out.println("Input Finded: " + entry.getKey() + " output " + entry.getValue());
+                //Gate k = null;
+                boolean x = entry.getValue();
+                output = x;
+                r = output.toString();
+                if(x == true){
+                    r = "1";
+
+
+                    //¹¹output = x;
+                }
+                if(x == false){
+                    r = "0";
+                    //output = x;
+                }
+                //output = x;
+            }
+        }
+        if(!output.equals("stuck")){
+            //System.out.println("   xxaxaxaxa            Gate: " + gate.getGate() + "(" +cells.getName() + ") inputSignals: " + gate.getGate().getInputs() + " -> values: "  + signals + " ~ " + input  + " -> Output " + gate.getGate().getOutputs() + " is: " + r + " ["+ output +"] ------ \n");
+        }else{
+            System.out.println("ERROR stuck !!!!! out : " + output + "  GATE: " + gate.getGate() + "  -- INFO type : " + gate.getGate().getType() );
+        }
+
+
+        return (boolean) output;
+    }
+
+
+    @Override
         public  void run() {
 
             switch (this.mode){
