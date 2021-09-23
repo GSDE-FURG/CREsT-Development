@@ -40,7 +40,7 @@ public class itemnize {
     public int getNewValue(){
         return this.newValue;
     }
-    private int getOriginalValue(){
+    public int getOriginalValue(){
         return this.originalValue;
     }
     public String getIdentidade(){
