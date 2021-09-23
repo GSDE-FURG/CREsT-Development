@@ -1785,6 +1785,7 @@ import signalProbability.ProbCircuit;
                     thread_item.getMTF_PERSONAL_LIST().get(pos).CompInfoItemnize(debug);
 
 
+
                     // IF case to development and see possible errors
 
                     if((0 != inputsSignals.get(index).getOriginalLogicValue())){
