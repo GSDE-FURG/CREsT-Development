@@ -30,6 +30,21 @@ import static ops.LogarithmOps.lnBig;
  * @author matheus
  */
 public class CommonOps {
+
+    public static long timenow() {
+        return System.currentTimeMillis();
+    }
+
+    public static long timestampDiff(Long timenow) {
+        return System.currentTimeMillis() - timenow;
+    }
+
+    public static void timestamp(Long timenow, String message) {
+        final long startTime = System.currentTimeMillis();
+        String timeConsup = "## TIME CONSUPTION ## ==> " + Long.toString(timestampDiff(timenow)) + " ms";
+        System.out.println(message);
+        System.out.println(timeConsup);
+    }
     
     public static String getTrueCurrentPath(Object obj) {        
         try {

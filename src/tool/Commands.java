@@ -49,6 +49,8 @@ import static ops.CommonOps.getMultipliedMatrix;
 import static ops.CommonOps.matrixPrint;
 import static ops.CommonOps.getITM;
 import static ops.CommonOps.sortByValue;
+import static  ops.CommonOps.timenow;
+import static  ops.CommonOps.timestamp;
 
 
 import ops.PTMOps;
@@ -112,6 +114,7 @@ public class Commands {
     private Map<String, String> helpTree = new LinkedHashMap<>();
     int counter;
     String output;
+    long timenow;
     
     public Commands() {
         
@@ -147,7 +150,7 @@ public class Commands {
         helpTree.put("write_verilog", "Export de current circuit to a file");
         
     }
-    
+
     public String getHelpDesc(String command) {
         return helpTree.get(command);
     }
@@ -575,14 +578,23 @@ public class Commands {
     public void ReadVerilog(String filename) throws IOException, Exception {
         //String path = CommonOps.getWorkPath(this) + "abc" + File.separator + filename;
         String path = CommonOps.getWorkPath(this) + filename;
-        
-        
+
         try {
             
-            
-            Terminal.getInstance().initCircuit(path);            
+            Long timeNow = timenow();
+            System.out.println("Verificando init Circuit...");
+            System.out.println("");
+
+            Terminal.getInstance().initCircuit(path);
+            timestamp(timeNow, "Init circuit");
+
+            timeNow = timenow();
             Terminal.getInstance().initLevelCircuit();
+            timestamp(timeNow, "Init Levelcircuit");
+
+            timeNow = timenow();
             Terminal.getInstance().initProbCircuit();
+            timestamp(timeNow, "Init Probcircuit");
         } catch (ScriptException ex) {
             System.out.println(ex);
         }
@@ -1661,14 +1673,27 @@ public class Commands {
         
         System.out.println("Mamae");
 
+        timenow = timenow();
         Terminal.getInstance().executeCommand("read_genlib abc/Matheus/1-minimal_no_cost.genlib");
-        Terminal.getInstance().executeCommand("read_custom_matrix 45nm.txt");
+        timestamp(timenow, "genlib reading...");
 
+        timenow = timenow();
+        Terminal.getInstance().executeCommand("read_custom_matrix 45nm.txt");
+        timestamp(timenow, "custom matrix reading...");
+
+
+        timenow = timenow();
         //Terminal.getInstance().executeCommand("read_verilog abc/Matheus/memory_control_minimal_no_cost.v");
         Terminal.getInstance().executeCommand("read_verilog abc/Matheus/arbiter_round_robin_minimal_no_cost.v");
+        timestamp(timenow, "circuit reading...");
+
+
         CellLibrary cellLib = Terminal.getInstance().getCellLibrary();
         ProbCircuit pCircuit = Terminal.getInstance().getProbCircuit();
-        System.out.println(pCircuit);
+        timenow = timenow();
+        Terminal.getInstance().executeCommand("spr");
+        timestamp(timenow, "Spr");
+
         /*
         for (String c : circuits) {
             ProbCircuit pCircuit = new CircuitFactory(Terminal.getInstance().getCellLibrary(), "files/mappeds/" + c).getProbCircuit();

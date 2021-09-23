@@ -17,6 +17,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import static  ops.CommonOps.timenow;
+import static  ops.CommonOps.timestamp;
+import static  ops.CommonOps.timestampDiff;
+
 import tool.Terminal;
 
 /**
@@ -31,6 +35,9 @@ public class MappedVerilogReader {
     private String path = new String();
     private Circuit circ;
     private CellLibrary cellLibrary;
+
+    public long gateAndSignalsCreation = 0;
+    public long signalsSettings = 0;
     
     /**
      * Simple Verilog File Reader class constructor. To instance an object.
@@ -44,7 +51,7 @@ public class MappedVerilogReader {
     }*/
     
     public MappedVerilogReader(String path, CellLibrary library) throws IOException, Exception {        
-        this.cellLibrary = library;        
+        this.cellLibrary = library;
         readFile(path);
     }
 
@@ -192,7 +199,9 @@ public class MappedVerilogReader {
 
 
         if (cellLibrary.getCellByName(gateTypeName) != null) {
-            
+
+            long timeFlag1 = timenow();
+
             gateIdIOs = preGate[1].replaceAll(" ", "");
 
             preGate = gateIdIOs.split("\\Q(\\E", 2);
@@ -200,7 +209,6 @@ public class MappedVerilogReader {
             String gateId = preGate[0];
 
             String gateIOsString = preGate[1].replaceFirst("[\\Q.\\E]", "");
-
 
             gateIOsString = gateIOsString.substring(0, gateIOsString.length()-2);
 
@@ -211,11 +219,20 @@ public class MappedVerilogReader {
             ArrayList<Signal> inputs = new ArrayList<>(fooGate.getType().getInputs().size());
             ArrayList<Signal> outputs = new ArrayList<>(fooGate.getType().getOutputs().size());
 
+            gateAndSignalsCreation = gateAndSignalsCreation + timestampDiff(timeFlag1);
+
+            long timeFlag2 = timenow();
+
+
 
             for (int i = 0; i < gateIOs.length; i++) {
 
                 String[] signal = gateIOs[i].split("\\Q(\\E", 2);
 
+                System.out.println(Arrays.toString(signal));
+                System.out.println(fooGate.getType().getInputs());
+
+                // Se tem, quer dizer que o sinal é uma entrada!
                 if(fooGate.getType().getInputs().contains(signal[0])) {
                     inputs.add(fooGate.getType().getInputs().indexOf(signal[0]), getSignalById(signal[1]));                
                     getSignalById(signal[1]).addDestiny(fooGate);
@@ -232,13 +249,20 @@ public class MappedVerilogReader {
                 }
             }
 
+            System.out.println(inputs);
+            System.out.println(outputs);
+            System.out.println();
+
+
+            signalsSettings = signalsSettings + timestampDiff(timeFlag2);
+
             fooGate.setInputs(inputs);
             fooGate.setOutputs(outputs);
 
             this.circ.addGate(fooGate);
         
         } else {
-            throw new java.lang.RuntimeException("this is not quite as badfasfasfasffas");
+            throw new java.lang.RuntimeException("Cell " + gateTypeName + " not founded!!");
         }
     }
     
@@ -264,20 +288,36 @@ public class MappedVerilogReader {
      * @throws java.io.IOException
      */
     public void readFile(String path) throws IOException, Exception {
+
+        long lineIFstime = 0;
+        long signalFactoryTime = 0;
+        long gateFactoryTime = 0;
+        long whileHead;
+        long whileTail;
+        long signalFlag;
+        long gateFlag;
         
         File file = new File(path);
         BufferedReader br;
+        Long timeNow = timenow();
         this.circ = new Circuit();
+        timestamp(timeNow, "New Circuit...");
 
+        timeNow = timenow();
         this.circ.setName(file.getName().substring(0, file.getName().indexOf(".")));        
-
+        timestamp(timeNow, "Circuit naming...");
         String reserved = "";        
-            
+
+        timeNow = timenow();
         br = new BufferedReader(new FileReader(file));                        
-        
+        timestamp(timeNow, "Buffreader setting...");
+
+        Long timeWhile = timenow();
 
         while ((line = br.readLine()) != null) {                        
-            
+
+            whileHead = timenow();
+
             if(line.contains("//")) {
                 line = line.split("//")[0];
             }
@@ -294,25 +334,44 @@ public class MappedVerilogReader {
                reserved = "wire";
             }
 
+            //TODO remover
+            lineIFstime = lineIFstime + timestampDiff(whileHead);
+
             switch(reserved){
                 case "input":
                 case "wire":
+                    signalFlag = timenow();
                     signalFactory(line);
+                    signalFactoryTime = signalFactoryTime + timestampDiff(signalFlag);
                     break;
                 case "output":
+                    signalFlag = timenow();
                     signalFactory(line, true);
+                    signalFactoryTime = signalFactoryTime + timestampDiff(signalFlag);
                     break;                        
 
                 default:
                     if (isLineGate(line)) {
+                        gateFlag = timenow();
                         gateFactory(line);
+                        gateFactoryTime = gateFactoryTime + timestampDiff(gateFlag);
                     }
             }
 
+            whileTail = timenow();
             if (line.contains(";")) {                   
                reserved = "null";
             }
+            lineIFstime = lineIFstime + timestampDiff(whileTail);
 
-        }        
+        }
+
+        timestamp(timeWhile, "After file lines while...");
+        System.out.println("WhileIFs time = " + lineIFstime + " ms");
+        System.out.println("SignalsFactory time = " + signalFactoryTime + " ms");
+        System.out.println("GatesFactory time = " + gateFactoryTime + " ms");
+        System.out.println();
+        System.out.println("Gates and Signals Creation = " + gateAndSignalsCreation + " ms");
+        System.out.println("Signals Settings = " + signalsSettings + " ms");
     }
 }

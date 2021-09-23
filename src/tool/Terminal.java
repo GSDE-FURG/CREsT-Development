@@ -146,7 +146,6 @@ class TerminalWrapper {
 
 
                 }
-
                 r.keyPress(KeyEvent.VK_ENTER);
                 r.keyRelease(KeyEvent.VK_ENTER);
 
@@ -286,8 +285,8 @@ class TerminalWrapper {
             // ##########
             
             // term.executeCommand("clear");
-            r.keyPress(KeyEvent.VK_ENTER);
-            r.keyRelease(KeyEvent.VK_ENTER);
+            //r.keyPress(KeyEvent.VK_ENTER);
+            //r.keyRelease(KeyEvent.VK_ENTER);
             
         }        
     }
