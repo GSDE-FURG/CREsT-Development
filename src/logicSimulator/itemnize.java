@@ -7,22 +7,25 @@ import java.util.ArrayList;
 public class itemnize {
 
     private final String id;
-    private final int originalValue;
+    private int originalValue;
     private int newValue;
     private final Signal sig;
     private ArrayList<Integer> inputVector =  new ArrayList<>();
 
 
-    public itemnize(Signal s, String id, int originalValue, ArrayList<Integer> input) {
+    public itemnize(Signal s, String id, ArrayList<Integer> input) {
         this.id = id;
-        this.originalValue = originalValue;
+        this.originalValue = -123; //= ;originalValue;
         this.sig = s;
         this.sig.setOriginalLogicValue(this.originalValue);
         this.sig.setLogicValue(123);
         this.inputVector = input;
     }
+    public void setOriginalValue(int value){
+        this.originalValue = value;
+    }
 
-    private void setNewValue(int value){
+    public void setNewValue(int value){
         this.newValue = value;
         this.sig.setLogicValue(this.newValue);
 
@@ -34,13 +37,13 @@ public class itemnize {
         }
 
     }
-    private int getNewValue(){
+    public int getNewValue(){
         return this.newValue;
     }
     private int getOriginalValue(){
         return this.originalValue;
     }
-    private String getIdentidade(){
+    public String getIdentidade(){
         return this.id;
     }
     private Signal getSignalItemnize(){
@@ -50,7 +53,7 @@ public class itemnize {
         System.out.println(this.inputVector + " - ID: " + this.id + " Ori: " + this.originalValue + "  New: " + this.newValue + "  FaultSig: " + this.sig.getId());
     }
     public void CompInfoItemnize(String comp){
-        System.out.println(this.inputVector + " >> " + comp + " || Itemnize ID: " + this.id + " Ori: " + this.originalValue + "  New: " + this.newValue + "  FaultSig: " + this.sig.getId());
+        System.out.println(this.inputVector + " >> " + comp + " || Itemnize ID: " + this.id + " Origem: " + this.originalValue + "  New: " + this.newValue + "  FaultSig: " + this.sig.getId());
     }
 
 
