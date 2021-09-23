@@ -1780,6 +1780,8 @@ import signalProbability.ProbCircuit;
                             + "]  Ori: " +  thread_item.get_MTF_FaultSignal_List_thd().get(pos).getOriginalLogicValue()
                             + " New: " +  thread_item.get_MTF_FaultSignal_List_thd().get(pos).getLogicValue() +"  posFaultList: " + pos + "  ~ ";
                     */
+
+
                     thread_item.getMTF_PERSONAL_LIST().get(pos).CompInfoItemnize(debug);
 
 
