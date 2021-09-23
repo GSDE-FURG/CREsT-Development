@@ -32,6 +32,10 @@ public class TestVectorInformation {
 
     private final List <Signal> MTF_FaultSignal_List_thd = Collections.synchronizedList(new ArrayList<Signal>());
 
+    private final List <itemnize> MTF_PERSONAL_LIST = Collections.synchronizedList(new ArrayList<itemnize>());
+
+
+
     public ConcurrentHashMap <String, Signal>  MTF_Fault_LIST_thd = new ConcurrentHashMap<>();
     //private ArrayList <Signal> MTF_FaultSignal_List_Base;
     //private ArrayList <SignalExtendedProperties> MTF_FaultSignal_List_Extended;
@@ -53,9 +57,8 @@ public class TestVectorInformation {
             this.MTF_FaultSignal_List.add(faultSignal);
 
             this.MTF_Fault_LIST_thd.put(faultSignal.getId(), faultSignal);
+
             //this.MTF_FaultSignal_List_Base = new ArrayList<>(this.MTF_FaultSignal_List);
-
-
             //this.MTF_FaultSignal_List_Extended = new ArrayList<>();
             //SignalExtendedProperties x = new SignalExtendedProperties();
             //x.setSignal(faultSignal);
@@ -111,6 +114,22 @@ public class TestVectorInformation {
         return this.MTF_FaultSignal_List_thd;
     }
 
+    public synchronized List <itemnize> getMTF_PERSONAL_LIST()
+    {
+        return this.MTF_PERSONAL_LIST;
+    }
+
+    public synchronized itemnize getMTF_PERSONAL_LIST_POS(int pos)
+    {
+        return this.MTF_PERSONAL_LIST.get(pos);
+    }
+
+    public synchronized void setFAULT_MTF_PERSONAL_LIST(int pos, int originalValue, ArrayList<Integer> input)
+    {
+       itemnize item = new itemnize(this.get_MTF_FaultSignal_List_thd().get(pos), this.get_MTF_FaultSignal_List_thd().get(pos).getId(), originalValue, input);
+       this.MTF_PERSONAL_LIST.add(item);
+    }
+
 
     public ArrayList <Signal> get_MTF_FaultSignal_List (){
         return this.MTF_FaultSignal_List;
@@ -148,13 +167,16 @@ public class TestVectorInformation {
                 //this.MTF_FaultSignal_List.add(this.faultSignals);
                 this.MTF_FaultSignal_List.add(faultSignal);
                 //this.MTF_FaultSignal_List_Extended.add(x);
-
+                 itemnize item = new itemnize(this.MTF_FaultSignal_List_thd.get(0), this.MTF_FaultSignal_List_thd.get(0).getId(), faultSignal.getOriginalLogicValue(), this.inputVector);
+                 this.MTF_PERSONAL_LIST.add(item);
 
         }
         else
         {
                 this.MTF_FaultSignal_List.add(faultSignal);
                 //this.MTF_FaultSignal_List_Extended.add(x);
+                itemnize item = new itemnize(this.MTF_FaultSignal_List_thd.get(this.MTF_FaultSignal_List_thd.size()-1), this.MTF_FaultSignal_List_thd.get(this.MTF_FaultSignal_List_thd.size()-1).getId(), faultSignal.getOriginalLogicValue(), this.inputVector);
+                this.MTF_PERSONAL_LIST.add(item);
         }
         //this.MTF_FaultSignal_List_Extended.add(new SignalExtendedProperties(faultSignal));
             this.MTF_FaultSignal_List_thd.add(faultSignal);
@@ -216,6 +238,7 @@ public class TestVectorInformation {
         }
         return -1;
     }
+
     public int getPositionFaultSignalInMTFListThd(Signal f){
 
         for (int i = 0; i < this.get_MTF_FaultSignal_List_thd().size(); i++) {
