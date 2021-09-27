@@ -1086,7 +1086,7 @@ import signalProbability.ProbCircuit;
                                 this.tempIndex = pos;
                                 Signal fault_signal_MTF = thread_item.get_MTF_FaultSignal_List_thd().get(pos);
 
-                                if (sig.getId().equals(fault_signal_MTF.getId()) && thread_item.getMTF_PERSONAL_LIST().get(pos).getOriginalValue() == 1) {
+                                if (sig.getId().equals(fault_signal_MTF.getId())){
 
                                     if (thread_item.getMTF_PERSONAL_LIST().get(pos).getOriginalValue() == gate.getGate().getOutputs().get(s).getLogicValue()) {
 
@@ -1159,7 +1159,7 @@ import signalProbability.ProbCircuit;
                                 this.tempIndex = pos;
                                 Signal fault_signal_MTF = thread_item.get_MTF_FaultSignal_List_thd().get(pos);
 
-                                if(sig.getId().equals(fault_signal_MTF.getId()) && thread_item.getMTF_PERSONAL_LIST().get(pos).getOriginalValue()==0) {
+                                if(sig.getId().equals(fault_signal_MTF.getId())) {
                                     //if(sig.getId().equals(faultSig.getId())){ // Define bitflip 0 to 1
                                     //thread_item.get_MTF_FaultSignal_List_thd().get(pos).setVisited();
                                     if (thread_item.getMTF_PERSONAL_LIST().get(pos).getOriginalValue() == gate.getGate().getOutputs().get(s).getLogicValue()) {
@@ -1753,21 +1753,23 @@ import signalProbability.ProbCircuit;
 
             int pos = thread_item.getPositionFaultSignalInMTFListThd(inputsSignals.get(index)); //identifica se o sinal de entrada (index) está na lista de sinais a serem injetadas as falhas
 
-            if((pos > -1) && (! thread_item.getMTF_FaultSignal_List_thd().get(pos).getVisited())){ // Identifica se a posição na lista de falhas esta vazia (pos>-1)
+            if(pos > -1){ // Identifica se a posição na lista de falhas esta vazia (pos>-1)
 
                 this.tempIndex = pos;
 
                 //hashmap.put(index , pos);
 
+                if((inputsSignals.get(index).getOriginalLogicValue() == 0) && (inputsSignals.get(index).getId().equals(thread_item.getMTF_FaultSignal_List_thd().get(pos).getId()))){ //Efetua o bitflip para sinal com valor 0 original
 
-                if((inputsSignals.get(index).getOriginalLogicValue() == 0) && (thread_item.getMTF_FaultSignal_List_thd().get(pos).getId().equals(inputsSignals.get(index).getId()))){ //Efetua o bitflip para sinal com valor 0 original
+                    // if((inputsSignals.get(index).getOriginalLogicValue() == 0) && (inputsSignals.get(index).getId().equals(thread_item.getMTF_FaultSignal_List_thd().get(pos).getId()))){ //Efetua o bitflip para sinal com valor 0 original
                     /* Here is applied the bitflip on gate input signals 0 to 1 *Signals present in MultipleFaultList*/
                     //thread_item.getMTF_FaultSignal_List_thd().get(pos).setVisited();
                     //thread_item.setFAULT_MTF_PERSONAL_LIST(pos, inputsSignals.get(index).getOriginalLogicValue(), thread_item.getinputVector());
                     //thread_item.getMTF_PERSONAL_LIST().get(pos).setOriginalValue(0);
                     thread_item.getMTF_PERSONAL_LIST().get(pos).setNewValue(1);
                     //thread_item.getMTF_FaultSignal_List_thd().get(pos).setVisited();
-                    //inputsSignals.get(index).setOriginalLogicValue(0);
+
+                    inputsSignals.get(index).setOriginalLogicValue(0);
                     inputsSignals.get(index).setLogicValue(1);
                     inputsSignals.get(index).setLogicValueBoolean(Boolean.TRUE);
 
@@ -1828,7 +1830,7 @@ import signalProbability.ProbCircuit;
                     thread_item.getMTF_PERSONAL_LIST().get(pos).setNewValue(0);
 
                     //thread_item.getMTF_FaultSignal_List_thd().get(pos).setVisited();
-                    //inputsSignals.get(index).setOriginalLogicValue(1);
+                    inputsSignals.get(index).setOriginalLogicValue(1);
                     inputsSignals.get(index).setLogicValue(0);
                     inputsSignals.get(index).setLogicValueBoolean(Boolean.FALSE);
 

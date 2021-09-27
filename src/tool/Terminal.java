@@ -117,8 +117,9 @@ class TerminalWrapper {
 
                 System.out.println("Flag : " + flag);
 
+
                 Terminal term = Terminal.getInstance();
-                term.open(0, 0, 820, 700);
+                //term.open(0, 0, 820, 700);
 
                 // FOR DEV
                 Robot r = new Robot();
