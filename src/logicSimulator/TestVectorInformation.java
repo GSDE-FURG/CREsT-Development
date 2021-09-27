@@ -111,6 +111,60 @@ public class TestVectorInformation {
 
 
     }
+    public String getBitFlipMTFPERSONAL_LIST(){
+
+        String bitflip;
+        String r = "";
+
+
+        for (int i = 0; i < this.getMTF_PERSONAL_LIST().size(); i++) {
+            r = r + this.getMTF_PERSONAL_LIST().get(i).getBitflip() + " " + this.getMTF_PERSONAL_LIST().get(i).getIdentidade() ;
+        }
+        /*
+        if(this.originalSignalValue == 0){
+            bitflip = "1";
+        }
+        else{
+            bitflip = "0";
+        }
+
+        r = "("+ this.originalSignalValue + ")to("+ bitflip + ")";
+        */
+
+
+        return r;
+
+
+    }
+
+    public ArrayList <String> getMTFPERSONAL_LIST_Identities(){
+
+        String bitflip;
+        String r = "[";
+        ArrayList<String> x = new ArrayList<>();
+
+        for (int i = 0; i < this.getMTF_PERSONAL_LIST().size(); i++) {
+           // r = r + this.getMTF_PERSONAL_LIST().get(i).getIdentidade() + ", ";
+            x.add(this.getMTF_PERSONAL_LIST().get(i).getIdentidade());
+        }
+
+        /*
+        if(this.originalSignalValue == 0){
+            bitflip = "1";
+        }
+        else{
+            bitflip = "0";
+        }
+
+        r = "("+ this.originalSignalValue + ")to("+ bitflip + ")";
+        */
+
+
+        return x;
+
+
+    }
+
 
     public synchronized List<Signal> getMTF_FaultSignal_List_thd() {
         return this.MTF_FaultSignal_List_thd;

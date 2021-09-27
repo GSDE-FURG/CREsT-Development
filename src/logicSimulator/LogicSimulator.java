@@ -1141,7 +1141,7 @@ import signalProbability.ProbCircuit;
                             + "]  Ori: " +  thread_item.get_MTF_FaultSignal_List_thd().get(pos).getOriginalLogicValue()
                             + " New: " +  thread_item.get_MTF_FaultSignal_List_thd().get(pos).getLogicValue() +"  posFaultList: " + pos + "  ~ ";
                     */
-                                        thread_item.getMTF_PERSONAL_LIST().get(pos).CompInfoItemnize(debug); //print
+                                       // thread_item.getMTF_PERSONAL_LIST().get(pos).CompInfoItemnize(debug); //print
                                     }
                                 }
 
@@ -1210,7 +1210,7 @@ import signalProbability.ProbCircuit;
                             + "]  Ori: " +  thread_item.get_MTF_FaultSignal_List_thd().get(pos).getOriginalLogicValue()
                             + " New: " +  thread_item.get_MTF_FaultSignal_List_thd().get(pos).getLogicValue() +"  posFaultList: " + pos + "  ~ ";
                     */
-                                        thread_item.getMTF_PERSONAL_LIST().get(pos).CompInfoItemnize(debug);
+                                       // thread_item.getMTF_PERSONAL_LIST().get(pos).CompInfoItemnize(debug);
                                     }
                                     //  }
                                 }
@@ -1494,8 +1494,7 @@ import signalProbability.ProbCircuit;
             this.settingFaultInjectionResults();
         }
 
-        public  void
-        startSimulationMultipleFaultInjection() throws IOException, WriteException{
+        public void startSimulationMultipleFaultInjection() throws IOException, WriteException{
 
             for (int i = 0; i < this.threadSimulationList.size(); i++) {
 
@@ -1802,7 +1801,7 @@ import signalProbability.ProbCircuit;
                     */
 
 
-                    thread_item.getMTF_PERSONAL_LIST().get(pos).CompInfoItemnize(debug);
+                    //thread_item.getMTF_PERSONAL_LIST().get(pos).CompInfoItemnize(debug);
 
 
 
@@ -1855,7 +1854,7 @@ import signalProbability.ProbCircuit;
                             + "  N: " + thread_item.get_MTF_FaultSignal_List_thd().get(pos).getLogicValue() + "|| " + thread_item.get_MTF_FaultSignal_List_thd()
                             +"  || itemnizelist: " + thread_item.getMTF_PERSONAL_LIST_NODESINFO()  + " ||";
 
-                    thread_item.getMTF_PERSONAL_LIST().get(pos).CompInfoItemnize(debug);
+                    //thread_item.getMTF_PERSONAL_LIST().get(pos).CompInfoItemnize(debug);
 
                     /* Debug */
                     /*
