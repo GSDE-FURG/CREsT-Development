@@ -550,6 +550,7 @@ public class WriteCsvTh {
                     //csvWriter.append(s  + ";" + item.get(y).getFaultSignal() +";" + "(" + item.get(y).getFaultSignal().getOriginalLogicValue()+ ")to(" +  item.get(y).getFaultSignal().getLogicValue() + ")" + ";"+ faultFree + ";" + fault + ";" + propagated_faults);
                     //AQUI
                    // csvWriter.append(s  + ";" + item.get(y).get_MTF_FaultSignal_List_thd() +";" + item.get(y).getBitFlipMTFPERSONAL_LIST() + ";"+ faultFree + ";" + fault + ";" + propagated_faults);
+                    //New
                     csvWriter.append(s  + ";" + item.get(y).getMTFPERSONAL_LIST_Identities()
                             +";" + item.get(y).getBitFlipMTFPERSONAL_LIST() + ";"+ faultFree + ";" + fault + ";" + propagated_faults);
 
