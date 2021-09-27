@@ -260,6 +260,7 @@ public class TestVectorInformation {
                 //System.out.println("\n SIG founded: " + f.getId()  +" ~ " + this.getSimulationIndex());
                 return i;
             }
+
         }
         return -1;
     }

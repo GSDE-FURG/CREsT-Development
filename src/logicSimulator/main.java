@@ -191,7 +191,8 @@ public class main{
 
                     //Exaustic mode for debug
                     Orchestrator simulacaoMultithreading_debug = new Orchestrator(this.threads, this.reliabilityConst, this.relativePath, this.genlib, this.relativePath + this.circuitList.get(i));
-                    simulacaoMultithreading_debug.runMultithreadingExausticSimulation("ALL_SIGNALS");
+                    //
+                    // simulacaoMultithreading_debug.runMultithreadingExausticSimulation("ALL_SIGNALS");
 
 
 
