@@ -11,6 +11,10 @@ import datastructures.Signal;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 
+import static  ops.CommonOps.timenow;
+import static  ops.CommonOps.timestamp;
+import static  ops.CommonOps.timestampDiff;
+
 /**
  *
  * @author matheus
@@ -29,14 +33,26 @@ public class LevelCircuit extends Circuit {
         depthGates = new ArrayList<>();
         gateLevels = new ArrayList<>();
         interLevels = new ArrayList<>();
+
+        long gatesDEPTH;
+        long gateLEVELS;
+        long interLEVELS;
         
         for (int i = 0; i < circuit.getGates().size(); i++) {            
             depthGates.add(new DepthGate(circuit.getGates().get(i)));
         }        
-        
+
+        gatesDEPTH = timenow();
         setGatesDepth();
+        timestamp(gatesDEPTH, "Gates Depth DFS");
+
+        gateLEVELS = timenow();
         setGateLevels();
+        timestamp(gateLEVELS, "Gate Levels setting");
+
+        interLEVELS = timenow();
         setInterLevels();
+        timestamp(interLEVELS, "Inter Levels setting");
         
     }
     

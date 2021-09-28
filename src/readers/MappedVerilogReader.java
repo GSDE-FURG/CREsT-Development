@@ -155,9 +155,11 @@ public class MappedVerilogReader {
         
         for (int i = 0; i < preSignals.length; i++) {            
             Signal auxSig = new Signal();
-            auxSig.setId(preSignals[i].trim());            
+            String signalID = preSignals[i].trim();
+            auxSig.setId(signalID);
 
             this.circ.addSignal(auxSig);
+            this.circ.addHashSignal(signalID, auxSig);
         }
     }
     
@@ -174,10 +176,12 @@ public class MappedVerilogReader {
         
         for (int i = 0; i < preSignals.length; i++) {            
             Signal auxSig = new Signal();
-            auxSig.setId(preSignals[i].trim());
+            String signalID = preSignals[i].trim();
+            auxSig.setId(signalID);
             auxSig.addDestiny(null);
 
             this.circ.addSignal(auxSig);
+            this.circ.addHashSignal(signalID, auxSig);
         }
     }
     
@@ -229,18 +233,16 @@ public class MappedVerilogReader {
 
                 String[] signal = gateIOs[i].split("\\Q(\\E", 2);
 
-                System.out.println(Arrays.toString(signal));
-                System.out.println(fooGate.getType().getInputs());
 
                 // Se tem, quer dizer que o sinal é uma entrada!
                 if(fooGate.getType().getInputs().contains(signal[0])) {
-                    inputs.add(fooGate.getType().getInputs().indexOf(signal[0]), getSignalById(signal[1]));                
-                    getSignalById(signal[1]).addDestiny(fooGate);
+                    inputs.add(fooGate.getType().getInputs().indexOf(signal[0]), getSignalById2(signal[1]));
+                    getSignalById2(signal[1]).addDestiny(fooGate);
                 }
                 else {
                     if (fooGate.getType().getOutputs().contains(signal[0])) {
-                        outputs.add(fooGate.getType().getOutputs().indexOf(signal[0]), getSignalById(signal[1]));
-                        getSignalById(signal[1]).setOrigin(fooGate);
+                        outputs.add(fooGate.getType().getOutputs().indexOf(signal[0]), getSignalById2(signal[1]));
+                        getSignalById2(signal[1]).setOrigin(fooGate);
                     }
                     else {
                         // TODO: criar modelo para exceções
@@ -249,9 +251,6 @@ public class MappedVerilogReader {
                 }
             }
 
-            System.out.println(inputs);
-            System.out.println(outputs);
-            System.out.println();
 
 
             signalsSettings = signalsSettings + timestampDiff(timeFlag2);
@@ -277,6 +276,10 @@ public class MappedVerilogReader {
         System.out.println(this.circ.getName() + "<----");
         System.err.println("Signal " + id + " doesnt exist!!");
         return null;
+    }
+
+    public Signal getSignalById2(String id) {
+        return this.circ.getHashSignalById(id);
     }
     
     /**
