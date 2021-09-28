@@ -1415,6 +1415,7 @@ import signalProbability.ProbCircuit;
                                         thread_item.getMTF_PERSONAL_LIST().get(pos).setNewValue(1);
                                         thread_item.getMTF_PERSONAL_LIST().get(pos).setBooleanFlag();
 
+
                                         outGates = outGates + "  OUTGATE ****** 0 to 1 FAULTSIGNAL IDENTIFICADO " + fault_signal_MTF.getId() + "  posFaultList: " + pos;
 
                                         //thread_item.get_MTF_FaultSignal_List_thd().get(pos).setOriginalLogicValue(0);
