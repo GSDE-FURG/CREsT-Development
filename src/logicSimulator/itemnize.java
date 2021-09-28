@@ -11,6 +11,7 @@ public class itemnize {
     private int newValue;
     private final Signal sig;
     private ArrayList<Integer> inputVector =  new ArrayList<>();
+    private boolean booleanFlag;
 
 
     public itemnize(Signal s, String id, ArrayList<Integer> input) {
@@ -20,6 +21,7 @@ public class itemnize {
         this.sig.setOriginalLogicValue(this.originalValue);
         this.sig.setLogicValue(123);
         this.inputVector = input;
+        this.booleanFlag = false;
     }
     public void setOriginalValue(int value){
         this.originalValue = value;
@@ -37,6 +39,15 @@ public class itemnize {
         }
 
     }
+
+    public void setBooleanFlag(){
+        this.booleanFlag = true;
+    }
+
+    public boolean getBooleaFlag(){
+        return this.booleanFlag;
+    }
+
     public int getNewValue(){
         return this.newValue;
     }
@@ -55,7 +66,6 @@ public class itemnize {
     public void CompInfoItemnize(String comp){
         System.out.println(this.inputVector + " >> " + comp + " || Itemnize ID: " + this.id + " Origem: " + this.originalValue + "  New: " + this.newValue + "  FaultSig: " + this.sig.getId());
     }
-
     public String getBitflip(){
         if(this.originalValue == 0){
             return "(" + this.originalValue + ")to(1)";
