@@ -1684,8 +1684,8 @@ public class Commands {
 
         timenow = timenow();
         //Terminal.getInstance().executeCommand("read_verilog abc/Matheus/memory_control_minimal_no_cost.v");
-        //Terminal.getInstance().executeCommand("read_verilog abc/Matheus/arbiter_round_robin_minimal_no_cost.v");
-        Terminal.getInstance().executeCommand("read_verilog abc/Matheus/sixteen-minimal.v");
+        Terminal.getInstance().executeCommand("read_verilog abc/Matheus/arbiter_round_robin_minimal_no_cost.v");
+        //Terminal.getInstance().executeCommand("read_verilog abc/Matheus/sixteen-minimal.v");
         timestamp(timenow, "circuit reading...");
 
 
