@@ -48,26 +48,25 @@ def mapCircuit(nomeCircuit, genlib, bench_cmd, lib_cmd, output_path):
     fourth_step_cmd = "write_verilog %s/%s_%s.v" % (output_path, nameCircuit, nameGenlib)
 
     abc_full_cmd = "./abc -c \'%s %s %s %s\'" % (first_step_cmd, second_step_cmd, third_step_cmd, fourth_step_cmd)
-    print(abc_full_cmd)
     os.system(abc_full_cmd)
 
 
 # Script configuration file extensions
 bench = "blif"
-lib = "genlib"
+library = "genlib"
 #######################
 
 #
 circuitList = []
 libList = []
 bench_type = circuit_lib_type_switcher(bench)
-lib_type = circuit_lib_type_switcher(lib)
+lib_type = circuit_lib_type_switcher(library)
 
 
 for file in glob.glob("*.%s" % bench):
     circuitList.append(file)
 
-for genlib in glob.glob("*.%s" % lib):
+for genlib in glob.glob("*.%s" % library):
     libList.append(genlib)
 
 for lib in libList:
