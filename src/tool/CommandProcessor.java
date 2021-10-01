@@ -503,15 +503,38 @@ class CommandProcessor {
                             cmd.Exaustive_Fault_injection(splittedCommand.get(1), splittedCommand.get(2), splittedCommand.get(3)); // Exaustive Simulation
                             success = true;
                         }else{
+
                             if((splittedCommand.get(3).equals("-mc"))){
                                 cmd.Monte_Carlo_Fault_injection(splittedCommand.get(1), splittedCommand.get(2),splittedCommand.get(4)); // MC 20000
                                 success = true;
                             }
                             if((splittedCommand.get(3).equals("-mcmtf"))){
-                                System.out.println("Dev Mode  ->>>>>>>>> Inside Multiple Fault injection .....");
-                                cmd.Monte_Carlo_Multiple_Transient_Fault_Injection(splittedCommand.get(1), splittedCommand.get(2),splittedCommand.get(4), splittedCommand.get(5), splittedCommand.get(6)); // MC 20000
+
+                                System.out.println("Dev Mode  ->>>>>>>>> Inside Multiple Fault injection ..... : " + splittedCommand);
+
+                                //cmd.Monte_Carlo_Multiple_Transient_Fault_Injection(splittedCommand.get(1), splittedCommand.get(2),splittedCommand.get(4), splittedCommand.get(5), splittedCommand.get(6)); // MC 20000
+
+                                cmd.Monte_Carlo_Multiple_Transient_Fault_Injection_Array(splittedCommand.get(1), splittedCommand.get(2), splittedCommand); // MC 20000 - MTF SINGLES DOUBLES TRIPLES
+
+                                System.out.println(splittedCommand);
+
                                 success = true;
                             }
+                            /*
+                            if((splittedCommand.get(3).equals("-mcmtfv2x"))){
+
+                                System.out.println("Dev Mode  ->>>>>>>>> Inside Multiple Fault injection .....");
+
+                                cmd.Monte_Carlo_Multiple_Transient_Fault_Injection(splittedCommand.get(1), splittedCommand.get(2),splittedCommand.get(4), splittedCommand.get(5), splittedCommand.get(6)); // MC 20000
+
+                                //cmd.Monte_Carlo_Multiple_Transient_Fault_Injection_Array(splittedCommand.get(1), splittedCommand.get(2),splittedCommand.get(4), splittedCommand.get(5), splittedCommand.get(6), new ArrayList<>(<String>)); // MC 20000 - MTF SINGLES DOUBLES TRIPLES
+
+                                System.out.println(splittedCommand);
+
+                                success = true;
+                            }
+                            */
+
                         }
                         success = false;
                     } catch (IOException | ScriptException e) {

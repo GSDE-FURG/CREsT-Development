@@ -207,8 +207,41 @@ public class main{
                 }
                 //System.out.println("STR: " + str);
     }
-    
-        public void PrintCircuitsSpecs(int sampleSize, String Signals) throws Exception{
+
+    public void monteCarloSimulationMultipleTransientFaultsMODE(ArrayList <Integer> mtf_sizes, int sampleSize, String Signals) throws Exception{
+
+        System.out.println("Multiple Fault Injection : " + sampleSize);
+        System.out.println("Path: " +this.relativePath);
+        System.out.println("Genlib: " +this.genlib);
+        System.out.println("Circuit: " +this.circuitList);
+
+        System.out.println("ARGS:"  +  mtf_sizes) ;
+
+        String str = "";
+        for (int i = 0; i < this.circuitList.size(); i++) {
+
+            //Exaustic mode for debug
+            Orchestrator simulacaoMultithreading_debug = new Orchestrator(this.threads, this.reliabilityConst, this.relativePath, this.genlib, this.relativePath + this.circuitList.get(i));
+            //
+            // simulacaoMultithreading_debug.runMultithreadingExausticSimulation("ALL_SIGNALS");
+
+
+
+
+            Orchestrator simulacaoMultithreading = new Orchestrator(this.threads, this.reliabilityConst, this.relativePath, this.genlib, this.relativePath + this.circuitList.get(i));
+            //simulacaoMultithreading.PrintCircuitSpecs();
+            //str = str + simulacaoMultithreading.PrintCircuitSpecs() + "\n";
+            //simulacaoMultithreading.runMultipleFaultInjectionMultithreadingMonteCarlo(base, order, frequency,sampleSize, Signals); //ou Signals =  "ALL_SIGNALS" ou "INTERMEDIATE" ou "INTERMEDIATE_AND_OUTPUTS" ou "INPUTS" ou "INPUTS_OUTPUTS"
+            simulacaoMultithreading.runMultipleFaultInjectionMultithreadingMonteCarloMODE(mtf_sizes, sampleSize, Signals); //ou Signals =  "ALL_SIGNALS" ou "INTERMEDIATE" ou "INTERMEDIATE_AND_OUTPUTS" ou "INPUTS" ou "INPUTS_OUTPUTS"
+
+
+            this.OUTPUT_INFO = simulacaoMultithreading.getFRM(" MTFT Sample (Monte Carlo = N)");
+        }
+        //System.out.println("STR: " + str);
+    }
+
+
+    public void PrintCircuitsSpecs(int sampleSize, String Signals) throws Exception{
                 //Loop na simulação de circuitos 
                 String str = "";
                 for (int i = 0; i < this.circuitList.size(); i++) {

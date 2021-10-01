@@ -66,9 +66,7 @@ class TerminalWrapper {
             * 
             */
              /* Clayton */
-            if(args.length > 3 && (args[3].equals("-mc") || args[3].equals("-exaustive") ||  args[3].equals("-mcmtf")))
-
-            {
+            if(args.length > 3 && (args[3].equals("-mc") || args[3].equals("-exaustive") ||  args[3].equals("-mcmtf") ||  args[3].equals("-mcmtfv2x"))) {
 
                 //System.out.println("INSIDE IF....");
                 //System.out.println("2: " + dcmd);
@@ -86,10 +84,18 @@ class TerminalWrapper {
 
                 int size = args.length;
 
-                //System.out.println("Size: " + size);
-
                 switch (size){
+                    case (8): //MC Fault Injection
+                        genlib = args[1];
+                        circuit = args[2];
+                        flag = args[3];
+                        //sample = args[4];
+                        base  = args[4];
+                        order = args[5];
+                        frequency = args[6];
 
+                        break;
+                        /*
                     case (7): //MC Fault Injection
                         genlib = args[1];
                         circuit = args[2];
@@ -100,6 +106,8 @@ class TerminalWrapper {
                         frequency = args[6];
 
                         break;
+                        */
+
 
                     case (5): //MC Fault Injection
                         genlib = args[1];
@@ -136,8 +144,28 @@ class TerminalWrapper {
                         break;
 
                     case ("-mcmtf"):
-                        System.out.println("- Multiple Event Transient (SET) -mcmtf: " + sample);
-                        term.executeCommand("mc_fault_injection" + " " + genlib + " " + circuit + " " + flag + " " + base + " " + order + " " + frequency);
+
+                        System.out.println("ARGS: " + args);
+                        ArrayList <String> x = new ArrayList<>();
+                        String arguments_compiled = "";
+                        //System.out.println("ARGS: " + args);
+
+
+                        for(int i = 4 ; i < args.length; i++) {
+                            x.add(args[i]);
+                            if(i <= 4 ){
+                                arguments_compiled = args[i];
+                            }else {
+                                arguments_compiled = arguments_compiled + " " + args[i];
+                            }
+
+                        }
+
+                        //System.out.println("- Multiple Event Transient (SET) -mcmtf: " + sample);
+
+                        System.out.println("- Multiple Event Transient (SET) -mcmtf: " + arguments_compiled);
+                       // term.executeCommand("mc_fault_injection" + " " + genlib + " " + circuit + " " + flag + " " + base + " " + order + " " + frequency);
+                        term.executeCommand("mc_fault_injection" + " " + genlib + " " + circuit + " " + flag + " " + arguments_compiled);
                         break;
 
                     case ("-exaustive"):
