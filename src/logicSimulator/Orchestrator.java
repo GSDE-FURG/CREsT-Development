@@ -693,7 +693,7 @@ import writers.WriteCsvTh;
                 return new_pos;
             }
             else{
-                System.out.println(" Alread exist in faultlist : " + this.signals_to_inject_faults.get(new_pos) +  "     list: " + temp.get_MTF_FaultSignal_List());
+                //System.out.println(" Alread exist in faultlist : " + this.signals_to_inject_faults.get(new_pos) +  "     list: " + temp.get_MTF_FaultSignal_List());
             }
 
             /*
@@ -714,10 +714,38 @@ import writers.WriteCsvTh;
         HashMap <Integer, Integer> keys = new HashMap<>();
         for (Map.Entry<Integer, Integer> entry : map.entrySet()) {
             if (entry.getValue().equals(value)) {
-                keys.add(entry.getKey());
+                keys.put(entry.getKey(), entry.getValue());
             }
         }
         return keys;
+    }
+
+    public int getPosMap(HashMap <Integer, multiple_faults_object> map,  int value){
+        HashMap <Integer, multiple_faults_object> keys = new HashMap<>();
+        for (Map.Entry<Integer, multiple_faults_object> entry : map.entrySet()) {
+            if (entry.getValue().getCounter()
+                    == value) {
+                keys.put(entry.getKey(), entry.getValue());
+                System.out.println("FOUNDED: " + entry.getKey());
+                return value;
+            }
+        }
+
+        return -1;
+
+    }
+
+    public int getPosMapNew(ArrayList <Integer> map,  int value){
+        int pos = -1;
+        for (int i = 0; i < map.size(); i++) {
+                    if(map.get(i) == value){
+                        return i;
+                    }
+
+        }
+
+        return -1;
+
     }
 
     public List particionateMultipletransientFaultInjectionVectorPerThreadMODE(ArrayList <ArrayList<Integer>> ListInputVectors, ArrayList <Integer> mtf_list) throws ScriptException, Exception{
@@ -748,12 +776,19 @@ import writers.WriteCsvTh;
                     //System.out.println("LOGIC GATES consider WIRES (CTE) Can't inject fault: " + Signals_CTE_ONE_ZERO);
                */
 
-        HashMap  <Integer, Integer> mtf_fault_list = new HashMap<>();
+        HashMap  <Integer, multiple_faults_object> mtf_fault_list = new HashMap<>();
         HashMap  <Integer, Integer> map = new HashMap<>();
+        HashMap  <Integer, Integer> mapOrder = new HashMap<>();
+
+        mtf_list.remove(0);
+
+        ArrayList <Integer> mtf_list_2 = new ArrayList<>(mtf_list);
 
         for (int i = 1; i < mtf_list.size(); i++) {
-            mtf_fault_list.put(mtf_list.get(i), i+1);
+            multiple_faults_object object_temp =  new multiple_faults_object(i+1, mtf_list.get(i), 0);
+            mtf_fault_list.put(mtf_list.get(i), object_temp);
             map.put(mtf_list.get(i), i+1);
+            mapOrder.put(i+1 , mtf_list.get(i));
         }
         System.out.println(mtf_fault_list);
 
@@ -784,11 +819,28 @@ import writers.WriteCsvTh;
 
             for (int j = start; j < end ; j++) {
                 //System.out.println(i);
-                if((mtf_fault_list.containsKey(j)) && (mtf_fault_list.get(j) > 1)){
+                //if((mtf_fault_list.containsKey(j)) && (mtf_fault_list.get(j).getOrder() > 1)){
+                //int index = getPosMap(mtf_fault_list, j);
 
-                    int order = mtf_fault_list.get(j);
+                int index = getPosMapNew(mtf_list, j);
 
-                    System.out.println("Founded key : " + j + "  list: " + mtf_fault_list);
+                //if(j> 149 && j < 1000)
+                   /// System.out.println(j + "  index: " + index + " Key: " + mtf_list + "    " + mtf_list_2
+                 //
+                //   );
+
+               /// if((index > -1) && (mtf_fault_list.containsKey(j)) && (mtf_fault_list.get(j).getOrder() >1)){
+
+                if((index > -1)){
+
+                    //int order = mtf_fault_list.get(j).getOrder();
+
+                    int order = (index)+ 2;
+
+                   // multiple_faults_object temp_x = mtf_fault_list.get(j);
+
+
+                    System.out.println(order + "  Founded key : " + j + "  list: " + mtf_list +  "   " + mtf_list_2);
 
                     inputVector = this.get_Input_Vectors(ListInputVectors, j); //input Test n
 
@@ -808,20 +860,42 @@ import writers.WriteCsvTh;
                     }
 
 
-                    System.out.println(inputVector+ "--> Order: " + order + "   J index: " + j + "  mapOld" + map + "  mapNew: " + mtf_fault_list
-                            + " - faultSig list random choose : " + temp.get_MTF_FaultSignal_List() );
+
 
                     ItemxSimulationList.add(temp);
 
-                    //mtf_fault_list.replace(j, );
-                    //mtf_fault_list.put(j*2, hashMap.remove(j));
+                   ///
 
-                    //
-                    //
-                    mtf_fault_list.remove(j, order);
+                    mtf_list.set(index, mtf_list_2.get(index) + j);
 
-                    //
-                    mtf_fault_list.put(, order);
+                    /*
+                    multiple_faults_object x_temp = mtf_fault_list.get(j);
+
+
+
+
+
+
+                    int a =  x_temp.getCounter();    //150
+                    x_temp.setList(j+ mtf_fault_list.get(j).getOriginal_counter()); //300
+                    x_temp.updateCounter(j+ mtf_fault_list.get(j).getOriginal_counter()); //counter 300
+
+
+                    //multiple_faults_object yy_temp = mtf_fault_list.get(j);
+
+                    mtf_fault_list.remove(j);// remove 150
+                    mtf_fault_list.put(j , x_temp); // Add 300 key
+
+
+                    x_temp.printList();
+
+
+                     */
+
+                  //  System.out.println(inputVector+ "--> Order: " + order + "   J index: " + j + "  mapOld" + map + "  mapNew: " + mtf_fault_list
+
+                   //         + " - faultSig list random choose : " + temp.get_MTF_FaultSignal_List() );
+
 
                 }else{
                     inputVector = this.get_Input_Vectors(ListInputVectors, j); //input Test n
