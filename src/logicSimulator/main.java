@@ -208,9 +208,9 @@ public class main{
                 //System.out.println("STR: " + str);
     }
 
-    public void monteCarloSimulationMultipleTransientFaultsMODE(ArrayList <Integer> mtf_sizes, int sampleSize, String Signals) throws Exception{
+    public void monteCarloSimulationMultipleTransientFaultsMODE(ArrayList <Integer> mtf_sizes, String Signals) throws Exception{
 
-        System.out.println("Multiple Fault Injection : " + sampleSize);
+        System.out.println("Multiple Fault Injection : " + mtf_sizes);
         System.out.println("Path: " +this.relativePath);
         System.out.println("Genlib: " +this.genlib);
         System.out.println("Circuit: " +this.circuitList);
@@ -232,7 +232,7 @@ public class main{
             //simulacaoMultithreading.PrintCircuitSpecs();
             //str = str + simulacaoMultithreading.PrintCircuitSpecs() + "\n";
             //simulacaoMultithreading.runMultipleFaultInjectionMultithreadingMonteCarlo(base, order, frequency,sampleSize, Signals); //ou Signals =  "ALL_SIGNALS" ou "INTERMEDIATE" ou "INTERMEDIATE_AND_OUTPUTS" ou "INPUTS" ou "INPUTS_OUTPUTS"
-            simulacaoMultithreading.runMultipleFaultInjectionMultithreadingMonteCarloMODE(mtf_sizes, sampleSize, Signals); //ou Signals =  "ALL_SIGNALS" ou "INTERMEDIATE" ou "INTERMEDIATE_AND_OUTPUTS" ou "INPUTS" ou "INPUTS_OUTPUTS"
+            simulacaoMultithreading.runMultipleFaultInjectionMultithreadingMonteCarloMODE(mtf_sizes, Signals); //ou Signals =  "ALL_SIGNALS" ou "INTERMEDIATE" ou "INTERMEDIATE_AND_OUTPUTS" ou "INPUTS" ou "INPUTS_OUTPUTS"
 
 
             this.OUTPUT_INFO = simulacaoMultithreading.getFRM(" MTFT Sample (Monte Carlo = N)");

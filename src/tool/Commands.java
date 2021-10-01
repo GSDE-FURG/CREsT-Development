@@ -419,10 +419,10 @@ public class Commands {
         //System.out.println("base: " + base + "  Order: " + order  + "  Frequency: " + frequency);
 
         //String[] arrOfStr = circuit.split("/", 2);
-        ArrayList <String> x = new ArrayList<>();
+        ArrayList <Integer> x = new ArrayList<>();
 
         for(int i = 4 ; i < splittedCommand.size(); i++) {
-            x.add(splittedCommand.get(i));
+            x.add(Integer.parseInt(splittedCommand.get(i)));
 
         }
 
@@ -481,7 +481,7 @@ public class Commands {
             experimento.preparingEnviromentSingleFile(this.circuit_analysis);
 
 
-            experimento.monteCarloSimulationMultipleTransientFaults(Integer.parseInt(base), Integer.parseInt(order), Integer.parseInt(frequency), sampleSizeMonteCarlo, "ALL_SIGNALS");
+            experimento.monteCarloSimulationMultipleTransientFaultsMODE(x, "ALL_SIGNALS");
 
             System.out.println("Simulation results:\n" + experimento.getFMR());
 
