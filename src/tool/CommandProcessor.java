@@ -603,6 +603,9 @@ class CommandProcessor {
             case "foo9":
                 cmd.Foo9();
                 break;
+            case "fooiscas21":
+                cmd.Foo_ISCAS2021();
+                break;
             case "csv_spr_generator":
                 cmd.CSVSprGenerator();
                 break;

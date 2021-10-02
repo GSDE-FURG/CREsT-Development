@@ -30,10 +30,11 @@ import schivittz.LeArquivo;
  *
  * @author matheus
  */
+@SuppressWarnings("removal")
 public class CellLibrary {
     
     private ArrayList<Cell> cells;
-    
+
     public CellLibrary() {
 
     }
@@ -66,7 +67,8 @@ public class CellLibrary {
         
         return null;
     }
-    
+
+    @SuppressWarnings("removal")
     public void setTruthTables() throws ScriptException {
         ScriptEngineManager mgr = new ScriptEngineManager();
         ScriptEngine engine = mgr.getEngineByName("JavaScript");
@@ -123,7 +125,8 @@ public class CellLibrary {
             
         }
     }
-    
+
+    @SuppressWarnings("removal")
     public void setITMCells() {
         
         ScriptEngineManager mgr = new ScriptEngineManager();
@@ -182,8 +185,8 @@ public class CellLibrary {
             }
         }
     }
-    
-    
+
+    @SuppressWarnings("removal")
     public void setPTMCells(BigDecimal reliability) {
         
         ScriptEngineManager mgr = new ScriptEngineManager();
@@ -194,7 +197,9 @@ public class CellLibrary {
         for (int i = 0; i < cells.size(); i++) {
             Cell auxCell = cells.get(i);
             
-            if(auxCell.getInputs().isEmpty()) {            
+            if(auxCell.getInputs().isEmpty()) {
+                System.out.println("Mirna!!");
+                System.out.println(auxCell);
                 ptm = new BigDecimal[1][2];
                 ptm[0][0] = reliability;
                 ptm[0][1] = BigDecimal.ONE.subtract(reliability);
@@ -256,7 +261,8 @@ public class CellLibrary {
             
         }
     }
-    
+
+    @SuppressWarnings("removal")
     public void setPTMCellByName(String cellName, BigDecimal reliability) {
         Cell cell = this.getCellByName(cellName);
         if(cell == null) {
@@ -329,7 +335,8 @@ public class CellLibrary {
             cell.setItm2(itm2);
         }
     }
-    
+
+    @SuppressWarnings("removal")
     public void setPTMCells2(float reliability) {
         
         System.out.println("PAPAI ===> " + reliability);
