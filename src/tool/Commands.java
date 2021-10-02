@@ -1786,7 +1786,7 @@ public class Commands {
     
     public void Foo5() throws IOException, Exception {
 
-        ExpressionBoolEvaluator b_eval = new ExpressionBoolEvaluator();
+        BooleanExpressionEvaluator b_eval = new BooleanExpressionEvaluator();
 
         /*
         System.out.println("f * f ==> " + b_eval.parseBoolExpr("&(f,f)"));
@@ -1813,7 +1813,7 @@ public class Commands {
             stack.push(c);
         }
         System.out.println("Expression: " + expression);
-        System.out.println("Teste " + expression + " ==> " + b_eval.cleanParentheses2(stack));
+        System.out.println("Teste " + expression + " ==> " + b_eval.parseBoolExpression(stack));
 
     }
     
