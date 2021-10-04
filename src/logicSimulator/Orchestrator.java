@@ -604,7 +604,7 @@ import writers.WriteCsvTh;
             file.write(content);
         }
     }
-    public void writeSimpleLogMTFMODE(String filename, String date, String dateend, long propagateTimems) throws IOException{
+    public void writeSimpleLogMTFMODE(String filename, String date, String dateend, long propagateTimems, ArrayList <Integer> mtf_list) throws IOException{
 
         ///System.out.println("Creating .txt -> file: " + filename);
         //float reliability_circuit =  (float) ( 1 - ((float) this.unmasked_faults / (float) this.sampleSize));
@@ -615,10 +615,15 @@ import writers.WriteCsvTh;
         try (FileWriter file = new FileWriter(filename+".txt")) {
 
 
-            content = "Started at Date/hour: "  + date + " and finished at: " + dateend  + "\n\n";
+            content = "Multiple Transient Fault Simulation Started at Date/hour: "  + date + " and finished at: " + dateend  + "\n\n";
             //content = content + "Date/hour (finished): "+ dateend + "\n\n";
             content = content + "Circuit: " + this.circuit.getName() + "\n";
             content = content+  "Number of Simulations (sample size = N): " + this.sampleSize + "\n";
+
+            for (int i = 0; i < mtf_list.size(); i++) {
+                content = content +  "      - For each  (" + mtf_list.get(i) + ") faults happens a MTF of order (" + (i+2) + ")\n" ;
+            }
+            content = content + "- Sample = " + this.sampleSize + "\n";
             //content = content+  "For each  (" + period + ") faults happens a Multiple Transient Fault (" + order + ") with frequency: (" + frequency + ") - Sample = " + this.sampleSize + "\n";
             content = content+  "Number of Threads: " + this.threads + "\n";
             content = content + "Number of detected faults (Ne): " + this.unmasked_faults + "\n";
@@ -864,6 +869,7 @@ import writers.WriteCsvTh;
                 end = N;
             } else {
                 if (i == 0) {
+                    //start = 1;
                     start = 0;
                     end = partition;
                 } else {
@@ -898,6 +904,7 @@ import writers.WriteCsvTh;
 
                     int order = (index)+ 2;
 
+
                    // multiple_faults_object temp_x = arraylist_mtf.get(j);
 
 
@@ -907,7 +914,8 @@ import writers.WriteCsvTh;
 
                     int SigIndex = this.sortRandomFaultInjection(); //int SigIndex = decide_Random_Signals_Contrains(Signals_CTE_ONE_ZERO);
 
-                    TestVectorInformation temp = new TestVectorInformation(inputVector, this.signals_to_inject_faults.get(SigIndex), j + 1);
+                    //TestVectorInformation temp = new TestVectorInformation(inputVector, this.signals_to_inject_faults.get(SigIndex), j + 1);
+                    TestVectorInformation temp = new TestVectorInformation(inputVector, this.signals_to_inject_faults.get(SigIndex), j );
 
                     ArrayList <Integer> SigIndexList = new ArrayList<Integer>();
 
@@ -918,6 +926,8 @@ import writers.WriteCsvTh;
                         //temp.setMultipleTransientFaultInjection( this.signals_to_inject_faults.get( this.sortRandomFaultInjection()));
                         int new_pos = sortExclusiveFaultIndex(SigIndexList, temp);
                         temp.setMultipleTransientFaultInjection( this.signals_to_inject_faults.get(new_pos));
+                        SigIndexList.add(new_pos); // Do no reapet signals
+
                     }
 
                     System.out.println("  Founded key : " + j + "  list: " + mtf_list +  "   " + arrayList_mtf_original + " fault list " + temp.get_MTF_FaultSignal_List() + "  order: "  + order  );
@@ -963,7 +973,9 @@ import writers.WriteCsvTh;
                     inputVector = this.get_Input_Vectors(ListInputVectors, j); //input Test n
                     int SigIndex = this.sortRandomFaultInjection(); //int SigIndex = decide_Random_Signals_Contrains(Signals_CTE_ONE_ZERO);
 
-                    TestVectorInformation temp = new TestVectorInformation(inputVector, this.signals_to_inject_faults.get(SigIndex), j + 1);
+                    //TestVectorInformation temp = new TestVectorInformation(inputVector, this.signals_to_inject_faults.get(SigIndex), j + 1);
+                    TestVectorInformation temp = new TestVectorInformation(inputVector, this.signals_to_inject_faults.get(SigIndex), j
+                    );
                     ItemxSimulationList.add(temp);
                 }
                 counter++;
@@ -1895,6 +1907,12 @@ import writers.WriteCsvTh;
 
         ArrayList <ArrayList<Integer>> ListInputVectors =  this.splitInputPatternsInInt(random_input_vectors, this.probCircuit.getInputs().size());
 
+        ArrayList <Integer> tt = new ArrayList<>(mtf_list);
+        tt.remove(0);
+
+
+        final ArrayList <Integer> arrayList_mtf_original = new ArrayList<>(tt); // Original ArrayList
+
         List thread_list = this.particionateMultipletransientFaultInjectionVectorPerThreadMODE(ListInputVectors, mtf_list); // x - vectors per thread
 
         long propagateTimeStart = System.nanoTime();
@@ -1932,10 +1950,11 @@ import writers.WriteCsvTh;
         String formattedDate2 = myDateObj2.format(myFormatObj2);
 
 
-        this.writeSimpleLogMTFMODE(option + "_MULTIPLE_MonteCarlo_Simple_Log_" +this.circuit.getName()+"_Threads-"+ this.threads +  "_sampleSize-" + this.sampleSize, formattedDate,  formattedDate2, propagateTime);
+        this.writeSimpleLogMTFMODE(option + "_MULTIPLE_MonteCarlo_Simple_Log_" +this.circuit.getName()+"_Threads-"+ this.threads +  "_sampleSize-" + this.sampleSize, formattedDate,  formattedDate2, propagateTime, arrayList_mtf_original
+        );
 
         //
-        // this.writeCsvFileCompleteThMTF(option+"_MULTIPLE_MonteCarlo_Complete_Log_"+this.circuit.getName()+"_Theads-"+ this.threads + "_sampleSize"+ this.sampleSize, itemx_list);
+         this.writeCsvFileCompleteThMTF(option+"_MULTIPLE_MonteCarlo_Complete_Log_"+this.circuit.getName()+"_Theads-"+ this.threads + "_sampleSize"+ this.sampleSize, itemx_list);
 
 
         System.out.println("\n\n----------------- Results ------------------");
