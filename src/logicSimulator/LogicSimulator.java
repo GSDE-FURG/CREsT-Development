@@ -1288,16 +1288,12 @@ import signalProbability.ProbCircuit;
                     final DepthGate gate = (DepthGate) object;
                     //   boolean gateResult = this.calculateOutputFacultInjectionGateValueMultipleFaultInjectionV2NEWMODE(gate.getGate().getType(), gate, gate.getGate().getInputs(), thread_item);  //Method calc the output from the gate cal bitflip
                     boolean gateResult = this.calculateOutputFacultInjectionGateValueMultipleFaultInjectionV2NEWMODEFASTER(gate.getGate().getType(), gate, gate.getGate().getInputs(), thread_item);  //Method calc the output from the gate cal bitflip
-
-
                     ///Signal faultSig;
 
                     if(this.tempIndex == -1){  // Defines a position in
                         this.tempIndex = 0;
                         //faultSig = thread_item.get_MTF_FaultSignal_List_thd().get(0);
-
                     }
-
 
                     for (int s = 0; s < gate.getGate().getOutputs().size(); s++) {
 
@@ -1329,10 +1325,12 @@ import signalProbability.ProbCircuit;
 
                                 if (sig.getId().equals(fault_signal_MTF.getId())){
 
-                                    if ((gate.getGate().getOutputs().get(s).getLogicValue() == thread_item.getMTF_PERSONAL_LIST().get(pos).getOriginalValue()) && (!thread_item.getMTF_PERSONAL_LIST().get(pos).getBooleaFlag())) {
+                                    //if ((gate.getGate().getOutputs().get(s).getLogicValue() == thread_item.getMTF_PERSONAL_LIST().get(pos).getOriginalValue()) && (!thread_item.getMTF_PERSONAL_LIST().get(pos).getBooleaFlag())) {
+
+                                        if ((gate.getGate().getOutputs().get(s).getLogicValue() == thread_item.getMTF_PERSONAL_LIST().get(pos).getOriginalValue())) {
 
 
-                                        //thread_item.get_MTF_FaultSignal_List_thd().get(pos).setVisited();
+                                            //thread_item.get_MTF_FaultSignal_List_thd().get(pos).setVisited();
 
                                         //System.out.println("INSIDEEEEEEEEE ...... " + sig + " test"+ thread_item.getSimulationIndex());
                                         //if(sig.getId().equals(faultSig.getId())){ // COmparar com lista novamente
@@ -1407,7 +1405,10 @@ import signalProbability.ProbCircuit;
                                 if(sig.getId().equals(fault_signal_MTF.getId())) {
                                     //if(sig.getId().equals(faultSig.getId())){ // Define bitflip 0 to 1
                                     //thread_item.get_MTF_FaultSignal_List_thd().get(pos).setVisited();
-                                    if ((gate.getGate().getOutputs().get(s).getLogicValue() == thread_item.getMTF_PERSONAL_LIST().get(pos).getOriginalValue()) && (!thread_item.getMTF_PERSONAL_LIST().get(pos).getBooleaFlag())) {
+                                    //if ((gate.getGate().getOutputs().get(s).getLogicValue() == thread_item.getMTF_PERSONAL_LIST().get(pos).getOriginalValue()) && (!thread_item.getMTF_PERSONAL_LIST().get(pos).getBooleaFlag())) {
+                                    if ((gate.getGate().getOutputs().get(s).getLogicValue() == thread_item.getMTF_PERSONAL_LIST().get(pos).getOriginalValue())) {
+
+
                                         // System.out.println("Aplicavel..." +
                                         //         "");
 
