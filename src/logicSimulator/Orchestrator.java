@@ -604,6 +604,52 @@ import writers.WriteCsvTh;
             file.write(content);
         }
     }
+    public void writeSimpleLogMTFMODE(String filename, String date, String dateend, long propagateTimems) throws IOException{
+
+        ///System.out.println("Creating .txt -> file: " + filename);
+        //float reliability_circuit =  (float) ( 1 - ((float) this.unmasked_faults / (float) this.sampleSize));
+        //double lamb = - Math.log(reliability_circuit);
+        //this.MTBF = (1 / lamb);
+        //System.out.println("MTBF : " + this.MTBF);
+        String content = "";
+        try (FileWriter file = new FileWriter(filename+".txt")) {
+
+
+            content = "Started at Date/hour: "  + date + " and finished at: " + dateend  + "\n\n";
+            //content = content + "Date/hour (finished): "+ dateend + "\n\n";
+            content = content + "Circuit: " + this.circuit.getName() + "\n";
+            content = content+  "Number of Simulations (sample size = N): " + this.sampleSize + "\n";
+            //content = content+  "For each  (" + period + ") faults happens a Multiple Transient Fault (" + order + ") with frequency: (" + frequency + ") - Sample = " + this.sampleSize + "\n";
+            content = content+  "Number of Threads: " + this.threads + "\n";
+            content = content + "Number of detected faults (Ne): " + this.unmasked_faults + "\n";
+            content = content + "Fault Mask Rate (FMR): "+ " 1 - Ne/N = (1-(" + this.unmasked_faults + "/" + this.sampleSize + ")) = " + this.circuitReliaibility + "\n";
+            //content = content +  "MTBF: " + this.MTBF + "\n\n";
+
+            content = content +  "Performance time(s): " + (propagateTimems) + "\n";
+
+
+            /*
+
+              System.out.println("\n\n----------------- Results ------------------");
+                System.out.println("Circuit: " + this.circuit.getName());
+                System.out.println("- Simulation started at: " + formattedDate + " and finished at: "+ formattedDate2); //formattedDate
+
+               // System.out.println("- PropagatedTime (s): " + propagateTime);
+                System.out.println("- Sample Size (N): " + N);
+                System.out.println("- Number of detected faults (Ne): " + this.unmasked_faults);
+                System.out.println("- Fault Mask Rate (FMR): " + " 1 - Ne/N = (1-(" + this.unmasked_faults + "/" + N + ")) = " + this.circuitReliaibility);
+                //System.out.println("- MTBF (Mean Time Between failure) : " + this.MTBF);
+                System.out.println("- Simulation TimeElapsed: " + propagateTime
+                        + "(s)");
+
+                System.out.println("--------------------------------------------");
+
+            */
+
+
+            file.write(content);
+        }
+    }
 
 
     public List particionateVectorPerThread(ArrayList <ArrayList<Integer>> ListInputVectors) throws ScriptException, Exception{
@@ -735,16 +781,31 @@ import writers.WriteCsvTh;
 
     }
 
-    public int getPosMapNew(ArrayList <Integer> map,  int value){
+    public int getPosArrayListNew(ArrayList <Integer> map, ArrayList <Integer> map_original,  int value){
         int pos = -1;
+        //int times = 0;
+        ArrayList <Integer> times_ = new ArrayList<>();
         for (int i = 0; i < map.size(); i++) {
                     if(map.get(i) == value){
-                        return i;
+                        pos = i;
+                        int new_value =  map_original.get(i)+ map.get(i);
+                        map.set(i,new_value);
                     }
-
         }
 
-        return -1;
+
+        /*
+        if(times_.size() > 0){ // equal occorrence happens [15000 6000 15000] for example
+            for (int i = 0; i < map.size(); i++) {
+                if((map.get(i) == value) && (times_.get(i) == i) && (times_.get(i) != pos)){
+
+                }
+            }
+        }
+        */
+
+
+        return pos;
 
     }
 
@@ -776,23 +837,23 @@ import writers.WriteCsvTh;
                     //System.out.println("LOGIC GATES consider WIRES (CTE) Can't inject fault: " + Signals_CTE_ONE_ZERO);
                */
 
-        HashMap  <Integer, multiple_faults_object> mtf_fault_list = new HashMap<>();
-        HashMap  <Integer, Integer> map = new HashMap<>();
-        HashMap  <Integer, Integer> mapOrder = new HashMap<>();
+        HashMap  <Integer, multiple_faults_object> arraylist_mtf = new HashMap<>();
+        //HashMap  <Integer, Integer> map = new HashMap<>();
+        //HashMap  <Integer, Integer> mapOrder = new HashMap<>();
 
         mtf_list.remove(0);
 
-        ArrayList <Integer> mtf_list_2 = new ArrayList<>(mtf_list);
+        final ArrayList <Integer> arrayList_mtf_original = new ArrayList<>(mtf_list); // Original ArrayList
 
         for (int i = 1; i < mtf_list.size(); i++) {
             multiple_faults_object object_temp =  new multiple_faults_object(i+1, mtf_list.get(i), 0);
-            mtf_fault_list.put(mtf_list.get(i), object_temp);
-            map.put(mtf_list.get(i), i+1);
-            mapOrder.put(i+1 , mtf_list.get(i));
+            arraylist_mtf.put(mtf_list.get(i), object_temp);
+            //map.put(mtf_list.get(i), i+1);
+            //mapOrder.put(i+1 , mtf_list.get(i));
         }
-        System.out.println(mtf_fault_list);
+        System.out.println(arraylist_mtf + " and original " +  arrayList_mtf_original);
 
-        int times = 1;
+        //int times = 1;
         for (int i = 0; i < this.threads; i++) { //Loop of simulations
 
             ArrayList<TestVectorInformation> ItemxSimulationList = new ArrayList<>();
@@ -819,28 +880,28 @@ import writers.WriteCsvTh;
 
             for (int j = start; j < end ; j++) {
                 //System.out.println(i);
-                //if((mtf_fault_list.containsKey(j)) && (mtf_fault_list.get(j).getOrder() > 1)){
-                //int index = getPosMap(mtf_fault_list, j);
+                //if((arraylist_mtf.containsKey(j)) && (arraylist_mtf.get(j).getOrder() > 1)){
+                //int index = getPosMap(arraylist_mtf, j);
 
-                int index = getPosMapNew(mtf_list, j);
+                int index = getPosArrayListNew(mtf_list, arrayList_mtf_original, j);
 
                 //if(j> 149 && j < 1000)
-                   /// System.out.println(j + "  index: " + index + " Key: " + mtf_list + "    " + mtf_list_2
+                   /// System.out.println(j + "  index: " + index + " Key: " + mtf_list + "    " + arrayList_mtf_original
                  //
                 //   );
 
-               /// if((index > -1) && (mtf_fault_list.containsKey(j)) && (mtf_fault_list.get(j).getOrder() >1)){
+               /// if((index > -1) && (arraylist_mtf.containsKey(j)) && (arraylist_mtf.get(j).getOrder() >1)){
 
                 if((index > -1)){
 
-                    //int order = mtf_fault_list.get(j).getOrder();
+                    //int order = arraylist_mtf.get(j).getOrder();
 
                     int order = (index)+ 2;
 
-                   // multiple_faults_object temp_x = mtf_fault_list.get(j);
+                   // multiple_faults_object temp_x = arraylist_mtf.get(j);
 
 
-                    System.out.println(order + "  Founded key : " + j + "  list: " + mtf_list +  "   " + mtf_list_2);
+
 
                     inputVector = this.get_Input_Vectors(ListInputVectors, j); //input Test n
 
@@ -859,17 +920,18 @@ import writers.WriteCsvTh;
                         temp.setMultipleTransientFaultInjection( this.signals_to_inject_faults.get(new_pos));
                     }
 
-
+                    System.out.println("  Founded key : " + j + "  list: " + mtf_list +  "   " + arrayList_mtf_original + " fault list " + temp.get_MTF_FaultSignal_List() + "  order: "  + order  );
 
 
                     ItemxSimulationList.add(temp);
 
                    ///
 
-                    mtf_list.set(index, mtf_list_2.get(index) + j);
+                    //mtf_list.set(index, arrayList_mtf_original.get(index) + j);
 
                     /*
-                    multiple_faults_object x_temp = mtf_fault_list.get(j);
+
+                    multiple_faults_object x_temp = arraylist_mtf.get(j);
 
 
 
@@ -877,14 +939,14 @@ import writers.WriteCsvTh;
 
 
                     int a =  x_temp.getCounter();    //150
-                    x_temp.setList(j+ mtf_fault_list.get(j).getOriginal_counter()); //300
-                    x_temp.updateCounter(j+ mtf_fault_list.get(j).getOriginal_counter()); //counter 300
+                    x_temp.setList(j+ arraylist_mtf.get(j).getOriginal_counter()); //300
+                    x_temp.updateCounter(j+ arraylist_mtf.get(j).getOriginal_counter()); //counter 300
 
 
-                    //multiple_faults_object yy_temp = mtf_fault_list.get(j);
+                    //multiple_faults_object yy_temp = arraylist_mtf.get(j);
 
-                    mtf_fault_list.remove(j);// remove 150
-                    mtf_fault_list.put(j , x_temp); // Add 300 key
+                    arraylist_mtf.remove(j);// remove 150
+                    arraylist_mtf.put(j , x_temp); // Add 300 key
 
 
                     x_temp.printList();
@@ -892,7 +954,7 @@ import writers.WriteCsvTh;
 
                      */
 
-                  //  System.out.println(inputVector+ "--> Order: " + order + "   J index: " + j + "  mapOld" + map + "  mapNew: " + mtf_fault_list
+                  //  System.out.println(inputVector+ "--> Order: " + order + "   J index: " + j + "  mapOld" + map + "  mapNew: " + arraylist_mtf
 
                    //         + " - faultSig list random choose : " + temp.get_MTF_FaultSignal_List() );
 
@@ -908,6 +970,8 @@ import writers.WriteCsvTh;
 
             }
             System.out.println("Start : " + start + " END: " + end);
+            System.out.println("  Founded key : " + this.sampleSize + "  list: " + mtf_list +  "   " + arrayList_mtf_original
+            );
 
 
             LogicSimulator threadItem = new LogicSimulator(ItemxSimulationList, this.circuit, this.cellLibrary, this.levelCircuit, start, end, this.genlib , this.circuitNameStr); // Thread contex info
@@ -923,7 +987,7 @@ import writers.WriteCsvTh;
 
 
         }
-        System.out.println("SIZE : " +  mtf_fault_list.size());
+        System.out.println("SIZE : " +  arraylist_mtf.size());
 
         return thread_list;
     }
@@ -1868,7 +1932,7 @@ import writers.WriteCsvTh;
         String formattedDate2 = myDateObj2.format(myFormatObj2);
 
 
-        // this.writeSimpleLogMTF(option + "_MULTIPLE_MonteCarlo_Simple_Log_" +this.circuit.getName()+"_Threads-"+ this.threads +  "_sampleSize-" + this.sampleSize, formattedDate,  formattedDate2, propagateTime, order, period, frequency);
+        this.writeSimpleLogMTFMODE(option + "_MULTIPLE_MonteCarlo_Simple_Log_" +this.circuit.getName()+"_Threads-"+ this.threads +  "_sampleSize-" + this.sampleSize, formattedDate,  formattedDate2, propagateTime);
 
         //
         // this.writeCsvFileCompleteThMTF(option+"_MULTIPLE_MonteCarlo_Complete_Log_"+this.circuit.getName()+"_Theads-"+ this.threads + "_sampleSize"+ this.sampleSize, itemx_list);
