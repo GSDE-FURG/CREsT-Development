@@ -930,7 +930,8 @@ import writers.WriteCsvTh;
 
                     }
 
-                    System.out.println("  Founded key : " + j + "  list: " + mtf_list +  "   " + arrayList_mtf_original + " fault list " + temp.get_MTF_FaultSignal_List() + "  order: "  + order  );
+                    System.out.println(inputVector +
+                            "  Founded key : " + j + "  list: " + mtf_list +  "   " + arrayList_mtf_original + " fault list " + temp.get_MTF_FaultSignal_List() + "  order: "  + order  );
 
 
                     ItemxSimulationList.add(temp);
