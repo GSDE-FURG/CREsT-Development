@@ -224,7 +224,9 @@ public class main{
                 Orchestrator simulacaoMultithreading_debug = new Orchestrator(this.threads, this.reliabilityConst, this.relativePath, this.genlib, this.relativePath + this.circuitList.get(i));
                 //
                 //
-                // simulacaoMultithreading_debug.runMultithreadingExausticSimulation("ALL_SIGNALS");
+                //simulacaoMultithreading_debug.runMultithreadingExausticSimulation("ALL_SIGNALS");
+
+               // simulacaoMultithreading_debug.runMultithreadingExausticSimulationComplete("ALL_SIGNALS");
 
 
 
@@ -233,6 +235,9 @@ public class main{
                 //simulacaoMultithreading.PrintCircuitSpecs();
                 //str = str + simulacaoMultithreading.PrintCircuitSpecs() + "\n";
                 //simulacaoMultithreading.runMultipleFaultInjectionMultithreadingMonteCarlo(base, order, frequency,sampleSize, Signals); //ou Signals =  "ALL_SIGNALS" ou "INTERMEDIATE" ou "INTERMEDIATE_AND_OUTPUTS" ou "INPUTS" ou "INPUTS_OUTPUTS"
+
+
+
                 simulacaoMultithreading.runMultipleFaultInjectionMultithreadingMonteCarloMODE(mtf_sizes, Signals); //ou Signals =  "ALL_SIGNALS" ou "INTERMEDIATE" ou "INTERMEDIATE_AND_OUTPUTS" ou "INPUTS" ou "INPUTS_OUTPUTS"
 
 
