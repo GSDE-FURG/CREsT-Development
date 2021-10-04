@@ -68,9 +68,11 @@ public class itemnize {
     }
     public String getBitflip(){
         if(this.originalValue == 0){
-            return "(" + this.originalValue + ")to(1)";
+            //return "(" + this.originalValue + ")to(1)";
+            return "(" + this.originalValue + "/1)";
         }else{
-            return "(" + this.originalValue + ")to(0)";
+            //return "(" + this.originalValue + ")to(0)";
+            return "(" + this.originalValue + "/0)";
         }
 
     }

@@ -118,7 +118,7 @@ public class TestVectorInformation {
 
 
         for (int i = 0; i < this.getMTF_PERSONAL_LIST().size(); i++) {
-            r = r + this.getMTF_PERSONAL_LIST().get(i).getBitflip() + " " + this.getMTF_PERSONAL_LIST().get(i).getIdentidade() ;
+            r = r + this.getMTF_PERSONAL_LIST().get(i).getBitflip() + "" + this.getMTF_PERSONAL_LIST().get(i).getIdentidade() + " " ;
         }
         /*
         if(this.originalSignalValue == 0){
