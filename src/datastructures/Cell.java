@@ -203,6 +203,7 @@ public class Cell {
     }
     
     public void combFactory(String combResult) {
+
         String numBits = "%"+this.inputs.size()+"s";
         Map<ArrayList<Boolean>, Boolean> combination = new LinkedHashMap<>();
         

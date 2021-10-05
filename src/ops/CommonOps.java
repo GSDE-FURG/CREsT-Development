@@ -31,6 +31,11 @@ import static ops.LogarithmOps.lnBig;
  */
 public class CommonOps {
 
+    public static String getBinaryTruthTable(String hexTruth, int cellInputSize) {
+        BigInteger bInt = new BigInteger(hexTruth, 16);
+        return String.format("%" + (int)Math.pow(2, cellInputSize) + "s", bInt.toString(2)).replace(' ', '0');
+    }
+
     public static long timenow() {
         return System.currentTimeMillis();
     }

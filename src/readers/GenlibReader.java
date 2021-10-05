@@ -50,8 +50,27 @@ public class GenlibReader {
      * @return
      */
     public String getCleanedLine(String line) {
-        String cleaned = line.replaceAll("\\s{2,}", " ").replaceAll("\t", " ");                                     
-        return cleaned;
+        String cleaned = line.replaceAll("\\s{2,}", " ").replaceAll("\t", " ");
+        boolean flag = false;
+        boolean flag2 = false;
+        StringBuilder newString = new StringBuilder();
+        for(char c : cleaned.toCharArray()) {
+            if(c == '=') {
+                flag = true;
+            }
+            if(c == ';') {
+                flag = false;
+            }
+            if(flag) {
+                if(c != ' ') {
+                    newString.append(c);
+                }
+            } else {
+                newString.append(c);
+            }
+        }
+        //System.out.println(newString.toString());
+        return newString.toString();
     }
     
     public String getCleanedFunction(String function) {
@@ -105,7 +124,6 @@ public class GenlibReader {
 
     
     public Cell CellFactory(String line) {
-        
         String[] cleanedLine = getCleanedLine(line).split(" ");
         
         String name = cleanedLine[1];

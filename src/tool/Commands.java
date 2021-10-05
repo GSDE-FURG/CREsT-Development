@@ -1786,34 +1786,54 @@ public class Commands {
     
     public void Foo5() throws IOException, Exception {
 
+        //Terminal.getInstance().executeCommand("read_genlib abc/Matheus/1-minimal_no_cost.genlib");
+        //Terminal.getInstance().executeCommand("read_genlib abc/Matheus/asap7.genlib");
+        Terminal.getInstance().executeCommand("read_genlib abc/cadence.genlib");
+
+        CellLibrary cellLib = Terminal.getInstance().getCellLibrary();
         BooleanExpressionEvaluator b_eval = new BooleanExpressionEvaluator();
 
-        /*
-        System.out.println("f * f ==> " + b_eval.parseBoolExpr("&(f,f)"));
-        System.out.println("t * f ==> " + b_eval.parseBoolExpr("&(t,f)"));
-        System.out.println("f * f * f ==> " + b_eval.parseBoolExpr("&(f, f, f)"));
-        System.out.println("(t*f)+f ==> " + b_eval.parseBoolExpr("|(&(t,f),f)"));
-        System.out.println("t+(t*f) ==> " + b_eval.parseBoolExpr("|(t,&(t,f))"));
 
-        System.out.println("example 1 ==> " + b_eval.parseBoolExpr("!(f)"));
-        System.out.println("example 2 ==> " + b_eval.parseBoolExpr("|(f,t)"));
-        System.out.println("example 3 ==> " + b_eval.parseBoolExpr("&(t,f)"));
+        for(Cell cell : cellLib.getCells()) {
+            //System.out.println(cell);
+            String truth = cell.getTruthTable();
+            //System.out.println("Truth: " + cell.getTruthTable());
+            BigInteger bInt = new BigInteger(truth, 16);
 
-        */
-        //System.out.println("example 4 |(&(t,f,t),!(t)) ==> " + b_eval.parseBoolExpr("|(&(t,f,t),!(t))"));
+            String javascriptEngine = String.format("%" + (int)Math.pow(2, cell.getInputs().size()) + "s", bInt.toString(2)).replace(' ', '0');
+            String manualEval = b_eval.getTruthTable(cell);
+
+            if (javascriptEngine.equals(manualEval)) {
+                System.out.println(cell + " ==> OK! ==> " + cell.getInputs());
+            } else {
+                System.out.println(String.format("%s ==> %s ==> %s ==> %s", cell.toString(), truth, javascriptEngine, manualEval));
+            }
+
+            /*
+            System.out.println(cell + " ==> " + cell.getFunctions().get(0) + " ==> " + truth + " ==> " +
+                    String.format("%" + (int)Math.pow(2, cell.getInputs().size()) + "s", bInt.toString(2)).replace(' ', '0') + " ---> " +
+                    b_eval.getTruthTable(cell));
+            System.out.println("mamae"); */
+        }
+
+
+
+
+
         char teste = 't';
-        char teste2 = 'f';
-        char teste3 = 'f';
+        char teste2 = 't';
+        char teste3 = 't';
         char teste4 = 'f';
 
         //String expression = String.format("((%c+(!%c)*(!%c)))", teste, teste2, teste3);
-        String expression = String.format("!%c", teste);
-        Stack<Character> stack = new Stack<>();
-        for (char c: expression.toCharArray()) {
-            stack.push(c);
-        }
+
+        String expression = String.format("!(%c*%c+%c*%c)", teste, teste2, teste3, teste4);
+        //Stack<Character> stack = new Stack<>();
+        //for (char c: expression.toCharArray()) {
+        //    stack.push(c);
+        //}
         System.out.println("Expression: " + expression);
-        System.out.println("Teste " + expression + " ==> " + b_eval.parseBoolExpression(stack));
+        System.out.println("Teste " + expression + " ==> " + b_eval.parseBoolExpression(expression));
 
     }
     
