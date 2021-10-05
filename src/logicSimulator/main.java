@@ -226,7 +226,18 @@ public class main{
                 //
                 //simulacaoMultithreading_debug.runMultithreadingExausticSimulation("ALL_SIGNALS");
 
-               // simulacaoMultithreading_debug.runMultithreadingExausticSimulationComplete("ALL_SIGNALS");
+                //simulacaoMultithreading_debug.runMultithreadingExausticSimulationComplete("ALL_SIGNALS");
+
+                    //
+                // double x = 0.9999;
+
+                    main experimento = new main(threads, "0.9999", relativePath, genlib);
+
+                    experimento.preparingEnviroment();
+
+                    experimento.monteCarloSimulation(20000, "ALL_SIGNALS");
+
+                    System.out.println("\n\n\n" + "");
 
 
 
@@ -235,8 +246,6 @@ public class main{
                 //simulacaoMultithreading.PrintCircuitSpecs();
                 //str = str + simulacaoMultithreading.PrintCircuitSpecs() + "\n";
                 //simulacaoMultithreading.runMultipleFaultInjectionMultithreadingMonteCarlo(base, order, frequency,sampleSize, Signals); //ou Signals =  "ALL_SIGNALS" ou "INTERMEDIATE" ou "INTERMEDIATE_AND_OUTPUTS" ou "INPUTS" ou "INPUTS_OUTPUTS"
-
-
 
                 simulacaoMultithreading.runMultipleFaultInjectionMultithreadingMonteCarloSimulation(mtf_sizes, Signals); //ou Signals =  "ALL_SIGNALS" ou "INTERMEDIATE" ou "INTERMEDIATE_AND_OUTPUTS" ou "INPUTS" ou "INPUTS_OUTPUTS"
 
@@ -247,7 +256,7 @@ public class main{
         }
 
 
-    public void PrintCircuitsSpecs(int sampleSize, String Signals) throws Exception{
+        public void PrintCircuitsSpecs(int sampleSize, String Signals) throws Exception{
                 //Loop na simulação de circuitos 
                 String str = "";
                 for (int i = 0; i < this.circuitList.size(); i++) {

@@ -1284,6 +1284,7 @@ import signalProbability.ProbCircuit;
 
         this.threadID = (long) Thread.currentThread().getId();
 
+
         ArrayList <GateLevel> gatesLevels = this.levelCircuit.getGateLevels();
 
         //String track_operations = thread_item.getSimulationIndex() + " -  Fault List: " + thread_item.get_MTF_FaultSignal_List_thd() + "    " + thread_item.getinputVector() +  "\n";

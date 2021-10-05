@@ -83,7 +83,7 @@ class TerminalWrapper {
                 String order = "", base = "", frequency = "";
 
                 int size = args.length;
-
+                /*
                 switch (size){
                     case (8): //MC Fault Injection
                         genlib = args[1];
@@ -95,7 +95,7 @@ class TerminalWrapper {
                         frequency = args[6];
 
                         break;
-                        /*
+
                     case (7): //MC Fault Injection
                         genlib = args[1];
                         circuit = args[2];
@@ -106,7 +106,8 @@ class TerminalWrapper {
                         frequency = args[6];
 
                         break;
-                        */
+
+
 
 
                     case (5): //MC Fault Injection
@@ -123,7 +124,13 @@ class TerminalWrapper {
                         break;
                 }
 
-                System.out.println("Flag : " + flag);
+                */
+                genlib = args[1];
+                circuit = args[2];
+                flag = args[3];
+                sample = args[4];
+
+                System.out.println("-Flag : " + flag);
 
 
                 Terminal term = Terminal.getInstance();
@@ -145,7 +152,8 @@ class TerminalWrapper {
 
                     case ("-mcmtf"):
 
-                        System.out.println("ARGS: " + args);
+                        //System.out.println("ARGS: " + args.toString()
+                        //);
                         ArrayList <String> x = new ArrayList<>();
                         String arguments_compiled = "";
                         //System.out.println("ARGS: " + args);
@@ -154,6 +162,7 @@ class TerminalWrapper {
                         for(int i = 4 ; i < args.length; i++) {
                             x.add(args[i]);
                             if(i <= 4 ){
+
                                 arguments_compiled = args[i];
                             }else {
                                 arguments_compiled = arguments_compiled + " " + args[i];

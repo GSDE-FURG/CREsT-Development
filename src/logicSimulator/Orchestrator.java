@@ -846,7 +846,18 @@ import writers.WriteCsvTh;
         //HashMap  <Integer, Integer> map = new HashMap<>();
         //HashMap  <Integer, Integer> mapOrder = new HashMap<>();
 
-        mtf_list.remove(0);
+
+        if(mtf_list.size() > 0){
+            mtf_list.remove(0);
+        }else{
+
+            System.out.println("pass");
+        }
+
+
+
+
+
 
         final ArrayList <Integer> arrayList_mtf_original = new ArrayList<>(mtf_list); // Original ArrayList
 
@@ -931,7 +942,8 @@ import writers.WriteCsvTh;
                     }
 
                    //
-                    // System.out.println(inputVector + "  Founded key : " + j + "  list: " + mtf_list +  "   " + arrayList_mtf_original + " fault list " + temp.get_MTF_FaultSignal_List() + "  order: "  + order  );
+
+                    //System.out.println(inputVector + "  Founded key : " + j + "  list: " + mtf_list +  "   " + arrayList_mtf_original + " fault list " + temp.get_MTF_FaultSignal_List() + "  order: "  + order  );
 
 
                     ItemxSimulationList.add(temp);
@@ -983,7 +995,7 @@ import writers.WriteCsvTh;
 
             }
                 System.out.println("Start : " + start + " END: " + end);
-               // System.out.println("  Founded key : " + this.sampleSize + "  list: " + mtf_list +  "   " + arrayList_mtf_original);
+               System.out.println("  Founded key : " + this.sampleSize + "  list: " + mtf_list +  "   " + arrayList_mtf_original);
 
 
             LogicSimulator threadItem = new LogicSimulator(ItemxSimulationList, this.circuit, this.cellLibrary, this.levelCircuit, start, end, this.genlib , this.circuitNameStr); // Thread contex info
@@ -1805,7 +1817,7 @@ import writers.WriteCsvTh;
 
     public void runMultithreadingMonteCarlo(int sampleSize, String option) throws IOException, Exception{
 
-                System.out.println(" ----- Monte Carlo version -------");
+                System.out.println(" ----- Monte Carlo version Single Transient Fault (STF) -------");
                 long loadTimeStart = System.nanoTime();//System.currentTimeMillis();
 
                 LocalDateTime myDateObj = LocalDateTime.now();
@@ -1907,7 +1919,6 @@ import writers.WriteCsvTh;
 
 
                 this.writeSimpleLog(option + "_MonteCarlo_Simple_Log_" +this.circuit.getName()+"_Threads-"+ this.threads +  "_sampleSize-" + this.sampleSize, formattedDate,  formattedDate2, propagateTime);
-
                 this.writeCsvFileCompleteTh(option+"_MonteCarlo_Complete_Log_"+this.circuit.getName()+"_Theads-"+ this.threads + "_sampleSize"+ this.sampleSize, itemx_list);
 
 
