@@ -162,12 +162,10 @@ class TerminalWrapper {
                         for(int i = 4 ; i < args.length; i++) {
                             x.add(args[i]);
                             if(i <= 4 ){
-
                                 arguments_compiled = args[i];
                             }else {
                                 arguments_compiled = arguments_compiled + " " + args[i];
                             }
-
                         }
 
                         //System.out.println("- Multiple Event Transient (SET) -mcmtf: " + sample);

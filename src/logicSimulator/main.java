@@ -222,15 +222,14 @@ public class main{
 
                 //Exaustic mode for debug
                 Orchestrator simulacaoMultithreading_debug = new Orchestrator(this.threads, this.reliabilityConst, this.relativePath, this.genlib, this.relativePath + this.circuitList.get(i));
-                //
-                //
+
                 //simulacaoMultithreading_debug.runMultithreadingExausticSimulation("ALL_SIGNALS");
 
                 //simulacaoMultithreading_debug.runMultithreadingExausticSimulationComplete("ALL_SIGNALS");
 
                     //
                 // double x = 0.9999;
-
+                /*
                     main experimento = new main(threads, "0.9999", relativePath, genlib);
 
                     experimento.preparingEnviroment();
@@ -238,9 +237,7 @@ public class main{
                     experimento.monteCarloSimulation(20000, "ALL_SIGNALS");
 
                     System.out.println("\n\n\n" + "");
-
-
-
+                */
 
                 Orchestrator simulacaoMultithreading = new Orchestrator(this.threads, this.reliabilityConst, this.relativePath, this.genlib, this.relativePath + this.circuitList.get(i));
                 //simulacaoMultithreading.PrintCircuitSpecs();
@@ -316,8 +313,7 @@ public class main{
              this.readResultsInLot(folderPath, "ALL_SIGNALS");
              
         }
-        
-         
+
         private List<String> readFile(String filename) 
 {
                     List<String> records = new ArrayList<String>();

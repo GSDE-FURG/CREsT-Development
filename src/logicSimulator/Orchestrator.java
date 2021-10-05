@@ -1009,7 +1009,6 @@ import writers.WriteCsvTh;
 
             System.out.println("            \n                  - Thread id: " + threadItem.getThreadId() + "  Simulation Size: " + threadItem.getThreadSimulatinArray().size() + "  MTF: " + ItemxSimulationList.size());
 
-
         }
         System.out.println("SIZE : " +  arraylist_mtf.size());
 
@@ -1899,8 +1898,10 @@ import writers.WriteCsvTh;
                 }
 
                 /* Compilando os resultados - Falhas detectadas Ne*/
+                int bitfipCcounter = 0;
                 for (int i=0; i < this.itemx_list.size() ; i++) {
                     this.unmasked_faults = this.unmasked_faults +  itemx_list.get(i).getPropagatedFaults();
+                    bitfipCcounter = bitfipCcounter + itemx_list.get(i).bitflipcounter;
                 }
 
                  this.circuitReliaibility = (float) (1.0 - ((float) this.unmasked_faults / (float) this.sampleSize));
@@ -2180,9 +2181,12 @@ import writers.WriteCsvTh;
         Instant endThreadingTimeElapsed = Instant.now();
 
         /* Compilando os resultados - Falhas detectadas Ne*/
+        int bitfipCcounter = 0;
         for (int i=0; i < this.itemx_list.size() ; i++) {
             this.unmasked_faults = this.unmasked_faults +  itemx_list.get(i).getPropagatedFaults();
+            bitfipCcounter = bitfipCcounter + itemx_list.get(i).bitflipcounter;
         }
+
 
         this.circuitReliaibility = (float) (1.0 - ((float) this.unmasked_faults / (float) this.sampleSize));
 
@@ -2208,6 +2212,7 @@ import writers.WriteCsvTh;
 
         Instant endTimelogGeneration = Instant.now();
 
+
         long timeElapsed_logGeneration = Duration.between(startTimelogGeneration, endTimelogGeneration).toSeconds();
 
         System.out.println("\n\n----------------- Results ------------------");
@@ -2224,7 +2229,9 @@ import writers.WriteCsvTh;
         String time = "- Load Time : " + timeElapsed_loadTime + "(s) - Setup Time: " + timeElapsed_PrepareTime  + "(s) - Threading Execution Time: " + timeElapsed_ThreadingTime
                 + "(s) - Log Generation: " + timeElapsed_logGeneration
                 + "(s) - Simulation Instant TimeElapsed: " + timeElapsed_Instant +" (s)";
-
+        System.out.println("- MTF order list: " + mtf_list
+        );
+        System.out.println("- Bitflip Counter: " + bitfipCcounter);
         System.out.println(time);
 
         System.out.println("--------------------------------------------");

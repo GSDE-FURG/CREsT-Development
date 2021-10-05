@@ -66,6 +66,7 @@ import signalProbability.ProbCircuit;
 
         private int tempIndex;
         private String mode;
+        public int bitflipcounter;
 
         public LogicSimulator(ArrayList <TestVectorInformation> threadSimulationList, Circuit circuit, CellLibrary cellLibrary, LevelCircuit levelCircuit, int start, int end, String genlib, String circuitFilePath) throws IOException, ScriptException, Exception{
        
@@ -80,6 +81,8 @@ import signalProbability.ProbCircuit;
            //this.genlibPATH = "abc\\" + genlib;
            
            this.propagated_faults = 0;
+
+           this.bitflipcounter = 0;
 
            this.tempIndex = -1;
            
@@ -1284,6 +1287,7 @@ import signalProbability.ProbCircuit;
 
         this.threadID = (long) Thread.currentThread().getId();
 
+        int inner_bitflip_counter = 0;
 
         ArrayList <GateLevel> gatesLevels = this.levelCircuit.getGateLevels();
 
@@ -1325,11 +1329,16 @@ import signalProbability.ProbCircuit;
                             gate.getGate().getOutputs().get(s).setLogicValue(1);
                             gate.getGate().getOutputs().get(s).setLogicValueBoolean(Boolean.TRUE);
 
+                            if(gate.getGate().getOutputs().get(s).getOriginalLogicValue() != gate.getGate().getOutputs().get(s).getLogicValue()){
+                                this.bitflipcounter++;
+                                inner_bitflip_counter++;
+                            }
 
+                            /*
                             outGates =  "[" +gate.getGate().getId() + "]  Ori: " + gate.getGate().getOutputsOriginalValuesToString()
 
                                     + " New: " + gate.getGate().getOutputsValuesToString() + "  ";
-
+                            */
                             //for (int inside = 0; inside < hashMap_temp.size(); inside++) { // Test Case for faulsignals in outputs gate
 
                             //boolean check = hashMap_temp.containsKey(inside); //key founded in hashmap
@@ -1380,6 +1389,13 @@ import signalProbability.ProbCircuit;
 
                             outGates = gate.getGate().getId() + "  Ori: " + gate.getGate().getOutputsOriginalValuesToString()
                                     + " New: " + gate.getGate().getOutputsValuesToString() + "  ";
+
+
+
+                            if(gate.getGate().getOutputs().get(s).getOriginalLogicValue() != gate.getGate().getOutputs().get(s).getLogicValue()){
+                                this.bitflipcounter++;
+                                inner_bitflip_counter++;
+                            }
 
                             // for (int inside = 0; inside < hashMap_temp.size(); inside++) { // Test Case for faulsignals in outputs gate
 
@@ -1468,6 +1484,8 @@ import signalProbability.ProbCircuit;
                 }
             }
         }
+
+        //System.out.println(thread_item.getinputVector() + "  faullist: " + thread_item.getMTFPERSONAL_LIST_Identities() + " " + "Inner Bitflip: " + inner_bitflip_counter);
 
 
     }
@@ -1728,6 +1746,9 @@ import signalProbability.ProbCircuit;
                 */
 
         }
+
+            System.out.println(threadID +
+                    "NUMBER OF BITFLIPS: " + this.bitflipcounter);
 
         //this.settingFaultInjectionResults();
             this.settingFaultInjectionResultsMTF();
