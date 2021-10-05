@@ -930,8 +930,8 @@ import writers.WriteCsvTh;
 
                     }
 
-                    System.out.println(inputVector +
-                            "  Founded key : " + j + "  list: " + mtf_list +  "   " + arrayList_mtf_original + " fault list " + temp.get_MTF_FaultSignal_List() + "  order: "  + order  );
+                   //
+                    // System.out.println(inputVector + "  Founded key : " + j + "  list: " + mtf_list +  "   " + arrayList_mtf_original + " fault list " + temp.get_MTF_FaultSignal_List() + "  order: "  + order  );
 
 
                     ItemxSimulationList.add(temp);
@@ -982,9 +982,8 @@ import writers.WriteCsvTh;
                 counter++;
 
             }
-            System.out.println("Start : " + start + " END: " + end);
-            System.out.println("  Founded key : " + this.sampleSize + "  list: " + mtf_list +  "   " + arrayList_mtf_original
-            );
+                System.out.println("Start : " + start + " END: " + end);
+               // System.out.println("  Founded key : " + this.sampleSize + "  list: " + mtf_list +  "   " + arrayList_mtf_original);
 
 
             LogicSimulator threadItem = new LogicSimulator(ItemxSimulationList, this.circuit, this.cellLibrary, this.levelCircuit, start, end, this.genlib , this.circuitNameStr); // Thread contex info
