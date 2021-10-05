@@ -2650,7 +2650,6 @@ import signalProbability.ProbCircuit;
 
                     break;
 
-
                 case ("Multiple"):
                     System.out.println("Multiple Transient Event - SET");
                     try {
