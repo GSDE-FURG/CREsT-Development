@@ -4528,7 +4528,7 @@ public class Commands {
             "AOI222",
             "XOR2"};
 
-    String[] benchs = {"arbiter",
+    /*String[] benchs = {"arbiter",
                        "cavlc",
                        "ctrl",
                        "dec",
@@ -4537,7 +4537,18 @@ public class Commands {
                        "mem_ctrl",
                        "priority",
                        "router",
-                       "voter"};
+                       "voter"}; */
+
+    String[] benchs = {"adder",
+            "bar",
+            "div",
+            "hyp",
+            "log2",
+            "max",
+            "multiplier",
+            "sin",
+            "sqrt",
+            "square"};
 
 
     String[] libs = {"1-minimal_no_cost",

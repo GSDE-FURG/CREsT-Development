@@ -204,7 +204,7 @@ public class MappedVerilogReader {
 
         if (cellLibrary.getCellByName(gateTypeName) != null) {
 
-            long timeFlag1 = timenow();
+            //long timeFlag1 = timenow();
 
             gateIdIOs = preGate[1].replaceAll(" ", "");
 
@@ -223,9 +223,9 @@ public class MappedVerilogReader {
             ArrayList<Signal> inputs = new ArrayList<>(fooGate.getType().getInputs().size());
             ArrayList<Signal> outputs = new ArrayList<>(fooGate.getType().getOutputs().size());
 
-            gateAndSignalsCreation = gateAndSignalsCreation + timestampDiff(timeFlag1);
+            //gateAndSignalsCreation = gateAndSignalsCreation + timestampDiff(timeFlag1);
 
-            long timeFlag2 = timenow();
+            //long timeFlag2 = timenow();
 
 
 
@@ -253,7 +253,7 @@ public class MappedVerilogReader {
 
 
 
-            signalsSettings = signalsSettings + timestampDiff(timeFlag2);
+            //signalsSettings = signalsSettings + timestampDiff(timeFlag2);
 
             fooGate.setInputs(inputs);
             fooGate.setOutputs(outputs);
@@ -302,24 +302,27 @@ public class MappedVerilogReader {
         
         File file = new File(path);
         BufferedReader br;
-        Long timeNow = timenow();
+        //Long timeNow = timenow();
         this.circ = new Circuit();
-        timestamp(timeNow, "New Circuit...");
+        //Debug_matheus
+        //timestamp(timeNow, "New Circuit...");
 
-        timeNow = timenow();
-        this.circ.setName(file.getName().substring(0, file.getName().indexOf(".")));        
-        timestamp(timeNow, "Circuit naming...");
+        //timeNow = timenow();
+        this.circ.setName(file.getName().substring(0, file.getName().indexOf(".")));
+        //Debug_matheus
+        //timestamp(timeNow, "Circuit naming...");
         String reserved = "";        
 
-        timeNow = timenow();
-        br = new BufferedReader(new FileReader(file));                        
-        timestamp(timeNow, "Buffreader setting...");
+        //timeNow = timenow();
+        br = new BufferedReader(new FileReader(file));
+        //Debug_matheus
+        //timestamp(timeNow, "Buffreader setting...");
 
-        Long timeWhile = timenow();
+        //Long timeWhile = timenow();
 
-        while ((line = br.readLine()) != null) {                        
-
-            whileHead = timenow();
+        while ((line = br.readLine()) != null) {
+            //Debug_matheus
+            //whileHead = timenow();
 
             if(line.contains("//")) {
                 line = line.split("//")[0];
@@ -337,38 +340,44 @@ public class MappedVerilogReader {
                reserved = "wire";
             }
 
-            //TODO remover
-            lineIFstime = lineIFstime + timestampDiff(whileHead);
+            //Debug_matheus
+            //lineIFstime = lineIFstime + timestampDiff(whileHead);
 
             switch(reserved){
                 case "input":
                 case "wire":
-                    signalFlag = timenow();
+                    //signalFlag = timenow();
                     signalFactory(line);
-                    signalFactoryTime = signalFactoryTime + timestampDiff(signalFlag);
+                    //Debug_matheus
+                    //signalFactoryTime = signalFactoryTime + timestampDiff(signalFlag);
                     break;
                 case "output":
-                    signalFlag = timenow();
+                    //signalFlag = timenow();
                     signalFactory(line, true);
-                    signalFactoryTime = signalFactoryTime + timestampDiff(signalFlag);
+                    //Debug_matheus
+                    //signalFactoryTime = signalFactoryTime + timestampDiff(signalFlag);
                     break;                        
 
                 default:
                     if (isLineGate(line)) {
-                        gateFlag = timenow();
+                        //gateFlag = timenow();
                         gateFactory(line);
-                        gateFactoryTime = gateFactoryTime + timestampDiff(gateFlag);
+                        //Debug_matheus
+                        //gateFactoryTime = gateFactoryTime + timestampDiff(gateFlag);
                     }
             }
 
-            whileTail = timenow();
+            //whileTail = timenow();
             if (line.contains(";")) {                   
                reserved = "null";
             }
-            lineIFstime = lineIFstime + timestampDiff(whileTail);
+            //Debug_matheus
+            //lineIFstime = lineIFstime + timestampDiff(whileTail);
 
         }
 
+        //Debug_matheus
+        /*
         timestamp(timeWhile, "After file lines while...");
         System.out.println("WhileIFs time = " + lineIFstime + " ms");
         System.out.println("SignalsFactory time = " + signalFactoryTime + " ms");
@@ -376,5 +385,6 @@ public class MappedVerilogReader {
         System.out.println();
         System.out.println("Gates and Signals Creation = " + gateAndSignalsCreation + " ms");
         System.out.println("Signals Settings = " + signalsSettings + " ms");
+        */
     }
 }
