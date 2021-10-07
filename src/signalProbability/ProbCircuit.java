@@ -23,6 +23,10 @@ import java.util.Map;
 import levelDatastructures.DepthGate;
 import levelDatastructures.GateLevel;
 import ops.CommonOps;
+import tool.Terminal;
+
+import static ops.CommonOps.timenow;
+import static ops.CommonOps.timestamp;
 
 /**
  *
@@ -32,67 +36,34 @@ public class ProbCircuit extends Circuit {
     
     private ArrayList<ProbSignal> probSignals = new ArrayList<>();
     private ArrayList<ProbGate> probGates = new ArrayList<>();
+    private ArrayList<ProbSignal> pInputs;
+    private ArrayList<ProbSignal> pOutputs;
+
     private ArrayList<ProbGateLevel> probGateLevels = new ArrayList<>();
     private ArrayList<ProbInterLevel> probInterLevels = new ArrayList<>();
     private Map<String, ArrayList<ProbGate>> probGatesOrganized;
+
+    private boolean forInputs = false;
+    private boolean forOutputs = false;
     
     private boolean probGatesOrgFlag = false;
-    
-//    public static ProbCircuit create(String name, ArrayList<Signal> signals, ArrayList<Gate> gates) {
-//        
-//        ProbCircuit pCircuit = new ProbCircuit(name, signals, gates, gLevels);
-//        
-//        for (GateLevel gLevel : gLevels) {
-//            pCircuit.addProbGateLevel(new ProbGateLevel(gLevel));
-//        }
-//        
-//        pCircuit.makeProbSignalsAndProbGates();
-//        
-//        pCircuit.makeProbGateLevelsOLD();
-//        
-//        pCircuit.makeProbInterLevels();
-//        
-//        return pCircuit;
-//    }
-    
-    
-//    
-//    private ProbCircuit(String name, ArrayList<Signal> signals, ArrayList<Gate> gates, GateLevel gLevel) {
-//        super(name, signals, gates);       
-//        
-//    }
+
     
     public ProbCircuit (Circuit circuit) {
         this(circuit.getName(), circuit.getSignals(), circuit.getGates());
     }
     
     public ProbCircuit(String name, ArrayList<Signal> signals, ArrayList<Gate> gates) {
-        
         super(name, signals, gates);
-        
+
         this.makeProbSignalsAndProbGates();
+        //System.out.println("Foi o makeProbSignalsAndProbGates");
         this.setGatesDepth();
+        //System.out.println("Foi setGatesDepth");
         this.makeProbGateLevels();
-        this.makeProbInterLevels();
-        
-//        for (Signal signal : signals) {
-//            
-//            ProbSignal pSignal;
-//            Gate origin = signal.getOrigin();
-//            ArrayList<Gate> destiny = signal.getDestiny();
-//
-//            
-//            if(origin == null) {
-//                pSignal = new ProbSignal(signal.getId(), destiny);
-//            } else if(destiny == null) {
-//                pSignal = new ProbSignal(signal.getId(), origin);
-//            } else {
-//                pSignal = new ProbSignal(signal.getId(), origin, destiny);
-//            }
-//            
-//            this.addProbSignal(pSignal);
-//        }
-        
+        //System.out.println("Foi o makeProbGateLevels");
+        //this.makeProbInterLevels();
+       //System.out.println("Foi o makeProbInterLevels");
         
     }
 
@@ -234,12 +205,11 @@ public class ProbCircuit extends Circuit {
             
         }
     }
-    
-    
-    public ArrayList<ProbSignal> getProbInputs() {
-        
+
+    public ArrayList<ProbSignal> getProbInputs_OLD() {
+
         ArrayList<ProbSignal> pInputs = new ArrayList<>();
-        
+
         for(ProbSignal pSignal : this.probSignals) {
             if(pSignal.getOrigin() == null && !pSignal.getDestiny().isEmpty()) {
                 pInputs.add(pSignal);
@@ -247,25 +217,62 @@ public class ProbCircuit extends Circuit {
         }
         return pInputs;
     }
-    
-    public ArrayList<ProbSignal> getProbOutputs() {
-        
+
+    public ArrayList<ProbSignal> getProbOutputs_OLD() {
+
         ArrayList<ProbSignal> pOutputs = new ArrayList<>();
-        
+
         for(ProbSignal pSignal : this.probSignals) {
-            
+
 //            if(pSignal.getDestiny().isEmpty()) {
 //                pOutputs.add(pSignal);
 //            }
-            
+
             for(Gate fooGate: pSignal.getDestiny()) {
                 if(fooGate == null) {
                     pOutputs.add(pSignal);
                     break;
                 }
-            } 
+            }
         }
         return pOutputs;
+    }
+    
+    public ArrayList<ProbSignal> getProbInputs() {
+
+        if (forInputs) {
+            return this.pInputs;
+        } else {
+            this.pInputs = new ArrayList<>();
+
+            for (ProbSignal pSignal : this.probSignals) {
+                if (pSignal.getOrigin() == null && !pSignal.getDestiny().isEmpty()) {
+                    this.pInputs.add(pSignal);
+                }
+            }
+            return pInputs;
+        }
+    }
+
+    public ArrayList<ProbSignal> getProbOutputs() {
+
+        if(forOutputs) {
+            return this.pOutputs;
+        } else {
+            this.pOutputs = new ArrayList<>();
+
+            for(ProbSignal pSignal : this.probSignals) {
+
+                for(Gate fooGate: pSignal.getDestiny()) {
+                    if(fooGate == null) {
+                        this.pOutputs.add(pSignal);
+                        break;
+                    }
+                }
+            }
+            this.forOutputs = true;
+            return this.pOutputs;
+        }
     }
 
     public ArrayList<ProbGate> getProbGates() {
@@ -296,64 +303,96 @@ public class ProbCircuit extends Circuit {
     public void setProbGateLevels(ArrayList<ProbGateLevel> probGateLevels) {
         this.probGateLevels = probGateLevels;
     }
-    
-    public void makeProbGateLevels() {
+
+    public void makeProbGateLevels_OLD() {
         int lastLevel = 0;
         int inCounter = 0;
         int outCounter = 0;
-        
+
         ArrayList<Object> foo = new ArrayList<>();
-        
+
         for (int i = 0; i < this.getProbOutputs().size(); i++) {
+            System.out.println(this.getProbOutputs().get(i).getPOrigin().getDepth());
             foo.add(this.getProbOutputs().get(i).getPOrigin());
         }
-        
-        for (int i = 0; i < foo.size(); i++) {    
-            
+
+        for (int i = 0; i < foo.size(); i++) {
+
             if (foo.get(i) instanceof ProbGate) {
-                
+
                 ProbGate fooGate = (ProbGate)foo.get(i);
                 /*
-                ** Verify the last depth of circuit
-                */
+                 ** Verify the last depth of circuit
+                 */
                 if (lastLevel < fooGate.getDepth()) {
                     lastLevel = fooGate.getDepth();
                 }
-            }                            
+            }
         }
-        
+
         ProbGateLevel gateLevel = new ProbGateLevel(lastLevel);
-        
+
         for (int i = 0; i < foo.size(); i++) {
             if (foo.get(i) instanceof ProbGate) {
-                
+
                 ProbGate fooGate = (ProbGate)foo.get(i);
-                
+
                 if (fooGate.getDepth() == gateLevel.getLevel()) {
                     if(!gateLevel.containsGate(foo.get(i))) {
-                        gateLevel.addGate(fooGate);                        
+                        gateLevel.addGate(fooGate);
                         inCounter += fooGate.getpInputs().size();
                         outCounter += fooGate.getpOutputs().size();
                     }
                 } else {
                     /*
-                    ** Take the previous depthGate outputs
-                    */
+                     ** Take the previous depthGate outputs
+                     */
                     for (int j = 0; j < fooGate.getpOutputs().size(); j++) {
                         ProbSignal fooSignal = fooGate.getpOutputs().get(j);
                         gateLevel.addGate(fooSignal);
                         inCounter++;
                         outCounter++;
                     }
-                    
-                }                
-            } 
+
+                }
+            }
         }
-        
+
         gateLevel.setIn(inCounter);
-        gateLevel.setOut(outCounter);        
+        gateLevel.setOut(outCounter);
         this.probGateLevels.add(gateLevel);
-        makeLeftGateLevels(gateLevel);                                
+        makeLeftGateLevels(gateLevel);
+    }
+
+    public void makeProbGateLevels() {
+        int greaterDepth = 0;
+        long timeNow = timenow();
+
+        //System.out.println("Outputs: " + this.getProbOutputs().size());
+        for (int i = 0; i < this.getProbOutputs().size(); i++) {
+
+            int flag = this.getProbOutputs().get(i).getPOrigin().getDepth();
+            if(flag > greaterDepth) {
+                greaterDepth = flag;
+            }
+            //foo.add(this.getProbOutputs().get(i).getPOrigin());
+        }
+
+        ArrayList<ProbGateLevel> pGatesLevels = new ArrayList<>(greaterDepth);
+
+        this.probGateLevels = new ArrayList<>(greaterDepth);
+        for(int i = 0; i < greaterDepth; i++) {
+            this.probGateLevels.add(new ProbGateLevel(i+1));
+        }
+
+        for (int i = 0; i < this.getProbGates().size(); i++) {
+            ProbGate pGate = this.getProbGates().get(i);
+            int depth = pGate.getDepth();
+            this.getProbGateLevels().get(depth-1).addGate(pGate);
+        }
+
+        //timestamp(timeNow, "Make ProbGateLevels Done!!");
+
     }
     
     public void makeLeftGateLevels(ProbGateLevel lastGateLevel) {
@@ -424,6 +463,7 @@ public class ProbCircuit extends Circuit {
             
             this.probGateLevels.add(0, currentLevel);
             //System.out.println("teste");
+            System.out.println("Current Level: " + currentLevel.getLevel());
             if(currentLevel.getLevel() != 1) {
                 makeLeftGateLevels(currentLevel);
 
@@ -574,16 +614,16 @@ public class ProbCircuit extends Circuit {
             
         }
     }
-    
-    public ArrayList<ProbSignal> getFanouts() {
-        
+
+    public ArrayList<ProbSignal> getFanouts_OLD() {
+
         ArrayList<ProbSignal> fanouts = new ArrayList<>();
-        LinkedHashSet<ProbSignal> linked = new LinkedHashSet();        
-        
+        LinkedHashSet<ProbSignal> linked = new LinkedHashSet();
+
         for (int i = 0; i < this.getProbInterLevels().size(); i++) {
-                    
-            ProbInterLevel fooInter = this.getProbInterLevels().get(i);            
-            
+
+            ProbInterLevel fooInter = this.getProbInterLevels().get(i);
+
             ArrayList<ProbSignal> ins = fooInter.getInSignals();
             ArrayList<ProbSignal> outs = new ArrayList<>(fooInter.getOutSignals());
 
@@ -598,11 +638,22 @@ public class ProbCircuit extends Circuit {
                     }
                 }
 
-                linked.addAll(outs);                        
-            }                      
+                linked.addAll(outs);
+            }
         }
 
         fanouts.addAll(linked);
+        return fanouts;
+    }
+    
+    public ArrayList<ProbSignal> getFanouts() {
+
+        ArrayList<ProbSignal> fanouts = new ArrayList<>();
+        for(ProbSignal pSignal : this.getProbSignals()) {
+            if(pSignal.getPDestiny().size() > 1) {
+                fanouts.add(pSignal);
+            }
+        }
         return fanouts;
     }
     
@@ -788,6 +839,38 @@ public class ProbCircuit extends Circuit {
             gate.setDepth(fooDepth + 1);        
         }
         
+        return gate;
+    }
+
+    public ProbGate gateDfsProbGateLevel(ProbGate gate, int previousDepth) {
+
+        ArrayList<ProbSignal> inputs = gate.getpInputs();
+        int currentDepth = gate.getDepth();
+        int depthDiff = previousDepth-currentDepth;
+
+        if (!gate.visited2) {
+            gate.visited2 = true;
+
+            this.probGateLevels.get(currentDepth-1).addGate(gate);
+
+            for (int i = 0; i < inputs.size(); i++) {
+                if(inputs.get(i).getOrigin() != null) {
+                    gateDfsProbGateLevel(inputs.get(i).getPOrigin(), gate.getDepth());
+                } else {
+                    if(currentDepth > 1) {
+                        for (int j = 0; j < currentDepth-1; j++) {
+                            this.probGateLevels.get(j).addGate(inputs.get(i));
+                        }
+                    }
+                }
+            }
+        }
+        //ADD intermediate signals as gates
+        if(depthDiff > 1) {
+            for(int i = 0; i < depthDiff-1; i++) {
+                this.probGateLevels.get(currentDepth+i).addGate(gate.getpOutputs().get(0));
+            }
+        }
         return gate;
     }
     

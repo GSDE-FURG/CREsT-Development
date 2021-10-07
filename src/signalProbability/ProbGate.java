@@ -24,8 +24,11 @@ public class ProbGate extends Gate {
     private float[][] reliabilityMatrix2;
     private BigDecimal gateReliability;
     private int depth;
+
     public int currentIn = 0;
     public boolean visited = false;
+    public boolean visited2 = false;
+
     
     
     public ProbGate(String id, Cell type, ArrayList<ProbSignal> inputs, ArrayList<ProbSignal> outputs) {
