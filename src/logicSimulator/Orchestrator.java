@@ -49,6 +49,7 @@ import writers.WriteCsvTh;
     private float circuitReliaibility;
     private MappedVerilogReader verilog_circuit;
     private String Performance_Time;
+    private int sizeExaustiveCompleteSimulation;
 
     private ArrayList <Signal> signals_to_inject_faults = new ArrayList<>();
     private final ArrayList <String> inputListValues = new ArrayList<>();
@@ -1270,7 +1271,6 @@ import writers.WriteCsvTh;
         return combination;
     }
 
-
     private static void helper(List<int[]> combinations, int data[], int start, int end, int index) {
         if (index == data.length) {
             int[] combination = data.clone();
@@ -1287,8 +1287,6 @@ import writers.WriteCsvTh;
         helper(combinations, new int[r], 0, n-1, 0);
         return combinations;
     }
-
-
 
     public List particionateExausticVectorComplete(ArrayList <ArrayList<Integer>> ListInputVectors) throws ScriptException, Exception{
 
@@ -1317,13 +1315,15 @@ import writers.WriteCsvTh;
 
 
         int vec = (int) Math.pow(2, this.circuit.getInputs().size());
-
+        long result_computation = 0;
         for (int i = 1; i < this.signals_to_inject_faults.size(); i++) {
             ///int combination = (int) (factorialUsingRecursion(this.circuit.getSignals().size())/ ((factorialUsingRecursion(this.signals_to_inject_faults.size() - i)) * (factorialUsingRecursion(i))));
             long comb = combination(this.circuit.getSignals().size(), i);
-            System.out.println("conjunto  " + this.circuit.getSignals().size() + "," + i  + " : " + comb + "  testComplexity = " + vec  + " * " + comb + " = " + (comb*vec));
-        }
 
+            result_computation = result_computation + (comb);
+            System.out.println("conjunto  " + this.circuit.getSignals().size() + "," + i  + " : " + comb + "  testComplexity = " + comb + " = " + (result_computation)) ;
+        }
+            this.sizeExaustiveCompleteSimulation = (int) result_computation * vec;
         /*
         for (int i = 0; i < this.signals_to_inject_faults.size(); i++) {
             List<int[]> combinations = generate(this.signals_to_inject_faults.size(), i);
@@ -1334,7 +1334,8 @@ import writers.WriteCsvTh;
         }
         */
 
-
+        //this.sizeExaustiveCompleteSimulation = 0;
+        int counter = 0;
         for (int i = 0; i < this.threads; i++) { //Loop of simulations
 
             ArrayList <TestVectorInformation> ItemxSimulationList = new ArrayList<>();
@@ -1360,15 +1361,15 @@ import writers.WriteCsvTh;
             System.out.println(" - starting thread: "+i  + " - simulate fault injection (number): " + partition);
 
 
-            System.out.println("SIGNALS LIST: " + this.signals_to_inject_faults
-            );
+            System.out.println("SIGNALS LIST: " + this.signals_to_inject_faults);
             for (int j = start; j < end ; j++){ // Vetores [0000] [00001]
 
                 inputVector = this.get_Input_Vectors(ListInputVectors, j);
 
                 for (int aux = 0; aux < this.signals_to_inject_faults.size(); aux++) { // 0 to 11 sinais
 
-                    for (int ill = aux+1; ill <= 3; ill++) { // G1 ~ G1,G2 ~ G1,G2,G3 sinais em order
+                    for (int ill = aux+1; ill <= this.signals_to_inject_faults.size()
+                            ; ill++) { // G1 ~ G1,G2 ~ G1,G2,G3 sinais em order
 
                         int SigIndex = aux; // G1, G2 , G3
 
@@ -1377,29 +1378,21 @@ import writers.WriteCsvTh;
                         for (int[] combination : combinations){ //
                             TestVectorInformation temp = new TestVectorInformation(inputVector, this.signals_to_inject_faults.get(combination[aux]), j+1);  //Inject in G1 first
 
+                           // this.sizeExaustiveCompleteSimulation++;
+
                             for (int element = 1; element < combination.length; element++) {
-
                                 ArrayList<Integer> SigIndexList = new ArrayList<Integer>();
-
                                 SigIndexList.add(combination[element]);
-
                                 temp.setMultipleTransientFaultInjection(this.signals_to_inject_faults.get(combination[element]));
                                 SigIndexList.add(combination[element]);
 
                             }
-                                if(j ==0)
-                                System.out.println(ill + " ill " +
-                                        "Vec: " + inputVector + " comb: " + Arrays.toString(combination) + " Fault Signal: " +  this.signals_to_inject_faults.get(SigIndex) + " list: " +
-                                        "" +
-                                        "" + temp.get_MTF_FaultSignal_List()
-                                );
+                            counter++;
+ //                           if(j == 0)
+//                               System.out.println(ill + " ill " + "Vec: " + inputVector + " comb: " + Arrays.toString(combination) + " Fault Signal: " +  this.signals_to_inject_faults.get(SigIndex) + " list: "+ "" + temp.get_MTF_FaultSignal_List() + " counter: " + counter);
 
-
-                           //
                             ItemxSimulationList.add(temp);
-
                         }
-                        //System.out.printf("generated %d combinations of %d items from %d ", combinations.size(), this.signals_to_inject_faults.size(), i);
                     }
                 }
                 /*
@@ -1419,6 +1412,7 @@ import writers.WriteCsvTh;
 
             }
 
+
             LogicSimulator threadItem = new LogicSimulator(ItemxSimulationList, this.circuit, this.cellLibrary, this.levelCircuit, start, end, this.genlib , this.circuitNameStr); // Thread contex info
             threadItem.setMode("Multiple");
             itemx_list.add(threadItem);
@@ -1428,7 +1422,10 @@ import writers.WriteCsvTh;
             thread.setName(Integer.toString(threadItem.hashCode()));
             thread_list.add(thread);
 
+
+            System.out.println(i + " Thread - Size simulation" + " " + this.sizeExaustiveCompleteSimulation + "    computation: " + result_computation + "   - SimulatlistionSize: "+itemx_list.get(i).getThreadSimulatinArray().size() + "   counter: " +counter);
         }
+        this.sizeExaustiveCompleteSimulation = (int) counter;
 
         return thread_list;
 
@@ -1637,8 +1634,6 @@ import writers.WriteCsvTh;
 
         this.signals_to_inject_faults = this.signalsToInjectFault(option); // Consider all signals to fault inject
 
-        sizeExasuticTest = (this.sampleSize * this.signals_to_inject_faults.size());
-
         ArrayList <String> random_input_vectors =  this.generateInputVector("TRUE_TABLE"); //this.calcInputTableVector(this.probCircuit.getInputs().size(), this.sampleSize);
 
         ArrayList <ArrayList<Integer>> ListInputVectors =  this.splitInputPatternsInInt(random_input_vectors, this.probCircuit.getInputs().size());
@@ -1649,9 +1644,12 @@ import writers.WriteCsvTh;
 
         List thread_list = particionateExausticVectorComplete(ListInputVectors);  // TESTE ALL GATES ///particionateVectorPerThread(ListInputVectors); // x - vectors per thread
 
+        N = sizeExasuticTest = this.sizeExaustiveCompleteSimulation;//(this.sampleSize * this.signals_to_inject_faults.size());
+
         long propagateTimeStart = System.nanoTime();
 
         /*Execução das threads*/
+
         Thread thread_temp = null;
         for (int i=0; i < thread_list.size() ; i++) {
             thread_temp = (Thread) thread_list.get(i);
@@ -1696,6 +1694,7 @@ import writers.WriteCsvTh;
 
 
         this.sampleSize = sizeExasuticTest;
+
 
         this.writeSimpleLogMultipleTransientFaultExaustive(option + "ExaustiveSimulation_Simple_Log_" +this.circuit.getName()+"_Threads-"+ this.threads +  "_sampleSize-" + this.sampleSize, formattedDate,  formattedDate2, timeElapsed_Instant);
 
@@ -2246,7 +2245,6 @@ import writers.WriteCsvTh;
 
 
     }
-
 
     public void runMultipleFaultInjectionMultithreadingMonteCarloSimulation(ArrayList <Integer> mtf_list, String option) throws IOException, Exception{
 
