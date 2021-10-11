@@ -83,6 +83,7 @@ public class MapTeste {
 
             for (int[] combination : combinations) {
                 System.out.println(Arrays.toString(combination));
+
                 for (int element = 0; element < combination.length; element++) {
                     System.out.println(combination[element]);
                 }

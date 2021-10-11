@@ -657,6 +657,59 @@ import writers.WriteCsvTh;
         }
     }
 
+    public void writeSimpleLogMultipleTransientFaultExaustive(String filename, String date, String dateend, long timeElapsedSimulation) throws IOException{
+
+        ///System.out.println("Creating .txt -> file: " + filename);
+        //float reliability_circuit =  (float) ( 1 - ((float) this.unmasked_faults / (float) this.sampleSize));
+        //double lamb = - Math.log(reliability_circuit);
+        //this.MTBF = (1 / lamb);
+        //System.out.println("MTBF : " + this.MTBF);
+        String content = "";
+        try (FileWriter file = new FileWriter(filename+".txt")) {
+
+
+            content = "Multiple Transient Fault Simulation Started at Date/hour: "  + date + " and finished at: " + dateend  + "\n\n";
+            //content = content + "Date/hour (finished): "+ dateend + "\n\n";
+            content = content + "Circuit: " + this.circuit.getName() + "\n";
+            content = content+  "Number of Simulations (sample size = N): " + this.sampleSize + "\n";
+
+            // for (int i = 0; i < mtf_list.size(); i++) {
+            //     content = content +  "      - For each  (" + mtf_list.get(i) + ") faults happens a MTF of order (" + (i+2) + ")\n" ;
+            // }
+            content = content + "- Sample = " + this.sampleSize + "\n";
+            //content = content+  "For each  (" + period + ") faults happens a Multiple Transient Fault (" + order + ") with frequency: (" + frequency + ") - Sample = " + this.sampleSize + "\n";
+            content = content+  "Number of Threads: " + this.threads + "\n";
+            content = content + "Number of detected faults (Ne): " + this.unmasked_faults + "\n";
+            content = content + "Fault Mask Rate (FMR): "+ " 1 - Ne/N = (1-(" + this.unmasked_faults + "/" + this.sampleSize + ")) = " + this.circuitReliaibility + "\n";
+            //content = content +  "MTBF: " + this.MTBF + "\n\n";
+
+            content = content +  "Performance time m(s): " + (timeElapsedSimulation) + "\n";
+
+
+            /*
+
+              System.out.println("\n\n----------------- Results ------------------");
+                System.out.println("Circuit: " + this.circuit.getName());
+                System.out.println("- Simulation started at: " + formattedDate + " and finished at: "+ formattedDate2); //formattedDate
+
+               // System.out.println("- PropagatedTime (s): " + propagateTime);
+                System.out.println("- Sample Size (N): " + N);
+                System.out.println("- Number of detected faults (Ne): " + this.unmasked_faults);
+                System.out.println("- Fault Mask Rate (FMR): " + " 1 - Ne/N = (1-(" + this.unmasked_faults + "/" + N + ")) = " + this.circuitReliaibility);
+                //System.out.println("- MTBF (Mean Time Between failure) : " + this.MTBF);
+                System.out.println("- Simulation TimeElapsed: " + propagateTime
+                        + "(s)");
+
+                System.out.println("--------------------------------------------");
+
+            */
+
+
+            file.write(content);
+        }
+    }
+
+
     public List particionateVectorPerThread(ArrayList <ArrayList<Integer>> ListInputVectors) throws ScriptException, Exception{
 
         List thread_list = new ArrayList();
@@ -1322,17 +1375,16 @@ import writers.WriteCsvTh;
                         List<int[]> combinations = generate(this.signals_to_inject_faults.size(), ill); // Combination of 11 and 1 = 11 ~ 11 and 2 = 55 ~ 11and 3
 
                         for (int[] combination : combinations){ //
-                            TestVectorInformation temp = new TestVectorInformation(inputVector, this.signals_to_inject_faults.get(combination[aux
-                                    ]), j+1);  //Inject in G1 first
+                            TestVectorInformation temp = new TestVectorInformation(inputVector, this.signals_to_inject_faults.get(combination[aux]), j+1);  //Inject in G1 first
 
                             for (int element = 1; element < combination.length; element++) {
-
 
                                 ArrayList<Integer> SigIndexList = new ArrayList<Integer>();
 
                                 SigIndexList.add(combination[element]);
 
                                 temp.setMultipleTransientFaultInjection(this.signals_to_inject_faults.get(combination[element]));
+                                SigIndexList.add(combination[element]);
 
                             }
                                 if(j ==0)
@@ -1344,7 +1396,7 @@ import writers.WriteCsvTh;
 
 
                            //
-                            // ItemxSimulationList.add(temp);
+                            ItemxSimulationList.add(temp);
 
                         }
                         //System.out.printf("generated %d combinations of %d items from %d ", combinations.size(), this.signals_to_inject_faults.size(), i);
@@ -1524,7 +1576,7 @@ import writers.WriteCsvTh;
 
         System.out.println(" ----- Exaustive Complete Simulation Version -------");
         long loadTimeStart = System.nanoTime();//System.currentTimeMillis();
-
+        Instant start = Instant.now();
 
         LocalDateTime myDateObj = LocalDateTime.now();
         DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
@@ -1554,13 +1606,13 @@ import writers.WriteCsvTh;
         //System.out.println("Patterns : " + this.verilog_circuit.getGatePattern());
 
 
-
+        Instant loadTimeElapsed = Instant.now();
         /* Print circuit Specs*/
         System.out.println("\n        ------ Printing Circuit Specs: --------");
         //this.PrintSpecsThesis();
         System.out.println("          ---------------------------------------\n");
         /*----------------------*/
-
+        Instant startPreparingSimulationTimeElapsed = Instant.now();
 
         /*Circuit Probabilities */
         this.initLevelCircuit();
@@ -1591,7 +1643,9 @@ import writers.WriteCsvTh;
 
         ArrayList <ArrayList<Integer>> ListInputVectors =  this.splitInputPatternsInInt(random_input_vectors, this.probCircuit.getInputs().size());
 
-        //System.out.println("LIST:::::: "+ ListInputVectors);
+        Instant endPreparingSimulationTimeElapsed = Instant.now();
+
+        Instant startThreadingTimeElapsed = Instant.now();
 
         List thread_list = particionateExausticVectorComplete(ListInputVectors);  // TESTE ALL GATES ///particionateVectorPerThread(ListInputVectors); // x - vectors per thread
 
@@ -1611,9 +1665,13 @@ import writers.WriteCsvTh;
         }
 
         /* Compilando os resultados - Falhas detectadas Ne*/
+        int bitfipCcounter = 0;
         for (int i=0; i < this.itemx_list.size() ; i++) {
             this.unmasked_faults = this.unmasked_faults +  itemx_list.get(i).getPropagatedFaults();
+            bitfipCcounter = bitfipCcounter + itemx_list.get(i).bitflipcounter;
         }
+
+        Instant endThreadingTimeElapsed = Instant.now();
 
         /*circuit reliability SER (Soft Error Rate)*/
         this.circuitReliaibility = (float) (1.0 - ((float) this.unmasked_faults / (float) sizeExasuticTest));
@@ -1622,39 +1680,55 @@ import writers.WriteCsvTh;
         System.out.println("-> Sample: " + sizeExasuticTest);
         System.out.println("-> SER : " + this.circuitReliaibility);
 
-
-        long propagateTimeEnd = System.nanoTime();
-        //long propagateTime =    TimeUnit.NANOSECONDS.toSeconds(propagateTimeEnd - propagateTimeStart);
-        long propagateTime =  TimeUnit.NANOSECONDS.toMillis(propagateTimeEnd - propagateTimeStart);
-
+        Instant finish = Instant.now();
+        long timeElapsed_Instant = Duration.between(start, finish).toSeconds();
 
         LocalDateTime myDateObj2 = LocalDateTime.now();
         DateTimeFormatter myFormatObj2 = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
         String formattedDate2 = myDateObj2.format(myFormatObj2);
 
+
+        Instant startTimelogGeneration = Instant.now();
+
+        long timeElapsed_loadTime = Duration.between(start, loadTimeElapsed).toSeconds();
+        long timeElapsed_PrepareTime = Duration.between(startPreparingSimulationTimeElapsed, endPreparingSimulationTimeElapsed).toSeconds();
+        long timeElapsed_ThreadingTime = Duration.between(startThreadingTimeElapsed, endThreadingTimeElapsed).toSeconds();
+
+
         this.sampleSize = sizeExasuticTest;
 
-        this.writeSimpleLog("ExausticSimulation_" +this.circuit.getName()+"_Threads-"+ this.threads + "_sampleSize-" + this.sampleSize, formattedDate,  formattedDate2, propagateTime);
+        this.writeSimpleLogMultipleTransientFaultExaustive(option + "ExaustiveSimulation_Simple_Log_" +this.circuit.getName()+"_Threads-"+ this.threads +  "_sampleSize-" + this.sampleSize, formattedDate,  formattedDate2, timeElapsed_Instant);
 
-        this.writeCsvFileCompleteTh("ExausticSimulation_"+this.circuit.getName()+"_Theads-"+ this.threads + "_sampleSize-" + this.sampleSize, itemx_list);
+        this.writeCsvFileCompleteThMTF("ExausticSimulation_"+this.circuit.getName()+"_Theads-"+ this.threads + "_sampleSize-" + this.sampleSize, itemx_list);
 
+        Instant endTimelogGeneration = Instant.now();
+
+        long timeElapsed_logGeneration = Duration.between(startTimelogGeneration, endTimelogGeneration).toSeconds();
 
         System.out.println("\n\n----------------- Results ------------------");
         System.out.println("Circuit: " + this.circuit.getName());
-        System.out.println("- Simulation finished at: " + formattedDate2);
-        //System.out.println("- PropagatedTime (s): " + propagateTime);
-        System.out.println("- Sample (N): " + this.sampleSize);
-        System.out.println("- Detected faults (Ne): " + this.unmasked_faults);
-        System.out.println("- Fault Masking Rate (FMR): " + "(1-(" + this.unmasked_faults + "/" + this.sampleSize + ")) = " + this.circuitReliaibility);
-        // System.out.println("- MTBF (Mean Time Between failure) : " + this.MTBF);
-        System.out.println("- Simulation TimeElapsed: " + propagateTime + "(s)");
+        System.out.println("- Simulation started at: " + formattedDate + " and finished at: "+ formattedDate2); //formattedDate
+
+        // System.out.println("- PropagatedTime (s): " + propagateTime);
+        System.out.println("- Sample Size (N): " + N);
+        System.out.println("- Propagated fault(s) (Ne): " + this.unmasked_faults);
+        System.out.println("- Fault Mask Rate (FMR): " + " 1 - Ne/N = (1-(" + this.unmasked_faults + "/" + N + ")) = " + this.circuitReliaibility);
+        //System.out.println("- MTBF (Mean Time Between failure) : " + this.MTBF);
+        // System.out.println("- Simulation TimeElapsed: " + propagateTimems + "(ms)");
+
+        String time = "- Load Time : " + timeElapsed_loadTime + "(s) - Setup Time: " + timeElapsed_PrepareTime  + "(s) - Threading Execution Time: " + timeElapsed_ThreadingTime
+                + "(s) - Log Generation: " + timeElapsed_logGeneration
+                + "(s) - Simulation Instant TimeElapsed: " + timeElapsed_Instant +" (s)";
+        //System.out.println("- MTF order list: " + mtf_list);
+        System.out.println("- Bitflip Counter: " + bitfipCcounter);
+        System.out.println(time);
+
         System.out.println("--------------------------------------------");
+        this.Performance_Time = "Simulation started at: " + formattedDate
+                + " and finished at: " + formattedDate2;
+        this.sampleSize = N;
+        System.out.println(" ----------------------------------------------------------------------------------------------------------------------");
 
-        this.Performance_Time = "Simulation started at: " + formattedDate + " and finished at: " + formattedDate2;
-
-        System.out.println(" ----------------------------------------------------------------------------------------------------------------------------\n\n");
-        /*
-         */
     }
 
     public void runMultithreadingSimulation(String option) throws IOException, Exception{
@@ -2172,6 +2246,7 @@ import writers.WriteCsvTh;
 
 
     }
+
 
     public void runMultipleFaultInjectionMultithreadingMonteCarloSimulation(ArrayList <Integer> mtf_list, String option) throws IOException, Exception{
 
