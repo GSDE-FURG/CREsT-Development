@@ -1307,38 +1307,42 @@ import writers.WriteCsvTh;
             System.out.println(" - starting thread: "+i  + " - simulate fault injection (number): " + partition);
 
 
-
+            System.out.println("SIGNALS LIST: " + this.signals_to_inject_faults
+            );
             for (int j = start; j < end ; j++){ // Vetores [0000] [00001]
 
                 inputVector = this.get_Input_Vectors(ListInputVectors, j);
 
                 for (int aux = 0; aux < this.signals_to_inject_faults.size(); aux++) { // 0 to 11 sinais
 
-                    for (int ill = aux+1; ill <= 2; ill++) { // G1 ~ G1,G2 ~ G1,G2,G3
+                    for (int ill = aux+1; ill <= 3; ill++) { // G1 ~ G1,G2 ~ G1,G2,G3 sinais em order
 
                         int SigIndex = aux; // G1, G2 , G3
 
                         List<int[]> combinations = generate(this.signals_to_inject_faults.size(), ill); // Combination of 11 and 1 = 11 ~ 11 and 2 = 55 ~ 11and 3
 
                         for (int[] combination : combinations){ //
+                            TestVectorInformation temp = new TestVectorInformation(inputVector, this.signals_to_inject_faults.get(combination[aux
+                                    ]), j+1);  //Inject in G1 first
 
                             for (int element = 1; element < combination.length; element++) {
 
-                                TestVectorInformation temp = new TestVectorInformation(inputVector, this.signals_to_inject_faults.get(combination[element-1]), j+1);  //Inject in G1 first
 
-                                ArrayList <Integer> SigIndexList = new ArrayList<Integer>();
+                                ArrayList<Integer> SigIndexList = new ArrayList<Integer>();
 
                                 SigIndexList.add(combination[element]);
 
-                                temp.setMultipleTransientFaultInjection( this.signals_to_inject_faults.get(combination[element]));
+                                temp.setMultipleTransientFaultInjection(this.signals_to_inject_faults.get(combination[element]));
 
-                              //
+                            }
                                 if(j ==0)
-                                System.out.println("Vec: " + inputVector + " comb: " + Arrays.toString(combination) + " Fault Signal: " +  this.signals_to_inject_faults.get(SigIndex) + " list: " +
+                                System.out.println(ill + " ill " +
+                                        "Vec: " + inputVector + " comb: " + Arrays.toString(combination) + " Fault Signal: " +  this.signals_to_inject_faults.get(SigIndex) + " list: " +
                                         "" +
                                         "" + temp.get_MTF_FaultSignal_List()
                                 );
-                            }
+
+
                            //
                             // ItemxSimulationList.add(temp);
 
