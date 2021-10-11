@@ -1,35 +1,97 @@
 package logicSimulator;
-import java.util.HashMap;
-import java.util.Map;
+import java.nio.channels.Pipe;
+import java.util.*;
+
+import static org.ejml.EjmlUnitTests.assertEquals;
 
 public class MapTeste {
 
+    MapTeste(){
 
-        public static void main(String args[]) {
+    }
 
-            Map<String, String> example = new HashMap<String, String>();
+    public long factorialUsingRecursion(int n) {
+        if (n <= 2) {
+            return n;
+        }
+        return n * factorialUsingRecursion(n - 1);
+    }
 
-            example.put("K1", new String("V1"));
-            example.put("K2", new String("V2"));
-            example.put("K3", new String("V3"));
-            example.put("K4", new String("V4"));
-            example.put("K5", new String("V5"));
+    public long combination(int n, int p){
+        int combination = (int) (factorialUsingRecursion(n)/ ((factorialUsingRecursion(p) * (factorialUsingRecursion(n-p)))));
+        return combination;
+    }
 
-            /*
-             * O método "keySet()" retorna um Set com todas as chaves do
-             * nosso HashMap, e tendo o Set com todas as Chaves,
-             * podemos facilmente pegar
-             * os valores que desejamos
-             * */
+    private static void combinationPassx(int signal_size, int times){
+        ArrayList <Integer> x = new ArrayList<>();
+        int pivot = 0;
+        for (int i = 1; i <= signal_size; i++) {
+            x.add(i);
+            for (pivot = i; pivot < signal_size; pivot+= times) {
+                ArrayList<Integer> faultList = new ArrayList<>();
+                for (int element = pivot + 1; element < signal_size; element++) {
+                    faultList.add(element);
+                    System.out.println("Pivot: " + pivot + "  - " + element + "   list: " + faultList);
+                }
 
-            for (String key : example.keySet()) {
+                System.out.println("--------end Pivot -------");
 
-                //Capturamos o valor a partir da chave
-                String value = example.get(key);
-                System.out.println(key + " = " + value);
             }
+        }
+    }
+
+    private static ArrayList<Integer> combinationPassNew(int signal_size, int init){
+        ArrayList <Integer> x = new ArrayList<>();
+
+        for (int i = init; i <= signal_size; i++) {
+                x.add(i);
+        }
+        System.out.println("--------end Pivot -------");
+        return x;
+    }
+
+
+    private static void helper(List<int[]> combinations, int data[], int start, int end, int index) {
+        if (index == data.length) {
+            int[] combination = data.clone();
+            combinations.add(combination);
+        } else if (start <= end) {
+            data[index] = start;
+            helper(combinations, data, start + 1, end, index + 1);
+            helper(combinations, data, start + 1, end, index);
+        }
+    }
+
+    public static List<int[]> generate(int n, int r) {
+        List<int[]> combinations = new ArrayList<>();
+        helper(combinations, new int[r], 0, n-1, 0);
+        return combinations;
+    }
+
+
+
+    public static void main(String[] args) throws Exception{
+
+        ArrayList<Integer> x = new ArrayList<>();
+        int signalSize = 11;
+        int pairs = 2;
+
+
+
+        List<int[]> combinations = generate(signalSize, pairs);
+        System.out.println(combinations);
+
+            for (int[] combination : combinations) {
+                System.out.println(Arrays.toString(combination));
+                for (int element = 0; element < combination.length; element++) {
+                    System.out.println(combination[element]);
+                }
+            }
+                System.out.printf("generated %d combinations of %d items from %d ", combinations.size(), signalSize, pairs);
+
 
         }
+    }
 
 
-}
+

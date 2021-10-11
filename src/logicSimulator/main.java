@@ -225,7 +225,7 @@ public class main{
 
                 //simulacaoMultithreading_debug.runMultithreadingExausticSimulation("ALL_SIGNALS");
 
-                //simulacaoMultithreading_debug.runMultithreadingExausticSimulationComplete("ALL_SIGNALS");
+                simulacaoMultithreading_debug.runMultithreadingExausticSimulationComplete("ALL_SIGNALS");
 
                     //
                 // double x = 0.9999;

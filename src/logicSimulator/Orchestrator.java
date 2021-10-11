@@ -1205,9 +1205,37 @@ import writers.WriteCsvTh;
 
     }
 
-    public void setFaultCompleteMode(){
-
+    public long factorialUsingRecursion(int n) {
+        if (n <= 2) {
+            return n;
+        }
+        return n * factorialUsingRecursion(n - 1);
     }
+
+    public long combination(int n, int p){
+        int combination = (int) (factorialUsingRecursion(n)/ ((factorialUsingRecursion(p) * (factorialUsingRecursion(n-p)))));
+        return combination;
+    }
+
+
+    private static void helper(List<int[]> combinations, int data[], int start, int end, int index) {
+        if (index == data.length) {
+            int[] combination = data.clone();
+            combinations.add(combination);
+        } else if (start <= end) {
+            data[index] = start;
+            helper(combinations, data, start + 1, end, index + 1);
+            helper(combinations, data, start + 1, end, index);
+        }
+    }
+
+    public static List<int[]> generate(int n, int r) {
+        List<int[]> combinations = new ArrayList<>();
+        helper(combinations, new int[r], 0, n-1, 0);
+        return combinations;
+    }
+
+
 
     public List particionateExausticVectorComplete(ArrayList <ArrayList<Integer>> ListInputVectors) throws ScriptException, Exception{
 
@@ -1233,6 +1261,27 @@ import writers.WriteCsvTh;
                     //System.out.println("LOGIC GATES consider WIRES (CTE) Can't inject fault: " + Signals_CTE_ONE_ZERO);
                */
 
+
+
+        int vec = (int) Math.pow(2, this.circuit.getInputs().size());
+
+        for (int i = 1; i < this.signals_to_inject_faults.size(); i++) {
+            ///int combination = (int) (factorialUsingRecursion(this.circuit.getSignals().size())/ ((factorialUsingRecursion(this.signals_to_inject_faults.size() - i)) * (factorialUsingRecursion(i))));
+            long comb = combination(this.circuit.getSignals().size(), i);
+            System.out.println("conjunto  " + this.circuit.getSignals().size() + "," + i  + " : " + comb + "  testComplexity = " + vec  + " * " + comb + " = " + (comb*vec));
+        }
+
+        /*
+        for (int i = 0; i < this.signals_to_inject_faults.size(); i++) {
+            List<int[]> combinations = generate(this.signals_to_inject_faults.size(), i);
+            for (int[] combination : combinations) {
+               // System.out.println(Arrays.toString(combination));
+            }
+            //System.out.printf("generated %d combinations of %d items from %d ", combinations.size(), this.signals_to_inject_faults.size(), i);
+        }
+        */
+
+
         for (int i = 0; i < this.threads; i++) { //Loop of simulations
 
             ArrayList <TestVectorInformation> ItemxSimulationList = new ArrayList<>();
@@ -1257,8 +1306,47 @@ import writers.WriteCsvTh;
 
             System.out.println(" - starting thread: "+i  + " - simulate fault injection (number): " + partition);
 
-            for (int j = start; j < end ; j++){
 
+
+            for (int j = start; j < end ; j++){ // Vetores [0000] [00001]
+
+                inputVector = this.get_Input_Vectors(ListInputVectors, j);
+
+                for (int aux = 0; aux < this.signals_to_inject_faults.size(); aux++) { // 0 to 11 sinais
+
+                    for (int ill = aux+1; ill <= 2; ill++) { // G1 ~ G1,G2 ~ G1,G2,G3
+
+                        int SigIndex = aux; // G1, G2 , G3
+
+                        List<int[]> combinations = generate(this.signals_to_inject_faults.size(), ill); // Combination of 11 and 1 = 11 ~ 11 and 2 = 55 ~ 11and 3
+
+                        for (int[] combination : combinations){ //
+
+                            for (int element = 1; element < combination.length; element++) {
+
+                                TestVectorInformation temp = new TestVectorInformation(inputVector, this.signals_to_inject_faults.get(combination[element-1]), j+1);  //Inject in G1 first
+
+                                ArrayList <Integer> SigIndexList = new ArrayList<Integer>();
+
+                                SigIndexList.add(combination[element]);
+
+                                temp.setMultipleTransientFaultInjection( this.signals_to_inject_faults.get(combination[element]));
+
+                              //
+                                if(j ==0)
+                                System.out.println("Vec: " + inputVector + " comb: " + Arrays.toString(combination) + " Fault Signal: " +  this.signals_to_inject_faults.get(SigIndex) + " list: " +
+                                        "" +
+                                        "" + temp.get_MTF_FaultSignal_List()
+                                );
+                            }
+                           //
+                            // ItemxSimulationList.add(temp);
+
+                        }
+                        //System.out.printf("generated %d combinations of %d items from %d ", combinations.size(), this.signals_to_inject_faults.size(), i);
+                    }
+                }
+                /*
                 for (int aux = 0; aux < this.signals_to_inject_faults.size(); aux++) {
 
                     inputVector = this.get_Input_Vectors(ListInputVectors, j); //input Test n
@@ -1270,6 +1358,8 @@ import writers.WriteCsvTh;
 
                     System.out.println("Vec: " + inputVector + " Fault Signal: " +  this.signals_to_inject_faults.get(SigIndex));
                 }
+                */
+
 
             }
 
@@ -1499,7 +1589,7 @@ import writers.WriteCsvTh;
 
         //System.out.println("LIST:::::: "+ ListInputVectors);
 
-        List thread_list = particionateExausticVector(ListInputVectors);  // TESTE ALL GATES ///particionateVectorPerThread(ListInputVectors); // x - vectors per thread
+        List thread_list = particionateExausticVectorComplete(ListInputVectors);  // TESTE ALL GATES ///particionateVectorPerThread(ListInputVectors); // x - vectors per thread
 
         long propagateTimeStart = System.nanoTime();
 
