@@ -4528,6 +4528,62 @@ public class Commands {
             "AOI222",
             "XOR2"};
 
+    String[] benchs = {"b01_C",
+                       "b02_C",
+            "b03_C",
+            "b04_C",
+            "b05_C",
+            "b06_C",
+            "b07_C",
+            "b08_C",
+            "b09_C",
+            "b10_C",
+            "b11_C",
+            "b12_C",
+            "b13_C",
+            "b14_C",
+            "b15_C",
+            "b17_C",
+            "b18_C",
+            "b19_C",
+            "b20_C",
+            "b21_C",
+            "b22_C"};
+
+    /*String[] benchs = {"25_1",
+            "25_2",
+            "25_3",
+            "25_4",
+            "25_5",
+            "25_6",
+            "25_7",
+            "25_8",
+            "25_9",
+            "25_10",
+            "25_11",
+            "25_12",
+            "25_13",
+            "25_14",
+            "25_15",
+            "25_16",
+            "25_17",
+            "25_18",
+            "25_19",
+            "25_20",
+            "25_21",
+            "25_22",
+            "25_23",
+            "25_24",
+            "25_25",
+            "g25",
+            "g36",
+            "g125",
+            "g216",
+            "g625",
+            "g1296",
+            "LEKU-CB",
+            "LEKU-CD"};*/
+
     /*String[] benchs = {"arbiter",
                        "cavlc",
                        "ctrl",
@@ -4539,7 +4595,7 @@ public class Commands {
                        "router",
                        "voter"}; */
 
-    String[] benchs = {"adder",
+    /*String[] benchs = {"adder",
             "bar",
             "div",
             "hyp",
@@ -4548,7 +4604,9 @@ public class Commands {
             "multiplier",
             "sin",
             "sqrt",
-            "square"};
+            "square"};*/
+
+
 
 
     String[] libs = {"1-minimal_no_cost",

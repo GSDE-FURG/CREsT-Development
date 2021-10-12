@@ -370,11 +370,14 @@ public class ProbCircuit extends Circuit {
 
         //System.out.println("Outputs: " + this.getProbOutputs().size());
         for (int i = 0; i < this.getProbOutputs().size(); i++) {
-
-            int flag = this.getProbOutputs().get(i).getPOrigin().getDepth();
-            if(flag > greaterDepth) {
-                greaterDepth = flag;
+            ProbGate pGate = this.getProbOutputs().get(i).getPOrigin();
+            if(pGate != null) {
+                int flag = pGate.getDepth();
+                if(flag > greaterDepth) {
+                    greaterDepth = flag;
+                }
             }
+
             //foo.add(this.getProbOutputs().get(i).getPOrigin());
         }
 
@@ -804,14 +807,16 @@ public class ProbCircuit extends Circuit {
     
     public void setGatesDepth() {
                 
-        for (int i = 0; i < this.getOutputs().size(); i++) {                        
-            gateDfs(this.getProbOutputs().get(i).getPOrigin());
+        for (int i = 0; i < this.getOutputs().size(); i++) {
+            ProbGate pGate = this.getProbOutputs().get(i).getPOrigin();
+            if(pGate != null) {
+                gateDfs(this.getProbOutputs().get(i).getPOrigin());
+            }
         }
                 
     }
     
     public ProbGate gateDfs(ProbGate gate) {
-
         int fooDepth = 0;            
         ArrayList<ProbSignal> inputs = gate.getpInputs();
         

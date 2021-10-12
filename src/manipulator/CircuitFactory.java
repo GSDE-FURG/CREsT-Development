@@ -7,6 +7,7 @@ package manipulator;
 
 import datastructures.CellLibrary;
 import datastructures.Circuit;
+import datastructures.Gate;
 import readers.MappedVerilogReader;
 import signalProbability.ProbCircuit;
 
@@ -26,7 +27,6 @@ public class CircuitFactory {
     
     public ProbCircuit getProbCircuit() throws Exception {
         Circuit circuit = new MappedVerilogReader(path, cellLib).getCircuit();
-
         return new ProbCircuit(circuit);
     }
     
