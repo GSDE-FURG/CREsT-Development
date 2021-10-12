@@ -1366,17 +1366,16 @@ import writers.WriteCsvTh;
 
                 inputVector = this.get_Input_Vectors(ListInputVectors, j);
 
-                for (int aux = 0; aux < this.signals_to_inject_faults.size(); aux++) { // 0 to 11 sinais
+                for (int n = 0; n < this.signals_to_inject_faults.size(); n++) { // 0 to 11 sinais
 
-                    for (int ill = aux+1; ill <= this.signals_to_inject_faults.size()
-                            ; ill++) { // G1 ~ G1,G2 ~ G1,G2,G3 sinais em order
+                    for (int p = n+1; p < this.signals_to_inject_faults.size() ; p++) { // G1 ~ G1,G2 ~ G1,G2,G3 sinais em order
 
-                        int SigIndex = aux; // G1, G2 , G3
+                        int SigIndex = n; // G1, G2 , G3
 
-                        List<int[]> combinations = generate(this.signals_to_inject_faults.size(), ill); // Combination of 11 and 1 = 11 ~ 11 and 2 = 55 ~ 11and 3
+                        List<int[]> combinations = generate(this.signals_to_inject_faults.size(), p); // Combination of 11 and 1 = 11 ~ 11 and 2 = 55 ~ 11and 3
 
                         for (int[] combination : combinations){ //
-                            TestVectorInformation temp = new TestVectorInformation(inputVector, this.signals_to_inject_faults.get(combination[aux]), j+1);  //Inject in G1 first
+                            TestVectorInformation temp = new TestVectorInformation(inputVector, this.signals_to_inject_faults.get(combination[n]), j+1);  //Inject in G1 first
 
                            // this.sizeExaustiveCompleteSimulation++;
 

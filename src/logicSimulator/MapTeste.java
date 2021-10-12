@@ -70,28 +70,33 @@ public class MapTeste {
 
 
 
-    public static void main(String[] args) throws Exception{
+    public static void main(String[] args) throws Exception {
 
         ArrayList<Integer> x = new ArrayList<>();
         int signalSize = 11;
-        int pairs = 2;
+        int pairs = 1;
 
 
+        for (int i = 0; i < 11; i++) {
 
-        List<int[]> combinations = generate(signalSize, pairs);
-        System.out.println(combinations);
+
+            List<int[]> combinations = generate(signalSize, i);
+
+            System.out.println(combinations);
 
             for (int[] combination : combinations) {
                 System.out.println(Arrays.toString(combination));
 
-                for (int element = 0; element < combination.length; element++) {
-                    System.out.println(combination[element]);
-                }
+                // for (int element = 0; element < combination.length; element++) {
+                //     System.out.println(combination[element]);
+                // }
             }
-                System.out.printf("generated %d combinations of %d items from %d ", combinations.size(), signalSize, pairs);
+
+            System.out.printf("generated %d combinations of %d items from %d ", combinations.size(), signalSize, i+1);
 
 
         }
+    }
     }
 
 
