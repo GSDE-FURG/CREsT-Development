@@ -505,6 +505,7 @@ import writers.WriteCsvTh;
         ArrayList <Signal> inputSignals = this.circuit.getInputs();
 
 
+
         String Header = "Input Signals" + ";" + "Fault Signal" + ";" + "Fault Type" + ";" + "Fault-Free Circuit Output" + ";" + "Faulty Circuit Output";
         WriteCsvTh logfile = new WriteCsvTh();
 
@@ -1388,15 +1389,31 @@ import writers.WriteCsvTh;
                         List<int[]> combinations = generate(this.signals_to_inject_faults.size(), p); // Combination of 11 and 1 = 11 ~ 11 and 2 = 55 ~ 11and 3
 
                         for (int[] combination : combinations){ //
-                            TestVectorInformation temp = new TestVectorInformation(inputVector, this.signals_to_inject_faults.get(combination[p-1]), counterv2);  //Inject in G1 first
+                            TestVectorInformation temp = new TestVectorInformation(inputVector, this.signals_to_inject_faults.get(combination[0
+                                    ]), counterv2);  //Inject in G1 first
 
-                           // this.sizeExaustiveCompleteSimulation++;
+                            // this.sizeExaustiveCompleteSimulation++;
+                            String pivot = this.signals_to_inject_faults.get(combination[p-1]).toString();
 
                             for (int element = 1; element < combination.length; element++) {
                                 ArrayList<Integer> SigIndexList = new ArrayList<Integer>();
                                 //SigIndexList.add(combination[element]);
                                 temp.setMultipleTransientFaultInjection(this.signals_to_inject_faults.get(combination[element]));
                                 SigIndexList.add(combination[element]);
+
+                                String pivoCerto = this.signals_to_inject_faults.get(combination[0]).toString();
+
+                                if(j ==0) {
+                                    System.out.println(inputVector +
+                                            "  Sig Index List: " + SigIndexList +
+                                            "  Comb: " + Arrays.toString(combination) +
+                                            "  Pivot Atual:  " + pivot +
+                                            "  Pivot Certo: " + pivoCerto
+                                            + " combEl: " + combination[element]);
+                                }
+
+
+
 
 
                             }
