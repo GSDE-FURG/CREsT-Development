@@ -1400,7 +1400,6 @@ import writers.WriteCsvTh;
                                 //SigIndexList.add(combination[element]);
                                 temp.setMultipleTransientFaultInjection(this.signals_to_inject_faults.get(combination[element]));
                                 SigIndexList.add(combination[element]);
-
                                 //String pivoCerto = this.signals_to_inject_faults.get(combination[0]).toString();
 
                                 /*
