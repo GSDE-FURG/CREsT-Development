@@ -127,6 +127,17 @@ public class main{
                                      + "2^Signals * Gates)");
                 }
         }
+
+        public void multithreadingSimulationExausticComplete() throws Exception{ //ou Signals =  "ALL_SIGNALS" for exaustive consider all_signals
+            //Loop na simulação de circuitos
+            for (int i = 0; i < this.circuitList.size(); i++) {
+                Orchestrator simulacaoMultithreading = new Orchestrator(this.threads, this.reliabilityConst,
+                        this.relativePath, this.genlib, this.relativePath + this.circuitList.get(i));
+                simulacaoMultithreading.runMultithreadingExausticSimulationComplete("ALL_SIGNALS");
+                this.OUTPUT_INFO = simulacaoMultithreading.getFRM("Sample (N = "
+                        + "2^Signals * Gates)");
+            }
+        }
         
         public void Area_monteCarloSimulation(int sampleSize, String Signals) throws Exception{
                 //Loop na simulação de circuitos 

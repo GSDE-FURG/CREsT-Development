@@ -497,8 +497,13 @@ class CommandProcessor {
                         //String x = splittedCommand.get(3);
                         //System.out.println("3 position : " +
                         //       splittedCommand.get(3) + "size : " + splittedCommand.size());
-
-                        if((splittedCommand.size() <= 4) && (splittedCommand.get(3).equals("-exaustive"))){
+                        if(splittedCommand.size() == 5 && splittedCommand.get(4).equals("-complete")){
+                            System.out.println("INSIDEE");
+                            cmd.Exaustive_Fault_injectionComplete(splittedCommand.get(1), splittedCommand.get(2), splittedCommand.get(3)); // Exaustive Simulation
+                            success = true;
+                        }
+                        if((splittedCommand.size() <= 4
+                        ) && (splittedCommand.get(3).equals("-exhaustive"))){
                             //System.out.println("Inside Exaustive");
                             cmd.Exaustive_Fault_injection(splittedCommand.get(1), splittedCommand.get(2), splittedCommand.get(3)); // Exaustive Simulation
                             success = true;

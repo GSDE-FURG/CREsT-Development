@@ -1387,14 +1387,9 @@ import writers.WriteCsvTh;
 
 
 
-            for (int j = start; j <
-                    end ; j++){
+            for (int j = start; j < end ; j++){
 
                 inputVector = this.get_Input_Vectors(ListInputVectors, j);  // Vetores [0000] [00001]
-
-
-
-
                     for (int p = 1; p < this.signals_to_inject_faults.size(); p++) { // 1 , 2, 3, 4
 
                         String nxp = "  p: " + p + "  vec: "+ inputVector + "  vv2: " + counterv2 + "  j: "+ j;

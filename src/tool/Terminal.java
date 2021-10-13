@@ -25,6 +25,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
 
+import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.script.ScriptException;
@@ -66,7 +67,9 @@ class TerminalWrapper {
             * 
             */
              /* Clayton */
-            if(args.length > 3 && (args[3].equals("-mc") || args[3].equals("-exaustive") ||  args[3].equals("-mcmtf") ||  args[3].equals("-mcmtfv2x"))) {
+            if(args.length > 3 && (args[3].equals("-mc") || args[3].equals("-exaustive") || args[3].equals("-exhaustive"
+            )))
+             {
 
                 String genlib = "";
                 String circuit = "";
@@ -75,12 +78,12 @@ class TerminalWrapper {
 
                 String order = "", base = "", frequency = "";
 
-                int size = args.length;
+                int args_size = args.length;
 
                 genlib = args[1];
                 circuit = args[2];
                 flag = args[3];
-                sample = args[4];
+                //sample = args[4];
 
                 System.out.println("-Flag : " + flag);
 
@@ -92,42 +95,65 @@ class TerminalWrapper {
                 Robot r = new Robot();
                 //term.executeCommand();
 
-
-
                 switch (flag) {
-
+                    /*
                     case ("-mc"):
-
                         System.out.println("- Single Event Transient (SET) -mc: " + sample);
                         term.executeCommand("mc_fault_injection" + " " + genlib + " " + circuit + " " + flag + " " + sample);
                         break;
+                     */
 
-                    case ("-mcmtf"):
+                    case ("-mc"):
 
-                        ArrayList <String> x = new ArrayList<>();
-                        String arguments_compiled = "";
+                        String option; //= "Single";
 
-                        for(int i = 4 ; i < args.length; i++) {
-                            x.add(args[i]);
-                            if(i <= 4 ){
-                                arguments_compiled = args[i];
-                            }else {
-                                arguments_compiled = arguments_compiled + " " + args[i];
-                            }
+                        if (args_size == 4){ // Define Single Faults
+                            option = "Single";
+                        }else{
+                            option = "Multiple";  // Define Multiple Faults
                         }
 
-                        //System.out.println("- Multiple Event Transient (SET) -mcmtf: " + sample);
+                        switch (option){
+                            case ("Single"):
+                                    term.executeCommand("mc_fault_injection" + " " + genlib + " " + circuit + " " + flag + " " + args[4]);
+                                    break;
 
-                        System.out.println("- Multiple Event Transient (SET) -mcmtf: " + arguments_compiled);
-                       // term.executeCommand("mc_fault_injection" + " " + genlib + " " + circuit + " " + flag + " " + base + " " + order + " " + frequency);
-                        term.executeCommand("mc_fault_injection" + " " + genlib + " " + circuit + " " + flag + " " + arguments_compiled);
+                            case("Multiple"):
+                                ArrayList <String> x = new ArrayList<>();
+                                String arguments_compiled = "";
+
+
+                                for(int i = 4 ; i < args.length; i++) {
+                                    x.add(args[i]);
+                                    if(i <= 4 ){
+                                        arguments_compiled = args[i];
+                                    }else {
+
+                                        arguments_compiled = arguments_compiled + " " + args[i];
+                                    }
+                                }
+                                System.out.println("- Multiple Event Transient (SET) -mcmtf: " + arguments_compiled);
+                                // term.executeCommand("mc_fault_injection" + " " + genlib + " " + circuit + " " + flag + " " + base + " " + order + " " + frequency);
+                                term.executeCommand("mc_fault_injection" + " " + genlib + " " + circuit + " " + flag + " " + arguments_compiled);
+                                break;
+                            }
+
                         break;
 
-                    case ("-exaustive"):
-                        System.out.println("- Exaustive Simulation Single Event Transient (SET) -exaustive: " + sample);
-                        term.executeCommand("mc_fault_injection" + " " + genlib + " " + circuit + " " + flag + " " + sample);
-                        break;
+                    case ("-exhaustive"):
+                        if(args_size == 5
+                        ){
+                            System.out.println("- Exahustive Simulation Multiple Event Transient (SET) -exaustive -complete: " + Arrays.toString(args));
+                            term.executeCommand("mc_fault_injection" + " " + genlib + " " + circuit + " " + flag + " " + args[4]);
+                        }else{
+                            System.out.println("- Exhaustive Simulation Single Event Transient (SET) -exaustive: ");
+                            term.executeCommand("mc_fault_injection" + " " + genlib + " " + circuit + " " + flag
 
+                            )
+                            ;
+                        }
+
+                        break;
 
                 }
                 r.keyPress(KeyEvent.VK_ENTER);
