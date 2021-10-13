@@ -92,7 +92,6 @@ public class MappedVerilogReader {
      * @return boolean
      */
     public boolean isLineGate(String line) {
-     
         if (line.matches("(.*)("+ getGatePattern() +")(.*)")) {
             return true;
         }
@@ -340,10 +339,17 @@ public class MappedVerilogReader {
                reserved = "wire";
             }
 
+            if (line.contains("module")) {
+                reserved = "module";
+            }
+
             //Debug_matheus
             //lineIFstime = lineIFstime + timestampDiff(whileHead);
 
             switch(reserved){
+                case "module":
+                    break;
+
                 case "input":
                 case "wire":
                     //signalFlag = timenow();
