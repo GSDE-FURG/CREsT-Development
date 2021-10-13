@@ -1384,7 +1384,7 @@ import writers.WriteCsvTh;
 
 
                         System.out.println(nxp);
-                        int SigIndex = p-1; // G1, G2 , G3
+                        //int SigIndex = p-1; // G1, G2 , G3
 
                         List<int[]> combinations = generate(this.signals_to_inject_faults.size(), p); // Combination of 11 and 1 = 11 ~ 11 and 2 = 55 ~ 11and 3
 
@@ -1393,7 +1393,7 @@ import writers.WriteCsvTh;
                                     ]), counterv2);  //Inject in G1 first
 
                             // this.sizeExaustiveCompleteSimulation++;
-                            String pivot = this.signals_to_inject_faults.get(combination[p-1]).toString();
+                            //String pivot = this.signals_to_inject_faults.get(combination[0]).toString();
 
                             for (int element = 1; element < combination.length; element++) {
                                 ArrayList<Integer> SigIndexList = new ArrayList<Integer>();
@@ -1401,8 +1401,9 @@ import writers.WriteCsvTh;
                                 temp.setMultipleTransientFaultInjection(this.signals_to_inject_faults.get(combination[element]));
                                 SigIndexList.add(combination[element]);
 
-                                String pivoCerto = this.signals_to_inject_faults.get(combination[0]).toString();
+                                //String pivoCerto = this.signals_to_inject_faults.get(combination[0]).toString();
 
+                                /*
                                 if(j ==0) {
                                     System.out.println(inputVector +
                                             "  Sig Index List: " + SigIndexList +
@@ -1411,10 +1412,7 @@ import writers.WriteCsvTh;
                                             "  Pivot Certo: " + pivoCerto
                                             + " combEl: " + combination[element]);
                                 }
-
-
-
-
+                                */
 
                             }
                             counterv2++;
