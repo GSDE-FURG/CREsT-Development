@@ -953,6 +953,8 @@ import writers.WriteCsvTh;
                 //System.out.println(i);
                 //if((arraylist_mtf.containsKey(j)) && (arraylist_mtf.get(j).getOrder() > 1)){
                 //int index = getPosMap(arraylist_mtf, j);
+                //System.out.println("J: " + j);
+
 
                 int index = getPosArrayListNew(mtf_list, arrayList_mtf_original, j);
 
@@ -978,8 +980,7 @@ import writers.WriteCsvTh;
                     inputVector = this.get_Input_Vectors(ListInputVectors, j); //input Test n
 
                     int SigIndex = this.sortRandomFaultInjection(); //int SigIndex = decide_Random_Signals_Contrains(Signals_CTE_ONE_ZERO);
-
-                    //TestVectorInformation temp = new TestVectorInformation(inputVector, this.signals_to_inject_faults.get(SigIndex), j + 1);
+                     //TestVectorInformation temp = new TestVectorInformation(inputVector, this.signals_to_inject_faults.get(SigIndex), j + 1);
                     TestVectorInformation temp = new TestVectorInformation(inputVector, this.signals_to_inject_faults.get(SigIndex), j );
 
                     ArrayList <Integer> SigIndexList = new ArrayList<Integer>();
@@ -1336,6 +1337,8 @@ import writers.WriteCsvTh;
 
         //this.sizeExaustiveCompleteSimulation = 0;
         int counter = 0;
+        int counterv2 = 0;
+
         for (int i = 0; i < this.threads; i++) { //Loop of simulations
 
             ArrayList <TestVectorInformation> ItemxSimulationList = new ArrayList<>();
@@ -1363,19 +1366,20 @@ import writers.WriteCsvTh;
 
             System.out.println("SIGNALS LIST: " + this.signals_to_inject_faults);
 
-            int counterv2 = 0;
 
-            for (int j = start; j < end ; j++){ // Vetores [0000] [00001]
 
-                inputVector = this.get_Input_Vectors(ListInputVectors, j);
+            for (int j = start; j < end ; j++){
+
+                inputVector = this.get_Input_Vectors(ListInputVectors, j);  // Vetores [0000] [00001]
 
                 //for (int n = 0; n < this.signals_to_inject_faults.size(); n++) { // 0 to 11 sinais
 
                     for (int p = 1; p < this.signals_to_inject_faults.size(); p++) { // 1 , 2, 3, 4
 
-                        String nxp = "  p: " + p + "  vec: "+ inputVector + "  vv2: " + counterv2;
 
-                        counterv2++;
+                        String nxp = "  p: " + p + "  vec: "+ inputVector + "  vv2: " + counterv2 + "  j: "+ j;
+
+
 
 
                         System.out.println(nxp);
@@ -1384,23 +1388,27 @@ import writers.WriteCsvTh;
                         List<int[]> combinations = generate(this.signals_to_inject_faults.size(), p); // Combination of 11 and 1 = 11 ~ 11 and 2 = 55 ~ 11and 3
 
                         for (int[] combination : combinations){ //
-                            TestVectorInformation temp = new TestVectorInformation(inputVector, this.signals_to_inject_faults.get(combination[p-1]), j+1);  //Inject in G1 first
+                            TestVectorInformation temp = new TestVectorInformation(inputVector, this.signals_to_inject_faults.get(combination[p-1]), counterv2);  //Inject in G1 first
 
                            // this.sizeExaustiveCompleteSimulation++;
 
                             for (int element = 1; element < combination.length; element++) {
                                 ArrayList<Integer> SigIndexList = new ArrayList<Integer>();
-                                SigIndexList.add(combination[element]);
+                                //SigIndexList.add(combination[element]);
                                 temp.setMultipleTransientFaultInjection(this.signals_to_inject_faults.get(combination[element]));
                                 SigIndexList.add(combination[element]);
 
+
                             }
+                            counterv2++;
+
                             counter++;
  //                           if(j == 0)
 //                               System.out.println(ill + " ill " + "Vec: " + inputVector + " comb: " + Arrays.toString(combination) + " Fault Signal: " +  this.signals_to_inject_faults.get(SigIndex) + " list: "+ "" + temp.get_MTF_FaultSignal_List() + " counter: " + counter);
 
                             ItemxSimulationList.add(temp);
                         }
+                       // counterv2++;
                    // }
                 }
                 /*
@@ -2329,7 +2337,7 @@ import writers.WriteCsvTh;
             ArrayList <ArrayList<Integer>> ListInputVectors =  this.splitInputPatternsInInt(random_input_vectors, this.probCircuit.getInputs().size());
 
             ArrayList <Integer> tt = new ArrayList<>(mtf_list);
-            tt.remove(0);
+            tt.remove(0); // 20k
 
             final ArrayList <Integer> arrayList_mtf_original = new ArrayList<>(tt); // Original ArrayList
 
