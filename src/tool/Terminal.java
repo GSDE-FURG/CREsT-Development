@@ -68,13 +68,6 @@ class TerminalWrapper {
              /* Clayton */
             if(args.length > 3 && (args[3].equals("-mc") || args[3].equals("-exaustive") ||  args[3].equals("-mcmtf") ||  args[3].equals("-mcmtfv2x"))) {
 
-                //System.out.println("INSIDE IF....");
-                //System.out.println("2: " + dcmd);
-
-                //String x = dcmd.getOptionValue("mc_fault_injection");
-
-                // System.out.println("Args: " + x);
-
                 String genlib = "";
                 String circuit = "";
                 String flag = "";
@@ -83,48 +76,7 @@ class TerminalWrapper {
                 String order = "", base = "", frequency = "";
 
                 int size = args.length;
-                /*
-                switch (size){
-                    case (8): //MC Fault Injection
-                        genlib = args[1];
-                        circuit = args[2];
-                        flag = args[3];
-                        //sample = args[4];
-                        base  = args[4];
-                        order = args[5];
-                        frequency = args[6];
 
-                        break;
-
-                    case (7): //MC Fault Injection
-                        genlib = args[1];
-                        circuit = args[2];
-                        flag = args[3];
-                        //sample = args[4];
-                        base  = args[4];
-                        order = args[5];
-                        frequency = args[6];
-
-                        break;
-
-
-
-
-                    case (5): //MC Fault Injection
-                        genlib = args[1];
-                        circuit = args[2];
-                        flag = args[3];
-                        sample = args[4];
-                        break;
-
-                    case(4): //Exaustive
-                        genlib = args[1];
-                        circuit = args[2];
-                        flag = args[3];
-                        break;
-                }
-
-                */
                 genlib = args[1];
                 circuit = args[2];
                 flag = args[3];
@@ -152,12 +104,8 @@ class TerminalWrapper {
 
                     case ("-mcmtf"):
 
-                        //System.out.println("ARGS: " + args.toString()
-                        //);
                         ArrayList <String> x = new ArrayList<>();
                         String arguments_compiled = "";
-                        //System.out.println("ARGS: " + args);
-
 
                         for(int i = 4 ; i < args.length; i++) {
                             x.add(args[i]);

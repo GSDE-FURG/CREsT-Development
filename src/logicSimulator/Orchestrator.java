@@ -841,18 +841,26 @@ import writers.WriteCsvTh;
 
     }
 
+
     public int getPosArrayListNew(ArrayList <Integer> map, ArrayList <Integer> map_original,  int value){
         int pos = -1;
         //int times = 0;
         ArrayList <Integer> times_ = new ArrayList<>();
         for (int i = 0; i < map.size(); i++) {
-                    if(map.get(i) == value){
-                        pos = i;
-                        int new_value =  map_original.get(i)+ map.get(i);
-                        map.set(i,new_value);
-                    }
-        }
+                    if((map.get(i) == value) && (map.get(i) != 0)){
+                        //if(map.get(i) == value){
+                        /*
 
+
+                         */
+                        pos = i;
+                        int new_value =  map_original.get(i) + map.get(i) + 1
+
+                                ;
+                        map.set(i,new_value);
+
+                        }
+                    }
 
         /*
         if(times_.size() > 0){ // equal occorrence happens [15000 6000 15000] for example
@@ -869,6 +877,15 @@ import writers.WriteCsvTh;
 
     }
 
+    /**
+     *
+     *
+     * @param ListInputVectors
+     * @param mtf_list
+     * @return
+     * @throws ScriptException
+     * @throws Exception
+     */
     public List particionateMultipletransientFaultInjectionVectorPerThreadMODE(ArrayList <ArrayList<Integer>> ListInputVectors, ArrayList <Integer> mtf_list) throws ScriptException, Exception{
 
         System.out.println("\n\n         +++++++    Dev mode  ++++++");
@@ -952,7 +969,8 @@ import writers.WriteCsvTh;
 
             for (int j = start; j < end ; j++) {
                 //System.out.println(i);
-                //if((arraylist_mtf.containsKey(j)) && (arraylist_mtf.get(j).getOrder() > 1)){
+                //if((arraylist_mtf.containsKey(j)) && (arraylist_mtf.get(j).getOrder(
+                // ) > 1)){
                 //int index = getPosMap(arraylist_mtf, j);
                 //System.out.println("J: " + j);
 
@@ -1369,19 +1387,20 @@ import writers.WriteCsvTh;
 
 
 
-            for (int j = start; j < end ; j++){
+            for (int j = start; j <
+                    end ; j++){
 
                 inputVector = this.get_Input_Vectors(ListInputVectors, j);  // Vetores [0000] [00001]
 
-                //for (int n = 0; n < this.signals_to_inject_faults.size(); n++) { // 0 to 11 sinais
+
+
 
                     for (int p = 1; p < this.signals_to_inject_faults.size(); p++) { // 1 , 2, 3, 4
-
 
                         String nxp = "  p: " + p + "  vec: "+ inputVector + "  vv2: " + counterv2 + "  j: "+ j;
 
 
-
+    //[20000 100 200 400]
 
                         System.out.println(nxp);
                         //int SigIndex = p-1; // G1, G2 , G3
@@ -2343,7 +2362,7 @@ import writers.WriteCsvTh;
 
             ArrayList <String> random_input_vectors = this.generateInputVector("RANDOM"); // Generate Random Input Vectors or InputTrueTable
 
-            Collections.sort(random_input_vectors);
+           // Collections.sort(random_input_vectors);
 
             ///
             // System.out.println(random_input_vectors);
@@ -2436,10 +2455,6 @@ import writers.WriteCsvTh;
                 + " and finished at: " + formattedDate2;
         this.sampleSize = N;
         System.out.println(" ----------------------------------------------------------------------------------------------------------------------");
-        /*
-
-         */
-
 
     }
 
@@ -2447,6 +2462,7 @@ import writers.WriteCsvTh;
 
         //float FMR, int sample, int unmasked_faults, long propagatedTime
         String result;
+
 
         result = "\n";
         result = result + "         " + this.Performance_Time + "\n";
