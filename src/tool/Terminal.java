@@ -67,8 +67,150 @@ class TerminalWrapper {
             * 
             */
              /* Clayton */
-            if(args.length > 3 && (args[3].equals("-mc") || args[3].equals("-exaustive") || args[3].equals("-exhaustive"
-            )))
+            /*
+            Options optionsv2 = new Options();
+
+            Option mc = new Option("mc", "mc_fault_injection", true, "show this message");
+            mc.setRequired(false);
+            //mc.setArgName("");
+            mc.setArgs(20000);
+
+            Option exhaustic = new Option("exhaustive", "complete", false, "Exhastive simulation");
+            exhaustic.setRequired(false);
+            exhaustic.setArgName("exhaustive");
+            //exhaustic.setOptionalArg(true);
+            //exhaustic.setLongOpt("complete");
+            //exhaustic.setArgs(1);
+
+
+            optionsv2.addOption(mc);
+            optionsv2.addOption(exhaustic);
+
+            CommandLineParser parserv2 = new DefaultParser();
+            HelpFormatter formatterv2 = new HelpFormatter();
+            CommandLine cmdv2;
+
+            //
+            cmdv2 = parserv2.parse(optionsv2, args);
+
+            System.out.println("Parser: " + parserv2.toString());
+            System.out.println("MC ARGS: " + mc.getArgs());
+            System.out.println("cmd: " + cmdv2.getArgs());
+            System.out.println("cmd args list: " + cmdv2.getArgList());
+            System.out.println("cmd OPTIONS: " + cmdv2.getOptions());
+            //
+            System.out.println("cmd : " + cmdv2.getArgs().length
+            );
+            System.out.println("Help: " + formatterv2);
+            System.out.println("Help: " + formatterv2.getArgName()
+            );
+
+            formatterv2.printHelp("mc", optionsv2
+            );
+
+            if(cmdv2.hasOption("-exhaustive")){
+                System.out.println("Inside" + "  value: " + cmdv2.getOptionValue("exhaustive"));
+            }
+            //mc_fault_injection teste/cadence.genlib teste/c.v -exhaustive -complete
+            */
+
+            CommandLineParser parserv2 = new DefaultParser();
+            HelpFormatter formatterv2 = new HelpFormatter();
+            Options optionsv2 = new Options();
+            CommandLine cmdv2;
+
+
+
+                Option mc = new Option("mc", "mc_fault_injection", true, "Monte carlo fault injection");
+                mc.setRequired(false);
+
+                Option exhasutive = new Option("exhaustive", "exh", false, "Monte carlo fault injection");
+                exhasutive.setRequired(false);
+
+
+                Option exhaustiveOp = new Option("complete", "exh", true, "Monte carlo fault injection");
+                exhaustiveOp.setRequired(false);
+
+
+                optionsv2.addOption(mc);
+                optionsv2.addOption(exhasutive);
+                optionsv2.addOption(exhaustiveOp);
+
+            try {
+                cmdv2 = parserv2.parse(optionsv2, args);
+
+                System.out.println("cmd: " + cmdv2.getArgs());
+                System.out.println("cmd args list: " + cmdv2.getArgList());
+
+                Terminal terminal = Terminal.getInstance();
+
+                if (cmdv2.hasOption("exhaustive")) {
+                    int args_size = args.length;
+
+                    String option = "";
+                    String genlib = args[1];
+                    String circuit = args[2];
+                    String command = args[3];
+
+                    if (args_size == 4) { // Define Single Faults
+                        // option = "Single";
+                        System.out.println("- Exhaustive Simulation Single Event Transient (SET) -exaustive: ");
+                        terminal.executeCommand("mc_fault_injection" + " " + genlib + " " + circuit + " " + command);
+                    } else {
+                        String command_op;
+                        command_op = args[4];
+                        //option = "Multiple";  // Define Multiple Faults
+                        System.out.println("- Exahustive Simulation Multiple Event Transient (SET) -exaustive -complete: " + Arrays.toString(args));
+                        terminal.executeCommand("mc_fault_injection" + " " + genlib + " " + circuit + " " + command + " " + command_op);
+                    }
+
+                }
+                if (cmdv2.hasOption("mc")) {
+                    int args_size = args.length;
+
+                    String option = "";
+                    String genlib = args[1];
+                    String circuit = args[2];
+                    String command = args[3];
+                    String sampleSTF = args[4];
+
+                    if (args_size == 4) { // Define Single Faults
+                        option = "Single";
+                    } else {
+                        option = "Multiple";  // Define Multiple Faults
+                    }
+
+                    switch (option) {
+
+                        case ("Single"):
+                            terminal.executeCommand("mc_fault_injection" + " " + genlib + " " + circuit + " " + command + " " + sampleSTF);
+                            break;
+
+                        case ("Multiple"):
+                            ArrayList<String> x = new ArrayList<>();
+                            String arguments_compiled = "";
+                            for (int i = 4; i < args.length; i++) {
+                                x.add(args[i]);
+                                if (i <= 4) {
+                                    arguments_compiled = args[i];
+                                } else {
+
+                                    arguments_compiled = arguments_compiled + " " + args[i];
+                                }
+                            }
+                            System.out.println("- Multiple Event Transient (SET) -mcmtf: " + arguments_compiled);
+                            terminal.executeCommand("mc_fault_injection" + " " + genlib + " " + circuit + " " + command + " " + arguments_compiled);
+                            break;
+                    }
+
+                }
+            }catch (Exception e){
+                System.out.println(e);
+            }
+            System.out.println("-------------------------\n");
+            args[3] = "";
+
+            if(args.length > 3 && (args[3].equals("-mc") || args[3].equals("-exaustive") || args[3].equals("-exhaustive")))
              {
 
                 String genlib = "";
@@ -95,7 +237,7 @@ class TerminalWrapper {
                 Robot r = new Robot();
                 //term.executeCommand();
 
-                switch (flag) {
+                switch (flag){
                     /*
                     case ("-mc"):
                         System.out.println("- Single Event Transient (SET) -mc: " + sample);
@@ -118,11 +260,9 @@ class TerminalWrapper {
                                     term.executeCommand("mc_fault_injection" + " " + genlib + " " + circuit + " " + flag + " " + args[4]);
                                     break;
 
-                            case("Multiple"):
+                            case ("Multiple"):
                                 ArrayList <String> x = new ArrayList<>();
                                 String arguments_compiled = "";
-
-
                                 for(int i = 4 ; i < args.length; i++) {
                                     x.add(args[i]);
                                     if(i <= 4 ){
@@ -133,7 +273,6 @@ class TerminalWrapper {
                                     }
                                 }
                                 System.out.println("- Multiple Event Transient (SET) -mcmtf: " + arguments_compiled);
-                                // term.executeCommand("mc_fault_injection" + " " + genlib + " " + circuit + " " + flag + " " + base + " " + order + " " + frequency);
                                 term.executeCommand("mc_fault_injection" + " " + genlib + " " + circuit + " " + flag + " " + arguments_compiled);
                                 break;
                             }
@@ -141,29 +280,19 @@ class TerminalWrapper {
                         break;
 
                     case ("-exhaustive"):
-                        if(args_size == 5
-                        ){
+                        if(args_size == 5){
                             System.out.println("- Exahustive Simulation Multiple Event Transient (SET) -exaustive -complete: " + Arrays.toString(args));
                             term.executeCommand("mc_fault_injection" + " " + genlib + " " + circuit + " " + flag + " " + args[4]);
                         }else{
                             System.out.println("- Exhaustive Simulation Single Event Transient (SET) -exaustive: ");
-                            term.executeCommand("mc_fault_injection" + " " + genlib + " " + circuit + " " + flag
-
-                            )
-                            ;
+                            term.executeCommand("mc_fault_injection" + " " + genlib + " " + circuit + " " + flag);
                         }
-
                         break;
-
                 }
                 r.keyPress(KeyEvent.VK_ENTER);
                 r.keyRelease(KeyEvent.VK_ENTER);
-
-
             }
-
             else {
-
 
                 Options options = new Options();
 
@@ -188,6 +317,7 @@ class TerminalWrapper {
                 help.setRequired(false);
                 options.addOption(help);
 
+                /*
                 Option mc = new Option("mc", "MC_SET", true, "show this message");
                 mc.setRequired(true);
                 options.addOption(mc);
@@ -195,7 +325,7 @@ class TerminalWrapper {
                 Option mcfi = new Option("mc_fault_injection", "MC_SET", true, "show this message");
                 mcfi.setRequired(true);
                 options.addOption(mcfi);
-
+                */
 
                 CommandLineParser parser = new DefaultParser();
                 HelpFormatter formatter = new HelpFormatter();
@@ -205,7 +335,7 @@ class TerminalWrapper {
                     try {
                         cmd = parser.parse(options, args);
                         System.out.println(parser);
-                        System.out.println(mc.getValue());
+                        //System.out.println(mc.getValue());
                         if (cmd.hasOption("help")) {
                             formatter.printHelp("VetoresCriticos", options);
                             System.exit(1);
