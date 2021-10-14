@@ -6,9 +6,13 @@
 package tool;
 
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.TimerTask;
 import javax.script.ScriptException;
 
@@ -502,27 +506,21 @@ class CommandProcessor {
                             cmd.Exaustive_Fault_injectionComplete(splittedCommand.get(1), splittedCommand.get(2), splittedCommand.get(3)); // Exaustive Simulation
                             success = true;
                         }
-                        if((splittedCommand.size() <= 4
-                        ) && (splittedCommand.get(3).equals("-exhaustive"))){
+                        if((splittedCommand.size() <= 4) && (splittedCommand.get(3).equals("-exhaustive"))){
                             //System.out.println("Inside Exaustive");
                             cmd.Exaustive_Fault_injection(splittedCommand.get(1), splittedCommand.get(2), splittedCommand.get(3)); // Exaustive Simulation
                             success = true;
                         }else{
 
-                            if((splittedCommand.get(3).equals("-mc"))){
+                            if((splittedCommand.get(3).equals("-mc")) && (splittedCommand.size() == 4)){
                                 cmd.Monte_Carlo_Fault_injection(splittedCommand.get(1), splittedCommand.get(2),splittedCommand.get(4)); // MC 20000
                                 success = true;
                             }
-                            if((splittedCommand.get(3).equals("-mcmtf"))){
+                            if((splittedCommand.get(3).equals("-mc")) && (splittedCommand.size() > 4)){
 
-                                System.out.println("Dev Mode  ->>>>>>>>> Inside Multiple Fault injection ..... : " + splittedCommand);
-
-                                //cmd.Monte_Carlo_Multiple_Transient_Fault_Injection(splittedCommand.get(1), splittedCommand.get(2),splittedCommand.get(4), splittedCommand.get(5), splittedCommand.get(6)); // MC 20000
-
+                                //System.out.println("Dev Mode  ->>>>>>>>> Inside Multiple Fault injection ..... : " + splittedCommand);
                                 cmd.Monte_Carlo_Multiple_Transient_Fault_Injection_Array(splittedCommand.get(1), splittedCommand.get(2), splittedCommand); // MC 20000 - MTF SINGLES DOUBLES TRIPLES
-
-                                System.out.println(splittedCommand);
-
+                                //System.out.println(splittedCommand);
                                 success = true;
                             }
                             /*
@@ -566,9 +564,69 @@ class CommandProcessor {
                 } else {
                     boolean success = false;
                     try {
-                        cmd.Read_Scrip_Mc_Fault_injection(splittedCommand.get(1));
+                        System.out.println("ARG: " + splittedCommand);
+                        //cmd.Read_Scrip_Mc_Fault_injection(splittedCommand.get(1));
+                        int threads = 4; //Numero de threads
+                        List<String> records = new ArrayList<>();
+                        String script_file = splittedCommand.get(1);
+                        try (BufferedReader reader = new BufferedReader(new FileReader(script_file))) {
+                            String line;
+                            while ((line = reader.readLine()) != null)
+                            {
+                                records.add(line);
+
+                            }
+                        }
+
+                        System.out.println("File: " + script_file);
+                        System.out.println("Line 1: " + records.get(0));
+
+                        try {
+                            String[] arrOfStr = records.get(0).split(" ", 3);
+                            for (int i = 0; i < arrOfStr.length; i++) {
+                                System.out.println("- :" + arrOfStr[i]);
+                            }
+
+                            String relativePath = arrOfStr[0];//"";//"abc/";
+                            String genlib = arrOfStr[1];
+                            String sampleSizeMonteCarlo = "";
+
+                            String constReliability = "0.9999"; //Used for internal structures
+
+                            for (int i = 1; i < records.size(); i++) {
+
+                                String circuit = records.get(i);
+                                String complete_file = relativePath + circuit;
+
+                                System.out.println("Testing file: " + complete_file + " path: " + relativePath);
+
+                                File tmpDir = new File(relativePath + circuit);
+                                boolean exists = tmpDir.exists();
+                                if (exists) {
+                                    System.out.println("IN " + arrOfStr[2] +  " size: " + arrOfStr.length);
+                                    if(arrOfStr.length == 3){
+                                        sampleSizeMonteCarlo = arrOfStr[2];
+                                        cmd.Monte_Carlo_Fault_injection(relativePath + genlib, complete_file, sampleSizeMonteCarlo); // MC 20000
+                                        success = true;
+                                    }
+                                    if(arrOfStr.length >= 4){
+                                        ArrayList <String> splittedCommand_temp = new ArrayList<>();
+                                        for (int j = 3; j < arrOfStr.length; j++) {
+                                            //System.out.println(arrOfStr[j]);
+                                           splittedCommand_temp.add(arrOfStr[j]);
+                                        }
+
+                                        System.out.println(splittedCommand_temp);
+                                        cmd.Monte_Carlo_Multiple_Transient_Fault_Injection_Array(relativePath + genlib, complete_file, splittedCommand_temp); // MC 20000 - MTF SINGLES DOUBLES TRIPLES
+                                        success = true;
+                                    }
+                                }
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
                         success = true;
-                    } catch (IOException | ScriptException e) {                        
+                    } catch (IOException e) {
                         Terminal.getInstance().terminalOutput("## ERRO ##");
                         Terminal.getInstance().terminalOutput(e.getMessage());
                         Terminal.getInstance().terminalOutput("## ERRO ##");

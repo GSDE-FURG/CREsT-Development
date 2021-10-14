@@ -96,6 +96,11 @@ class TerminalWrapper {
                 Option exhasutive = new Option("exhaustive", "exh", false, "Monte carlo fault injection");
                 exhasutive.setRequired(false);
 
+                Option read_script = new Option("read_script", "rs", false, "Monte carlo fault injection");
+                read_script.setRequired(false);
+
+
+
 
                 Option exhaustiveOp = new Option("complete", "exh", true, "Monte carlo fault injection");
                 exhaustiveOp.setRequired(false);
@@ -103,6 +108,7 @@ class TerminalWrapper {
                 options.addOption(mc);
                 options.addOption(exhasutive);
                 options.addOption(exhaustiveOp);
+                options.addOption(read_script);
 
                 CommandLineParser parser = new DefaultParser();
                 HelpFormatter formatter = new HelpFormatter();
@@ -202,6 +208,7 @@ class TerminalWrapper {
                         switch (option) {
 
                             case ("Single"):
+                                System.out.println("Single Event Transient - MC");
                                 terminal.executeCommand("mc_fault_injection" + " " + genlib + " " + circuit + " " + command + " " + sampleSTF);
                                 break;
 
@@ -222,6 +229,11 @@ class TerminalWrapper {
                                 break;
                         }
 
+                    }
+
+                    if (cmd.hasOption("read_script")){
+                        String script_file = args[1];
+                        terminal.executeCommand("read_script" + " " + script_file);
                     }
 
                 }catch (Exception e){

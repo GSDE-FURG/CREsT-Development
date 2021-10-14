@@ -476,8 +476,6 @@ public class Commands {
 
     }
 
-
-
     public void Exaustive_Fault_injection(String genlib, String circuit, String flag) throws IOException, ScriptException, Exception {
         //String path = CommonOps.getWorkPath(this) + "abc" + File.separator + filename;
         System.out.println("Exaustive Simulation ....");
@@ -672,14 +670,6 @@ public class Commands {
     public void Read_Scrip_Mc_Fault_injection(String script_file) throws IOException, ScriptException, Exception {
         
         int threads = 4; //Numero de threads
-        //String path = CommonOps.getWorkPath(this) + "abc" + File.separator + filename;
-       
-        /*
-            System.out.println("Genlib: "+ genlib);
-            System.out.println("Circuit: "+ circuit);
-            System.out.println("MC_Sample: "+ mc_sample);
-        */
-   
         List<String> records = new ArrayList<>();
    
         try (BufferedReader reader = new BufferedReader(new FileReader(script_file))) {
@@ -691,8 +681,8 @@ public class Commands {
             }
         }
                   
-         //System.out.println("File: " + records);
-         //System.out.println("Line 1: " + records.get(0));
+         System.out.println("File: " + script_file);
+         System.out.println("Line 1: " + records.get(0));
 
          try {
              String[] arrOfStr = records.get(0).split(" ", 3);
@@ -702,7 +692,16 @@ public class Commands {
              
             String relativePath = arrOfStr[0] ;//"";//"abc/";
             String genlib = arrOfStr[1];
-            String sampleSizeMonteCarlo = arrOfStr[2];
+            String sampleSizeMonteCarlo = "";
+
+             if(arrOfStr.length >= 3){
+                System.out.println("MTF selected");
+                sampleSizeMonteCarlo = arrOfStr[2];
+            }else{
+                System.out.println("STF selected");
+                sampleSizeMonteCarlo = arrOfStr[2];
+            }
+
             String constReliability = "0.9999"; //Used for internal structures
               
             //System.out.println("Path: " + relativePath);
@@ -715,7 +714,7 @@ public class Commands {
                 String circuit = records.get(i);
                 String complete_file = relativePath + circuit;
                 
-                System.out.println("Testing file: " + complete_file);
+                System.out.println("Testing file: " + complete_file  + " path: " + relativePath);
                 
                 File tmpDir = new File(relativePath + circuit);
                 boolean exists = tmpDir.exists();
@@ -723,16 +722,19 @@ public class Commands {
                      System.out.println("        - File ok !");
                      //System.out.println("circuit: " + circuit + " genlib : " + genlib);
                      Terminal.getInstance().terminalOutput(" - Genlib File " + genlib + " read ..." );
+
                      Terminal.getInstance().terminalOutput(" - Verilog File " + circuit + " read ..." );
+
                      main experimento = new main(threads, constReliability, relativePath, relativePath+genlib);
                      experimento.preparingEnviromentSingleFile(circuit);
                      experimento.monteCarloSimulation(Integer.parseInt(sampleSizeMonteCarlo), "ALL_SIGNALS");
+
                      System.out.println("Simulation results:\n" + experimento.getFMR());
                      Terminal.getInstance().terminalOutput(experimento.getFMR());
 
                  }
                 else{
-                    System.out.println("x - Error file not exist : " +complete_file);
+                    System.out.println("x - Error file not exist : " + complete_file);
                 }
             }
          
