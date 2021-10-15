@@ -954,18 +954,30 @@ import writers.WriteCsvTh;
         }
         if(sum_proportion < 1){
             //need complete in this case
-            //float dif = 1 - sum_proportion;
+            float dif = 1 - sum_proportion;
             //int dif = 1 - Math.round(sum_proportion);
 
             for (int pos = 1; pos < mtf_list.size(); pos++) {
                 m.add(Math.round(sample * mtf_list.get(pos)));
-               // sum_up = sum_up + (sample * mtf_list.get(pos));
+                sum_up = sum_up + (sample * mtf_list.get(pos));
             }
 
-            //int sum = Math.round(sum_up);
-            //int least_to_complete = sample - sum;
+            int sum = Math.round(sum_up);
+            int least_to_complete = sample - sum;
 
-            //System.out.println("Difference ( 1 - " + sum_proportion + " ) = " + dif + "  - SUM: " + sum + "   least-to-complete: " + least_to_complete);
+            System.out.println("Difference ( 1 - " + sum_proportion + " ) = " + dif + "  - SUM: " + sum + "   least-to-complete: " + least_to_complete);
+
+            //Insert in simple faults
+                m.set(0, m.get(0) + least_to_complete);
+                System.out.println("m " + m);
+
+            //Insert in medium faults
+                //m.set(m.size()/2, m.get(0) + least_to_complete);
+                //System.out.println("m " + m);
+
+            //Insert in Higher order faults
+                //m.set(m.size(), m.get(0) + least_to_complete);
+                //System.out.println("m " + m);
         }
 
         System.out.println("    MTF LIST INTEGER: " + m);
@@ -1217,7 +1229,7 @@ import writers.WriteCsvTh;
 
         sum_proportion = sumProportionPercentage(mtf_list);
 
-        if(sum_proportion == 1.0){   /// 100%
+       // if(sum_proportion == 1.0){   /// 100%
 
             int sample_base = Math.round(mtf_list.get(0));
 
@@ -1332,32 +1344,6 @@ import writers.WriteCsvTh;
 
 
                  */
-        }
-        if(sum_proportion < 1 && sum_proportion >= 0){
-
-            System.err.println("Warning inputs for simulation are lower than 1 (100%), the simulation will be completed with faults order " + " SINGLE/DOUBLE/TRIPPLE ");
-
-            int sample_base = Math.round(mtf_list.get(0));
-
-            ArrayList <Integer> new_MTF = passProportionPercentage(mtf_list, sample_base);
-
-            System.out.println("New MTF LIST " + new_MTF);
-
-            float dif = 1 - sum_proportion;
-            float sum_up = 0;
-
-            //int dif = 1 - Math.round(sum_proportion);
-
-            for (int pos = 1; pos < mtf_list.size(); pos++) {
-                new_MTF.add(Math.round(sample_base * mtf_list.get(pos)));
-                sum_up = sum_up + (sample_base * mtf_list.get(pos));
-            }
-            int sum = Math.round(sum_up);
-            int least_to_complete = (sample_base - sum);
-
-            System.out.println("Difference ( 1 - " + sum_proportion + " ) = " + dif + "  - SUM: " + sum + "   least-to-complete: " + least_to_complete);
-
-        }
 
         return thread_list;
     }
