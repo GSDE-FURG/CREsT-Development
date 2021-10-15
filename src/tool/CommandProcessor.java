@@ -517,13 +517,12 @@ class CommandProcessor {
                                 success = true;
                             }
                             if((splittedCommand.get(3).equals("-mc")) && (splittedCommand.size() > 4)){
-                                //System.out.println("Dev Mode  ->>>>>>>>> Inside Multiple Fault injection ..... : " + splittedCommand);
-                                cmd.Monte_Carlo_Multiple_Transient_Fault_Injection_Array(splittedCommand.get(1), splittedCommand.get(2), splittedCommand); // MC 20000 - MTF SINGLES DOUBLES TRIPLES
-                                //System.out.println(splittedCommand);
+                                System.out.println("Dev Mode  ->>>>>>>>> Inside Multiple Fault injection ..... : " + splittedCommand);
+                                cmd.Monte_Carlo_Multiple_Transient_Fault_Injection_Proportion(splittedCommand.get(1), splittedCommand.get(2), splittedCommand); // MC 20000 - MTF SINGLES DOUBLES TRIPLES
                                 success = true;
                             }
 
-                            /*                  OLD METHOD FOR MTF
+                            /*                  OLD METHOD FOR MTF OverWrite
                             if((splittedCommand.get(3).equals("-mc")) && (splittedCommand.size() > 4)){
                                 //System.out.println("Dev Mode  ->>>>>>>>> Inside Multiple Fault injection ..... : " + splittedCommand);
                                 cmd.Monte_Carlo_Multiple_Transient_Fault_Injection_Array(splittedCommand.get(1), splittedCommand.get(2), splittedCommand); // MC 20000 - MTF SINGLES DOUBLES TRIPLES
@@ -573,11 +572,12 @@ class CommandProcessor {
                 } else {
                     boolean success = false;
                     try {
-                        System.out.println("ARG: " + splittedCommand);
+                        System.out.println("\n Argumentos: " + splittedCommand);
                         //cmd.Read_Scrip_Mc_Fault_injection(splittedCommand.get(1));
                         int threads = 4; //Numero de threads
                         List<String> records = new ArrayList<>();
                         String script_file = splittedCommand.get(1);
+                        System.out.println(" SplittedCommand : " +  splittedCommand);
                         try (BufferedReader reader = new BufferedReader(new FileReader(script_file))) {
                             String line;
                             while ((line = reader.readLine()) != null)
@@ -607,7 +607,7 @@ class CommandProcessor {
                                 String circuit = records.get(i);
                                 String complete_file = relativePath + circuit;
 
-                                System.out.println("Testing file: " + complete_file + " path: " + relativePath);
+                                System.out.println("- READ Testing file: " + complete_file + " path: " + relativePath);
 
                                 File tmpDir = new File(relativePath + circuit);
                                 boolean exists = tmpDir.exists();
@@ -628,7 +628,7 @@ class CommandProcessor {
                                         }
 
                                         System.out.println(splittedCommand_temp);
-                                        cmd.Monte_Carlo_Multiple_Transient_Fault_Injection_Array(relativePath + genlib, complete_file, splittedCommand_temp); // MC 20000 - MTF SINGLES DOUBLES TRIPLES
+                                        cmd.Monte_Carlo_Multiple_Transient_Fault_Injection_overWriteWorstOrder(relativePath + genlib, complete_file, splittedCommand_temp); // MC 20000 - MTF SINGLES DOUBLES TRIPLES
                                         success = true;
                                     }
                                 }

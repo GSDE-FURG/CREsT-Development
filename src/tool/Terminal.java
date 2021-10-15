@@ -230,7 +230,7 @@ class TerminalWrapper {
                     }
 
                     if (cmd.hasOption("read_script")){
-                        String script_file = args[1];
+                        String script_file = args[4];
                         terminal.executeCommand("read_script" + " " + script_file);
                     }
 
