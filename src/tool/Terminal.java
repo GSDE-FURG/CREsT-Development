@@ -100,8 +100,6 @@ class TerminalWrapper {
                 read_script.setRequired(false);
 
 
-
-
                 Option exhaustiveOp = new Option("complete", "exh", true, "Monte carlo fault injection");
                 exhaustiveOp.setRequired(false);
 
@@ -169,7 +167,7 @@ class TerminalWrapper {
                         System.exit(1);
                     }
 
-                try {// Procedure Multiple Fault Injection
+                try {                                       // Procedure for Single and Multiple Fault Injection (Monte Carlo procedure)
                     cmd = parser.parse(options, args);
                     if (cmd.hasOption("exhaustive")) {
                         int args_size = args.length;
@@ -199,10 +197,10 @@ class TerminalWrapper {
                         String command = args[3];
                         String sampleSTF = args[4];
 
-                        if (args_size == 4) { // Define Single Faults
+                        if (args_size == 4) { // Define Single Faults  [-mc_fault_injection teste/cadence.genlib teste/c.v -mc 20000]
                             option = "Single";
                         } else {
-                            option = "Multiple";  // Define Multiple Faults
+                            option = "Multiple";  // Define Multiple Faults [-mc_fault_injection teste/cadence.genlib teste/c.v -mc 20000 1 1 1]
                         }
 
                         switch (option) {

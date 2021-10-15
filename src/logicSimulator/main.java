@@ -219,7 +219,7 @@ public class main{
                 //System.out.println("STR: " + str);
     }
 
-        public void monteCarloSimulationMultipleTransientFaultsMODE(ArrayList <Integer> mtf_sizes, String Signals) throws Exception{
+        public void monteCarloSimulationMultipleTransientFaultsProportion(ArrayList <Integer> mtf_sizes, String Signals) throws Exception{
 
             System.out.println("Multiple Fault Injection : " + mtf_sizes);
             System.out.println("Path: " +this.relativePath);

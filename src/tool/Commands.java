@@ -279,7 +279,7 @@ public class Commands {
                                 + ": " + experimento.getFMR());
                 }
               
-                else{
+              else{
                     System.out.println("File or genlib not exist : " + circuit + "   -  " + genlib);
                 }
            
@@ -378,6 +378,17 @@ public class Commands {
 
     }
 
+
+    /** Process the command line and extracts the fault array list [-mc_fault_injection teste/cadence.genlib teste/c.v -mc 20000 100 200 300]
+     *  After process command line, this method links the method to Logic Simulator to procced MTF simulation
+     *  This procedure in special overwrite the MTF fault list [20000 1 1 1] always choosing the highest fault order (Ex: 1 1 1 Triple injection) - Command Example ArrayList [-mc_fault_injection teste/cadence.genlib teste/c.v -mc 20000 1 1 1]
+     * @author Clayton Farias
+     * @param genlib
+     * @param circuite
+     * @throws IOException
+     * @throws ScriptException
+     * @throws Exception
+     */
     public void Monte_Carlo_Multiple_Transient_Fault_Injection_Array(String genlib, String circuit, ArrayList <String> splittedCommand) throws IOException, ScriptException, Exception {
         //String path = CommonOps.getWorkPath(this) + "abc" + File.separator + filename;
         System.out.println(" ---- METHOD MODE -----");
@@ -458,7 +469,7 @@ public class Commands {
             experimento.preparingEnviromentSingleFile(this.circuit_analysis);
 
 
-            experimento.monteCarloSimulationMultipleTransientFaultsMODE(x, "ALL_SIGNALS");
+            experimento.monteCarloSimulationMultipleTransientFaultsProportion(x, "ALL_SIGNALS");
 
             System.out.println("Simulation results:\n" + experimento.getFMR());
 

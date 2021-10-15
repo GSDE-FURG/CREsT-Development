@@ -517,12 +517,21 @@ class CommandProcessor {
                                 success = true;
                             }
                             if((splittedCommand.get(3).equals("-mc")) && (splittedCommand.size() > 4)){
-
                                 //System.out.println("Dev Mode  ->>>>>>>>> Inside Multiple Fault injection ..... : " + splittedCommand);
                                 cmd.Monte_Carlo_Multiple_Transient_Fault_Injection_Array(splittedCommand.get(1), splittedCommand.get(2), splittedCommand); // MC 20000 - MTF SINGLES DOUBLES TRIPLES
                                 //System.out.println(splittedCommand);
                                 success = true;
                             }
+
+                            /*                  OLD METHOD FOR MTF
+                            if((splittedCommand.get(3).equals("-mc")) && (splittedCommand.size() > 4)){
+                                //System.out.println("Dev Mode  ->>>>>>>>> Inside Multiple Fault injection ..... : " + splittedCommand);
+                                cmd.Monte_Carlo_Multiple_Transient_Fault_Injection_Array(splittedCommand.get(1), splittedCommand.get(2), splittedCommand); // MC 20000 - MTF SINGLES DOUBLES TRIPLES
+                                //System.out.println(splittedCommand);
+                                success = true;
+                            }
+                            */
+
                             /*
                             if((splittedCommand.get(3).equals("-mcmtfv2x"))){
 
@@ -605,11 +614,13 @@ class CommandProcessor {
                                 if (exists) {
                                     System.out.println("IN " + arrOfStr[2] +  " size: " + arrOfStr.length);
                                     if(arrOfStr.length == 3){
+                                        System.out.println(" --------- STF -----------");
                                         sampleSizeMonteCarlo = arrOfStr[2];
                                         cmd.Monte_Carlo_Fault_injection(relativePath + genlib, complete_file, sampleSizeMonteCarlo); // MC 20000
                                         success = true;
                                     }
                                     if(arrOfStr.length >= 4){
+                                        System.out.println(" --------- M T F -----------");
                                         ArrayList <String> splittedCommand_temp = new ArrayList<>();
                                         for (int j = 3; j < arrOfStr.length; j++) {
                                             //System.out.println(arrOfStr[j]);
