@@ -219,7 +219,7 @@ public class main{
                 //System.out.println("STR: " + str);
     }
 
-        public void monteCarloSimulationMultipleTransientFaultsProportion(ArrayList <Integer> mtf_sizes, String Signals) throws Exception{
+        public void monteCarloSimulationMultipleTransientFaultsNew(ArrayList <Integer> mtf_sizes, String Signals) throws Exception{
 
             System.out.println("Multiple Fault Injection : " + mtf_sizes);
             System.out.println("Path: " +this.relativePath);
@@ -263,8 +263,52 @@ public class main{
             //System.out.println("STR: " + str);
         }
 
+    public void monteCarloSimulationMultipleTransientFaultsProportion(int sample, ArrayList <Float> mtf_sizes, String Signals) throws Exception{
 
-        public void PrintCircuitsSpecs(int sampleSize, String Signals) throws Exception{
+        System.out.println("Multiple Fault Injection : " + mtf_sizes);
+        System.out.println("Path: " +this.relativePath);
+        System.out.println("Genlib: " +this.genlib);
+        System.out.println("Circuit: " +this.circuitList);
+
+        System.out.println("ARGS:"  +  mtf_sizes) ;
+
+        String str = "";
+        for (int i = 0; i < this.circuitList.size(); i++) {
+
+            //Exaustic mode for debug
+            Orchestrator simulacaoMultithreading_debug = new Orchestrator(this.threads, this.reliabilityConst, this.relativePath, this.genlib, this.relativePath + this.circuitList.get(i));
+
+            //simulacaoMultithreading_debug.runMultithreadingExausticSimulation("ALL_SIGNALS"); //STF
+
+            //simulacaoMultithreading_debug.runMultithreadingExausticSimulationComplete("ALL_SIGNALS"); //MTF
+
+            //
+            // double x = 0.9999;
+                /*
+                    main experimento = new main(threads, "0.9999", relativePath, genlib);
+
+                    experimento.preparingEnviroment();
+
+                    experimento.monteCarloSimulation(20000, "ALL_SIGNALS");
+
+                    System.out.println("\n\n\n" + "");
+                */
+
+            Orchestrator simulacaoMultithreading = new Orchestrator(this.threads, this.reliabilityConst, this.relativePath, this.genlib, this.relativePath + this.circuitList.get(i));
+            //simulacaoMultithreading.PrintCircuitSpecs();
+            //str = str + simulacaoMultithreading.PrintCircuitSpecs() + "\n";
+            //simulacaoMultithreading.runMultipleFaultInjectionMultithreadingMonteCarlo(base, order, frequency,sampleSize, Signals); //ou Signals =  "ALL_SIGNALS" ou "INTERMEDIATE" ou "INTERMEDIATE_AND_OUTPUTS" ou "INPUTS" ou "INPUTS_OUTPUTS"
+
+            simulacaoMultithreading.runMultipleFaultInjectionMultithreadingMonteCarloSimulationProportion(sample, mtf_sizes, Signals); //ou Signals =  "ALL_SIGNALS" ou "INTERMEDIATE" ou "INTERMEDIATE_AND_OUTPUTS" ou "INPUTS" ou "INPUTS_OUTPUTS"
+
+
+            this.OUTPUT_INFO = simulacaoMultithreading.getFRM(" MTFT Sample (Monte Carlo = N)");
+        }
+        //System.out.println("STR: " + str);
+    }
+
+
+    public void PrintCircuitsSpecs(int sampleSize, String Signals) throws Exception{
                 //Loop na simulação de circuitos 
                 String str = "";
                 for (int i = 0; i < this.circuitList.size(); i++) {

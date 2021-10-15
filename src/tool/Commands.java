@@ -412,7 +412,6 @@ public class Commands {
 
         for(int i = 4 ; i < splittedCommand.size(); i++) {
             x.add(Integer.parseInt(splittedCommand.get(i)));
-
         }
 
         System.out.println("X array :" + x);
@@ -470,7 +469,7 @@ public class Commands {
             experimento.preparingEnviromentSingleFile(this.circuit_analysis);
 
 
-            experimento.monteCarloSimulationMultipleTransientFaultsProportion(x, "ALL_SIGNALS");
+            experimento.monteCarloSimulationMultipleTransientFaultsNew(x, "ALL_SIGNALS");
 
             System.out.println("Simulation results:\n" + experimento.getFMR());
 
@@ -517,12 +516,11 @@ public class Commands {
         //System.out.println("base: " + base + "  Order: " + order  + "  Frequency: " + frequency);
 
         //String[] arrOfStr = circuit.split("/", 2);
-        ArrayList <Integer> x = new ArrayList<>();
+        ArrayList <Float> x = new ArrayList<>();
 
         for(int i = 4 ; i < splittedCommand.size(); i++) {
-            x.add(Integer.parseInt(splittedCommand.get(i)));
+            x.add(Float.parseFloat(splittedCommand.get(i)));
         }
-
         System.out.println("X array :" + x);
         constReliability = "0.9999"; //Used for internal structures
         String relativePath = "";
@@ -546,11 +544,6 @@ public class Commands {
             this.genlib = genlib;
         }
 
-
-
-        //String genlib =  relativePath  + "lib_basic_no_cost.genlib";
-
-        //genlib =  relativePath  + "cadence.genlib";
         File tmpDir = new File(circuit);
         boolean exists = tmpDir.exists();
 
@@ -564,15 +557,16 @@ public class Commands {
             System.out.println("Genlib Texto Separado: " + this.relative_path);
 
             main experimento = new main(threads, constReliability, relativePath, this.relative_path  + this.genlib);
+
             experimento.preparingEnviromentSingleFile(this.circuit_analysis);
-            experimento.monteCarloSimulationMultipleTransientFaultsProportion(x, "ALL_SIGNALS");
+
+            experimento.monteCarloSimulationMultipleTransientFaultsProportion(sampleSizeMonteCarlo, x, "ALL_SIGNALS");
 
             System.out.println("Simulation results:\n" + experimento.getFMR());
 
             Terminal.getInstance().terminalOutput("Simulation results with " + threads + " threads "
                     + ": " + experimento.getFMR());
         }
-
         else{
             System.out.println("File or genlib not exist : " + circuit + "   -  " + genlib);
         }
