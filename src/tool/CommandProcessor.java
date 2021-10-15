@@ -575,9 +575,11 @@ class CommandProcessor {
                         System.out.println("\n Argumentos: " + splittedCommand);
                         //cmd.Read_Scrip_Mc_Fault_injection(splittedCommand.get(1));
                         int threads = 4; //Numero de threads
+
                         List<String> records = new ArrayList<>();
                         String script_file = splittedCommand.get(1);
                         System.out.println(" SplittedCommand : " +  splittedCommand);
+
                         try (BufferedReader reader = new BufferedReader(new FileReader(script_file))) {
                             String line;
                             while ((line = reader.readLine()) != null)
