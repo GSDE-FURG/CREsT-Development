@@ -90,11 +90,19 @@ class TerminalWrapper {
                 help.setRequired(false);
                 options.addOption(help);
 
-                Option mc = new Option("mc", "mc_fault_injection", true, "Monte carlo fault injection");
+                Option mc = new Option("mc", "mtf", true, "Monte carlo fault injection");
+                mc.setDescription("This method simulates the fault injection campaign (MC) " +
+                        "\n - Monte Carlo (MC) provides reduced test simulation and statistical confidence interval for resonable sample size\n" +
+                        " - Command: -mc_fault_injection <stdcell.genlig> <circuit.v> -mc <sample> <Proportion Single> <Proportion Double> ... <Proportion Triple> " +
+                        "\n - Usage example (90% Single faults, 10% Double faults) the pergentage must be lower or equal to 1 (100%), above values will not be performed: -mc 20000 0.9 0.1");
                 mc.setRequired(false);
 
-                Option exhasutive = new Option("exhaustive", "exh", false, "Monte carlo fault injection");
-                exhasutive.setRequired(false);
+                Option exhaustive = new Option("exhaustive", "exh", false, "Monte carlo fault injection");
+                exhaustive.setDescription("This method simulates the fault injection campaign (Exhaustive method) " +
+                        "- For Single Event Transient (SET) - Command: -mc_fault_injection <stdcell.genlig> <circuit.v> -exhaustive\n" +
+                        "- For Multiple Event Transient (MET) * Note: This method consider (from 1 to signals size combination, in order to proceed the complete fault injection simulation " +
+                        "- Command: -mc_fault_injection <stdcell.genlig> <circuit.v> -exhaustive -complete");
+                exhaustive.setRequired(false);
 
                 Option read_script = new Option("read_script", "rs", false, "Monte carlo fault injection");
                 read_script.setRequired(false);
@@ -104,7 +112,7 @@ class TerminalWrapper {
                 exhaustiveOp.setRequired(false);
 
                 options.addOption(mc);
-                options.addOption(exhasutive);
+                options.addOption(exhaustive);
                 options.addOption(exhaustiveOp);
                 options.addOption(read_script);
 
