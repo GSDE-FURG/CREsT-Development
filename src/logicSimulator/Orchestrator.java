@@ -1266,70 +1266,37 @@ import writers.WriteCsvTh;
                 // For prop_index
 
                 ArrayList<Integer> inputVector = new ArrayList<>();
+
                 inputVector = this.get_Input_Vectors(ListInputVectors, count); //input Test n
 
-                /*
-                if(count == end-1){
-                    ArrayList<TestVectorInformation> temp = new ArrayList<TestVectorInformation>(ItemxSimulationList.subList(start, end-1));
-                    LogicSimulator threadItem = new LogicSimulator(temp, this.circuit, this.cellLibrary, this.levelCircuit, start, end, this.genlib , this.circuitNameStr); // Thread contex info
-                    threadItem.setMode("Multiple");
-                    itemx_list.add(threadItem);
-
-                    Runnable runnable = threadItem;
-                    Thread thread = new Thread(runnable);
-                    thread.setName(Integer.toString(threadItem.hashCode()));
-                    thread_list.add(thread);
-
-                    System.out.println(" ~~~~~~~~~~ start: " + start + "  end: " + end + "                  - Thread id: " + threadItem.getThreadId() + "  Simulation Size: " + threadItem.getThreadSimulatinArray().size() + "  MTF: " + ItemxSimulationList.size() + "    Thread: " + thread_list.size() + "   real: " + temp.size());
-
-                    start = end;
-                    end = end + partition;
-                }
-                */
-
                 if (prop_index == 0){ // Single Transient Fault
-                    //inputVector = this.get_Input_Vectors(ListInputVectors, count); //input Test n
                     int SigIndex = this.sortRandomFaultInjection(); //int SigIndex = decide_Random_Signals_Contrains(Signals_CTE_ONE_ZERO);
-                    //TestVectorInformation temp = new TestVectorInformation(inputVector, this.signals_to_inject_faults.get(SigIndex), j + 1);
                     TestVectorInformation temp = new TestVectorInformation(inputVector, this.signals_to_inject_faults.get(SigIndex), count );
                     ArrayList <Integer> SigIndexList = new ArrayList<Integer>();
                     SigIndexList.add(SigIndex);
                     ItemxSimulationList.add(temp);
-
                    /// System.out.println("~ Injection Single TF number : " + count + " - Sig Index" + SigIndexList + "  temp: "+ temp.getMTFPERSONAL_LIST_Identities() + "  " +  temp.getSimulationIndex());
-
-
                 }
                 else{ // Double , Tripple
-                   // inputVector = this.get_Input_Vectors(ListInputVectors, count); //input Test n
-
                     int SigIndex = this.sortRandomFaultInjection(); //int SigIndex = decide_Random_Signals_Contrains(Signals_CTE_ONE_ZERO);
-                    //TestVectorInformation temp = new TestVectorInformation(inputVector, this.signals_to_inject_faults.get(SigIndex), j + 1);
                     TestVectorInformation temp = new TestVectorInformation(inputVector, this.signals_to_inject_faults.get(SigIndex), count );
                     ArrayList <Integer> SigIndexList = new ArrayList<Integer>();
                     SigIndexList.add(SigIndex);
-
                     for (int k = 1; k <= prop_index; k ++){
-                        //System.out.println("  ~~ ~~~~ ~~  Injection MTF number : " + k);
-                        //temp.setMultipleTransientFaultInjection( this.signals_to_inject_faults.get( this.sortRandomFaultInjection()));
                         int new_pos = sortExclusiveFaultIndex(SigIndexList, temp);
                         temp.setMultipleTransientFaultInjection( this.signals_to_inject_faults.get(new_pos));
                         SigIndexList.add(new_pos); // Do no reapet signals
-
                     }
                     System.out.println("~ Injection MTF number : " + count + " - Sig Index" + SigIndexList + "  temp: "+ temp.getMTFPERSONAL_LIST_Identities()  + "  " +  temp.getSimulationIndex());
                     ItemxSimulationList.add(temp);
                 }
-
                 count++;
-                //end = count;
             }
-            //start = count;
             System.out.println(prop_index + " Count: " + count + " ItemxSimulation: " + ItemxSimulationList.size() + "  order: ");
         }
         System.out.println("- End Count: " + count);
         System.out.println("- Combined: " + combined_MTF);
-        //System.out.println("- Itemx Size: " + ItemxSimulationList.size());
+        System.out.println("- Itemx Size: " + ItemxSimulationList.size());
         System.out.println("- ThreadList: " + thread_list.size());
 
         start = 0;
@@ -1349,7 +1316,6 @@ import writers.WriteCsvTh;
                     start = start + partition;
                     end = start + partition;
                 }
-
             }
 
             ArrayList<TestVectorInformation> temp = new ArrayList<TestVectorInformation>(ItemxSimulationList.subList(start, end));
@@ -1362,11 +1328,10 @@ import writers.WriteCsvTh;
             Thread thread = new Thread(runnable);
             thread.setName(Integer.toString(threadItem.hashCode()));
             thread_list.add(thread);
-            System.out.println("                -Start: " + start + " End: " + end + "  ThreadItem: " + threadItem.getStartendPos() + " size inputss: " + threadItem.getThreadSimulatinArray().size());
-
+            System.out.println("\n x-x-x ->>>>>> " + i + " Start: " + start + " End: " + end + "  ThreadItem: " + threadItem.getStartendPos() + " size inputss: " + threadItem.getThreadSimulatinArray().size() + " real: " + temp.size());
 
         }
-
+        System.out.println("Signal to inject fault: " + this.signals_to_inject_faults);
             return thread_list;
     }
 
@@ -2021,9 +1986,9 @@ import writers.WriteCsvTh;
         this.sampleSize = sizeExasuticTest;
 
 
-        this.writeSimpleLogMultipleTransientFaultExaustive(option + "ExaustiveSimulation_Simple_Log_" +this.circuit.getName()+"_Threads-"+ this.threads +  "_sampleSize-" + this.sampleSize, formattedDate,  formattedDate2, timeElapsed_Instant);
+        this.writeSimpleLogMultipleTransientFaultExaustive(option + "ExaustiveCompleteSimulation_Simple_Log_" +this.circuit.getName()+"_Threads-"+ this.threads +  "_sampleSize-" + this.sampleSize, formattedDate,  formattedDate2, timeElapsed_Instant);
 
-        this.writeCsvFileCompleteThMTF("ExausticSimulation_"+this.circuit.getName()+"_Theads-"+ this.threads + "_sampleSize-" + this.sampleSize, itemx_list);
+        this.writeCsvFileCompleteThMTF("ExausticCompleteSimulation_"+this.circuit.getName()+"_Theads-"+ this.threads + "_sampleSize-" + this.sampleSize, itemx_list);
 
         Instant endTimelogGeneration = Instant.now();
 
