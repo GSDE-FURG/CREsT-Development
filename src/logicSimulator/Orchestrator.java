@@ -962,25 +962,40 @@ import writers.WriteCsvTh;
                 sum_up = sum_up + (sample * mtf_list.get(pos));
             }
 
+            while (sum_up < mtf_list.get(0)){  // In case disparity in sum up rounding
+                sum_up++;
+            }
+
             int sum = Math.round(sum_up);
             int least_to_complete = sample - sum;
+            float temp_sample = Math.round(mtf_list.get(0));
+            mtf_list.remove(0);
 
-            System.out.println("Difference ( 1 - " + sum_proportion + " ) = " + dif + "  - SUM: " + sum + "   least-to-complete: " + least_to_complete);
+            System.out.println("sum up: " + sum_up);
 
-            //Insert in simple faults
+            if(sum_up == temp_sample) { // 20k == 20k
+
+                System.err.println("- Warning:" + " based on your inputs: " + mtf_list + " the sum should be 1 (" + sum_proportion + "), although " +
+                        " in this case the procedure will complete this number of tests (" + least_to_complete + ") because the diference was (1 - " + sum_proportion + " ) = " + dif + " * " + temp_sample + " = " + least_to_complete);
+
+                System.out.println("- temp arraylist mtf orriginal " + m);
+                //Insert in simple faults
                 m.set(0, m.get(0) + least_to_complete);
-                System.out.println("m " + m);
+                System.out.println("- temp arraylist mtf " + m);
 
-            //Insert in medium faults
+                //Insert in medium faults
                 //m.set(m.size()/2, m.get(0) + least_to_complete);
                 //System.out.println("m " + m);
 
-            //Insert in Higher order faults
+                //Insert in Higher order faults
                 //m.set(m.size(), m.get(0) + least_to_complete);
                 //System.out.println("m " + m);
+            }
+        }else{
+            System.out.println("Proportion sum up is : " + sum_proportion);
         }
 
-        System.out.println("    MTF LIST INTEGER: " + m);
+        System.out.println("- MTF LIST: " + m);
 
         return m;
     }
@@ -1199,7 +1214,7 @@ import writers.WriteCsvTh;
 
     public List particionateMultipletransientFaultInjectionVectorPerThreadProportion(ArrayList <ArrayList<Integer>> ListInputVectors, ArrayList <Float> mtf_list) throws ScriptException, Exception{
 
-        System.out.println("\n\n         +++++++    Dev mode  ++++++");
+        System.out.println("\n\n         +++++++    Dev mode Percentage (Proportion mode)  ++++++");
         System.out.println("                       MTF LIST = " + mtf_list);
 
         List thread_list = new ArrayList();
@@ -1232,16 +1247,17 @@ import writers.WriteCsvTh;
        // if(sum_proportion == 1.0){   /// 100%
 
             int sample_base = Math.round(mtf_list.get(0));
-
+            /*
             if(mtf_list.size() > 0) {
                // mtf_list.remove(0);
             } else {
                 System.out.println("pass");
             }
+            */
 
             ArrayList <Integer> new_MTF = passProportionPercentage(mtf_list, sample_base);
 
-            System.out.println("               new MTF LIST " + new_MTF);
+            System.out.println("- new MTF LIST " + new_MTF);
 
             final ArrayList<Float> arrayList_mtf_original = new ArrayList<>(mtf_list); // Original ArrayList
 
@@ -2916,7 +2932,7 @@ import writers.WriteCsvTh;
             System.out.println(" ----------------------------------------------------------------------------------------------------------------------");
         }
         else{
-            System.err.println("Inputs inserted sum up 1 (100%) Commands: " + mtf_list);
+            System.err.println("- Inputs inserted sum up ("+sumProportionPercentage(mtf_list)+") above 1 (100%), these were the inserted commands: " + mtf_list);
         }
 
     }
