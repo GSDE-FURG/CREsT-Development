@@ -1261,7 +1261,6 @@ import writers.WriteCsvTh;
                 combined_MTF.add(base_sum);
             }
 
-
             for (int index = 0; index < new_MTF.get(prop_index); index++){
                 // For prop_index
 
@@ -1294,6 +1293,7 @@ import writers.WriteCsvTh;
             }
             System.out.println(prop_index + " Count: " + count + " ItemxSimulation: " + ItemxSimulationList.size() + "  order: ");
         }
+
         System.out.println("- End Count: " + count);
         System.out.println("- Combined: " + combined_MTF);
         System.out.println("- Itemx Size: " + ItemxSimulationList.size());
@@ -1331,7 +1331,7 @@ import writers.WriteCsvTh;
             System.out.println("\n x-x-x ->>>>>> " + i + " Start: " + start + " End: " + end + "  ThreadItem: " + threadItem.getStartendPos() + " size inputss: " + threadItem.getThreadSimulatinArray().size() + " real: " + temp.size());
 
         }
-        System.out.println("Signal to inject fault: " + this.signals_to_inject_faults);
+        //System.out.println("Signal to inject fault: " + this.signals_to_inject_faults);
             return thread_list;
     }
 
@@ -2807,7 +2807,7 @@ import writers.WriteCsvTh;
             //Collections.sort(random_input_vectors);
 
             ///
-            System.out.println(" ....... dev input vectors size: " + random_input_vectors.size());
+            //System.out.println(" ....... dev input vectors size: " + random_input_vectors.size());
 
             ArrayList<ArrayList<Integer>> ListInputVectors = this.splitInputPatternsInInt(random_input_vectors, this.probCircuit.getInputs().size());
 
@@ -2828,8 +2828,6 @@ import writers.WriteCsvTh;
             for (int i = 0; i < thread_list.size(); i++) {
                 thread_temp = (Thread) thread_list.get(i);
                 thread_temp.start();
-
-
             }
             /*Esperando termino das threads*/
             for (int i = 0; i < thread_list.size(); i++) {
@@ -2892,8 +2890,10 @@ import writers.WriteCsvTh;
             String time = "- Load Time : " + timeElapsed_loadTime + "(s) - Setup Time: " + timeElapsed_PrepareTime + "(s) - Threading Execution Time: " + timeElapsed_ThreadingTime
                     + "(s) - Log Generation: " + timeElapsed_logGeneration
                     + "(s) - Simulation Instant TimeElapsed: " + timeElapsed_Instant + " (s)";
-            System.out.println("- MTF order list: " + mtf_list
-            );
+
+           // ArrayList <Integer> new_MTF = passProportionPercentage(arrayList_mtf_original, sample);
+            System.out.println("- MTF order list: " + mtf_list);
+
             System.out.println("- Bitflip Counter: " + bitfipCcounter);
             System.out.println(time);
 

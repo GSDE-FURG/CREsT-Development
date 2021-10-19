@@ -1750,8 +1750,7 @@ import signalProbability.ProbCircuit;
 
         }
 
-            System.out.println(threadID +
-                    "NUMBER OF BITFLIPS: " + this.bitflipcounter);
+            System.out.println("-" + threadID + " NUMBER OF BITFLIPS: " + this.bitflipcounter);
 
         //this.settingFaultInjectionResults();
             this.settingFaultInjectionResultsMTF();
