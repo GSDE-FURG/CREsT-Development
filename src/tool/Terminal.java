@@ -101,15 +101,21 @@ class TerminalWrapper {
                 exhaustive.setDescription("This method simulates the fault injection campaign (Exhaustive method) " +
                         "- For Single Event Transient (SET) - Command: -mc_fault_injection <stdcell.genlig> <circuit.v> -exhaustive\n" +
                         "- For Multiple Event Transient (MET) * Note: This method consider (from 1 to signals size combination, in order to proceed the complete fault injection simulation " +
-                        "- Command: -mc_fault_injection <stdcell.genlig> <circuit.v> -exhaustive -complete");
+                                "- Command: -mc_fault_injection <stdcell.genlig> <circuit.v> -exhaustive -complete");
+
                 exhaustive.setRequired(false);
 
-                Option read_script = new Option("read_script", "rs", false, "Monte carlo fault injection");
+                Option read_script = new Option("read_script", "rs", false, "Read script to perform Monte Carlo Fault injection in batch mode");
+                read_script.setDescription("This method simulates the fault injection campaign (MC) " +
+                        "in reading a script. The script example is present in 'scripts/read_script_example.txt'");
                 read_script.setRequired(false);
 
 
-                Option exhaustiveOp = new Option("complete", "exh", true, "Monte carlo fault injection");
-                exhaustiveOp.setRequired(false);
+               Option exhaustiveOp = new Option("complete", "complete", false, "Monte carlo fault injection");
+                exhaustiveOp.setDescription("This method simulates the fault injection campaign (Exhaustive complete method) \n" + "- For Multiple Event Transient (MET) * Note: This method consider (from 1 to signals size combination, in order to proceed the complete fault injection simulation " +
+                "- Command: -mc_fault_injection <stdcell.genlig> <circuit.v> -exhaustive -complete");
+               exhaustiveOp.setRequired(false);
+
 
                 options.addOption(mc);
                 options.addOption(exhaustive);
@@ -177,7 +183,7 @@ class TerminalWrapper {
 
                 try {                                       // Procedure for Single and Multiple Fault Injection (Monte Carlo procedure)
                     cmd = parser.parse(options, args);
-                    if (cmd.hasOption("exhaustive")) {
+                    if (cmd.hasOption("exhaustive") || cmd.hasOption("complete")) {
                         int args_size = args.length;
 
                         String genlib = args[1];
