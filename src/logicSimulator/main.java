@@ -297,7 +297,17 @@ public class main{
             Orchestrator simulacaoMultithreading = new Orchestrator(this.threads, this.reliabilityConst, this.relativePath, this.genlib, this.relativePath + this.circuitList.get(i));
             //simulacaoMultithreading.PrintCircuitSpecs();
             //str = str + simulacaoMultithreading.PrintCircuitSpecs() + "\n";
+
             //simulacaoMultithreading.runMultipleFaultInjectionMultithreadingMonteCarlo(base, order, frequency,sampleSize, Signals); //ou Signals =  "ALL_SIGNALS" ou "INTERMEDIATE" ou "INTERMEDIATE_AND_OUTPUTS" ou "INPUTS" ou "INPUTS_OUTPUTS"
+
+            /*
+            ArrayList <Integer> teste = new ArrayList<>();
+            teste.add(20000);
+            teste.add(1000);
+            teste.add(15000);
+            teste.add(19999);
+            simulacaoMultithreading.runMultipleFaultInjectionMultithreadingMonteCarloSimulation(teste, Signals); //ou Signals =  "ALL_SIGNALS" ou "INTERMEDIATE" ou "INTERMEDIATE_AND_OUTPUTS" ou "INPUTS" ou "INPUTS_OUTPUTS"
+            */
 
             simulacaoMultithreading.runMultipleFaultInjectionMultithreadingMonteCarloSimulationProportion(sample, mtf_sizes, Signals); //ou Signals =  "ALL_SIGNALS" ou "INTERMEDIATE" ou "INTERMEDIATE_AND_OUTPUTS" ou "INPUTS" ou "INPUTS_OUTPUTS"
 

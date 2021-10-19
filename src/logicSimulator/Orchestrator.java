@@ -1230,59 +1230,145 @@ import writers.WriteCsvTh;
             partition =  (int) temp ;//(ints) Math.round(collapsed_faults/NThreads);
         }
 
-        int start = 0;
-        int end = partition;
+
 
         //HashMap  <Integer, multiple_faults_object> arraylist_mtf = new HashMap<>();
         sum_proportion = sumProportionPercentage(mtf_list);
         int sample_base = Math.round(mtf_list.get(0));
         ArrayList <Integer> new_MTF = passProportionPercentage(mtf_list, sample_base);
-        System.out.println("- new MTF LIST " + new_MTF);
+        System.out.println("- new MTF LIST " + new_MTF + "  size: " + new_MTF.size());
+
         final ArrayList<Float> arrayList_mtf_original = new ArrayList<>(mtf_list); // Original ArrayList
 
-        ArrayList<TestVectorInformation> ItemxSimulationList = new ArrayList<>();
-        ArrayList<Integer> inputVector = new ArrayList<>();
+        ArrayList <TestVectorInformation> listOflist = new ArrayList<>();
+
+        ArrayList <Integer> combined_MTF = new ArrayList<>();
+        combined_MTF.add(new_MTF.get(0));
+        int base_sum = new_MTF.get(0);
 
         //Loop for Single, Double or tripple
+        int start = 0;
+        int end = partition;
+
+        //System.out.println("");
+        ArrayList<TestVectorInformation> ItemxSimulationList = new ArrayList<>();
+
         for (int prop_index = 0; prop_index < new_MTF.size(); prop_index++) {
             System.out.println(new_MTF.get(prop_index));
-            for (int index = 0; index < new_MTF.get(prop_index); index++) {
 
+            if(prop_index >0){
+                base_sum = base_sum + new_MTF.get(prop_index);
+                combined_MTF.add(base_sum);
+            }
+
+
+            for (int index = 0; index < new_MTF.get(prop_index); index++){
                 // For prop_index
+
+                ArrayList<Integer> inputVector = new ArrayList<>();
                 inputVector = this.get_Input_Vectors(ListInputVectors, count); //input Test n
 
-                if (prop_index == 0){ // Single Transient Fault
-                    int SigIndex = this.sortRandomFaultInjection();
-                    TestVectorInformation temp = new TestVectorInformation(inputVector, this.signals_to_inject_faults.get(SigIndex), count );
-                    ItemxSimulationList.add(temp);
-                    System.out.println(". Injection Single Transient Fault (STF) number : " + count + " - Sig Index  temp: "+ temp.getMTF_PERSONAL_LIST_NODESINFO());
+                /*
+                if(count == end-1){
+                    ArrayList<TestVectorInformation> temp = new ArrayList<TestVectorInformation>(ItemxSimulationList.subList(start, end-1));
+                    LogicSimulator threadItem = new LogicSimulator(temp, this.circuit, this.cellLibrary, this.levelCircuit, start, end, this.genlib , this.circuitNameStr); // Thread contex info
+                    threadItem.setMode("Multiple");
+                    itemx_list.add(threadItem);
 
+                    Runnable runnable = threadItem;
+                    Thread thread = new Thread(runnable);
+                    thread.setName(Integer.toString(threadItem.hashCode()));
+                    thread_list.add(thread);
+
+                    System.out.println(" ~~~~~~~~~~ start: " + start + "  end: " + end + "                  - Thread id: " + threadItem.getThreadId() + "  Simulation Size: " + threadItem.getThreadSimulatinArray().size() + "  MTF: " + ItemxSimulationList.size() + "    Thread: " + thread_list.size() + "   real: " + temp.size());
+
+                    start = end;
+                    end = end + partition;
                 }
-                else{ // Double, Tripple
+                */
+
+                if (prop_index == 0){ // Single Transient Fault
+                    //inputVector = this.get_Input_Vectors(ListInputVectors, count); //input Test n
                     int SigIndex = this.sortRandomFaultInjection(); //int SigIndex = decide_Random_Signals_Contrains(Signals_CTE_ONE_ZERO);
+                    //TestVectorInformation temp = new TestVectorInformation(inputVector, this.signals_to_inject_faults.get(SigIndex), j + 1);
                     TestVectorInformation temp = new TestVectorInformation(inputVector, this.signals_to_inject_faults.get(SigIndex), count );
                     ArrayList <Integer> SigIndexList = new ArrayList<Integer>();
                     SigIndexList.add(SigIndex);
-                    for (int k = 1; k <= prop_index; k ++){
+                    ItemxSimulationList.add(temp);
 
+                   /// System.out.println("~ Injection Single TF number : " + count + " - Sig Index" + SigIndexList + "  temp: "+ temp.getMTFPERSONAL_LIST_Identities() + "  " +  temp.getSimulationIndex());
+
+
+                }
+                else{ // Double , Tripple
+                   // inputVector = this.get_Input_Vectors(ListInputVectors, count); //input Test n
+
+                    int SigIndex = this.sortRandomFaultInjection(); //int SigIndex = decide_Random_Signals_Contrains(Signals_CTE_ONE_ZERO);
+                    //TestVectorInformation temp = new TestVectorInformation(inputVector, this.signals_to_inject_faults.get(SigIndex), j + 1);
+                    TestVectorInformation temp = new TestVectorInformation(inputVector, this.signals_to_inject_faults.get(SigIndex), count );
+                    ArrayList <Integer> SigIndexList = new ArrayList<Integer>();
+                    SigIndexList.add(SigIndex);
+
+                    for (int k = 1; k <= prop_index; k ++){
+                        //System.out.println("  ~~ ~~~~ ~~  Injection MTF number : " + k);
                         //temp.setMultipleTransientFaultInjection( this.signals_to_inject_faults.get( this.sortRandomFaultInjection()));
                         int new_pos = sortExclusiveFaultIndex(SigIndexList, temp);
                         temp.setMultipleTransientFaultInjection( this.signals_to_inject_faults.get(new_pos));
                         SigIndexList.add(new_pos); // Do no reapet signals
 
                     }
-                    System.out.println("~ Injection MTF number : " + count + " - Sig Index" + SigIndexList + "  temp: "+ temp.getMTFPERSONAL_LIST_Identities());
+                    System.out.println("~ Injection MTF number : " + count + " - Sig Index" + SigIndexList + "  temp: "+ temp.getMTFPERSONAL_LIST_Identities()  + "  " +  temp.getSimulationIndex());
                     ItemxSimulationList.add(temp);
                 }
+
                 count++;
+                //end = count;
             }
+            //start = count;
             System.out.println(prop_index + " Count: " + count + " ItemxSimulation: " + ItemxSimulationList.size() + "  order: ");
         }
-        System.out.println(" End Count: " + count);
+        System.out.println("- End Count: " + count);
+        System.out.println("- Combined: " + combined_MTF);
+        //System.out.println("- Itemx Size: " + ItemxSimulationList.size());
+        System.out.println("- ThreadList: " + thread_list.size());
 
-        return thread_list;
+        start = 0;
+        end = partition;
+        for (int i = 0; i < this.threads; i++) { //Loop of simulations
+            
+            System.out.println("Start: " + start + " End: " + end);
+            if ((this.threads - 1) == (i)) {
+                start = end;
+                end = N;
+            } else {
+                if (i == 0) {
+                    //start = 1;
+                    start = 0;
+                    end = partition;
+                } else {
+                    start = start + partition;
+                    end = start + partition;
+                }
+
+            }
+
+            ArrayList<TestVectorInformation> temp = new ArrayList<TestVectorInformation>(ItemxSimulationList.subList(start, end));
+            LogicSimulator threadItem = new LogicSimulator(temp, this.circuit, this.cellLibrary, this.levelCircuit, start, end, this.genlib , this.circuitNameStr); // Thread contex info
+
+            threadItem.setMode("Multiple");
+            itemx_list.add(threadItem);
+
+            Runnable runnable = threadItem;
+            Thread thread = new Thread(runnable);
+            thread.setName(Integer.toString(threadItem.hashCode()));
+            thread_list.add(thread);
+            System.out.println("                -Start: " + start + " End: " + end + "  ThreadItem: " + threadItem.getStartendPos() + " size inputss: " + threadItem.getThreadSimulatinArray().size());
+
+
+        }
+
+            return thread_list;
     }
-
 
     public List particionateMultipletransientFaultInjectionVectorPerThread(ArrayList <ArrayList<Integer>> ListInputVectors,int period, int order, int frequency) throws ScriptException, Exception{
 
@@ -2753,10 +2839,10 @@ import writers.WriteCsvTh;
 
             ArrayList<String> random_input_vectors = this.generateInputVector("RANDOM"); // Generate Random Input Vectors or InputTrueTable
 
-            // Collections.sort(random_input_vectors);
+            //Collections.sort(random_input_vectors);
 
             ///
-            // System.out.println(random_input_vectors);
+            System.out.println(" ....... dev input vectors size: " + random_input_vectors.size());
 
             ArrayList<ArrayList<Integer>> ListInputVectors = this.splitInputPatternsInInt(random_input_vectors, this.probCircuit.getInputs().size());
 
@@ -2790,7 +2876,9 @@ import writers.WriteCsvTh;
 
             /* Compilando os resultados - Falhas detectadas Ne*/
             int bitfipCcounter = 0;
+
             for (int i = 0; i < this.itemx_list.size(); i++) {
+                System.out.println(" itemx_list: " + itemx_list.get(i) + " prop: " + itemx_list.get(i).getPropagatedFaults());
                 this.unmasked_faults = this.unmasked_faults + itemx_list.get(i).getPropagatedFaults();
                 bitfipCcounter = bitfipCcounter + itemx_list.get(i).bitflipcounter;
             }

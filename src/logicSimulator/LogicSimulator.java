@@ -128,6 +128,9 @@ import signalProbability.ProbCircuit;
                 this.cellLibrary.setPTMCells(new BigDecimal("0.9999"));
         
         }
+        public String getStartendPos(){
+          return ("Pos: " + this.startPos + " - " + this.endPosition);
+        }
        
         private void startSimulationFaultFree() throws IOException, WriteException{   
  
@@ -2492,7 +2495,6 @@ import signalProbability.ProbCircuit;
 
      public void setMode(String mode_var){
             this.mode = mode_var;
-
         }
 
         private  boolean calculateFaultFreeOutputGateValue(Cell cells, DepthGate gate,ArrayList <Signal> inputsSignals){
