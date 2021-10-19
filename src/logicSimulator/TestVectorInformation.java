@@ -28,6 +28,7 @@ public class TestVectorInformation {
     private long threadID;
 
     private boolean MTF;
+
     private final  ArrayList <Signal> MTF_FaultSignal_List;
 
     private final List <Signal> MTF_FaultSignal_List_thd = Collections.synchronizedList(new ArrayList<Signal>());
@@ -68,7 +69,7 @@ public class TestVectorInformation {
             
     }
     
-     public String getBitFlip(){
+    public String getBitFlip(){
             
             String bitflip;
             String r = "";
@@ -111,6 +112,7 @@ public class TestVectorInformation {
 
 
     }
+
     public String getBitFlipMTFPERSONAL_LIST(){
 
         String bitflip;
@@ -165,7 +167,6 @@ public class TestVectorInformation {
 
     }
 
-
     public synchronized List<Signal> getMTF_FaultSignal_List_thd() {
         return this.MTF_FaultSignal_List_thd;
     }
@@ -174,6 +175,7 @@ public class TestVectorInformation {
     {
         return this.MTF_PERSONAL_LIST;
     }
+
     public synchronized String getMTF_PERSONAL_LIST_NODESINFO()
     {
         String x = "";
@@ -184,17 +186,12 @@ public class TestVectorInformation {
         return x;
     }
 
-
-
-
     public synchronized void setFAULT_MTF_PERSONAL_LIST(int pos, int originalValue, ArrayList<Integer> input)
     {
        itemnize item = new itemnize(this.get_MTF_FaultSignal_List_thd().get(pos), this.get_MTF_FaultSignal_List_thd().get(pos).getId(), input);
        item.setOriginalValue(originalValue);
        this.MTF_PERSONAL_LIST.add(item);
     }
-
-
     public ArrayList <Signal> get_MTF_FaultSignal_List (){
         return this.MTF_FaultSignal_List;
      }
@@ -208,7 +205,6 @@ public class TestVectorInformation {
         return this.MTF_FaultSignal_List_Base;
     }
     */
-
     public boolean get_MTF_flag(){
         return this.MTF;
      }
@@ -218,9 +214,6 @@ public class TestVectorInformation {
         return this.MTF_FaultSignal_List_Extended;
     }
     */
-
-
-
      public void setMultipleTransientFaultInjection(Signal faultSignal){
          //SignalExtendedProperties x = new SignalExtendedProperties();
          //x.setSignal(faultSignal);
@@ -296,7 +289,7 @@ public class TestVectorInformation {
         return this.outputFreeFault;
     }
 
-    public int getPositionFaultSignalInMTFList(Signal f){
+     public int getPositionFaultSignalInMTFList(Signal f){
 
         for (int i = 0; i < this.MTF_FaultSignal_List.size(); i++) {
             if(this.MTF_FaultSignal_List.get(i).getId().equals(f.getId())){
@@ -307,7 +300,7 @@ public class TestVectorInformation {
         return -1;
     }
 
-    public int getPositionFaultSignalInMTFListThd(Signal f){
+     public int getPositionFaultSignalInMTFListThd(Signal f){
 
         for (int i = 0; i < this.get_MTF_FaultSignal_List_thd().size(); i++) {
             if(this.get_MTF_FaultSignal_List_thd().get(i).getId().equals(f.getId())){
