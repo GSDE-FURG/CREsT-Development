@@ -63,6 +63,7 @@ import signalProbability.ProbCircuit;
 
         /*new*/
         private Map <String, SensitiveCell> sensitive_cells = new HashMap<>();
+        private float sum_sensitive_cells_area;
 
         private int tempIndex;
         private String mode;
@@ -88,7 +89,9 @@ import signalProbability.ProbCircuit;
            
            this.linkedQueueFaultFree = new ConcurrentLinkedQueue<>(); 
            this.linkedQueueFault = new ConcurrentLinkedQueue<>(); 
-           this.faultSignalCuncorrentLinked = new ConcurrentLinkedQueue<>(); 
+           this.faultSignalCuncorrentLinked = new ConcurrentLinkedQueue<>();
+
+           this.sum_sensitive_cells_area = 0;
            
                 /*Reading CellLibrary*/
                 CellLibrary cellLib = new CellLibrary();
@@ -147,11 +150,16 @@ import signalProbability.ProbCircuit;
 
         private void startCalculationSensitiveAreas() throws IOException, WriteException{
 
-            for (int i = 0; i < this.threadSimulationList.size(); i++) {
+            for (int i = 0; i < this.threadSimulationList.size(); i++){
                 this.insertInputVectors("selected", this.threadSimulationList.get(i).getinputVector());
                 this.propagateInputVectorsForSensitiveAreaCalculation(this.threadSimulationList.get(i).getSimulationIndex(), this.threadSimulationList.get(i).getinputVector(), this.threadSimulationList.get(i));
                 //this.getPropagateFaultFreeResults( this.threadSimulationList.get(i).getinputVector(), this.threadSimulationList.get(i).getSimulationIndex(), this.threadSimulationList.get(i), i+1);
+                System.out.println("------------------------- vec: " +  this.threadSimulationList.get(i).getSimulationIndex() +  " sum: " + this.threadSimulationList.get(i).getSum_sensitive_cells_area() + "--------------------------------\n");
             }
+
+        }
+        public List <TestVectorInformation> get_threadSimulationList(){
+            return this.threadSimulationList;
         }
 
         private void startSimulationFaultFreeMTF() throws IOException, WriteException{
@@ -293,7 +301,7 @@ import signalProbability.ProbCircuit;
                     DepthGate gate = (DepthGate) object;
                     //gate.getGate().getType()
                     //System.out.println("              - Gate: "+ gatesInThisLevel.get(k)  + "  type: "+ gate.getGate().getType());
-                    boolean outputGate = this.calculateFaultFreeOutputGateValue(gate.getGate().getType(), gate, gate.getGate().getInputs());  //Method calc the output from the gate
+                    boolean outputGate = this.calculateFaultFreeOutputGateValueForSensitiveAreaCalculation(gate.getGate().getType(), gate, gate.getGate().getInputs(), thread_item);  //Method calc the output from the gate
 
 
                     for (int s = 0; s < gate.getGate().getOutputs().size(); s++) {
@@ -2652,6 +2660,96 @@ import signalProbability.ProbCircuit;
          
          return (boolean) output;
      }
+
+     private  boolean calculateFaultFreeOutputGateValueForSensitiveAreaCalculation(Cell cells, DepthGate gate,ArrayList <Signal> inputsSignals, TestVectorInformation thread_item){
+
+        Map<ArrayList<Boolean>, Boolean> comb = cells.getComb();
+        ArrayList <Boolean> input = new ArrayList<>();
+        ArrayList <Integer> signals = new ArrayList<>();
+        String concat_inputs = "";
+
+        for (int index = 0; index < inputsSignals.size(); index++) {
+
+            signals.add(inputsSignals.get(index).getLogicValue());
+
+            if(inputsSignals.get(index).getLogicValue() == 0){
+                input.add(Boolean.FALSE);
+                concat_inputs = concat_inputs + "0";
+            }
+            if(inputsSignals.get(index).getLogicValue() == 1){
+                input.add(Boolean.TRUE);
+                concat_inputs = concat_inputs + "1";
+            }
+        }
+
+
+
+         //System.out.println("Concat signals: " + concat_inputs);
+
+        //System.out.println("                                Input Signal: " + inputsSignals + " v: "+input);
+        Object output = "stuck";
+
+        String r = "";
+
+        String gate_temp = gate.getGate().getType().toString();
+        //System.out.println("Gate: " + gate_temp);
+
+        if(gate_temp.equals("ZERO")){
+            //System.out.println("  OPS ------------------------------ ZERO    " + gate_temp );
+            r = "0";
+            //boolean saida =
+            return Boolean.FALSE;
+        }
+        if(gate_temp.equals("ONE")){
+            //System.out.println("  OPS ------------------------------ OONE    " + gate_temp );
+            r = "1";
+            //boolean saida =
+            return Boolean.TRUE;
+        }
+
+        for (Map.Entry<ArrayList<Boolean>, Boolean> entry : comb.entrySet()){
+            if(entry.getKey().equals(input)){
+                //System.out.println("Input Finded: " + entry.getKey() + " output " + entry.getValue());
+                //Gate k = null;
+                boolean x = entry.getValue();
+                output = x;
+                r = output.toString();
+                if(x == true){
+                    r = "1";
+
+
+                    //¹¹output = x;
+                }
+                if(x == false){
+                    r = "0";
+                    //output = x;
+                }
+                //output = x;
+            }
+        }
+        if(!output.equals("stuck")){
+            //System.out.println("   xxaxaxaxa            Gate: " + gate.getGate() + "(" +cells.getName() + ") inputSignals: " + gate.getGate().getInputs() + " -> values: "  + signals + " ~ " + input  + " -> Output " + gate.getGate().getOutputs() + " is: " + r + " ["+ output +"] ------ \n");
+        }else{
+            System.out.println("ERROR stuck !!!!! out : " + output + "  GATE: " + gate.getGate() + "  -- INFO type : " + gate.getGate().getType() );
+        }
+
+         /* Calculate Sensitive Area of This Gate */
+            SensitiveCell cell = this.sensitive_cells.get(gate.getGate().getType()+"_"+concat_inputs);
+
+            if((cell != null)){
+
+                //this.sum_sensitive_cells_area = this.sum_sensitive_cells_area + Float.parseFloat(cell.getSensitive_are());
+                thread_item.sum_sensitive_cells_area(Float.parseFloat(cell.getSensitive_are()));
+                System.out.println("idx: " + thread_item.getSimulationIndex() + "  invec: " + thread_item.getinputVector() + " gateid: " + gate.getGate().getId() + " gate: " + gate.getGate().getOutputs() + " sigs: " + gate.getGate().getInputs() +  " CEll founded: " + cell.getCell_id() + " input: " +cell.getInput_vec()  + " out: " + output + " sensitive area: "+ cell.getSensitive_are() + " sum: " + thread_item.getSum_sensitive_cells_area());
+            }
+
+            //System.out.println("Gate: " + gate.getGate().getType() + " inputSigs: " + inputsSignals + " inputs: " + concat_inputs + "  Output: " + output);
+
+         /* Calculate Sensitive Area of This Gate */
+
+        return (boolean) output;
+    }
+
 
     private  boolean calculateFaultFreeOutputGateValueMTF(Cell cells, DepthGate gate,ArrayList <Signal> inputsSignals, TestVectorInformation thread_item){
 

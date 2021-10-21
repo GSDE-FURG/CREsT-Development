@@ -311,7 +311,10 @@ public class main{
 
             simulacaoMultithreading.runMultipleFaultInjectionMultithreadingMonteCarloSimulationProportion(sample, mtf_sizes, Signals); //ou Signals =  "ALL_SIGNALS" ou "INTERMEDIATE" ou "INTERMEDIATE_AND_OUTPUTS" ou "INPUTS" ou "INPUTS_OUTPUTS"
 
-            simulacaoMultithreading.runCalculationSensitiveAreas(Signals, "teste/lookup_table.csv");
+
+            Orchestrator simulacaoMultithreadingCalculateSensitiveArea = new Orchestrator(this.threads, this.reliabilityConst, this.relativePath, this.genlib, this.relativePath + this.circuitList.get(i));
+
+            simulacaoMultithreadingCalculateSensitiveArea.runCalculationSensitiveAreas(Signals, "teste/lookup_table.csv");
 
             this.OUTPUT_INFO = simulacaoMultithreading.getFRM(" MTFT Sample (Monte Carlo = N)");
         }

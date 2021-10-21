@@ -27,6 +27,8 @@ public class TestVectorInformation {
     private int index;
     private long threadID;
 
+    private float sum_sensitive_cells_area;
+
     private boolean MTF;
 
     private final  ArrayList <Signal> MTF_FaultSignal_List;
@@ -50,7 +52,7 @@ public class TestVectorInformation {
             this.allfaultSignals = new ArrayList<>();
 
             /* new */
-
+            this.sum_sensitive_cells_area = 0;
 
             this.MTF = false;
             this.MTF_FaultSignal_List = new ArrayList<>();
@@ -68,7 +70,15 @@ public class TestVectorInformation {
             //this.MTF_FaultSignal_List_Extended.add(x);
             
     }
-    
+
+    public void sum_sensitive_cells_area(float cells_sensitive_area){
+        this.sum_sensitive_cells_area = this.sum_sensitive_cells_area + cells_sensitive_area;
+    }
+
+    public float getSum_sensitive_cells_area() {
+        return this.sum_sensitive_cells_area;
+    }
+
     public String getBitFlip(){
             
             String bitflip;

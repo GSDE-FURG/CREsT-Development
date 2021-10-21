@@ -1581,7 +1581,7 @@ import writers.WriteCsvTh;
 
             for (int j = start; j < end ; j++){
 
-                for (int aux = 0; aux < this.signals_to_inject_faults.size(); aux++) {
+                for (int aux = 0; aux < 1; aux++) {
 
                     inputVector = this.get_Input_Vectors(ListInputVectors, j); //input Test n
 
@@ -1590,7 +1590,7 @@ import writers.WriteCsvTh;
                     TestVectorInformation temp = new TestVectorInformation(inputVector, this.signals_to_inject_faults.get(SigIndex), j+1);
                     ItemxSimulationList.add(temp);
 
-                    System.out.println("Vec: " + inputVector + " Fault Signal: " +  this.signals_to_inject_faults.get(SigIndex));
+                    System.out.println(j + " Vec: " + inputVector + " Fault Signal: " +  this.signals_to_inject_faults.get(SigIndex));
                 }
 
             }
@@ -3102,13 +3102,13 @@ import writers.WriteCsvTh;
 
         this.signals_to_inject_faults = this.signalsToInjectFault(option); // Consider all signals to fault inject
 
-        sizeExasuticTest = (this.sampleSize * this.signals_to_inject_faults.size());
+        sizeExasuticTest = this.sampleSize;//(this.sampleSize * this.signals_to_inject_faults.size());
 
         ArrayList <String> random_input_vectors =  this.generateInputVector("TRUE_TABLE"); //this.calcInputTableVector(this.probCircuit.getInputs().size(), this.sampleSize);
 
         ArrayList <ArrayList<Integer>> ListInputVectors =  this.splitInputPatternsInInt(random_input_vectors, this.probCircuit.getInputs().size());
 
-        //System.out.println("LIST:::::: "+ ListInputVectors);
+        System.out.println("LIST:::::: "+ ListInputVectors.size());
 
         List thread_list = particionateExausticVectorForSensitiveAreas(ListInputVectors, sensitive_cells);  // TESTE ALL GATES ///particionateVectorPerThread(ListInputVectors); // x - vectors per thread
 
@@ -3131,6 +3131,14 @@ import writers.WriteCsvTh;
         for (int i=0; i < this.itemx_list.size() ; i++) {
             this.unmasked_faults = this.unmasked_faults +  itemx_list.get(i).getPropagatedFaults();
         }
+        for (int i = 0; i < this.itemx_list.size(); i++) {
+            List <TestVectorInformation> x =  this.itemx_list.get(i).get_threadSimulationList();
+            for (int j = 0; j < x.size(); j++) {
+                System.out.println(" index: " + x.get(j).getSimulationIndex() + " vec: " + x.get(j).getinputVector() + " sensitive area sum: " + x.get(j).getSum_sensitive_cells_area() );
+            }
+        }
+
+        //System.out.println("SIZE: " + this.itemx_list.size());
 
         /*circuit reliability SER (Soft Error Rate)*/
         this.circuitReliaibility = (float) (1.0 - ((float) this.unmasked_faults / (float) sizeExasuticTest));
