@@ -141,6 +141,14 @@ import signalProbability.ProbCircuit;
             }  
         }
 
+        private void startCalculationSensitiveAreas() throws IOException, WriteException{
+
+            for (int i = 0; i < this.threadSimulationList.size(); i++) {
+                this.insertInputVectors("selected", this.threadSimulationList.get(i).getinputVector());
+                this.propagateInputVectors(this.threadSimulationList.get(i).getSimulationIndex(), this.threadSimulationList.get(i).getinputVector(), this.threadSimulationList.get(i));
+                //this.getPropagateFaultFreeResults( this.threadSimulationList.get(i).getinputVector(), this.threadSimulationList.get(i).getSimulationIndex(), this.threadSimulationList.get(i), i+1);
+            }
+        }
 
         private void startSimulationFaultFreeMTF() throws IOException, WriteException{
 
@@ -258,6 +266,84 @@ import signalProbability.ProbCircuit;
            
          
      }
+
+
+    private  void propagateInputVectorsForSensitiveAreaCalculation(int testNumber, ArrayList <Integer> vector, TestVectorInformation thread_item) throws IOException, WriteException{
+
+        this.threadID = (long) Thread.currentThread().getId();
+        thread_item.setThreadID(this.threadID);
+
+        //System.out.println("-> Propagating testNumber(" + testNumber + ")" + " - at Thread_ID - " + this.threadID );
+        //System.out.println("  Vector: " + vector);
+        ArrayList <GateLevel> gatesLevels = this.levelCircuit.getGateLevels();
+
+        for (int j = 0; j < gatesLevels.size(); j++) {
+
+            ArrayList <Object> gatesInThisLevel = gatesLevels.get(j).getGates();
+
+            for (int k = 0; k < gatesInThisLevel.size(); k++) {
+                String AwnsString = gatesInThisLevel.get(k).getClass().toString();
+                //System.out.println("Aws: "+ AwnsString);
+                if(AwnsString.equals("class levelDatastructures.DepthGate")){
+                    Object object = gatesInThisLevel.get(k);
+                    DepthGate gate = (DepthGate) object;
+                    //gate.getGate().getType()
+                    //System.out.println("              - Gate: "+ gatesInThisLevel.get(k)  + "  type: "+ gate.getGate().getType());
+                    boolean outputGate = this.calculateFaultFreeOutputGateValue(gate.getGate().getType(), gate, gate.getGate().getInputs());  //Method calc the output from the gate
+
+
+                    for (int s = 0; s < gate.getGate().getOutputs().size(); s++) {
+
+                        Signal sig = gate.getGate().getOutputs().get(s);
+
+                        //System.out.println(faultSig+" Sig EQUAL "+sig);
+
+                        if(outputGate == true){    //Saida do GATE  = 1
+                            thread_item.setSignalOriginalValue(1);
+
+
+                            //sig.setLogicValue(1);
+                            gate.getGate().getOutputs().get(s).setOriginalLogicValue(1);
+                            gate.getGate().getOutputs().get(s).setLogicValue(1);
+                            gate.getGate().getOutputs().get(s).setLogicValueBoolean(Boolean.TRUE);
+
+                                /*
+                                if(sig.getId().equals(faultSig.getId())){
+                                   // System.out.println("@ "+faultSig+" Sig EQUAL "+sig);
+                                    faultSig.setOriginalLogicValue(1);
+                                }
+                                */
+                        }
+                        else{
+                            thread_item.setSignalOriginalValue(0);
+                            //sig.setLogicValue(0);
+                            gate.getGate().getOutputs().get(s).setOriginalLogicValue(0);
+                            gate.getGate().getOutputs().get(s).setLogicValue(0);
+                            gate.getGate().getOutputs().get(s).setLogicValueBoolean(Boolean.FALSE);
+
+                                /*
+                                if(sig.getId().equals(faultSig.getId())){
+                                    //System.out.println("@ "+faultSig+" Sig EQUAL "+sig);
+                                    faultSig.setOriginalLogicValue(0);
+                                }
+                                */
+                        }
+                            /*
+                             System.out.println("              - Gate: "+ gatesInThisLevel.get(k)
+                                     +  "  type: "+ gate.getGate().getType()
+                                     +  " - Inputs: " + gate.getGate().getInputs().get(0) + " value: " + gate.getGate().getInputs().get(0).getLogicValue()
+                                     +  " - Inputs: " + gate.getGate().getInputs().get(1)+ " value: " + gate.getGate().getInputs().get(1).getLogicValue()
+                                     +  "              - output: " + sig.getOriginalLogicValue());
+                            */
+                    }
+                }
+            }
+
+        }
+
+
+    }
+
 
     private  void propagateInputVectorsMTF(int testNumber, ArrayList <Integer> vector, TestVectorInformation thread_item) throws IOException, WriteException{
 
@@ -1979,9 +2065,6 @@ import signalProbability.ProbCircuit;
             return (boolean) output;
         }
 
-
-
-
         //Compara os sinais da lista de falhas com sinais de entrada da porta lógica
     private  boolean calculateOutputFacultInjectionGateValueMultipleFaultInjectionV2NEWMODE(Cell cells, DepthGate gate, ArrayList <Signal> inputsSignals, TestVectorInformation thread_item){
 
@@ -2659,6 +2742,16 @@ import signalProbability.ProbCircuit;
 
             switch (this.mode){
 
+                case ("Sensitive_Area"):
+                    System.out.println("Calculate Sensitive Area");
+                    try {
+                        startCalculationSensitiveAreas();
+                    }
+                    catch (IOException | WriteException ex) {
+                        Logger.getLogger(LogicSimulator.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                    break;
+
                 case ("Single"):
                     System.out.println("Single Transient Event - SET");
                     try {
@@ -2675,6 +2768,8 @@ import signalProbability.ProbCircuit;
                 case ("Multiple"):
                     System.out.println("Multiple Transient Event - SET");
                     try {
+                        //caulculate Sensitive Areas from csv file
+
                         startSimulationFaultFreeMTF();
                         startSimulationMultipleFaultInjection();
                     } catch (IOException | WriteException ex) {

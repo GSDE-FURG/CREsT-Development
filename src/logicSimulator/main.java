@@ -311,6 +311,7 @@ public class main{
 
             simulacaoMultithreading.runMultipleFaultInjectionMultithreadingMonteCarloSimulationProportion(sample, mtf_sizes, Signals); //ou Signals =  "ALL_SIGNALS" ou "INTERMEDIATE" ou "INTERMEDIATE_AND_OUTPUTS" ou "INPUTS" ou "INPUTS_OUTPUTS"
 
+            simulacaoMultithreading.runCalculationSensitiveAreas(Signals, "teste/lookup_table.csv");
 
             this.OUTPUT_INFO = simulacaoMultithreading.getFRM(" MTFT Sample (Monte Carlo = N)");
         }
