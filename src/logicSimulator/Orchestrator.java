@@ -3128,9 +3128,9 @@ import writers.WriteCsvTh;
         }
 
         /* Compilando os resultados - Falhas detectadas Ne*/
-        for (int i=0; i < this.itemx_list.size() ; i++) {
-            this.unmasked_faults = this.unmasked_faults +  itemx_list.get(i).getPropagatedFaults();
-        }
+        //for (int i=0; i < this.itemx_list.size() ; i++) {
+        //    this.unmasked_faults = this.unmasked_faults +  itemx_list.get(i).getPropagatedFaults();
+        //}
         for (int i = 0; i < this.itemx_list.size(); i++) {
             List <TestVectorInformation> x =  this.itemx_list.get(i).get_threadSimulationList();
             for (int j = 0; j < x.size(); j++) {
@@ -3141,7 +3141,7 @@ import writers.WriteCsvTh;
         //System.out.println("SIZE: " + this.itemx_list.size());
 
         /*circuit reliability SER (Soft Error Rate)*/
-        this.circuitReliaibility = (float) (1.0 - ((float) this.unmasked_faults / (float) sizeExasuticTest));
+       // this.circuitReliaibility = (float) (1.0 - ((float) this.unmasked_faults / (float) sizeExasuticTest));
 
         //System.out.println("-> Umasked Faults: " + this.unmasked_faults);
         //System.out.println("-> Sample: " + sizeExasuticTest);
