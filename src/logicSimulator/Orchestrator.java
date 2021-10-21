@@ -11,6 +11,7 @@ import datastructures.Circuit;
 import datastructures.Gate;
 import datastructures.Signal;
 
+import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -1528,7 +1529,7 @@ import writers.WriteCsvTh;
 
     }
 
-    public List particionateExausticVectorForSensitiveAreas(ArrayList <ArrayList<Integer>> ListInputVectors) throws ScriptException, Exception{
+    public List particionateExausticVectorForSensitiveAreas(ArrayList <ArrayList<Integer>> ListInputVectors,  Map <String, SensitiveCell> sensitive_cells) throws ScriptException, Exception{
 
         System.out.println("- Sensitive Area inputs ...");
 
@@ -1596,6 +1597,7 @@ import writers.WriteCsvTh;
 
             LogicSimulator threadItem = new LogicSimulator(ItemxSimulationList, this.circuit, this.cellLibrary, this.levelCircuit, start, end, this.genlib , this.circuitNameStr); // Thread contex info
             threadItem.setMode("Sensitive_Area");
+            threadItem.setSensitiveCellsMap(sensitive_cells);
             itemx_list.add(threadItem);
 
             Runnable runnable = threadItem;
@@ -2993,15 +2995,52 @@ import writers.WriteCsvTh;
 
     }
 
-    //public void runCalculationSensitiveAreas
+    public Map<String, SensitiveCell> readCsvFileAndMapSensitiveCellsArea(String input, String comma){
+
+
+            String line = "";
+
+            String outputString;
+
+            //String ArrayCsv[] = new String[4];
+
+            Map<String, SensitiveCell> sensitive_cells = new HashMap<>();
+
+            try (BufferedReader br = new BufferedReader(new FileReader(input))) {
+
+                //Para cada linea no vacia
+                for (int i = 0; (line = br.readLine()) != null ; i++) {
+
+                    String[] table = line.split(comma);
+
+                    String concat = table[0]+"_"+table[1];
+
+                    outputString = "Cell " + table[0] + " Vec = " + table[1]+ " , Sensitive_Area " + table[2];
+
+                    SensitiveCell cell = new SensitiveCell(concat, table[1], table[2]);
+
+                    sensitive_cells.put(concat, cell);
+
+                    System.out.println(line + " splitted " + outputString);
+
+                }
+            } catch (IOException e) {
+                System.out.println("Error al leer .csv");
+                e.printStackTrace();
+            }
+            return sensitive_cells;
+    }
+
     public void runCalculationSensitiveAreas(String option, String file) throws IOException, Exception{ //Test All possibilities
-        System.out.println("File: " + file);
-        file = "teste\\lookup_table.csv";
-        System.out.println("File: " + file);
-
-
-
         System.out.println(" ----- Calculate Sensitive Areas -------");
+            System.out.println("File: " + file);
+            //file = "teste\\lookup_table.csv";
+            //System.out.println("File: " + file);
+
+        Map <String, SensitiveCell> sensitive_cells = readCsvFileAndMapSensitiveCellsArea(file, ",");
+
+        System.out.println("Sensitive Cells: " + sensitive_cells);
+
         long loadTimeStart = System.nanoTime();//System.currentTimeMillis();
 
         LocalDateTime myDateObj = LocalDateTime.now();
@@ -3071,7 +3110,7 @@ import writers.WriteCsvTh;
 
         //System.out.println("LIST:::::: "+ ListInputVectors);
 
-        List thread_list = particionateExausticVectorForSensitiveAreas(ListInputVectors);  // TESTE ALL GATES ///particionateVectorPerThread(ListInputVectors); // x - vectors per thread
+        List thread_list = particionateExausticVectorForSensitiveAreas(ListInputVectors, sensitive_cells);  // TESTE ALL GATES ///particionateVectorPerThread(ListInputVectors); // x - vectors per thread
 
         long propagateTimeStart = System.nanoTime();
 
@@ -3096,9 +3135,9 @@ import writers.WriteCsvTh;
         /*circuit reliability SER (Soft Error Rate)*/
         this.circuitReliaibility = (float) (1.0 - ((float) this.unmasked_faults / (float) sizeExasuticTest));
 
-        System.out.println("-> Umasked Faults: " + this.unmasked_faults);
-        System.out.println("-> Sample: " + sizeExasuticTest);
-        System.out.println("-> SER : " + this.circuitReliaibility);
+        //System.out.println("-> Umasked Faults: " + this.unmasked_faults);
+        //System.out.println("-> Sample: " + sizeExasuticTest);
+        //System.out.println("-> SER : " + this.circuitReliaibility);
 
 
         long propagateTimeEnd = System.nanoTime();

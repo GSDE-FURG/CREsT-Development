@@ -11,10 +11,7 @@ import datastructures.Circuit;
 import datastructures.Signal;
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.logging.Level;
@@ -63,6 +60,9 @@ import signalProbability.ProbCircuit;
         private final ArrayList <String> faultSignalArray = new ArrayList<>();
         private ConcurrentLinkedQueue<String> faultSignalCuncorrentLinked = new ConcurrentLinkedQueue<>();;
         private final ArrayList <String> faultSignalBitFlipArray = new ArrayList<>();
+
+        /*new*/
+        private Map <String, SensitiveCell> sensitive_cells = new HashMap<>();
 
         private int tempIndex;
         private String mode;
@@ -128,6 +128,10 @@ import signalProbability.ProbCircuit;
                 this.cellLibrary.setPTMCells(new BigDecimal("0.9999"));
         
         }
+        public void setSensitiveCellsMap(Map <String, SensitiveCell> sensitive_cells){
+            this.sensitive_cells = sensitive_cells;
+        }
+
         public String getStartendPos(){
           return ("Pos: " + this.startPos + " - " + this.endPosition);
         }
@@ -145,7 +149,7 @@ import signalProbability.ProbCircuit;
 
             for (int i = 0; i < this.threadSimulationList.size(); i++) {
                 this.insertInputVectors("selected", this.threadSimulationList.get(i).getinputVector());
-                this.propagateInputVectors(this.threadSimulationList.get(i).getSimulationIndex(), this.threadSimulationList.get(i).getinputVector(), this.threadSimulationList.get(i));
+                this.propagateInputVectorsForSensitiveAreaCalculation(this.threadSimulationList.get(i).getSimulationIndex(), this.threadSimulationList.get(i).getinputVector(), this.threadSimulationList.get(i));
                 //this.getPropagateFaultFreeResults( this.threadSimulationList.get(i).getinputVector(), this.threadSimulationList.get(i).getSimulationIndex(), this.threadSimulationList.get(i), i+1);
             }
         }
@@ -2584,6 +2588,7 @@ import signalProbability.ProbCircuit;
                 Map<ArrayList<Boolean>, Boolean> comb = cells.getComb();
                 ArrayList <Boolean> input = new ArrayList<>();
                 ArrayList <Integer> signals = new ArrayList<>();
+
                 for (int index = 0; index < inputsSignals.size(); index++) {
                        
                         
@@ -2743,7 +2748,7 @@ import signalProbability.ProbCircuit;
             switch (this.mode){
 
                 case ("Sensitive_Area"):
-                    System.out.println("Calculate Sensitive Area");
+                    System.out.println(" ~~~~~~ Calculate Sensitive Area ~~~~~~");
                     try {
                         startCalculationSensitiveAreas();
                     }
