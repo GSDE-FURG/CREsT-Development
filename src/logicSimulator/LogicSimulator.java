@@ -2874,7 +2874,7 @@ import signalProbability.ProbCircuit;
                     break;
 
                 case ("Multiple"):
-                    System.out.println("Multiple Transient Event - SET");
+                    //System.out.println("Multiple Transient Event - SET");
                     try {
                         //caulculate Sensitive Areas from csv file
 

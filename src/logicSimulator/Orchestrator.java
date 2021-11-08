@@ -2824,7 +2824,8 @@ import writers.WriteCsvTh;
 
     public void runMultipleFaultInjectionMultithreadingMonteCarloSimulationProportion(int sample, ArrayList <Float> mtf_list, String option) throws IOException, Exception{
 
-        if (sumProportionPercentage(mtf_list) == 1) {  // 100%
+        System.out.println("SUM PROPORTION: " + sumProportionPercentage(mtf_list));
+        if (sumProportionPercentage(mtf_list) == 1.0) {  // 100%
 
             System.out.println(" ----- Monte Carlo version  for Multiple Transient Fault Injection -------");
 
@@ -2858,7 +2859,7 @@ import writers.WriteCsvTh;
             this.verilog_circuit = verilog_circuit;
             /*Circuit linked to verilog_circuit - init circuit*/
             this.circuit = verilog_circuit.getCircuit();
-            System.out.println("    ... Reading verilog " + " at -> " + this.circuitNameStr + " ... ok");
+
             //System.out.println("Patterns : " + this.verilog_circuit.getGatePattern());
 
 
@@ -2987,7 +2988,7 @@ import writers.WriteCsvTh;
             this.Performance_Time = "Simulation started at: " + formattedDate
                     + " and finished at: " + formattedDate2;
             this.sampleSize = N;
-            System.out.println(" ----------------------------------------------------------------------------------------------------------------------");
+            System.out.println(" ----------------------------------------------------------------------------------------------------------------------\n\n...");
         }
         else{
             System.err.println("- Inputs inserted sum up ("+sumProportionPercentage(mtf_list)+") above 1 (100%), these were the inserted commands: " + mtf_list);
