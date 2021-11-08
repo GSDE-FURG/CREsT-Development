@@ -46,11 +46,11 @@ public class main{
              int sampleSizeMonteCarlo = 2000;
                      
              String constReliability = "0.9999"; //Used for internal structures
-             String relativePath = "teste/";
+             String relativePath = "circuitos/min/";
              
              //String genlib =  relativePath  + "lib_basic_no_cost.genlib";
             
-             String genlib =  relativePath  + "cadence.genlib";
+             String genlib =  relativePath  + "lib_min_no_cost.genlib"; //"cadence.genlib";
              
              main experimento = new main(threads, constReliability, relativePath, genlib);
              
@@ -62,14 +62,20 @@ public class main{
              
             //experimento.multithreadingSimulationExaustic();
            //experimento.multithreadingSimulation("ALL_SIGNALS");
-            experimento.monteCarloSimulation(sampleSizeMonteCarlo, "ALL_SIGNALS");
+            //experimento.monteCarloSimulation(sampleSizeMonteCarlo, "ALL_SIGNALS");
+
+            ArrayList<Integer> mtf_sizes = new ArrayList<>();
+            int sample = 20000;
+            mtf_sizes.add((int) (sample *0.5));
+            mtf_sizes.add((int) (sample * 0.05));
+            mtf_sizes.add((int) (sample * 0.005));
+            System.out.println(mtf_sizes);
+            experimento.monteCarloSimulationMultipleTransientFaultsNew(mtf_sizes, "ALL_SIGNALS");
 
 
              
             // String op = "full+xor";
-             
             // experimento.fooAlot("Resultados - Simulação - Diferentes Áreas/" + op);
-             
              //experimento.fooExecutionTransistors();
              
             
@@ -78,9 +84,7 @@ public class main{
              
              /*
              experimento.readResultsInLot("Resultados - Todas as simulações - 5 bibliotecas - ISCAS85/min", "ALL_SIGNALS");
-             
              experimento.readResultsInLot("Resultados - Todas as simulações - 5 bibliotecas - ISCAS85/min", "INTERMEDIATE_AND_OUTPUTS");
-             
              experimento.readResultsInLot("Resultados - Todas as simulações - 5 bibliotecas - ISCAS85/min", "INTERMEDIATE_Multithreading_");
              */
              
@@ -232,11 +236,11 @@ public class main{
             for (int i = 0; i < this.circuitList.size(); i++) {
 
                 //Exaustic mode for debug
-                Orchestrator simulacaoMultithreading_debug = new Orchestrator(this.threads, this.reliabilityConst, this.relativePath, this.genlib, this.relativePath + this.circuitList.get(i));
+               // Orchestrator simulacaoMultithreading_debug = new Orchestrator(this.threads, this.reliabilityConst, this.relativePath, this.genlib, this.relativePath + this.circuitList.get(i));
 
                 //simulacaoMultithreading_debug.runMultithreadingExausticSimulation("ALL_SIGNALS");
 
-                simulacaoMultithreading_debug.runMultithreadingExausticSimulationComplete("ALL_SIGNALS");
+               // simulacaoMultithreading_debug.runMultithreadingExausticSimulationComplete("ALL_SIGNALS");
 
                     //
                 // double x = 0.9999;
@@ -280,7 +284,7 @@ public class main{
 
             //simulacaoMultithreading_debug.runMultithreadingExausticSimulation("ALL_SIGNALS"); //STF
 
-            //simulacaoMultithreading_debug.runMultithreadingExausticSimulationComplete("ALL_SIGNALS"); //MTF
+            simulacaoMultithreading_debug.runMultithreadingExausticSimulationComplete("ALL_SIGNALS"); //MTF
 
             //
             // double x = 0.9999;
@@ -384,26 +388,26 @@ public class main{
         }
 
         private List<String> readFile(String filename) 
-{
-                    List<String> records = new ArrayList<String>();
-                    try
-                    {
-                      BufferedReader reader = new BufferedReader(new FileReader(filename));
-                      String line;
-                      while ((line = reader.readLine()) != null)
-                      {
-                        records.add(line);
-                      }
-                      reader.close();
-                      return records;
-                    }
-                    catch (Exception e)
-                    {
-                      System.err.format("Exception occurred trying to read '%s'.", filename);
-                      e.printStackTrace();
-                      return null;
-  }
-}
+        {
+                            List<String> records = new ArrayList<String>();
+                            try
+                            {
+                              BufferedReader reader = new BufferedReader(new FileReader(filename));
+                              String line;
+                              while ((line = reader.readLine()) != null)
+                              {
+                                records.add(line);
+                              }
+                              reader.close();
+                              return records;
+                            }
+                            catch (Exception e)
+                            {
+                              System.err.format("Exception occurred trying to read '%s'.", filename);
+                              e.printStackTrace();
+                              return null;
+                             }
+        }
         public void readEachFile(ArrayList<String> files, String path, String filter) throws IOException{
          
             ArrayList <String> FileContent = new ArrayList<>();

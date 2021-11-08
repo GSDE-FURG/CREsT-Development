@@ -2337,8 +2337,9 @@ import signalProbability.ProbCircuit;
             }
         }
 
+        /*ORIGNAL POS*/
         //Convert the input signal values to boolean
-        boolean output_converted = this.calculateTheOutputGatesInBoolean(comb, input, gate);
+        //boolean output_converted = this.calculateTheOutputGatesInBoolean(comb, input, gate);
 
         /* ---------- Special case for logical gates as wires GATE: ZERO or ONE ------- */
         String r = "";
@@ -2355,6 +2356,10 @@ import signalProbability.ProbCircuit;
             return Boolean.TRUE;
         }
         /* ---------- Special case for logical gates as wires GATE: ZERO or ONE ------- */
+
+        //Convert the input signal values to boolean
+        boolean output_converted = this.calculateTheOutputGatesInBoolean(comb, input, gate);
+
 
         return output_converted;
     }

@@ -1290,7 +1290,7 @@ import writers.WriteCsvTh;
                         temp.setMultipleTransientFaultInjection( this.signals_to_inject_faults.get(new_pos));
                         SigIndexList.add(new_pos); // Do no reapet signals
                     }
-                    System.out.println("~ Injection MTF number : " + count + " - Sig Index" + SigIndexList + "  temp: "+ temp.getMTFPERSONAL_LIST_Identities()  + "  " +  temp.getSimulationIndex());
+                    //System.out.println("~ Injection MTF number : " + count + " - Sig Index" + SigIndexList + "  temp: "+ temp.getMTFPERSONAL_LIST_Identities()  + "  " +  temp.getSimulationIndex());
                     ItemxSimulationList.add(temp);
                 }
                 count++;
@@ -1729,7 +1729,7 @@ import writers.WriteCsvTh;
 
     //[20000 100 200 400]
 
-                        System.out.println(nxp);
+                        //System.out.println(nxp);
                         //int SigIndex = p-1; // G1, G2 , G3
 
                         List<int[]> combinations = generate(this.signals_to_inject_faults.size(), p); // Combination of 11 and 1 = 11 ~ 11 and 2 = 55 ~ 11and 3
@@ -2824,7 +2824,7 @@ import writers.WriteCsvTh;
 
     public void runMultipleFaultInjectionMultithreadingMonteCarloSimulationProportion(int sample, ArrayList <Float> mtf_list, String option) throws IOException, Exception{
 
-        if (sumProportionPercentage(mtf_list) <= 1) {  // 100%
+        if (sumProportionPercentage(mtf_list) == 1) {  // 100%
 
             System.out.println(" ----- Monte Carlo version  for Multiple Transient Fault Injection -------");
 
