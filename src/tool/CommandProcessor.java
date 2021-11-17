@@ -619,6 +619,9 @@ class CommandProcessor {
                                         System.out.println(" --------- STF -----------");
                                         sampleSizeMonteCarlo = arrOfStr[2];
                                         cmd.Monte_Carlo_Fault_injection(relativePath + genlib, complete_file, sampleSizeMonteCarlo); // MC 20000
+                                        //cmd.Monte_Carlo_Fault_injection(splittedCommand.get(1), splittedCommand.get(2),splittedCommand.get(4)); // MC 20000
+
+                                       // mc_fault_injection teste/mapped/EPFL2015/1-minimal_no_cost/1-minimal_no_cost.genlib teste/mapped/EPFL2015/1-minimal_no_cost/ctrl_1-minimal_no_cost.v -mc 20000 0.9 0.09 0.01
                                         success = true;
                                     }
                                     if(arrOfStr.length >= 4){

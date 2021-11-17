@@ -4,12 +4,8 @@
  * and open the template in the editor.
  */
 package logicSimulator;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.*;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -48,22 +44,28 @@ public class main{
         
         public static void main(String[] args) throws Exception {
             
-             int threads = 8; //Número de threads
+             int threads = 4; //Número de threads
              int sampleSizeMonteCarlo = 20000;
                      
              String constReliability = "0.9999"; //Used for internal structures
 
             ArrayList <String> Psthzs = new ArrayList<>();
             ArrayList <String> Psthzs_lib = new ArrayList<>();
-            Psthzs.add("circuitos/fullv2/"); Psthzs_lib.add("lib_full_no_cost.genlib");
-            Psthzs.add("circuitos/full/"); Psthzs_lib.add("lib_full_no_cost_no_xor.genlib");
-            Psthzs.add("circuitos/complex/"); Psthzs_lib.add("lib_complex_no_cost_no_xor.genlib");
-            Psthzs.add("circuitos/basic/"); Psthzs_lib.add("lib_basic_no_cost.genlib");
-            Psthzs.add("circuitos/min/"); Psthzs_lib.add("lib_min_no_cost.genlib");
+            //Psthzs.add("circuitos/fullv2/"); Psthzs_lib.add("lib_full_no_cost.genlib");
+            //Psthzs.add("circuitos/full/"); Psthzs_lib.add("lib_full_no_cost_no_xor.genlib");
+            //Psthzs.add("circuitos/complex/"); Psthzs_lib.add("lib_complex_no_cost_no_xor.genlib");
+            //Psthzs.add("circuitos/basic/"); Psthzs_lib.add("lib_basic_no_cost.genlib");
+            //Psthzs.add("circuitos/min/"); Psthzs_lib.add("lib_min_no_cost.genlib");
+
+            Psthzs.add("teste/mapped/EPFL2015/1-minimal_no_cost/"); Psthzs_lib.add("1-minimal_no_cost.genlib");
+
+            //Psthzs.add("teste/mapped/EPFL2015/5-full_no_cost/"); Psthzs_lib.add("5-full_no_cost.genlib");
+
+
+            ArrayList <String> circsGates= new ArrayList<>();
 
             for (int i = 0; i < Psthzs.size() ; i++) {
-                try {
-
+               // try {
 
                 String relativePath =  Psthzs.get(i); //"circuitos/fullv2/"; //"circuitos/fullv2/";//"circuitos/full/";//"circuitos/basic/"; //"circuitos/min/";
                 //String genlib =  relativePath  + "lib_basic_no_cost.genlib";
@@ -80,20 +82,40 @@ public class main{
                 ArrayList<Float> mtf_sizes = new ArrayList<>();
                 int sample = 20000;
                 mtf_sizes.add((float) sample);
-                mtf_sizes.add((float) 0.0);
                 mtf_sizes.add((float) 1);
+                //mtf_sizes.add((float) 1);
                 //mtf_sizes.add((float)0.00);
                 System.out.println(mtf_sizes);
                 experimento.setSample(sample);
 
-                experimento.monteCarloSimulationMultipleTransientFaultsProportion(experimento.sample, mtf_sizes, "ALL_SIGNALS");
-                    //experimento.readResultsInLot("fmr/fullv2/", "ALL_SIGNALS");
-                }
-                catch (Exception e){
-                    System.out.println("ERRORRRRRR !!!!");
-                }
+                    //experimento.monteCarloSimulationMultipleTransientFaultsProportion(experimento.sample, mtf_sizes, "ALL_SIGNALS");
+                    //experimento.readResultsInLot("Resultados Proporção 0.0 0.09 0.01/fullv2/", "ALL_SIGNALS");
+                    // experimento.readResultsInLot("Resultados Proporção 0.0 0.09 0.01/full/", "ALL_SIGNALS");
+                    //experimento.readResultsInLot("Resultados Proporção 0.0 0.09 0.01/complex/", "ALL_SIGNALS");
+                    //experimento.readResultsInLot("Resultados Proporção 0.0 0.09 0.01/basic/", "ALL_SIGNALS");
+                    //experimento.readResultsInLot("Resultados Proporção 0.0 0.09 0.01/min/", "ALL_SIGNALS");
+
+                     // experimento.readResultsInLot("teste/mapped/EPFL2015/5-full_no_cost/Results/", "ALL_SIGNALS");
+                //experimento.readResultsInLot("teste/mapped/EPFL2015/1-minimal_no_cost/Results/", "ALL_SIGNALS");
+
+
+                    //circsGates = experimento.getCircuitsGates();
+
+                  experimento.getCircuitsInputsAndGates();
+                  exper
+
+
+
+
+
+              //  }
+                //catch (Exception e){
+                //    System.out.println("ERRORRRRRR !!!!");
+               // }
 
             }
+
+            System.out.println("Lista Completa:  " + circsGates);
 
 
              
@@ -201,9 +223,11 @@ public class main{
                 System.out.println("Path: " +this.relativePath);
                  System.out.println("Genlib: " +this.genlib);
                    System.out.println("Circuit: " +this.circuitList);
-                
+
+                   this.threads = 8;
                 
                 String str = "";
+
                 for (int i = 0; i < this.circuitList.size(); i++) {
                      Orchestrator simulacaoMultithreading = new Orchestrator(this.threads, this.reliabilityConst,
                              this.relativePath, this.genlib, this.relativePath + this.circuitList.get(i));
@@ -290,58 +314,138 @@ public class main{
             //System.out.println("STR: " + str);
         }
 
-    public void monteCarloSimulationMultipleTransientFaultsProportion(int sample, ArrayList <Float> mtf_sizes, String Signals) throws Exception{
+        public void monteCarloSimulationMultipleTransientFaultsProportion(int sample, ArrayList <Float> mtf_sizes, String Signals) throws Exception{
 
-        System.out.println("Multiple Fault Injection : " + mtf_sizes);
-        System.out.println("Path: " +this.relativePath);
-        System.out.println("Genlib: " +this.genlib);
-        System.out.println("Circuit: " +this.circuitList);
+            System.out.println("Multiple Fault Injection : " + mtf_sizes);
+            System.out.println("Path: " +this.relativePath);
+            System.out.println("Genlib: " +this.genlib);
+            System.out.println("Circuit: " +this.circuitList);
 
-        System.out.println("ARGS:"  +  mtf_sizes) ;
+            System.out.println("ARGS:"  +  mtf_sizes) ;
 
-        String str = "";
-        for (int i = 0; i < this.circuitList.size(); i++) {
+            String str = "";
+            for (int i = 0; i < this.circuitList.size(); i++) {
+                System.out.println("_"+i);
+                //Exaustic mode for debug
+                //Orchestrator simulacaoMultithreading_debug = new Orchestrator(this.threads, this.reliabilityConst, this.relativePath, this.genlib, this.relativePath + this.circuitList.get(i));
 
-            //Exaustic mode for debug
-            //Orchestrator simulacaoMultithreading_debug = new Orchestrator(this.threads, this.reliabilityConst, this.relativePath, this.genlib, this.relativePath + this.circuitList.get(i));
+                //simulacaoMultithreading_debug.runMultithreadingExausticSimulation("ALL_SIGNALS"); //STF
 
-            //simulacaoMultithreading_debug.runMultithreadingExausticSimulation("ALL_SIGNALS"); //STF
+                //simulacaoMultithreading_debug.runMultithreadingExausticSimulationComplete("ALL_SIGNALS"); //MTF
 
-            //simulacaoMultithreading_debug.runMultithreadingExausticSimulationComplete("ALL_SIGNALS"); //MTF
+                //
+                // double x = 0.9999;
+                    /*
+                        main experimento = new main(threads, "0.9999", relativePath, genlib);
 
-            //
-            // double x = 0.9999;
+                        experimento.preparingEnviroment();
+
+                        experimento.monteCarloSimulation(20000, "ALL_SIGNALS");
+
+                        System.out.println("\n\n\n" + "");
+                    */
+
+                Orchestrator simulacaoMultithreading = new Orchestrator(this.threads, this.reliabilityConst, this.relativePath, this.genlib, this.relativePath + this.circuitList.get(i));
+                //simulacaoMultithreading.PrintCircuitSpecs();
+                //str = str + simulacaoMultithreading.PrintCircuitSpecs() + "\n";
+
+                //simulacaoMultithreading.runMultipleFaultInjectionMultithreadingMonteCarlo(base, order, frequency,sampleSize, Signals); //ou Signals =  "ALL_SIGNALS" ou "INTERMEDIATE" ou "INTERMEDIATE_AND_OUTPUTS" ou "INPUTS" ou "INPUTS_OUTPUTS"
+
                 /*
-                    main experimento = new main(threads, "0.9999", relativePath, genlib);
-
-                    experimento.preparingEnviroment();
-
-                    experimento.monteCarloSimulation(20000, "ALL_SIGNALS");
-
-                    System.out.println("\n\n\n" + "");
+                ArrayList <Integer> teste = new ArrayList<>();
+                teste.add(20000);
+                teste.add(1000);
+                teste.add(15000);
+                teste.add(19999);
+                simulacaoMultithreading.runMultipleFaultInjectionMultithreadingMonteCarloSimulation(teste, Signals); //ou Signals =  "ALL_SIGNALS" ou "INTERMEDIATE" ou "INTERMEDIATE_AND_OUTPUTS" ou "INPUTS" ou "INPUTS_OUTPUTS"
                 */
 
-            Orchestrator simulacaoMultithreading = new Orchestrator(this.threads, this.reliabilityConst, this.relativePath, this.genlib, this.relativePath + this.circuitList.get(i));
-            //simulacaoMultithreading.PrintCircuitSpecs();
-            //str = str + simulacaoMultithreading.PrintCircuitSpecs() + "\n";
+                simulacaoMultithreading.runMultipleFaultInjectionMultithreadingMonteCarloSimulationProportion(sample, mtf_sizes, Signals); //ou Signals =  "ALL_SIGNALS" ou "INTERMEDIATE" ou "INTERMEDIATE_AND_OUTPUTS" ou "INPUTS" ou "INPUTS_OUTPUTS"
 
-            //simulacaoMultithreading.runMultipleFaultInjectionMultithreadingMonteCarlo(base, order, frequency,sampleSize, Signals); //ou Signals =  "ALL_SIGNALS" ou "INTERMEDIATE" ou "INTERMEDIATE_AND_OUTPUTS" ou "INPUTS" ou "INPUTS_OUTPUTS"
+                this.OUTPUT_INFO = simulacaoMultithreading.getFRM(" MTFT Sample (Monte Carlo = N)");
+            }
+            //System.out.println("STR: " + str);
+        }
 
+        public ArrayList <String> getCircuitsGates() throws Exception{
+
+            System.out.println("Gates Area of " + this.circuitList.size() + " circuits");
             /*
-            ArrayList <Integer> teste = new ArrayList<>();
-            teste.add(20000);
-            teste.add(1000);
-            teste.add(15000);
-            teste.add(19999);
-            simulacaoMultithreading.runMultipleFaultInjectionMultithreadingMonteCarloSimulation(teste, Signals); //ou Signals =  "ALL_SIGNALS" ou "INTERMEDIATE" ou "INTERMEDIATE_AND_OUTPUTS" ou "INPUTS" ou "INPUTS_OUTPUTS"
+            System.out.println("Path: " +this.relativePath);
+            System.out.println("Genlib: " +this.genlib);
+            System.out.println("Circuit: " +this.circuitList);
+             System.out.println("ARGS:"  +  mtf_sizes) ;
             */
 
-            simulacaoMultithreading.runMultipleFaultInjectionMultithreadingMonteCarloSimulationProportion(sample, mtf_sizes, Signals); //ou Signals =  "ALL_SIGNALS" ou "INTERMEDIATE" ou "INTERMEDIATE_AND_OUTPUTS" ou "INPUTS" ou "INPUTS_OUTPUTS"
+            ArrayList <String> x = new ArrayList<>();
 
-            this.OUTPUT_INFO = simulacaoMultithreading.getFRM(" MTFT Sample (Monte Carlo = N)");
+
+            String str = "";
+
+            //System.out.println();
+
+            for (int i = 0; i < this.circuitList.size(); i++) {
+
+                System.out.println("_" + i);
+
+                Orchestrator simulacaoMultithreading = new Orchestrator(this.threads, this.reliabilityConst, this.relativePath, this.genlib, this.relativePath + this.circuitList.get(i));
+
+                x.add(simulacaoMultithreading.PrintCircuitSpecsFast()); //ou Signals =  "ALL_SIGNALS" ou "INTERMEDIATE" ou "INTERMEDIATE_AND_OUTPUTS" ou "INPUTS" ou "INPUTS_OUTPUTS"
+
+                //this.OUTPUT_INFO = simulacaoMultithreading.getFRM(" MTFT Sample (Monte Carlo = N)");
+            }
+
+
+
+
+
+
+            return x;
         }
-        //System.out.println("STR: " + str);
+
+    public void getCircuitsInputsAndGates() throws Exception{
+
+        System.out.println("Gates Area of " + this.circuitList.size() + " circuits");
+            /*
+            System.out.println("Path: " +this.relativePath);
+            System.out.println("Genlib: " +this.genlib);
+            System.out.println("Circuit: " +this.circuitList);
+             System.out.println("ARGS:"  +  mtf_sizes) ;
+            */
+
+        ArrayList <String> x = new ArrayList<>();
+
+
+        String str = "";
+
+        //System.out.println();
+
+        for (int i = 0; i < this.circuitList.size(); i++) {
+
+            System.out.println("_" + i);
+
+            Orchestrator simulacaoMultithreading = new Orchestrator(this.threads, this.reliabilityConst, this.relativePath, this.genlib, this.relativePath + this.circuitList.get(i));
+
+            x.add(simulacaoMultithreading.estimateMultithreadingExausticSimulationSize_AND_PRINT_INPUTS_SIGNALS_GATES("ALL_SIGNALS")); //ou Signals =  "ALL_SIGNALS" ou "INTERMEDIATE" ou "INTERMEDIATE_AND_OUTPUTS" ou "INPUTS" ou "INPUTS_OUTPUTS"
+
+            //this.OUTPUT_INFO = simulacaoMultithreading.getFRM(" MTFT Sample (Monte Carlo = N)");
+        }
+
+
+        try (FileWriter file = new FileWriter(relativePath + "/" + "---INPUTS_GATES_SIGNALS.txt")) {
+            String content = "circuit; Inputs; Signals; Gates";
+            for (int z = 0; z < x.size(); z++) {
+                content =  content + x.get(z) + "\n";
+            }
+            file.write(content);
+        }
+
+
+
+       // return x;
     }
+
+
 
     public void monteCarloSimulationCalculateSensitiveArea(int sample, ArrayList <Float> mtf_sizes, String Signals) throws Exception{
 
@@ -519,6 +623,8 @@ public class main{
         String Ne  = "";
         String FMR = "";
         String  time = "";
+
+        FileContent.add("File; sample; NE; Time(s);");
         for (int i = 0; i < files.size(); i++) {
             List<String> fileContentList  = this.readFile(path + "/" +files.get(i));
             System.out.println("Records: " + fileContentList);
@@ -539,11 +645,11 @@ public class main{
                     //FileContent.add(files.get(i) + ";" + sampleSize[1] + ";" + Ne[1] + ";" + time[1]);
                     //System.out.println("File: " + files.get(i)  +  " sample: " + sampleSize[1] + " > " + x + " t(s):" + time[1] );
                 }
-                if(x.contains("- Sample")){
+                if(x.contains("- Sample") || (x.contains("Number of Simulations"))){
                     String tttt [] =   x.split("=");
                     sample = tttt[1]; //fileContentList.get(9).split(":");
                 }
-                if(x.contains("Performance time m(s)")){
+                if(x.contains("Performance time")){
                     String tttt [] =   x.split(":");
                     time = tttt[1]; //fileContentList.get(9).split(":");
                 }

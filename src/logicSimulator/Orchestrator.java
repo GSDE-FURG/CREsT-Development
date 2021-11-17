@@ -179,9 +179,9 @@ import writers.WriteCsvTh;
         //System.out.println("               - Logic Gates (size): " + this.levelCircuit.getGates().size());
          //System.out.println("               - Levels (size): " + this.levelCircuit.getGateLevels().size());
          //System.out.println("- Inputs : " + this.circuit.getInputs());
-         //System.out.println("               - Inputs : " + this.circuit.getInputs().size()  + " - " +this.circuit.getInputs());
+         System.out.println("               - Inputs : " + this.circuit.getInputs().size()) ;// + " - " +this.circuit.getInputs());
          //System.out.println("               - Outputs : " + this.circuit.getOutputs().size() + " - " + " - " +this.circuit.getOutputs());
-         //System.out.println("               - Signals : " + this.circuit.getSignals().size());
+         System.out.println("               - Signals : " + this.circuit.getSignals().size());
          //String str = this.circuit.getName()+ ";" + this.circuit.getGates().size() + ";"+ this.levelCircuit.getGateLevels().size();
 
          return "";
@@ -317,9 +317,83 @@ import writers.WriteCsvTh;
              System.out.println("!!!! Erro número de gates divergente: c:" + c + "  circ: " + this.circuit.getGates().size());
          }
 
-         return result;
+         return Integer.toString(c);
 
      }
+
+    public String PrintGatesCounterDetails(){
+        System.out.println("           Circuit Name : " + this.circuit.getName());
+        //System.out.println("- Logic Gates : " + this.circuit.getGates());
+        System.out.println("               - Logic Gates (size): " + this.circuit.getGates().size() );
+        ///System.out.println("               - Levels (size): " + this.levelCircuit.getGateLevels().size());
+
+        ArrayList <gate_counter> temp = new ArrayList<>();
+
+        temp.add(new gate_counter("ZERO", 0));
+        temp.add(new gate_counter("ONE", 0));
+        temp.add(new gate_counter("BUF", 0));
+        temp.add(new gate_counter("INV", 0));
+
+        temp.add(new gate_counter("NOR2", 0));
+        temp.add(new gate_counter("NOR3", 0));
+        temp.add(new gate_counter("NOR4", 0));
+        temp.add(new gate_counter("NAND2", 0));
+
+        temp.add(new gate_counter("NAND3", 0));
+        temp.add(new gate_counter("NAND4", 0));
+        temp.add(new gate_counter("OAI21", 0));
+        temp.add(new gate_counter("OAI211", 0));
+
+        temp.add(new gate_counter("OAI22", 0));
+        temp.add(new gate_counter("OAI221", 0));
+        temp.add(new gate_counter("OAI222", 0));
+        temp.add(new gate_counter("AOI21", 0));
+
+        temp.add(new gate_counter("AOI211", 0));
+        temp.add(new gate_counter("AOI22", 0));
+        temp.add(new gate_counter("AOI221", 0));
+        temp.add(new gate_counter("AOI222", 0));
+
+        temp.add(new gate_counter("XOR2", 0));
+
+
+
+        for(Gate i: this.circuit.getGates()) {
+            //System.out.println("-" + i.getType());
+
+            /* if(searchGateInList(i.getType().toString(), temp) == false){ // Adicionar a lista
+                 gate_counter novo_gate = new gate_counter(i.getType().toString(), 0);
+                 temp.add(novo_gate);
+             }
+             */
+            if(searchGateInList(i.getType().toString(), temp) == false)
+            {
+                System.out.println("ERROR !!!!");
+            }
+        }
+
+        System.out.println("- Lista completa: ");
+        int c = 0;
+        String result = "\n" + this.circuit.getName() + ";" + this.circuit.getGates().size() +  "\n";
+
+
+        for(gate_counter item: temp){
+            //System.out.println(item.get_gate_type() + " " + item.get_gate_counter());
+            //result = result + item.get_gate_type() + ";" + item.get_gate_counter() + "\n";
+
+            result = result +item.get_gate_counter() + "\n";
+            c = c + item.get_gate_counter();
+        }
+
+        if(c == this.circuit.getGates().size()){
+            System.out.println("OK NUMERO DE GATES CORRETO: " + c);
+        }else{
+            System.out.println("!!!! Erro número de gates divergente: c:" + c + "  circ: " + this.circuit.getGates().size());
+        }
+
+        return result;
+
+    }
 
     public void initProbCircuit() {
         if(this.circuit != null) {
@@ -767,7 +841,6 @@ import writers.WriteCsvTh;
         }
     }
 
-
     public List particionateVectorPerThread(ArrayList <ArrayList<Integer>> ListInputVectors) throws ScriptException, Exception{
 
         List thread_list = new ArrayList();
@@ -896,7 +969,6 @@ import writers.WriteCsvTh;
         return -1;
 
     }
-
 
     public int getPosArrayListNew(ArrayList <Integer> map, ArrayList <Integer> map_original,  int value){
         int pos = -1;
@@ -1943,6 +2015,138 @@ import writers.WriteCsvTh;
              /*
              */
      }
+
+    public String estimateMultithreadingExausticSimulationSize_AND_PRINT_INPUTS_SIGNALS_GATES(String option) throws IOException, Exception{ //Test All possibilities
+
+
+        System.out.println(" ----- Estimate Exaustive Simulation Size -------");
+        long loadTimeStart = System.nanoTime();//System.currentTimeMillis();
+
+
+        LocalDateTime myDateObj = LocalDateTime.now();
+        DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+        String formattedDate = myDateObj.format(myFormatObj);
+
+
+        /*Reading CellLibrary*/
+        CellLibrary cellLib = new CellLibrary();
+
+
+        this.cellLibrary = cellLib;
+        this.cellLibrary.initLibrary(this.genlib);
+
+        System.out.println("    ... Reading Genlib " + " at -> " + this.genlib  + " ... ok");
+        //System.out.println("  - Avaliable logic gatesin this library: "+cellLib.getCells());
+
+
+        /*Reading verilog*/
+        MappedVerilogReader verilog_circuit = new MappedVerilogReader(this.circuitNameStr, this.cellLibrary);
+        this.verilog_circuit = verilog_circuit;
+        /*Circuit linked to verilog_circuit - init circuit*/
+        this.circuit = verilog_circuit.getCircuit();
+        System.out.println("    ... Reading verilog "+ " at -> " + this.circuitNameStr  + " ... ok");
+        //System.out.println("Patterns : " + this.verilog_circuit.getGatePattern());
+
+
+
+        /* Print circuit Specs*/
+        System.out.println("\n        ------ Printing Circuit Specs: --------");
+         // this.PrintSpecsThesis();
+        this.PrintSpecs();
+        System.out.println("          ---------------------------------------\n");
+
+        int sizeExasuticTest;
+
+        System.out.println("-   Sample size (N = 2^ENTRADAS): " + "2^"+ this.circuit.getInputs().size() + " = " + this.sampleSize);
+
+        this.signals_to_inject_faults = this.signalsToInjectFault(option); // Consider all signals to fault inject
+
+        //sizeExasuticTest = (this.sampleSize * this.signals_to_inject_faults.size());
+
+        //ArrayList <String> random_input_vectors =  this.generateInputVector("TRUE_TABLE"); //this.calcInputTableVector(this.probCircuit.getInputs().size(), this.sampleSize);
+
+        //System.out.println("SIZE: " + sizeExasuticTest)
+
+        //ArrayList <ArrayList<Integer>> ListInputVectors =  this.splitInputPatternsInInt(random_input_vectors, this.probCircuit.getInputs().size());
+
+        //System.out.println("LIST:::::: "+ ListInputVectors);
+
+        //List thread_list = particionateExausticVector(ListInputVectors);  // TESTE ALL GATES ///particionateVectorPerThread(ListInputVectors); // x - vectors per thread
+
+        //long propagateTimeStart = System.nanoTime();
+
+        String str = this.circuit.getName() + ";" + this.circuit.getInputs().size() + ";" + this.circuit.getSignals().size() + ";" + this.PrintGatesCounter(); //this.PrintTransistorsNumber();
+        System.out.println("STR: " + str);
+        return str;
+
+        /*Execução das threads*/
+        /*
+        Thread thread_temp = null;
+        for (int i=0; i < thread_list.size() ; i++) {
+            thread_temp = (Thread) thread_list.get(i);
+            thread_temp.start();
+
+        }
+
+         */
+        /*Esperando termino das threads*/
+        /*
+        for (int i=0; i < thread_list.size() ; i++) {
+            thread_temp = (Thread) thread_list.get(i);
+            thread_temp.join();
+        }
+        */
+        /* Compilando os resultados - Falhas detectadas Ne*/
+         /*
+        for (int i=0; i < this.itemx_list.size() ; i++) {
+            this.unmasked_faults = this.unmasked_faults +  itemx_list.get(i).getPropagatedFaults();
+        }
+         */
+        /*circuit reliability SER (Soft Error Rate)*/
+        /*
+        this.circuitReliaibility = (float) (1.0 - ((float) this.unmasked_faults / (float) sizeExasuticTest));
+
+        System.out.println("-> Umasked Faults: " + this.unmasked_faults);
+        System.out.println("-> Sample: " + sizeExasuticTest);
+        System.out.println("-> SER : " + this.circuitReliaibility);
+        */
+        /*
+        long propagateTimeEnd = System.nanoTime();
+        //long propagateTime =    TimeUnit.NANOSECONDS.toSeconds(propagateTimeEnd - propagateTimeStart);
+        long propagateTime =  TimeUnit.NANOSECONDS.toMillis(propagateTimeEnd - propagateTimeStart);
+
+
+        LocalDateTime myDateObj2 = LocalDateTime.now();
+        DateTimeFormatter myFormatObj2 = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+        String formattedDate2 = myDateObj2.format(myFormatObj2);
+
+        this.sampleSize = sizeExasuticTest;
+
+        this.writeSimpleLog("ExausticSimulation_" +this.circuit.getName()+"_Threads-"+ this.threads + "_sampleSize-" + this.sampleSize, formattedDate,  formattedDate2, propagateTime);
+
+        this.writeCsvFileCompleteTh("ExausticSimulation_"+this.circuit.getName()+"_Theads-"+ this.threads + "_sampleSize-" + this.sampleSize, itemx_list);
+
+
+        System.out.println("\n\n----------------- Results ------------------");
+        System.out.println("Circuit: " + this.circuit.getName());
+        System.out.println("- Simulation finished at: " + formattedDate2);
+        //System.out.println("- PropagatedTime (s): " + propagateTime);
+        System.out.println("- Sample (N): " + this.sampleSize);
+        System.out.println("- Detected faults (Ne): " + this.unmasked_faults);
+        System.out.println("- Fault Masking Rate (FMR): " + "(1-(" + this.unmasked_faults + "/" + this.sampleSize + ")) = " + this.circuitReliaibility);
+        // System.out.println("- MTBF (Mean Time Between failure) : " + this.MTBF);
+        System.out.println("- Simulation TimeElapsed: " + propagateTime + "(s)");
+        System.out.println("--------------------------------------------");
+
+        this.Performance_Time = "Simulation started at: " + formattedDate + " and finished at: " + formattedDate2;
+
+        System.out.println(" ----------------------------------------------------------------------------------------------------------------------------\n\n");
+
+        */
+
+        /*
+         */
+    }
 
     public void runMultithreadingExausticSimulationComplete(String option) throws IOException, Exception{ //Test All possibilities
 
@@ -3242,7 +3446,7 @@ import writers.WriteCsvTh;
                 System.out.println("\n        ------ Printing Circuit Specs: --------");
                 //String str = this.PrintSpecs();
 
-                String str =  this.PrintGatesCounter(); //this.PrintTransistorsNumber();
+                String str = this.circuit.getName() + ";" + this.PrintGatesCounter(); //this.PrintTransistorsNumber();
 
                 System.out.println("          ---------------------------------------\n");
                 /*----------------------*/
@@ -3253,5 +3457,44 @@ import writers.WriteCsvTh;
              /*
              */
      }
+
+    public String PrintCircuitSpecsFast() throws IOException, Exception{
+
+        CellLibrary cellLib = new CellLibrary();
+        //System.out.println("2");
+        this.cellLibrary = cellLib;
+        //System.out.println("3");
+        this.cellLibrary.initLibrary(this.genlib);
+        //System.out.println("4");
+
+        System.out.println("    ... Reading Genlib " + " at -> " + this.genlib + " ... ok");
+        //System.out.println("  - Avaliable logic gatesin this library: "+cellLib.getCells());
+
+        System.out.println("    ... Reading verilog " + " at -> " + this.circuitNameStr + " ... ok");
+        /*Reading verilog*/
+        MappedVerilogReader verilog_circuit = new MappedVerilogReader(this.circuitNameStr, this.cellLibrary);
+        this.verilog_circuit = verilog_circuit;
+        /*Circuit linked to verilog_circuit - init circuit*/
+        this.circuit = verilog_circuit.getCircuit();
+
+        //System.out.println("Patterns : " + this.verilog_circuit.getGatePattern());
+
+
+        /*Circuit Probabilities */
+        this.initLevelCircuit();
+
+        /*Init ProbCircuits*/
+        this.initProbCircuit();
+
+        /*Init PTMs Const*/
+        cellLib.setPTMCells2(Float.valueOf(this.reliabilityConst));
+        cellLib.setPTMCells(new BigDecimal(this.reliabilityConst));
+
+
+        String str = this.circuit.getName() + ";" + this.circuit.getInputs().size() + ";" + this.circuit.getSignals().size() + ";" + this.PrintGatesCounter(); //this.PrintTransistorsNumber();
+        System.out.println("STR: " + str);
+        return str;
+
+    }
 
 }

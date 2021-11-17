@@ -67,6 +67,7 @@ class TerminalWrapper {
             * 
             */
              /* Clayton */
+            //System.out.println("____>  " + args.toString());
                 Options options = new Options();
 
                 Option indataset = new Option("id", "indataset", true, "input dataset path");
@@ -105,10 +106,18 @@ class TerminalWrapper {
 
                 exhaustive.setRequired(false);
 
-                Option read_script = new Option("read_script", "rs", false, "Read script to perform Monte Carlo Fault injection in batch mode");
-                read_script.setDescription("This method simulates the fault injection campaign (MC) " +
-                        "in reading a script. The script example is present in 'scripts/read_script_example.txt'");
-                read_script.setRequired(false);
+                Option read_scripts = new Option("read_script", "rs", true, "Read script to perform Monte Carlo Fault injection in batch mode");
+                read_scripts.setDescription("This method simulates the fault injection campaign (MC) " + "in reading a script. The script example is present in 'scripts/read_script_example.txt'");
+                read_scripts.setRequired(false);
+
+
+                Option xmx= new Option("Xmx4G", "", false, "Read script to perform Monte Carlo Fault injection in batch mode");
+                xmx.setDescription("Use -Xmx to specify the max Java heap size");
+                xmx.setRequired(false);
+
+                Option xms= new Option("Xms2G", "", false, "Read script to perform Monte Carlo Fault injection in batch mode");
+                xms.setDescription("Use -Xmx to specify the initial Java heap size");
+                xms.setRequired(false);
 
 
                Option exhaustiveOp = new Option("complete", "complete", false, "Monte carlo fault injection");
@@ -120,7 +129,9 @@ class TerminalWrapper {
                 options.addOption(mc);
                 options.addOption(exhaustive);
                 options.addOption(exhaustiveOp);
-                options.addOption(read_script);
+                options.addOption(read_scripts);
+                options.addOption(xms);
+                options.addOption(xmx);
 
                 CommandLineParser parser = new DefaultParser();
                 HelpFormatter formatter = new HelpFormatter();
@@ -128,6 +139,7 @@ class TerminalWrapper {
 
                 Terminal terminal = Terminal.getInstance();
 
+            System.out.println("PROCESS...");
                 try {
                         cmd = parser.parse(options, args);
                         System.out.println(parser);
@@ -244,8 +256,20 @@ class TerminalWrapper {
                     }
 
                     if (cmd.hasOption("read_script")){
-                        String script_file = args[4];
+
+                        System.out.println("SCRIPT READING ... " + cmd.getArgs().toString());
+
+                        String script_file = "";
+
+                        for (int i = 0; i < args.length; i++) {
+                            if(!args[i].contains("-Xmx")){
+                                script_file = args[i];
+                            }
+                        }
+
                         terminal.executeCommand("read_script" + " " + script_file);
+
+
                     }
 
                 }catch (Exception e){
