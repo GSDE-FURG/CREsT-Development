@@ -39,6 +39,7 @@ public class main{
         }
 
     /**
+     *
       * @param sample set Monte Carlo Sampling
      */
     public void setSample(int sample) {
