@@ -57,9 +57,9 @@ public class main{
             //Psthzs.add("circuitos/basic/"); Psthzs_lib.add("lib_basic_no_cost.genlib");
             //Psthzs.add("circuitos/min/"); Psthzs_lib.add("lib_min_no_cost.genlib");
 
-            Psthzs.add("teste/mapped/EPFL2015/1-minimal_no_cost/"); Psthzs_lib.add("1-minimal_no_cost.genlib");
+            //Psthzs.add("teste/mapped/EPFL2015/1-minimal_no_cost/"); Psthzs_lib.add("1-minimal_no_cost.genlib");
 
-            //Psthzs.add("teste/mapped/EPFL2015/5-full_no_cost/"); Psthzs_lib.add("5-full_no_cost.genlib");
+            Psthzs.add("teste/mapped/EPFL2015/5-full_no_cost/"); Psthzs_lib.add("5-full_no_cost.genlib");
 
 
             ArrayList <String> circsGates= new ArrayList<>();
@@ -102,7 +102,7 @@ public class main{
                     //circsGates = experimento.getCircuitsGates();
 
                   experimento.getCircuitsInputsAndGates();
-                  exper
+
 
 
 
@@ -428,6 +428,15 @@ public class main{
 
             x.add(simulacaoMultithreading.estimateMultithreadingExausticSimulationSize_AND_PRINT_INPUTS_SIGNALS_GATES("ALL_SIGNALS")); //ou Signals =  "ALL_SIGNALS" ou "INTERMEDIATE" ou "INTERMEDIATE_AND_OUTPUTS" ou "INPUTS" ou "INPUTS_OUTPUTS"
 
+            String s = simulacaoMultithreading.PrintGatesCounterDetailsSorted();
+
+            try (FileWriter file = new FileWriter(relativePath + "/" + "GATES-" + this.circuitList.get(i)  +" .txt")) {
+                String content = "circuit; Gates";
+                //for (int z = 0; z < x.size(); z++) {
+                    content =  content + s + "\n";
+                //}
+                file.write(content);
+            }
             //this.OUTPUT_INFO = simulacaoMultithreading.getFRM(" MTFT Sample (Monte Carlo = N)");
         }
 
