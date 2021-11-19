@@ -24,10 +24,10 @@ public class main{
 
     /**
      *
-     * @param threads
-     * @param reliabilityConst
-     * @param relativePath
-     * @param genlib
+     * @param threads Threads
+     * @param reliabilityConst The reliability constant
+     * @param relativePath Relative Path for simulation files (folder: /test_folder/ --- example circuit.v and cadence.genlib)
+     * @param genlib Genlib name (example: cadence.genlib)
      */
         public main(int threads, String reliabilityConst, String relativePath, String genlib) {
             this.threads = threads;
@@ -39,7 +39,7 @@ public class main{
         }
 
     /**
-      * @param sample
+      * @param sample set Monte Carlo Sampling
      */
     public void setSample(int sample) {
         this.sample = sample;
@@ -47,7 +47,7 @@ public class main{
 
     /**
      *
-     * @return this.OUTPYT_INFO
+     * @return this.OUTPUT_INFO
      */
     public String getFMR(){
             return this.OUTPUT_INFO;
@@ -55,8 +55,6 @@ public class main{
 
     /**
      * Main method for call the logic simulator
-     * @param args
-     * @throws Exception
      */
         public static void main(String[] args) throws Exception {
             
@@ -111,7 +109,7 @@ public class main{
                     //experimento.readResultsInLot("teste/mapped/EPFL2015/1-minimal_no_cost/Results/", "ALL_SIGNALS");
 
                     //circsGates = experimento.getCircuitsGates();
-                    experimento.getCircuitsInputsAndGates();
+                    experimento.getCircuitsInputsGatesSignals();
                 //experimento.monteCarloSimulation(sampleSizeMonteCarlo, "ALL_SIGNALS"); //ou Signals =  "ALL_SIGNALS" ou "INTERMEDIATE" ou "INTERMEDIATE_AND_OUTPUTS" ou "INPUTS" ou "INPUTS_OUTPUTS"
 
 
@@ -144,43 +142,42 @@ public class main{
         /**
          * Method to link  the Logic Simulator and run method (runMultithreadingSimulation)
          * @param positionToFaultInjection The signals can be definied as "ALL_SIGNALS" ou "INTERMEDIATE" ou "INTERMEDIATE_AND_OUTPUTS" ou "INPUTS" ou "INPUTS_OUTPUTS"
-         * @throws Exception
          */
         public void multithreadingSimulation(String positionToFaultInjection) throws Exception{  //Loop na simulação de circuitos
-                for (int i = 0; i < this.circuitList.size(); i++) {
-                     Orchestrator simulacaoMultithreading = new Orchestrator(this.threads, this.reliabilityConst,
-                             this.relativePath, this.genlib, this.relativePath + this.circuitList.get(i));
-                            simulacaoMultithreading.runMultithreadingSimulation(positionToFaultInjection);
-                }
+            for (String s : this.circuitList) {
+                Orchestrator simulacaoMultithreading = new Orchestrator(this.threads, this.reliabilityConst,
+                        this.relativePath, this.genlib, this.relativePath + s);
+                simulacaoMultithreading.runMultithreadingSimulation(positionToFaultInjection);
+            }
         }
 
     /**
      * Method to link the Logic Simulator and run method Exhaustive Simulation for SET evaluation (Extracts the Fault Masking Rate - FMR)
-     * @throws Exception
+     * @throws Exception e e
      */
     public void multithreadingSimulationExaustic() throws Exception{ //ou Signals =  "ALL_SIGNALS" for exaustive consider all_signals
-                for (int i = 0; i < this.circuitList.size(); i++) {
-                     Orchestrator simulacaoMultithreading = new Orchestrator(this.threads, this.reliabilityConst,
-                             this.relativePath, this.genlib, this.relativePath + this.circuitList.get(i));
-                             simulacaoMultithreading.runMultithreadingExausticSimulation("ALL_SIGNALS"); 
-                             this.OUTPUT_INFO = simulacaoMultithreading.getFRM("Sample (N = "
-                                     + "2^Signals * Gates)");
-                }
+            for (String s : this.circuitList) {
+                Orchestrator simulacaoMultithreading = new Orchestrator(this.threads, this.reliabilityConst,
+                        this.relativePath, this.genlib, this.relativePath + s);
+                simulacaoMultithreading.runMultithreadingExausticSimulation("ALL_SIGNALS");
+                this.OUTPUT_INFO = simulacaoMultithreading.getFRM("Sample (N = "
+                        + "2^Signals * Gates)");
+            }
         }
 
     /**
      * Method to link the Logic Simulator and run method Exhaustive Complete Simulation for MET evaluation (All combinations) (Extracts the Fault Masking Rate - FMR)
-     * @throws Exception
+     * @throws Exception e e
      */
     public void multithreadingSimulationExausticComplete() throws Exception{ //ou Signals =  "ALL_SIGNALS" for exaustive consider all_signals
             //Loop na simulação de circuitos
-            for (int i = 0; i < this.circuitList.size(); i++) {
-                Orchestrator simulacaoMultithreading = new Orchestrator(this.threads, this.reliabilityConst,
-                        this.relativePath, this.genlib, this.relativePath + this.circuitList.get(i));
-                simulacaoMultithreading.runMultithreadingExausticSimulationComplete("ALL_SIGNALS");
-                this.OUTPUT_INFO = simulacaoMultithreading.getFRM("Sample (N = "
-                        + "2^Signals * Gates)");
-            }
+        for (String s : this.circuitList) {
+            Orchestrator simulacaoMultithreading = new Orchestrator(this.threads, this.reliabilityConst,
+                    this.relativePath, this.genlib, this.relativePath + s);
+            simulacaoMultithreading.runMultithreadingExausticSimulationComplete("ALL_SIGNALS");
+            this.OUTPUT_INFO = simulacaoMultithreading.getFRM("Sample (N = "
+                    + "2^Signals * Gates)");
+        }
         }
 
 
@@ -188,27 +185,27 @@ public class main{
      * Method to link  the Logic Simulator and run method (runMultithreadingSimulation)
      * @param monteCarloSample Monte Carlo sample size
      * @param positionToFaultInjection The signals can be definied as "ALL_SIGNALS" ou "INTERMEDIATE" ou "INTERMEDIATE_AND_OUTPUTS" ou "INPUTS" ou "INPUTS_OUTPUTS"
-     * @throws Exception
+     * @throws Exception e
      */
     public void monteCarloSimulation(int monteCarloSample , String positionToFaultInjection) throws Exception{
                 this.threads = 8;
-                for (int i = 0; i < this.circuitList.size(); i++) {
-                     Orchestrator simulacaoMultithreading = new Orchestrator(this.threads, this.reliabilityConst,
-                             this.relativePath, this.genlib, this.relativePath + this.circuitList.get(i));
-                             simulacaoMultithreading.runMultithreadingMonteCarlo(monteCarloSample , positionToFaultInjection); //ou Signals =  "ALL_SIGNALS" ou "INTERMEDIATE" ou "INTERMEDIATE_AND_OUTPUTS" ou "INPUTS" ou "INPUTS_OUTPUTS"
-                             this.OUTPUT_INFO = simulacaoMultithreading.getFRM(" Sample(Monte Carlo = N)");
-                }
+            for (String s : this.circuitList) {
+                Orchestrator simulacaoMultithreading = new Orchestrator(this.threads, this.reliabilityConst,
+                        this.relativePath, this.genlib, this.relativePath + s);
+                simulacaoMultithreading.runMultithreadingMonteCarlo(monteCarloSample, positionToFaultInjection); //ou Signals =  "ALL_SIGNALS" ou "INTERMEDIATE" ou "INTERMEDIATE_AND_OUTPUTS" ou "INPUTS" ou "INPUTS_OUTPUTS"
+                this.OUTPUT_INFO = simulacaoMultithreading.getFRM(" Sample(Monte Carlo = N)");
+            }
         }
 
         /**
          * This method is deprecated, was used for link the Logic Simulator and run method runMultipleFaultInjectionMultithreadingMonteCarlo
          * @deprecated
-         * @param base
-         * @param order
-         * @param frequency
-         * @param sampleSize
-         * @param Signals
-         * @throws Exception
+         * @param base base deprecated
+         * @param order order deprecated
+         * @param frequency frequency deprecated
+         * @param sampleSize Monte Carlo sampling deprecated
+         * @param Signals Singnals to inject fault deprecated
+         * @throws Exception e
          */
         public void monteCarloSimulationMultipleTransientFaults(int base, int order, int frequency, int sampleSize, String Signals) throws Exception{
 
@@ -218,35 +215,31 @@ public class main{
                 System.out.println("Circuit: " +this.circuitList);
 
 
+            for (String s : this.circuitList) {
 
-                String str = "";
-                for (int i = 0; i < this.circuitList.size(); i++) {
-
-                    //Exaustic mode for debug
-                    Orchestrator simulacaoMultithreading_debug = new Orchestrator(this.threads, this.reliabilityConst, this.relativePath, this.genlib, this.relativePath + this.circuitList.get(i));
-                    //
-                    // simulacaoMultithreading_debug.runMultithreadingExausticSimulation("ALL_SIGNALS");
+                //Exaustic mode for debug
+                //Orchestrator simulacaoMultithreading_debug = new Orchestrator(this.threads, this.reliabilityConst, this.relativePath, this.genlib, this.relativePath + this.circuitList.get(i));
+                //
+                // simulacaoMultithreading_debug.runMultithreadingExausticSimulation("ALL_SIGNALS");
 
 
+                Orchestrator simulacaoMultithreading = new Orchestrator(this.threads, this.reliabilityConst, this.relativePath, this.genlib, this.relativePath + s);
+                //simulacaoMultithreading.PrintCircuitSpecs();
+                //str = str + simulacaoMultithreading.PrintCircuitSpecs() + "\n";
+                simulacaoMultithreading.runMultipleFaultInjectionMultithreadingMonteCarlo(base, order, frequency, sampleSize, Signals); //ou Signals =  "ALL_SIGNALS" ou "INTERMEDIATE" ou "INTERMEDIATE_AND_OUTPUTS" ou "INPUTS" ou "INPUTS_OUTPUTS"
 
 
-                    Orchestrator simulacaoMultithreading = new Orchestrator(this.threads, this.reliabilityConst, this.relativePath, this.genlib, this.relativePath + this.circuitList.get(i));
-                    //simulacaoMultithreading.PrintCircuitSpecs();
-                    //str = str + simulacaoMultithreading.PrintCircuitSpecs() + "\n";
-                    simulacaoMultithreading.runMultipleFaultInjectionMultithreadingMonteCarlo(base, order, frequency,sampleSize, Signals); //ou Signals =  "ALL_SIGNALS" ou "INTERMEDIATE" ou "INTERMEDIATE_AND_OUTPUTS" ou "INPUTS" ou "INPUTS_OUTPUTS"
-
-
-                    this.OUTPUT_INFO = simulacaoMultithreading.getFRM(" MTFT Sample (Monte Carlo = N)");
-                }
+                this.OUTPUT_INFO = simulacaoMultithreading.getFRM(" MTFT Sample (Monte Carlo = N)");
+            }
                 //System.out.println("STR: " + str);
     }
 
     /**
      * This method is deprecated, was used for link the Logic Simulator and run method runMultipleFaultInjectionMultithreadingMonteCarlo
      * @deprecated
-     * @param mtf_sizes
-     * @param Signals
-     * @throws Exception
+     * @param mtf_sizes deprecated
+     * @param Signals deprecated
+     * @throws Exception e
      */
     public void monteCarloSimulationMultipleTransientFaultsNew(ArrayList <Integer> mtf_sizes, String Signals) throws Exception{
             /*
@@ -258,205 +251,132 @@ public class main{
             */
 
             String str = "";
-            for (int i = 0; i < this.circuitList.size(); i++) {
-                Orchestrator simulacaoMultithreading = new Orchestrator(this.threads, this.reliabilityConst, this.relativePath, this.genlib, this.relativePath + this.circuitList.get(i));
-                simulacaoMultithreading.runMultipleFaultInjectionMultithreadingMonteCarloSimulation(mtf_sizes, Signals); //ou Signals =  "ALL_SIGNALS" ou "INTERMEDIATE" ou "INTERMEDIATE_AND_OUTPUTS" ou "INPUTS" ou "INPUTS_OUTPUTS"
-                this.OUTPUT_INFO = simulacaoMultithreading.getFRM(" MTFT Sample (Monte Carlo = N)");
-            }
+        for (String s : this.circuitList) {
+            Orchestrator simulacaoMultithreading = new Orchestrator(this.threads, this.reliabilityConst, this.relativePath, this.genlib, this.relativePath + s);
+            simulacaoMultithreading.runMultipleFaultInjectionMultithreadingMonteCarloSimulation(mtf_sizes, Signals); //ou Signals =  "ALL_SIGNALS" ou "INTERMEDIATE" ou "INTERMEDIATE_AND_OUTPUTS" ou "INPUTS" ou "INPUTS_OUTPUTS"
+            this.OUTPUT_INFO = simulacaoMultithreading.getFRM(" MTFT Sample (Monte Carlo = N)");
+        }
 
         }
 
     /**
-     * This method
-     * @param sample
-     * @param mtf_sizes
-     * @param Signals
-     * @throws Exception
+     * This method links the Logic Simulator and simulate MET evaluation based in proportion of single, doubles, triples, ... faults order (Extracts the Fault Masking Rate - FMR)
+     * @param monteCarloSample Monte Carlo sample size
+     * @param mtf_sizes Proportion of (single, doubles, triples, ..., n) faults order. Example: 0.9 0.09 0.01 (90% single, 9% double, 1% triple
+     * @param positionToFaultInjection The signals can be definied as "ALL_SIGNALS" ou "INTERMEDIATE" ou "INTERMEDIATE_AND_OUTPUTS" ou "INPUTS" ou "INPUTS_OUTPUTS"
+     * @throws Exception e
      */
-        public void monteCarloSimulationMultipleTransientFaultsProportion(int sample, ArrayList <Float> mtf_sizes, String Signals) throws Exception{
+    public void monteCarloSimulationMultipleTransientFaultsProportion(int monteCarloSample, ArrayList <Float> mtf_sizes, String positionToFaultInjection) throws Exception{
 
             System.out.println("Multiple Fault Injection : " + mtf_sizes);
             System.out.println("Path: " +this.relativePath);
             System.out.println("Genlib: " +this.genlib);
             System.out.println("Circuit: " +this.circuitList);
-
             System.out.println("ARGS:"  +  mtf_sizes) ;
 
-            String str = "";
             for (int i = 0; i < this.circuitList.size(); i++) {
                 System.out.println("_"+i);
-                //Exaustic mode for debug
-                //Orchestrator simulacaoMultithreading_debug = new Orchestrator(this.threads, this.reliabilityConst, this.relativePath, this.genlib, this.relativePath + this.circuitList.get(i));
-
-                //simulacaoMultithreading_debug.runMultithreadingExausticSimulation("ALL_SIGNALS"); //STF
-
-                //simulacaoMultithreading_debug.runMultithreadingExausticSimulationComplete("ALL_SIGNALS"); //MTF
-
-                //
-                // double x = 0.9999;
-                    /*
-                        main experimento = new main(threads, "0.9999", relativePath, genlib);
-
-                        experimento.preparingEnviroment();
-
-                        experimento.monteCarloSimulation(20000, "ALL_SIGNALS");
-
-                        System.out.println("\n\n\n" + "");
-                    */
-
                 Orchestrator simulacaoMultithreading = new Orchestrator(this.threads, this.reliabilityConst, this.relativePath, this.genlib, this.relativePath + this.circuitList.get(i));
-                //simulacaoMultithreading.PrintCircuitSpecs();
-                //str = str + simulacaoMultithreading.PrintCircuitSpecs() + "\n";
-
-                //simulacaoMultithreading.runMultipleFaultInjectionMultithreadingMonteCarlo(base, order, frequency,sampleSize, Signals); //ou Signals =  "ALL_SIGNALS" ou "INTERMEDIATE" ou "INTERMEDIATE_AND_OUTPUTS" ou "INPUTS" ou "INPUTS_OUTPUTS"
-
-                /*
-                ArrayList <Integer> teste = new ArrayList<>();
-                teste.add(20000);
-                teste.add(1000);
-                teste.add(15000);
-                teste.add(19999);
-                simulacaoMultithreading.runMultipleFaultInjectionMultithreadingMonteCarloSimulation(teste, Signals); //ou Signals =  "ALL_SIGNALS" ou "INTERMEDIATE" ou "INTERMEDIATE_AND_OUTPUTS" ou "INPUTS" ou "INPUTS_OUTPUTS"
-                */
-
-                simulacaoMultithreading.runMultipleFaultInjectionMultithreadingMonteCarloSimulationProportion(sample, mtf_sizes, Signals); //ou Signals =  "ALL_SIGNALS" ou "INTERMEDIATE" ou "INTERMEDIATE_AND_OUTPUTS" ou "INPUTS" ou "INPUTS_OUTPUTS"
-
+                simulacaoMultithreading.runMultipleFaultInjectionMultithreadingMonteCarloSimulationProportion(monteCarloSample, mtf_sizes, positionToFaultInjection);
                 this.OUTPUT_INFO = simulacaoMultithreading.getFRM(" MTFT Sample (Monte Carlo = N)");
             }
-            //System.out.println("STR: " + str);
-        }
 
-        public ArrayList <String> getCircuitsGates() throws Exception{
-
-            System.out.println("Gates Area of " + this.circuitList.size() + " circuits");
-            /*
-            System.out.println("Path: " +this.relativePath);
-            System.out.println("Genlib: " +this.genlib);
-            System.out.println("Circuit: " +this.circuitList);
-             System.out.println("ARGS:"  +  mtf_sizes) ;
-            */
-
-            ArrayList <String> x = new ArrayList<>();
-
-
-            String str = "";
-
-            //System.out.println();
-
-            for (int i = 0; i < this.circuitList.size(); i++) {
-
-                System.out.println("_" + i);
-
-                Orchestrator simulacaoMultithreading = new Orchestrator(this.threads, this.reliabilityConst, this.relativePath, this.genlib, this.relativePath + this.circuitList.get(i));
-
-                x.add(simulacaoMultithreading.PrintCircuitSpecsFast()); //ou Signals =  "ALL_SIGNALS" ou "INTERMEDIATE" ou "INTERMEDIATE_AND_OUTPUTS" ou "INPUTS" ou "INPUTS_OUTPUTS"
-
-                //this.OUTPUT_INFO = simulacaoMultithreading.getFRM(" MTFT Sample (Monte Carlo = N)");
-            }
-
-
-
-
-
-
-            return x;
-        }
-
-    public void getCircuitsInputsAndGates() throws Exception{
-
-        System.out.println("Gates Area of " + this.circuitList.size() + " circuits");
-            /*
-            System.out.println("Path: " +this.relativePath);
-            System.out.println("Genlib: " +this.genlib);
-            System.out.println("Circuit: " +this.circuitList);
-             System.out.println("ARGS:"  +  mtf_sizes) ;
-            */
-
-        ArrayList <String> x = new ArrayList<>();
-
-
-        String str = "";
-
-        //System.out.println();
-
-        for (int i = 0; i < this.circuitList.size(); i++) {
-
-            System.out.println("_" + i);
-
-            Orchestrator simulacaoMultithreading = new Orchestrator(this.threads, this.reliabilityConst, this.relativePath, this.genlib, this.relativePath + this.circuitList.get(i));
-
-            x.add(simulacaoMultithreading.estimateMultithreadingExausticSimulationSize_AND_PRINT_INPUTS_SIGNALS_GATES("ALL_SIGNALS")); //ou Signals =  "ALL_SIGNALS" ou "INTERMEDIATE" ou "INTERMEDIATE_AND_OUTPUTS" ou "INPUTS" ou "INPUTS_OUTPUTS"
-
-            String s = simulacaoMultithreading.PrintGatesCounterDetailsSorted();
-
-            try (FileWriter file = new FileWriter(relativePath + "/" + "GATES-" + this.circuitList.get(i)  +" .txt")) {
-                String content = "circuit; Gates";
-                //for (int z = 0; z < x.size(); z++) {
-                    content =  content + s + "\n";
-                //}
-                file.write(content);
-            }
-            //this.OUTPUT_INFO = simulacaoMultithreading.getFRM(" MTFT Sample (Monte Carlo = N)");
-        }
-
-
-        try (FileWriter file = new FileWriter(relativePath + "/" + "---INPUTS_GATES_SIGNALS.txt")) {
-            String content = "circuit; Inputs; Signals; Gates";
-            for (int z = 0; z < x.size(); z++) {
-                content =  content + x.get(z) + "\n";
-            }
-            file.write(content);
-        }
-
-
-
-       // return x;
     }
 
+    /**
+     * This method returns an Arraylist of number of gates circuit(s)
+     * * @return ArrayList <String> gatesCirctuits
+     * @throws Exception e
+     */
+    public ArrayList <String> getCircuitsGates() throws Exception{
 
+            System.out.println("Gates Area of " + this.circuitList.size() + " circuits");
+            ArrayList <String> gatesCirctuits = new ArrayList<>();
+            String str = "";
+            for (int i = 0; i < this.circuitList.size(); i++) {
+                System.out.println("_" + i);
+                Orchestrator simulacaoMultithreading = new Orchestrator(this.threads, this.reliabilityConst, this.relativePath, this.genlib, this.relativePath + this.circuitList.get(i));
+                gatesCirctuits.add(simulacaoMultithreading.PrintCircuitSpecsFast());
+                this.OUTPUT_INFO = simulacaoMultithreading.getFRM(" MTFT Sample (Monte Carlo = N)");
+            }
 
-    public void monteCarloSimulationCalculateSensitiveArea(int sample, ArrayList <Float> mtf_sizes, String Signals) throws Exception{
+            return gatesCirctuits;
+    }
 
+    /**
+     *
+     * @param relativePath
+     * @param header
+     * @param content
+     * @param outputFilename
+     */
+    public void writeInformationInFileLog(String relativePath,  String header, String content, String outputFilename){
+        String content_file = header + "\n" + content;
+        try (FileWriter file = new FileWriter(relativePath + "/" + outputFilename + ".txt")) {
+            file.write(content_file);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * This method returns an Arraylist compiled of the number Inputs, Signals, and Gates in circuit(s)
+     * @throws Exception e
+     */
+    public void getCircuitsInputsGatesSignals() throws Exception{
+
+        System.out.println("Gates Area of " + this.circuitList.size() + " circuits");
+        ArrayList <String> gatesCirctuits = new ArrayList<>();
+        String str = "";
+
+        for (int i = 0; i < this.circuitList.size(); i++) {
+            System.out.println("_" + i);
+            Orchestrator simulacaoMultithreading = new Orchestrator(this.threads, this.reliabilityConst, this.relativePath, this.genlib, this.relativePath + this.circuitList.get(i));
+            gatesCirctuits.add(simulacaoMultithreading.estimateMultithreadingExausticSimulationSize_AND_PRINT_INPUTS_SIGNALS_GATES("ALL_SIGNALS")); //ou Signals =  "ALL_SIGNALS" ou "INTERMEDIATE" ou "INTERMEDIATE_AND_OUTPUTS" ou "INPUTS" ou "INPUTS_OUTPUTS"
+            String s = simulacaoMultithreading.PrintGatesCounterDetailsSorted();
+                //this.writeInformationInFileLog(relativePath, "circuit; Gates", s, "GATES-" + this.circuitList.get(i));
+            this.OUTPUT_INFO = simulacaoMultithreading.getFRM(" MTFT Sample (Monte Carlo = N)");
+        }
+
+        String content = "";
+
+        for (int z = 0; z < gatesCirctuits.size(); z++) {
+            content =  content + gatesCirctuits.get(z) + "\n";
+        }
+        this.writeInformationInFileLog(relativePath, "circuit; Inputs; Signals; Gates", content , "COMPILATION-NUMBER_OF_INPUTS_GATES_SIGNALS_CIRCUITLIST");
+    }
+
+    /**
+     * This method estimates the sensitive areas compiled (Exhaustive method), based on the extraction of the sensitive cells lookup table (csv file). For each vector is complied an individual total susceptible SET/MET area
+     * @param monteCarloSample Monte Carlo sample size
+     * @param mtf_sizes
+     * @param Signals
+     * @throws Exception e
+     */
+    public void CalculateSensitiveAreaExhative(int monteCarloSample, ArrayList <Float> mtf_sizes, String Signals) throws Exception{
+        /*
         System.out.println("Multiple Fault Injection : " + mtf_sizes);
         System.out.println("Path: " +this.relativePath);
         System.out.println("Genlib: " +this.genlib);
         System.out.println("Circuit: " +this.circuitList);
-
         System.out.println("ARGS:"  +  mtf_sizes) ;
+        */
 
-        String str = "";
         for (int i = 0; i < this.circuitList.size(); i++) {
-
-
-
-            Orchestrator simulacaoMultithreading = new Orchestrator(this.threads, this.reliabilityConst, this.relativePath, this.genlib, this.relativePath + this.circuitList.get(i));
-            //simulacaoMultithreading.PrintCircuitSpecs();
-            //str = str + simulacaoMultithreading.PrintCircuitSpecs() + "\n";
-
-            //simulacaoMultithreading.runMultipleFaultInjectionMultithreadingMonteCarlo(base, order, frequency,sampleSize, Signals); //ou Signals =  "ALL_SIGNALS" ou "INTERMEDIATE" ou "INTERMEDIATE_AND_OUTPUTS" ou "INPUTS" ou "INPUTS_OUTPUTS"
-
-            /*
-            ArrayList <Integer> teste = new ArrayList<>();
-            teste.add(20000);
-            teste.add(1000);
-            teste.add(15000);
-            teste.add(19999);
-            simulacaoMultithreading.runMultipleFaultInjectionMultithreadingMonteCarloSimulation(teste, Signals); //ou Signals =  "ALL_SIGNALS" ou "INTERMEDIATE" ou "INTERMEDIATE_AND_OUTPUTS" ou "INPUTS" ou "INPUTS_OUTPUTS"
-            */
-
-            simulacaoMultithreading.runMultipleFaultInjectionMultithreadingMonteCarloSimulationProportion(sample, mtf_sizes, Signals); //ou Signals =  "ALL_SIGNALS" ou "INTERMEDIATE" ou "INTERMEDIATE_AND_OUTPUTS" ou "INPUTS" ou "INPUTS_OUTPUTS"
-
-
             Orchestrator simulacaoMultithreadingCalculateSensitiveArea = new Orchestrator(this.threads, this.reliabilityConst, this.relativePath, this.genlib, this.relativePath + this.circuitList.get(i));
-
             simulacaoMultithreadingCalculateSensitiveArea.runCalculationSensitiveAreas(Signals, "teste/lookup_table.csv");
-
-            this.OUTPUT_INFO = simulacaoMultithreading.getFRM(" MTFT Sample (Monte Carlo = N)");
+            this.OUTPUT_INFO = simulacaoMultithreadingCalculateSensitiveArea.getFRM(" the computation of sensitive areas is complete");
         }
         //System.out.println("STR: " + str);
     }
 
 
+    /**
+     * Debug Method
+     * @param sampleSize
+     * @param Signals
+     * @throws Exception e
+     */
     public void PrintCircuitsSpecs(int sampleSize, String Signals) throws Exception{
                 //Loop na simulação de circuitos 
                 String str = "";
@@ -471,21 +391,12 @@ public class main{
                 System.out.println(str);
                 System.out.println("------");
         }
-        
-        public void monteCarloSimulation_Per_Area(int sampleSize, String Signals, int smallestGatesIncicuitsSimulation) throws Exception{
-                //Loop na simulação de circuitos 
-                String str = "";
-                for (int i = 0; i < this.circuitList.size(); i++) {
-                     Orchestrator simulacaoMultithreading = new Orchestrator(this.threads, this.reliabilityConst,
-                             this.relativePath, this.genlib, this.relativePath + this.circuitList.get(i));
-                             //simulacaoMultithreading.PrintCircuitSpecs();
-                             //str = str + simulacaoMultithreading.PrintCircuitSpecs() + "\n";
-                             simulacaoMultithreading.runMultithreading_MonteCarloSample_per_Area_Analisys(sampleSize, Signals, smallestGatesIncicuitsSimulation); //ou Signals =  "ALL_SIGNALS" ou "INTERMEDIATE" ou "INTERMEDIATE_AND_OUTPUTS" ou "INPUTS" ou "INPUTS_OUTPUTS"
-                }
-                //System.out.println("STR: " + str);
-        }
-        
-        public void preparingEnviroment(){
+
+
+    /**
+     * Method for prepare the simulation enviroment for batch simulation, it's filters the verilogs files (.v) present in the inputed folder
+     */
+    public void preparingEnviroment(){
                 
                 String[] circuitFiles;
                 File f = new File(this.relativePath);
@@ -494,23 +405,21 @@ public class main{
                 
                 for (String pathname : circuitFiles) {
                     if(pathname.endsWith(".v")){ // test tipe .v
-                        //System.out.println(pathname);
-                        //circuitList.add(pathname); 
                         this.circuitList.add(pathname);
                     }  
                 }
                 System.out.println("Circuits in List: " +  this.circuitList);
-                System.out.println("======================\n");
                
         }
-        
-        public void preparingEnviromentSingleFile(String circuit){
-                
+
+    /**
+     * Method for prepare the simulation enviroment for single circuit simulation
+     */
+    public void preparingEnviromentSingleFile(String circuit){
                 this.circuitList.add(circuit);
                 System.out.println("Circuits in analysis: " +  this.circuitList);
-                System.out.println("======================\n");
-               
-        }
+
+    }
        
         public void fooAlot(String folderPath) throws IOException{
 
@@ -518,7 +427,12 @@ public class main{
              
         }
 
-        private List<String> readFile(String filename) 
+    /**
+     * This method reads the result files (is used embeeded another method)
+     * @param filename Log filename
+     * @return List<String>
+     */
+    private List<String> readFile(String filename)
         {
                             List<String> records = new ArrayList<String>();
                             try
@@ -539,6 +453,13 @@ public class main{
                               return null;
                              }
         }
+        /**
+     * This method parses circuits results logs SET (FMR log) files, to combine the simulation informations (circuit, sample, Ne, FMR, time)  in a third one log (combining all circuits)
+     * @param files Arraylist with circuits names
+     * @param path circuits path
+     * @param filter filter (.v)
+     * @throws IOException e
+     */
         public void readEachFile(ArrayList<String> files, String path, String filter) throws IOException{
          
             ArrayList <String> FileContent = new ArrayList<>();
@@ -571,7 +492,7 @@ public class main{
                     pw.println(club);
                 }
                 pw.close();
-                System.out.println("ARquivo criado: " + path + "/" + filter + "_.txt" );
+                System.out.println("Created file : " + path + "/" + filter + "_.txt" );
                 /*
                 System.out.println(path + "/" + " resultado_.txt");
                 File file = new File(path + "/" + " resultado_.txt");
@@ -584,6 +505,13 @@ public class main{
        
         }
 
+    /**
+     * This method parses circuits results logs MET (FMR log) files, to combine the simulation informations (circuit, sample, Ne, FMR, time)  in a third one log (combining all circuits)
+     * @param files Arraylist with circuits names
+     * @param path circuits path
+     * @param filter filter (.v)
+     * @throws IOException e
+     */
     public void readEachFileProportion(ArrayList<String> files, String path, String filter) throws IOException{
 
         ArrayList <String> FileContent = new ArrayList<>();
@@ -605,7 +533,7 @@ public class main{
                     //out = files.get(i) + ";" + t[1];
                     //System.out.println("----- +" + t[1]);
                     //String[] sampleSize = fileContentList.get(3).split(":");
-                    String tttt [] =   x.split(":");
+                    String[] tttt =   x.split(":");
                     Ne = tttt[1]; //fileContentList.get(9).split(":");
                     //String[] time = fileContentList.get(10).split(":");
 
@@ -614,11 +542,11 @@ public class main{
                     //System.out.println("File: " + files.get(i)  +  " sample: " + sampleSize[1] + " > " + x + " t(s):" + time[1] );
                 }
                 if(x.contains("- Sample") || (x.contains("Number of Simulations"))){
-                    String tttt [] =   x.split("=");
+                    String[] tttt =   x.split("=");
                     sample = tttt[1]; //fileContentList.get(9).split(":");
                 }
                 if(x.contains("Performance time")){
-                    String tttt [] =   x.split(":");
+                    String[] tttt =   x.split(":");
                     time = tttt[1]; //fileContentList.get(9).split(":");
                 }
 
@@ -648,6 +576,12 @@ public class main{
     }
 
 
+    /**
+     * This method parses multiple circuits results logs in a third one log (combining all circuits) MAJOR METHOD
+     * @param path circuits path
+     * @param filter filter (.v)
+     * @throws IOException e
+     */
     public void readResultsInLot(String path, String filter) throws IOException{
                 
                 String[] circuitFiles;
@@ -688,8 +622,13 @@ public class main{
                 System.out.println("------------------------------------------");
                     
         }
-        
-        public void fooExecutionTransistors() throws Exception{
+
+
+    /**
+     * dev methods
+      * @throws Exception e
+     */
+    public void fooExecutionTransistors() throws Exception{
             
              //this.fooTransistors("Simulação Circuitos - ABC/min/", "lib_min_no_cost.genlib"); // 1° genlib
              
@@ -715,8 +654,11 @@ public class main{
                //this.foo("teste/", "cadence.genlib");
                //this.foo("Simulação Circuitos - ABC/basic/", "lib_basic_no_cost.genlib");
                //this.foo(relativePath, genlib);
-           } 
-      
+           }
+    /**
+     * dev methods
+     * @throws Exception e
+     */
         public void fooTransistors(String relativePath , String genlibTemp) throws Exception{
             
              int threads = 8; //Numero de threads
@@ -736,7 +678,10 @@ public class main{
              //experimento_genlib.monteCarloSimulation_Per_Area(sampleSizeMonteCarlo, "ALL_SIGNALS", 180);  //ou Signals =  "ALL_SIGNALS" ou "INTERMEDIATE" ou "INTERMEDIATE_AND_OUTPUTS" ou "INPUTS" ou "INPUTS_OUTPUTS"
 
         }
-        
+    /**
+     * dev methods
+     * @throws Exception e
+     */
         public void fooExecution() throws Exception{
             
             //this.foo("testar/", "cadence.genlib");
@@ -764,8 +709,11 @@ public class main{
                //this.foo("teste/", "cadence.genlib");
                //this.foo("Simulação Circuitos - ABC/basic/", "lib_basic_no_cost.genlib");
                //this.foo(relativePath, genlib);
-           } 
-        
+           }
+    /**
+     * dev methods
+     * @throws Exception e
+     */
         public void foo(String relativePath , String genlibTemp) throws Exception{
             
              int threads = 8; //Numero de threads
@@ -787,15 +735,14 @@ public class main{
              //experimento_genlib.monteCarloSimulation_Per_Area(sampleSizeMonteCarlo, "ALL_SIGNALS", 180);  //ou Signals =  "ALL_SIGNALS" ou "INTERMEDIATE" ou "INTERMEDIATE_AND_OUTPUTS" ou "INPUTS" ou "INPUTS_OUTPUTS"
 
         }
+
         /**
-         * Extracts the
-         * @param sampleSize
-         * @param Signals
-         * @throws Exception
-         */
+     * dev methods
+     * @throws Exception e
+     */
         public void foo3(int sampleSize, String Signals) throws Exception{
             //Loop na simulação de circuitos
-            String str = "";
+            //String str = "";
 
             ArrayList <Integer> N = new ArrayList<>();
             //c1355         c1908           c2670           c3540           c432            c499            c5315           c6288           c7552           c880
