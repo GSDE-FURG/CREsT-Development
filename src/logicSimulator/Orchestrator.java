@@ -471,6 +471,105 @@ import writers.WriteCsvTh;
 
     }
 
+    public String PrintGatesCounterDetailsSortedCompliled(int id){
+        System.out.println("          ~~~~~~ Circuit Name : " + this.circuit.getName());
+        //System.out.println("- Logic Gates : " + this.circuit.getGates());
+        System.out.println("               - Logic Gates (size): " + this.circuit.getGates().size() );
+        ///System.out.println("               - Levels (size): " + this.levelCircuit.getGateLevels().size());
+
+        ArrayList <gate_counter> temp = new ArrayList<>();
+
+        temp.add(new gate_counter("AOI21", 0));
+        temp.add(new gate_counter("AOI211", 0));
+        temp.add(new gate_counter("AOI22", 0));
+        temp.add(new gate_counter("AOI221", 0));
+        temp.add(new gate_counter("AOI222", 0));
+
+        temp.add(new gate_counter("BUF", 0));
+        temp.add(new gate_counter("INV", 0));
+
+        temp.add(new gate_counter("NAND2", 0));
+        temp.add(new gate_counter("NAND3", 0));
+        temp.add(new gate_counter("NAND4", 0));
+
+        temp.add(new gate_counter("NOR2", 0));
+        temp.add(new gate_counter("NOR3", 0));
+        temp.add(new gate_counter("NOR4", 0));
+
+        temp.add(new gate_counter("OAI21", 0));
+        temp.add(new gate_counter("OAI211", 0));
+        temp.add(new gate_counter("OAI22", 0));
+        temp.add(new gate_counter("OAI221", 0));
+        temp.add(new gate_counter("OAI222", 0));
+
+        temp.add(new gate_counter("ONE", 0));
+
+        temp.add(new gate_counter("XOR2", 0));
+        temp.add(new gate_counter("ZERO", 0));
+
+        ArrayList <String> files = new ArrayList<>();
+        files.add("alu4");
+                files.add("vda");
+                        files.add(    "frg2");
+                                files.add(      "t481");
+                                        files.add(      "dalu");
+                                                files.add(     "k2");
+                                                        files.add(      "pair");
+                                                                files.add(      "i8");
+                                                                        files.add(     "i10");
+                                                                                files.add(     "des");
+
+        String f = this.circuit.getName().replace("_lib_full_no_cost", "");
+        System.out.println("CIRC: "+this.circuitNameStr + "  " + this.circuit.getName() + " f: " + f);
+       if(files.contains(f) || (id == 0)) {
+           System.out.println("FINDED: " + this.circuit.getName());
+
+           for (Gate i : this.circuit.getGates()) {
+               //System.out.println("-" + i.getType());
+
+            /* if(searchGateInList(i.getType().toString(), temp) == false){ // Adicionar a lista
+                 gate_counter novo_gate = new gate_counter(i.getType().toString(), 0);
+                 temp.add(novo_gate);
+             }
+             */
+               if (searchGateInList(i.getType().toString(), temp) == false) {
+                   System.out.println("ERROR !!!!");
+               }
+           }
+
+           System.out.println("- Lista completa: ");
+           int c = 0;
+           String result = this.circuit.getName(); //+ this.circuit.getName() + ";" + this.circuit.getGates().size() +  "\n";
+           String gates = "";
+           if (id == 0) {
+               for (gate_counter item : temp) {
+                   gates = gates + "; " + item.get_gate_type();
+               }
+               gates = gates + "\n";
+           }
+
+           for (gate_counter item : temp) {
+               System.out.println(item.get_gate_type() + " " + item.get_gate_counter());
+
+               result = result + ";" + item.get_gate_counter();
+
+               //result = result +item.get_gate_counter() + "\n";
+               c = c + item.get_gate_counter();
+           }
+
+           result = gates + result + "\n";
+
+           if (c == this.circuit.getGates().size()) {
+               System.out.println("OK NUMERO DE GATES CORRETO: " + c);
+           } else {
+               System.out.println("!!!! Erro número de gates divergente: c:" + c + "  circ: " + this.circuit.getGates().size());
+           }
+           return result;
+       }
+        return "";
+
+    }
+
     public void initProbCircuit() {
         if(this.circuit != null) {
 
