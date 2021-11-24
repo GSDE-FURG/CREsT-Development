@@ -4,8 +4,11 @@
  * and open the template in the editor.
  */
 package logicSimulator;
+import jxl.read.biff.SharedStringFormulaRecord;
+
 import java.io.*;
 import java.lang.reflect.Array;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -73,8 +76,8 @@ public class main{
             //Psthzs.add("teste/mapped/EPFL2015/1-minimal_no_cost/"); Psthzs_lib.add("1-minimal_no_cost.genlib");
 
             Psthzs.add("teste/mapped/LGSynth91/Comb/COMB - Minimal/"); Psthzs_lib.add("lib_min_no_cost.genlib");
-            Psthzs.add("teste/mapped/LGSynth91/Comb/COMB - Complex/"); Psthzs_lib.add("lib_complex_no_cost_no_xor.genlib");
-            Psthzs.add("teste/mapped/LGSynth91/Comb/COMB - Full/"); Psthzs_lib.add("lib_full_no_cost.genlib");
+            //Psthzs.add("teste/mapped/LGSynth91/Comb/COMB - Complex/"); Psthzs_lib.add("lib_complex_no_cost_no_xor.genlib");
+            //Psthzs.add("teste/mapped/LGSynth91/Comb/COMB - Full/"); Psthzs_lib.add("lib_full_no_cost.genlib");
 
             ArrayList <String> circsGates= new ArrayList<>();
 
@@ -117,7 +120,7 @@ public class main{
                  //experimento.readResultsInLot("teste/mapped/EPFL2015/1-minimal_no_cost/Results/", "ALL_SIGNALS");
 
 
-                 experimento.readResultsInLotWithFilter("teste/mapped/LGSynth91/Comb/COMB - Full/", "ALL_SIGNALS");
+                 experimento.readResultsInLotWithFilter("teste/mapped/LGSynth91/result_comb_minimal/", "ALL_SIGNALS");
 
                  //circsGates = experimento.getCircuitsGates();
                                //experimento.getCircuitsInputsGatesSignals(); // Extract The files results for detailed types of gates
@@ -668,44 +671,43 @@ public class main{
 
         String[] circuitFiles;
         File f = new File(path);
-        ArrayList <String> filesc = new ArrayList<>();
+        ArrayList <String> files = new ArrayList<>();
         ArrayList <String> filtered_files = new ArrayList<>();
         circuitFiles = f.list();
 
-        ArrayList <String> files = new ArrayList<>();
-        files.add("alu4");
-        files.add("vda");
-        files.add(    "frg2");
-        files.add(      "t481");
-        files.add(      "dalu");
-        files.add(     "k2");
-        files.add(      "pair");
-        files.add(      "i8");
-        files.add(     "i10");
-        files.add(     "des");
+        ArrayList <String> filesx = new ArrayList<>();
+        filesx.add("alu4");
+        filesx.add("vda");
+        filesx.add("frg2");
+        filesx.add("t481");
+        filesx.add("dalu");
+        filesx.add("k2");
+        filesx.add("pair");
+        filesx.add("i8");
+        filesx.add("i10");
+        filesx.add("des");
 
-                //String f = this.circuit.getName().replace("_lib_full_no_cost", "");
+        System.out.println("path: " + path + "   -> " +Files.exists(f.toPath()));
 
         for (String pathname : circuitFiles) {
             if(pathname.endsWith(".txt")){ // test tipe .v
                 //System.out.println(pathname);
                 //circuitList.add(pathname);
                 //this.circuitList.add(pathname);
-                String fc = pathname.replace("_lib_full_no_cost.v", "");
-                System.out.println("FC: " + fc);
-                if(files.contains(fc)) {
-                    filesc.add(pathname);
-                }
+                files.add(pathname);
             }
         }
+        System.out.println("results in List: " +  files);
+        System.out.println("Size List: " +  files.size());
 
-        System.out.println("results in List: " +  filesc);
-        System.out.println("Size List: " +  filesc.size());
-
-        for (int i = 0; i < filesc.size(); i++) {
-            if(filesc.get(i).contains(filter)){
-                System.out.println("->" + filesc.get(i));
-                filtered_files.add(filesc.get(i));
+        for (int i = 0; i < files.size(); i++) {
+            //"ALL_SIGNALS_MULTIPLE_MonteCarlo_Simple_Log_" + file_temp + "_lib_min_no_cost_Threads-4_sampleSize-20000.txt";
+            for (String file_temp: filesx){
+                String tmp = "ALL_SIGNALS_MULTIPLE_MonteCarlo_Simple_Log_" + file_temp + "_lib_min_no_cost_Threads-4_sampleSize-20000.txt";
+                if(files.get(i).contains(tmp)){
+                    System.out.println("->" + files.get(i));
+                    filtered_files.add(files.get(i));
+                }
             }
         }
                 /*
@@ -721,7 +723,6 @@ public class main{
         //this.readEachFile(filtered_files, path, filter);
         this.readEachFileProportion(filtered_files, path, filter);
         System.out.println("------------------------------------------");
-
     }
 
 
