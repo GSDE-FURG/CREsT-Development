@@ -63,7 +63,7 @@ import writers.WriteCsvTh;
     private final ArrayList <ArrayList<String>> SignalFault = new ArrayList<>();
     private final ArrayList <ArrayList<String>> SignalFaultBitFlip = new ArrayList<>();
 
-    public Orchestrator(int threads, String reliabilityConst, String relativePath, String genlib, String circuitName) {
+    public Orchestrator(int threads, String reliabilityConst, String relativePath, String genlib, String circuitName) throws IOException {
             super(threads, reliabilityConst, relativePath, genlib);
 
              this.cellLibrary = new CellLibrary();
@@ -135,7 +135,7 @@ import writers.WriteCsvTh;
               for (int i = 0; i < signalList.size(); i++) {
                     r.add(signalList.get(i));
               }
-               System.out.println("--> Considering all signals (input, intermediate, output): "+r.size());
+               System.out.println("     --> Considering all signals (input, intermediate, output): "+r.size());
               return r;
 
 
@@ -298,7 +298,7 @@ import writers.WriteCsvTh;
              }
          }
 
-         System.out.println("- Lista completa: ");
+        // System.out.println("- Lista completa: ");
          int c = 0;
          String result = "\n" + this.circuit.getName() + ";" + this.circuit.getGates().size() +  "\n";
 
@@ -312,7 +312,7 @@ import writers.WriteCsvTh;
          }
 
          if(c == this.circuit.getGates().size()){
-             System.out.println("OK NUMERO DE GATES CORRETO: " + c);
+           //  System.out.println("OK NUMERO DE GATES CORRETO: " + c);
          }else{
              System.out.println("!!!! Erro número de gates divergente: c:" + c + "  circ: " + this.circuit.getGates().size());
          }
@@ -372,7 +372,7 @@ import writers.WriteCsvTh;
             }
         }
 
-        System.out.println("- Lista completa: ");
+        //System.out.println("- Lista completa: ");
         int c = 0;
         String result = "\n" + this.circuit.getName() + ";" + this.circuit.getGates().size() +  "\n";
 
@@ -386,7 +386,7 @@ import writers.WriteCsvTh;
         }
 
         if(c == this.circuit.getGates().size()){
-            System.out.println("OK NUMERO DE GATES CORRETO: " + c);
+           // System.out.println("OK NUMERO DE GATES CORRETO: " + c);
         }else{
             System.out.println("!!!! Erro número de gates divergente: c:" + c + "  circ: " + this.circuit.getGates().size());
         }
@@ -447,7 +447,7 @@ import writers.WriteCsvTh;
             }
         }
 
-        System.out.println("- Lista completa: ");
+        //System.out.println("- Lista completa: ");
         int c = 0;
         String result = "\n" + this.circuit.getName() + ";" + this.circuit.getGates().size() +  "\n";
 
@@ -462,7 +462,7 @@ import writers.WriteCsvTh;
         }
 
         if(c == this.circuit.getGates().size()){
-            System.out.println("OK NUMERO DE GATES CORRETO: " + c);
+            //System.out.println("OK NUMERO DE GATES CORRETO: " + c);
         }else{
             System.out.println("!!!! Erro número de gates divergente: c:" + c + "  circ: " + this.circuit.getGates().size());
         }
@@ -471,10 +471,10 @@ import writers.WriteCsvTh;
 
     }
 
-    public String PrintGatesCounterDetailsSortedCompliled(int id){
-        System.out.println("          ~~~~~~ Circuit Name : " + this.circuit.getName());
+    public String PrintGatesCounterDetailsSortedCompliled(int id, ArrayList <String> files, String filter){
+        //System.out.println("    - Circuit Name : " + this.circuit.getName());
         //System.out.println("- Logic Gates : " + this.circuit.getGates());
-        System.out.println("               - Logic Gates (size): " + this.circuit.getGates().size() );
+        //System.out.println("    - Logic Gates (size): " + this.circuit.getGates().size() );
         ///System.out.println("               - Levels (size): " + this.levelCircuit.getGateLevels().size());
 
         ArrayList <gate_counter> temp = new ArrayList<>();
@@ -507,6 +507,7 @@ import writers.WriteCsvTh;
         temp.add(new gate_counter("XOR2", 0));
         temp.add(new gate_counter("ZERO", 0));
 
+        /*
         ArrayList <String> files = new ArrayList<>();
         files.add("alu4");
                 files.add("vda");
@@ -518,26 +519,26 @@ import writers.WriteCsvTh;
                                                                 files.add(      "i8");
                                                                         files.add(     "i10");
                                                                                 files.add(     "des");
+        */
 
-        String f = this.circuit.getName().replace("_lib_full_no_cost", "");
-        System.out.println("CIRC: "+this.circuitNameStr + "  " + this.circuit.getName() + " f: " + f);
+        String f = this.circuit.getName().replace("_"+filter, "");
+       // f = f.replace("")
+       System.out.println("CIRC: "+this.circuitNameStr + "  " + this.circuit.getName() + " f: " + f);
        if(files.contains(f) || (id == 0)) {
-           System.out.println("FINDED: " + this.circuit.getName());
-
+           //System.out.println("FINDED: " + this.circuit.getName());
            for (Gate i : this.circuit.getGates()) {
                //System.out.println("-" + i.getType());
-
             /* if(searchGateInList(i.getType().toString(), temp) == false){ // Adicionar a lista
                  gate_counter novo_gate = new gate_counter(i.getType().toString(), 0);
                  temp.add(novo_gate);
              }
              */
                if (searchGateInList(i.getType().toString(), temp) == false) {
-                   System.out.println("ERROR !!!!");
+                   System.err.println("ERROR comparing number of gates !!!!");
                }
            }
 
-           System.out.println("- Lista completa: ");
+           //System.out.println("- Lista completa: ");
            int c = 0;
            String result = this.circuit.getName(); //+ this.circuit.getName() + ";" + this.circuit.getGates().size() +  "\n";
            String gates = "";
@@ -549,10 +550,8 @@ import writers.WriteCsvTh;
            }
 
            for (gate_counter item : temp) {
-               System.out.println(item.get_gate_type() + " " + item.get_gate_counter());
-
+               //System.out.println(item.get_gate_type() + " " + item.get_gate_counter());
                result = result + ";" + item.get_gate_counter();
-
                //result = result +item.get_gate_counter() + "\n";
                c = c + item.get_gate_counter();
            }
@@ -560,9 +559,11 @@ import writers.WriteCsvTh;
            result = gates + result + "\n";
 
            if (c == this.circuit.getGates().size()) {
-               System.out.println("OK NUMERO DE GATES CORRETO: " + c);
+               //System.out.println("OK NUMERO DE GATES CORRETO: " + c);
+
            } else {
-               System.out.println("!!!! Erro número de gates divergente: c:" + c + "  circ: " + this.circuit.getGates().size());
+               System.err.println("!!!! Erro número de gates divergente: c:" + c + "  circ: " + this.circuit.getGates().size());
+               return "";
            }
            return result;
        }
@@ -2194,7 +2195,7 @@ import writers.WriteCsvTh;
     public String estimateMultithreadingExausticSimulationSize_AND_PRINT_INPUTS_SIGNALS_GATES(String option) throws IOException, Exception{ //Test All possibilities
 
 
-        System.out.println(" ----- Estimate Exaustive Simulation Size -------");
+        //System.out.println(" ----- Estimate Exaustive Simulation Size -------");
         long loadTimeStart = System.nanoTime();//System.currentTimeMillis();
 
 
@@ -2210,7 +2211,7 @@ import writers.WriteCsvTh;
         this.cellLibrary = cellLib;
         this.cellLibrary.initLibrary(this.genlib);
 
-        System.out.println("    ... Reading Genlib " + " at -> " + this.genlib  + " ... ok");
+        //System.out.println("    ... Reading Genlib " + " at -> " + this.genlib  + " ... ok");
         //System.out.println("  - Avaliable logic gatesin this library: "+cellLib.getCells());
 
 
@@ -2219,20 +2220,20 @@ import writers.WriteCsvTh;
         this.verilog_circuit = verilog_circuit;
         /*Circuit linked to verilog_circuit - init circuit*/
         this.circuit = verilog_circuit.getCircuit();
-        System.out.println("    ... Reading verilog "+ " at -> " + this.circuitNameStr  + " ... ok");
+        //System.out.println("    ... Reading verilog "+ " at -> " + this.circuitNameStr  + " ... ok");
         //System.out.println("Patterns : " + this.verilog_circuit.getGatePattern());
 
 
 
         /* Print circuit Specs*/
-        System.out.println("\n        ------ Printing Circuit Specs: --------");
+       // System.out.println("\n        ------ Printing Circuit Specs: --------");
          // this.PrintSpecsThesis();
-        this.PrintSpecs();
-        System.out.println("          ---------------------------------------\n");
+       // this.PrintSpecs();
+       // System.out.println("          ---------------------------------------\n");
 
         int sizeExasuticTest;
 
-        System.out.println("-   Sample size (N = 2^ENTRADAS): " + "2^"+ this.circuit.getInputs().size() + " = " + this.sampleSize);
+        //System.out.println("-   Sample size (N = 2^ENTRADAS): " + "2^"+ this.circuit.getInputs().size() + " = " + this.sampleSize);
 
         this.signals_to_inject_faults = this.signalsToInjectFault(option); // Consider all signals to fault inject
 
@@ -2251,7 +2252,7 @@ import writers.WriteCsvTh;
         //long propagateTimeStart = System.nanoTime();
 
         String str = this.circuit.getName() + ";" + this.circuit.getInputs().size() + ";" + this.circuit.getSignals().size() + ";" + this.PrintGatesCounter(); //this.PrintTransistorsNumber();
-        System.out.println("STR: " + str);
+        System.out.println("           - Extracted string (circuit; inputs; signals; gates): " + str);
         return str;
 
         /*Execução das threads*/

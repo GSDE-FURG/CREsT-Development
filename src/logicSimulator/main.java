@@ -74,6 +74,8 @@ public class main{
             //Psthzs.add("teste/mapped/EPFL2015/1-minimal_no_cost/"); Psthzs_lib.add("1-minimal_no_cost.genlib");
             //Psthzs.add("teste/mapped/LGSynth91/Comb/COMB - Minimal/"); Psthzs_lib.add("lib_min_no_cost.genlib");
 
+            Psthzs.add("teste/mapped/LGSynth91/Comb/COMB - Minimal/"); Psthzs_lib.add("lib_min_no_cost.genlib");
+            Psthzs.add("teste/mapped/LGSynth91/Comb/COMB - Complex/"); Psthzs_lib.add("lib_complex_no_cost_no_xor.genlib");
             Psthzs.add("teste/mapped/LGSynth91/Comb/COMB - Full/"); Psthzs_lib.add("lib_full_no_cost.genlib");
 
             result_path.add("teste/mapped/LGSynth91/result_comb_minimal/"); result_path_filter.add("ALL_SIGNALS_MULTIPLE_MonteCarlo_Simple_Log_");
@@ -127,6 +129,7 @@ public class main{
                                 //circsGates = experimento.getCircuitsGates();
                                 //experimento.getCircuitsInputsGatesSignals(); // Extract The files results for detailed types of gates
                                 //experimento.getCircuitsInputsGatesSignalsFiltered("_lib_min_no_cost.v"); // Extract The files results for detailed types of gates
+                     experimento.getCircuitsInputsGatesSignalsFiltered(Psthzs_lib.get(i).replace(".genlib", ""), filesx); // Extract The files results for detailed types of gates
 
                  }catch (Exception e){
                      System.err.println("ERRROR ----------- " + e);
@@ -139,14 +142,6 @@ public class main{
              //experimento.fooExecutionTransistors();
              //experimento.fooExecution(); //Aqui
              
-             /*
-             experimento.readResultsInLot("Resultados - Todas as simulações - 5 bibliotecas - ISCAS85/min", "ALL_SIGNALS");
-             experimento.readResultsInLot("Resultados - Todas as simulações - 5 bibliotecas - ISCAS85/min", "INTERMEDIATE_AND_OUTPUTS");
-             experimento.readResultsInLot("Resultados - Todas as simulações - 5 bibliotecas - ISCAS85/min", "INTERMEDIATE_Multithreading_");
-             */
-
-            //experimento.multithreadingSimulation("ALL_SIGNALS"); //TRue Table - //ou Signals =  "ALL_SIGNALS" ou "INTERMEDIATE" ou "INTERMEDIATE_AND_OUTPUTS" ou "INPUTS" ou "INPUTS_OUTPUTS"
-            //experimento.monteCarloSimulation(sampleSizeMonteCarlo, "ALL_SIGNALS"); //ou Signals =  "ALL_SIGNALS" ou "INTERMEDIATE" ou "INTERMEDIATE_AND_OUTPUTS" ou "INPUTS" ou "INPUTS_OUTPUTS"
         }
 
      /**
@@ -371,7 +366,7 @@ public class main{
      * This method returns an Arraylist compiled of the number Inputs, Signals, and Gates in circuit(s)
      * @throws Exception e
      */
-    public void getCircuitsInputsGatesSignals() throws Exception{
+    public void getCircuitsInputsGatesSignals(String filter, ArrayList<String> files_to_filter) throws Exception{
 
         System.out.println("Gates Area of " + this.circuitList.size() + " circuits");
         ArrayList <String> gatesCirctuits = new ArrayList<>();
@@ -379,11 +374,11 @@ public class main{
         String compiled = "";
         for (int i = 0; i < this.circuitList.size(); i++) {
             try {
-                System.out.println("_" + i);
+                //System.out.println("_" + i);
                 Orchestrator simulacaoMultithreading = new Orchestrator(this.threads, this.reliabilityConst, this.relativePath, this.genlib, this.relativePath + this.circuitList.get(i));
                 gatesCirctuits.add(simulacaoMultithreading.estimateMultithreadingExausticSimulationSize_AND_PRINT_INPUTS_SIGNALS_GATES("ALL_SIGNALS")); //ou Signals =  "ALL_SIGNALS" ou "INTERMEDIATE" ou "INTERMEDIATE_AND_OUTPUTS" ou "INPUTS" ou "INPUTS_OUTPUTS"
                 //String s = simulacaoMultithreading.PrintGatesCounterDetailsSorted();
-                compiled = compiled + simulacaoMultithreading.PrintGatesCounterDetailsSortedCompliled(i);
+                compiled = compiled + simulacaoMultithreading.PrintGatesCounterDetailsSortedCompliled(i, files_to_filter, filter);
 
                // this.writeInformationInFileLog(relativePath, "circuit; Gates", s, "GATES-" + this.circuitList.get(i));
 
@@ -411,23 +406,25 @@ public class main{
      * This method returns an Arraylist compiled of the number Inputs, Signals, and Gates in circuit(s)
      * @throws Exception e
      */
-    public void getCircuitsInputsGatesSignalsFiltered(String filter) throws Exception{
+    public void getCircuitsInputsGatesSignalsFiltered(String filter, ArrayList<String> files_to_filter) throws Exception{
 
-        System.out.println("Gates Area of " + this.circuitList.size() + " circuits");
+        System.out.println("- Extracting Gates Area from " + this.circuitList.size() + " circuits (.v)");
         ArrayList <String> gatesCirctuits = new ArrayList<>();
-        String str = "";
+
         String compiled = "";
-        ArrayList <String> filesx = new ArrayList<>();
-        filesx.add("alu4");
-        filesx.add("vda");
-        filesx.add("frg2");
-        filesx.add("t481");
-        filesx.add("dalu");
-        filesx.add("k2");
-        filesx.add("pair");
-        filesx.add("i8");
-        filesx.add("i10");
-        filesx.add("des");
+            /*
+            ArrayList <String> filesx = new ArrayList<>();
+            filesx.add("alu4");
+            filesx.add("vda");
+            filesx.add("frg2");
+            filesx.add("t481");
+            filesx.add("dalu");
+            filesx.add("k2");
+            filesx.add("pair");
+            filesx.add("i8");
+            filesx.add("i10");
+            filesx.add("des");
+            */
         /*
         for (String file_temp: filesx){
             String tmp = "ALL_SIGNALS_MULTIPLE_MonteCarlo_Simple_Log_" + file_temp + "_lib_min_no_cost_Threads-4_sampleSize-20000.txt";
@@ -436,41 +433,39 @@ public class main{
                 filtered_files.add(files.get(i));
             }
         }*/
-
+        System.out.println("- Filter_library: " + filter);
         for (int i = 0; i < this.circuitList.size(); i++) {
-            System.out.println("------> " + this.circuitList.get(i));
+            //System.out.println("------> " + this.circuitList.get(i));
             try {
-                for (String file_temp: filesx){
-                    String tmp =  file_temp + filter; ///"_lib_min_no_cost.v";
+                for (String file_temp: files_to_filter){
+                    String tmp =  file_temp + "_" + filter; ///"_lib_min_no_cost.v";
                     if(this.circuitList.get(i).contains(tmp)){
-                        System.out.println("_" + i);
+                        //System.out.println("_" + i);
+                        //System.out.println("    -" + this.circuitList.get(i));
                         Orchestrator simulacaoMultithreading = new Orchestrator(this.threads, this.reliabilityConst, this.relativePath, this.genlib, this.relativePath + this.circuitList.get(i));
                         gatesCirctuits.add(simulacaoMultithreading.estimateMultithreadingExausticSimulationSize_AND_PRINT_INPUTS_SIGNALS_GATES("ALL_SIGNALS")); //ou Signals =  "ALL_SIGNALS" ou "INTERMEDIATE" ou "INTERMEDIATE_AND_OUTPUTS" ou "INPUTS" ou "INPUTS_OUTPUTS"
                         //String s = simulacaoMultithreading.PrintGatesCounterDetailsSorted();
-                        compiled = compiled + simulacaoMultithreading.PrintGatesCounterDetailsSortedCompliled(i);
-
+                        compiled = compiled + simulacaoMultithreading.PrintGatesCounterDetailsSortedCompliled(i, files_to_filter, filter);
                         // this.writeInformationInFileLog(relativePath, "circuit; Gates", s, "GATES-" + this.circuitList.get(i));
-
-
                         this.OUTPUT_INFO = simulacaoMultithreading.getFRM(" MTFT Sample (Monte Carlo = N)");
+                        System.out.println("\n");
                     }
                 }
-
             }
             catch (Exception e){
                 System.err.println("ERROR GETTING GATES_________________");
             }
-
         }
 
         String content = "";
+        System.out.println("COMPILED: " + compiled);
 
         for (int z = 0; z < gatesCirctuits.size(); z++) {
             content =  content + gatesCirctuits.get(z) + "\n";
         }
-        this.writeInformationInFileLogcsv(relativePath, "circuit; Inputs; Signals; Gates", content , "COMPILATION-NUMBER_OF_INPUTS_GATES_SIGNALS_CIRCUITLIST");
+        this.writeInformationInFileLogcsv(relativePath, "circuit; Inputs; Signals; Gates", content , "COMPILATION-NUMBER_OF_INPUTS_GATES_SIGNALS_CIRCUITLISTS_");
 
-        this.writeInformationInFileLogcsv(relativePath, "Gates; Circuit", compiled, "-----COMPILEDGATESIDENTIFICATION");
+        this.writeInformationInFileLogcsv(relativePath, "Gates; Circuit", compiled, "Compilation_GatesTypes_");
     }
 
     /**
@@ -524,7 +519,7 @@ public class main{
      * Method for prepare the simulation enviroment for batch simulation, it's filters the verilogs files (.v) present in the inputed folder
      */
     public void preparingEnviroment(){
-                
+
                 String[] circuitFiles;
                 File f = new File(this.relativePath);
                
@@ -536,7 +531,7 @@ public class main{
                     }  
                 }
                 //System.out.println("Circuits in List: " +  this.circuitList);
-        System.out.println("Were founded " + this.circuitList.size() + " circuit (.v) in path folder: " + this.relativePath + "\n");
+        System.out.println("- Were founded " + this.circuitList.size() + " circuit (.v) in path folder: " + this.relativePath );
                
         }
 
@@ -755,13 +750,13 @@ public class main{
         }
 
 
-        PrintWriter pw = new PrintWriter(new FileOutputStream(path + "/" + filter + "_.csv"));
+        PrintWriter pw = new PrintWriter(new FileOutputStream(path + "/" + "Results_compiled" + "_.csv"));
         for (String club : FileContent) {
             pw.println(club);
         }
         pw.close();
         System.out.println("");
-        System.out.println("- Created file: " + path + filter + ".csv" );
+        System.out.println("- Created file: " + path + "Results_compiled" + ".csv" );
                 /*
                 System.out.println(path + "/" + " resultado_.txt");
                 File file = new File(path + "/" + " resultado_.txt");
@@ -858,13 +853,13 @@ public class main{
                         }
                     }
                 }
-
+                System.out.println("- Total filtered files: " + filtered_files.size());
                 this.readEachFileProportioncsv(filtered_files, path, filter);
 
-                //System.out.println("------------------------------------------");
+                System.out.println("\n ------ End Process -------\n");
         }
         else{
-            System.err.println("Path to result files do not founded: " + path );
+            System.err.println("x Path to result files do not founded: " + path );
             }
     }
 
