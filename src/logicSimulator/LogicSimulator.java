@@ -430,17 +430,20 @@ import signalProbability.ProbCircuit;
          */
 
         ArrayList <String> concat_inputs = new ArrayList<>();
-        sizeInputs = sizeInputs /4;
-        int size_final = sizeInputs;
-        int size_temp = sizeInputs*2;
+        int size_temp = sizeInputs;
+        int size_final = size_temp;
+        int sum = 5 ;
         for (Signal x: this.circuit.getInputs()){
             template = template + "v"+x.getId().toString() + " " + x.getId().toString() + " 0 PULSE (0 1.0 "+ size_temp/2 + "n 1p 1p " + size_temp/2 + "n " + size_temp + "n)"  + "\n";
             //plot = plot + "v(" + x.getId().toString() + ")+" + sizeInputs*2 + " ";//;"plot v(G1gat)+8 V(G2gat)+6 V(G6gat)"
-            plot = plot + "v(" + x.getId().toString() + ")+" + sizeInputs*2 + " ";//;"plot v(G1gat)+8 V(G2gat)+6 V(G6gat)"
+            plot = plot + "v(" + x.getId().toString() + ")+" + sum + " ";;//plot + "v(" + x.getId().toString() + ")+" + sizeInputs + " ";//;"plot v(G1gat)+8 V(G2gat)+6 V(G6gat)"
             //sizeInputs = sizeInputs/2;
-            sizeInputs = sizeInputs - 2;
+            //sizeInputs = sizeInputs - 2;
             size_temp = size_temp / 2;
+            sizeInputs = sizeInputs/2;
+            sum = sum + 5;
         }
+        int temp = sizeInputs;
         for (Signal z: this.circuit.getOutputs()){
             //Cload G6gat 0 1f
             //template = template + "v"+x.getId().toString() + " " + x.getId().toString() + " 0 PULSE (0 1.0 "+ sizeInputs + "n 1p 1p " + sizeInputs + "n " + sizeInputs*2 + "n)"  + "\n";
@@ -448,8 +451,9 @@ import signalProbability.ProbCircuit;
             //sizeInputs = sizeInputs/2;
             outputsCapacitance = outputsCapacitance + "* Cload " + z.getId().toString() + " 0 1f\n";
 
-            plotOutput = plotOutput + "v(" + z.getId().toString() + ")+" + sizeInputs*2 + " ";
-            sizeInputs = sizeInputs - 2;//sizeInputs/2;
+            plotOutput = plotOutput + "v(" + z.getId().toString() + ")+" + sum + " ";
+            temp = temp/2;//sizeInputs/2;
+            sum = sum + 5;
 
         }
 
@@ -475,7 +479,7 @@ import signalProbability.ProbCircuit;
 
         template = template + "\n* SET no nodo 'Inv1'\n" +
                 //"\t\t*Iexp 0 out exp(0 190u 1n 40p 1.00001n 320p) \n" +
-                "\t\t*Iexp 0 out exp(0 190u 10n 10p 1.00001n 320p) \n" +
+                "\t\tIexp 0 G6gat exp(0 190u 1n 10p 1.00001n 320p) \n" +
                 "\t*transicao 0-1-0\n" +
                 "\n" +
                 "* Declarando uma capacitância de saída que pode ser usada para emular uma carga\n" +
@@ -495,7 +499,7 @@ import signalProbability.ProbCircuit;
                 ".endc\t     \n" +
                 "\n" +
                 "* Declarando o tipo de simulação *Precisa mudar para 15 (0 - 15 = 16 unidades de tempo) pois senão nao exitira descida para entrada A\n" +
-                ".tran 0.1n " + size_final*2 + "n \n" +
+                ".tran 0.1n " + size_final + "n \n" +
                 "\n" +
                 "* Definindo comandos measure para fazer medidas\n" +
                 "\n" +
