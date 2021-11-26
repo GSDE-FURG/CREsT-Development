@@ -3716,6 +3716,8 @@ import writers.WriteCsvTh;
         System.out.println("PATH: " + path);
         this.writeInformationInFileLog(path, "", this.itemx_list.get(0).getParsedNetlistContent(), "netlist_"+this.circuit.getName());
         System.out.println("Created parsed netlist file: " + path + "netlist_"+this.circuit.getName() + ".txt");
+        System.out.println("- Calling eletric simulator....");
+        this.runElectricalSimulator(path, path+"netlist_"+this.circuit.getName() + ".txt");
         // this.writeSimpleLogMultipleTransientFaultProportion(option + "_MULTIPLE_MonteCarlo_Simple_Log_" + this.circuit.getName() + "_Threads-" + this.threads + "_sampleSize-" + this.sampleSize, formattedDate, formattedDate2, timeElapsed_Instant, arrayList_mtf_original);
         //System.out.println("SIZE: " + this.itemx_list.size());
 
@@ -3760,6 +3762,18 @@ import writers.WriteCsvTh;
         System.out.println(" ----------------------------------------------------------------------------------------------------------------------------\n\n");
         /*
          */
+    }
+
+    public void runElectricalSimulator(String path, String spiceCircuito){
+        try {
+            Runtime runTime = Runtime.getRuntime();
+
+            String executablePath = path + "ngspice.exe " + spiceCircuito;//"C:\\Users\\sdkca\\AppData\\Local\\Programs\\Microsoft VS Code\\Code.exe";
+
+            Process process = runTime.exec(executablePath);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public String getFRM(String identification){

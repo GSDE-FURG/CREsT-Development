@@ -414,19 +414,9 @@ import signalProbability.ProbCircuit;
 
         String outputsCapacitance = " ";
         String plotOutput = " ";
-        int sizeInputs =  (int) Math.pow(2, this.circuit.getInputs().size())/2;
+        int sizeInputs =  (int) Math.pow(2, this.circuit.getInputs().size() + this.circuit.getOutputs().size())/2;
         int size = sizeInputs;
-        for (Signal z: this.circuit.getOutputs()){
-            //Cload G6gat 0 1f
-            //template = template + "v"+x.getId().toString() + " " + x.getId().toString() + " 0 PULSE (0 1.0 "+ sizeInputs + "n 1p 1p " + sizeInputs + "n " + sizeInputs*2 + "n)"  + "\n";
-            //plot = plot + "v(" + x.getId().toString() + ")+" + sizeInputs + " ";//;"plot v(G1gat)+8 V(G2gat)+6 V(G6gat)"
-            //sizeInputs = sizeInputs/2;
-            outputsCapacitance = outputsCapacitance + " Cload " + z.getId().toString() + " 0 1f\n";
 
-            plotOutput = plotOutput + "v(" + z.getId().toString() + ")+" + size*4 + " ";
-            size = size/2;
-
-        }
 
 
         String plot= "plot ";
@@ -440,10 +430,27 @@ import signalProbability.ProbCircuit;
          */
 
         ArrayList <String> concat_inputs = new ArrayList<>();
+        sizeInputs = sizeInputs /4;
+        int size_final = sizeInputs;
+        int size_temp = sizeInputs*2;
         for (Signal x: this.circuit.getInputs()){
-            template = template + "v"+x.getId().toString() + " " + x.getId().toString() + " 0 PULSE (0 1.0 "+ sizeInputs + "n 1p 1p " + sizeInputs + "n " + sizeInputs*2 + "n)"  + "\n";
+            template = template + "v"+x.getId().toString() + " " + x.getId().toString() + " 0 PULSE (0 1.0 "+ size_temp/2 + "n 1p 1p " + size_temp/2 + "n " + size_temp + "n)"  + "\n";
+            //plot = plot + "v(" + x.getId().toString() + ")+" + sizeInputs*2 + " ";//;"plot v(G1gat)+8 V(G2gat)+6 V(G6gat)"
             plot = plot + "v(" + x.getId().toString() + ")+" + sizeInputs*2 + " ";//;"plot v(G1gat)+8 V(G2gat)+6 V(G6gat)"
-            sizeInputs = sizeInputs/2;
+            //sizeInputs = sizeInputs/2;
+            sizeInputs = sizeInputs - 2;
+            size_temp = size_temp / 2;
+        }
+        for (Signal z: this.circuit.getOutputs()){
+            //Cload G6gat 0 1f
+            //template = template + "v"+x.getId().toString() + " " + x.getId().toString() + " 0 PULSE (0 1.0 "+ sizeInputs + "n 1p 1p " + sizeInputs + "n " + sizeInputs*2 + "n)"  + "\n";
+            //plot = plot + "v(" + x.getId().toString() + ")+" + sizeInputs + " ";//;"plot v(G1gat)+8 V(G2gat)+6 V(G6gat)"
+            //sizeInputs = sizeInputs/2;
+            outputsCapacitance = outputsCapacitance + "* Cload " + z.getId().toString() + " 0 1f\n";
+
+            plotOutput = plotOutput + "v(" + z.getId().toString() + ")+" + sizeInputs*2 + " ";
+            sizeInputs = sizeInputs - 2;//sizeInputs/2;
+
         }
 
         template = template + "\n * Portas Logicas";
@@ -483,11 +490,12 @@ import signalProbability.ProbCircuit;
                 "\t\t *plot i(Vfonte)\n" +
                 "\t     *plot v(A)+8 V(B)+6 V(C)+4 V(out)+2\n" +
                 plot + plotOutput +
-                "\n" +
+                "\n"
+                + "plot " + plotOutput + "\n"+
                 ".endc\t     \n" +
                 "\n" +
                 "* Declarando o tipo de simulação *Precisa mudar para 15 (0 - 15 = 16 unidades de tempo) pois senão nao exitira descida para entrada A\n" +
-                ".tran 0.001n 16n \n" +
+                ".tran 0.1n " + size_final*2 + "n \n" +
                 "\n" +
                 "* Definindo comandos measure para fazer medidas\n" +
                 "\n" +
