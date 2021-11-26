@@ -176,10 +176,8 @@ import signalProbability.ProbCircuit;
        // for (int i = 0; i < this.threadSimulationList.size(); i++){
             //this.insertInputVectors("selected", this.threadSimulationList.get(i).getinputVector());
             int i = 0;
-            String parsedNetlist = this.createSpiceNetlist();
-
+            String parsedNetlist = this.createSpiceNetlist("G1gat", "1");
             this.parsedNetlistContent = parsedNetlist;
-
             //this.getPropagateFaultFreeResults( this.threadSimulationList.get(i).getinputVector(), this.threadSimulationList.get(i).getSimulationIndex(), this.threadSimulationList.get(i), i+1);
             //System.out.println("------------------------- vec: " +  this.threadSimulationList.get(i).getSimulationIndex() +  " sum: " + this.threadSimulationList.get(i).getSum_sensitive_cells_area() + "--------------------------------\n");
        // }
@@ -384,7 +382,7 @@ import signalProbability.ProbCircuit;
 
     }
 
-    private String createSpiceNetlist() throws IOException, WriteException{
+    private String createSpiceNetlist(String SensitiveNode, String bitflipValue) throws IOException, WriteException{
 
             String template = "" +
                     "* Função Transiente\n" +
@@ -453,7 +451,7 @@ import signalProbability.ProbCircuit;
 
             plotOutput = plotOutput + "v(" + z.getId().toString() + ")+" + sum + " ";
             temp = temp/2;//sizeInputs/2;
-            sum = sum + 5;
+            sum = sum + 20;
 
         }
 
@@ -479,7 +477,7 @@ import signalProbability.ProbCircuit;
 
         template = template + "\n* SET no nodo 'Inv1'\n" +
                 //"\t\t*Iexp 0 out exp(0 190u 1n 40p 1.00001n 320p) \n" +
-                "\t\tIexp 0 G6gat exp(0 190u 1n 10p 1.00001n 320p) \n" +
+                "\t\tIexp 0 " + SensitiveNode + " exp(" + bitflipValue + " 190u 1n 10p 1.00001n 320p) \n" +
                 "\t*transicao 0-1-0\n" +
                 "\n" +
                 "* Declarando uma capacitância de saída que pode ser usada para emular uma carga\n" +

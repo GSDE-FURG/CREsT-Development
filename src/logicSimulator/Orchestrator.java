@@ -11,11 +11,10 @@ import datastructures.Circuit;
 import datastructures.Gate;
 import datastructures.Signal;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.math.BigDecimal;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -3717,7 +3716,19 @@ import writers.WriteCsvTh;
         this.writeInformationInFileLog(path, "", this.itemx_list.get(0).getParsedNetlistContent(), "netlist_"+this.circuit.getName());
         System.out.println("Created parsed netlist file: " + path + "netlist_"+this.circuit.getName() + ".txt");
         System.out.println("- Calling eletric simulator....");
-        this.runElectricalSimulator(path, path+"netlist_"+this.circuit.getName() + ".txt");
+        //path = path + "netlist_files/";
+        List<File> files = new ArrayList<>();
+
+
+        files.add(new File(path+"/45nm_HP.pm"));
+        files.add(new File(path+"/Library.txt"));
+        //String path = "C:/destination/";
+        for(File file : files) {
+            Files.copy(file.toPath(),
+                    (new File(path + "netlist_files/" + file.getName())).toPath(),
+                    StandardCopyOption.REPLACE_EXISTING);
+        }
+        this.runElectricalSimulator(path, path + "netlist_files/" +"netlist_"+this.circuit.getName() + ".txt");
         // this.writeSimpleLogMultipleTransientFaultProportion(option + "_MULTIPLE_MonteCarlo_Simple_Log_" + this.circuit.getName() + "_Threads-" + this.threads + "_sampleSize-" + this.sampleSize, formattedDate, formattedDate2, timeElapsed_Instant, arrayList_mtf_original);
         //System.out.println("SIZE: " + this.itemx_list.size());
 

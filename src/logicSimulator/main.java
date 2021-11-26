@@ -9,6 +9,8 @@ import jxl.read.biff.SharedStringFormulaRecord;
 import java.io.*;
 import java.lang.reflect.Array;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -114,7 +116,11 @@ public class main{
 
                      // STF - SET
                     // experimento.monteCarloSimulation(sampleSizeMonteCarlo, "ALL_SIGNALS"); //ou Signals =  "ALL_SIGNALS" ou "INTERMEDIATE" ou "INTERMEDIATE_AND_OUTPUTS" ou "INPUTS" ou "INPUTS_OUTPUTS"
+
+                    // experimento.parseVerilogToSpiceNetlist(20000, "ALL_SIGNALS");
                      experimento.parseVerilogToSpiceNetlist(20000, "ALL_SIGNALS");
+
+
                      /*   -- MTF - PROP SET --
                          ArrayList<Float> mtf_sizes = new ArrayList<>();
                          int sample = 20000;
@@ -361,11 +367,21 @@ public class main{
      * @param content
      * @param outputFilename
      */
-    public void writeInformationInFileLog(String relativePath,  String header, String content, String outputFilename){
-        String content_file = header + "\n" + content;
-        try (FileWriter file = new FileWriter(relativePath + "/" + outputFilename + ".txt")) {
-            file.write(content_file);
-        } catch (IOException e) {
+    public void writeInformationInFileLog(String relativePath,  String header, String content, String outputFilename) throws IOException {
+        try {
+            String content_file = header + "\n" + content;
+
+            relativePath = relativePath + "/netlist_files";
+            Path path = Paths.get(relativePath);
+
+            //java.nio.file.Files;
+            Files.createDirectories(path);
+
+            System.out.println("Directory is created!");
+            try (FileWriter file = new FileWriter(relativePath + "/" + outputFilename + ".txt")) {
+                file.write(content_file);
+            }
+        }catch (IOException e) {
             e.printStackTrace();
         }
     }
