@@ -74,6 +74,8 @@ public class main{
             //Psthzs.add("teste/mapped/EPFL2015/1-minimal_no_cost/"); Psthzs_lib.add("1-minimal_no_cost.genlib");
             //Psthzs.add("teste/mapped/LGSynth91/Comb/COMB - Minimal/"); Psthzs_lib.add("lib_min_no_cost.genlib");
 
+            Psthzs.add("teste/cccc/"); Psthzs_lib.add("cadence.genlib");
+            /*
             Psthzs.add("teste/mapped/LGSynth91/Comb/COMB - Minimal/"); Psthzs_lib.add("lib_min_no_cost.genlib");
             Psthzs.add("teste/mapped/LGSynth91/Comb/COMB - Complex/"); Psthzs_lib.add("lib_complex_no_cost_no_xor.genlib");
             Psthzs.add("teste/mapped/LGSynth91/Comb/COMB - Full/"); Psthzs_lib.add("lib_full_no_cost.genlib");
@@ -96,6 +98,9 @@ public class main{
                 filesx.add("i10");
                 filesx.add("des");
 
+                 */
+
+
             for (int i = 0; i < Psthzs.size() ; i++) {
                  try {
                      String relativePath = Psthzs.get(i);
@@ -108,8 +113,8 @@ public class main{
                      //experimento.multithreadingSimulation("ALL_SIGNALS");
 
                      // STF - SET
-                     //experimento.monteCarloSimulation(sampleSizeMonteCarlo, "ALL_SIGNALS"); //ou Signals =  "ALL_SIGNALS" ou "INTERMEDIATE" ou "INTERMEDIATE_AND_OUTPUTS" ou "INPUTS" ou "INPUTS_OUTPUTS"
-
+                    // experimento.monteCarloSimulation(sampleSizeMonteCarlo, "ALL_SIGNALS"); //ou Signals =  "ALL_SIGNALS" ou "INTERMEDIATE" ou "INTERMEDIATE_AND_OUTPUTS" ou "INPUTS" ou "INPUTS_OUTPUTS"
+                     experimento.parseVerilogToSpiceNetlist(20000, "ALL_SIGNALS");
                      /*   -- MTF - PROP SET --
                          ArrayList<Float> mtf_sizes = new ArrayList<>();
                          int sample = 20000;
@@ -124,15 +129,15 @@ public class main{
                      //experimento.readResultsInLot("teste/mapped/EPFL2015/1-minimal_no_cost/Results/", "ALL_SIGNALS");
 
                      //experimento.readResultsInLotWithFilter("teste/mapped/LGSynth91/result_comb_minimal/", "ALL_SIGNALS");
-                     experimento.readResultsInLotWithFilter(result_path.get(i), result_path_filter.get(i), filesx);
+                     //experimento.readResultsInLotWithFilter(result_path.get(i), result_path_filter.get(i), filesx);
 
                                 //circsGates = experimento.getCircuitsGates();
                                 //experimento.getCircuitsInputsGatesSignals(); // Extract The files results for detailed types of gates
                                 //experimento.getCircuitsInputsGatesSignalsFiltered("_lib_min_no_cost.v"); // Extract The files results for detailed types of gates
-                     experimento.getCircuitsInputsGatesSignalsFiltered(Psthzs_lib.get(i).replace(".genlib", ""), filesx); // Extract The files results for detailed types of gates
+                     //experimento.getCircuitsInputsGatesSignalsFiltered(Psthzs_lib.get(i).replace(".genlib", ""), filesx); // Extract The files results for detailed types of gates
 
                  }catch (Exception e){
-                     System.err.println("ERRROR ----------- " + e);
+                     System.err.println("ERRROR  in process ----------- " + e);
                  }
 
                 }
@@ -209,7 +214,26 @@ public class main{
             }
         }
 
-        /**
+
+    /**
+     * Method to link  the Logic Simulator and run method (runMultithreadingSimulation)
+     * @param monteCarloSample Monte Carlo sample size
+     * @param positionToFaultInjection The signals can be definied as "ALL_SIGNALS" ou "INTERMEDIATE" ou "INTERMEDIATE_AND_OUTPUTS" ou "INPUTS" ou "INPUTS_OUTPUTS"
+     * @throws Exception e
+     */
+    public void parseVerilogToSpiceNetlist(int monteCarloSample , String positionToFaultInjection) throws Exception{
+        this.threads = 0;
+        for (String s : this.circuitList) {
+            System.out.println("---> " + s);
+            Orchestrator simulacaoMultithreading = new Orchestrator(this.threads, this.reliabilityConst,
+                    this.relativePath, this.genlib, this.relativePath + s);
+            simulacaoMultithreading.generateSpiceNetlist(this.relativePath); //ou Signals =  "ALL_SIGNALS" ou "INTERMEDIATE" ou "INTERMEDIATE_AND_OUTPUTS" ou "INPUTS" ou "INPUTS_OUTPUTS"
+            this.OUTPUT_INFO = simulacaoMultithreading.getFRM("Netlist circuit generated: " + s);
+        }
+    }
+
+
+    /**
          * This method is deprecated, was used for link the Logic Simulator and run method runMultipleFaultInjectionMultithreadingMonteCarlo
          * @deprecated
          * @param base base deprecated
@@ -458,7 +482,7 @@ public class main{
         }
 
         String content = "";
-        System.out.println("COMPILED: " + compiled);
+        System.out.println("COMPILED GATES TYPES: \n" + compiled);
 
         for (int z = 0; z < gatesCirctuits.size(); z++) {
             content =  content + gatesCirctuits.get(z) + "\n";

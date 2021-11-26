@@ -31,12 +31,8 @@ import signalProbability.ProbCircuit;
 import writers.WriteCsvTh;
 
 /**
- *
- * @author Clayton Farias
+ *  @author Clayton Farias
  */
-
-
-
  public class Orchestrator extends main{
     
     private ArrayList <LogicSimulator> itemx_list = new ArrayList<>();
@@ -63,6 +59,15 @@ import writers.WriteCsvTh;
     private final ArrayList <ArrayList<String>> SignalFault = new ArrayList<>();
     private final ArrayList <ArrayList<String>> SignalFaultBitFlip = new ArrayList<>();
 
+    /**
+     *
+     * @param threads
+     * @param reliabilityConst
+     * @param relativePath
+     * @param genlib
+     * @param circuitName
+     * @throws IOException
+     */
     public Orchestrator(int threads, String reliabilityConst, String relativePath, String genlib, String circuitName) throws IOException {
             super(threads, reliabilityConst, relativePath, genlib);
 
@@ -70,6 +75,11 @@ import writers.WriteCsvTh;
              this.circuitNameStr = circuitName;
     }
 
+    /**
+     *
+     * @param option
+     * @return
+     */
     public ArrayList <Signal> signalsToInjectFault(String option){
 
         ArrayList <Signal> signalList = new ArrayList<>();
@@ -147,6 +157,9 @@ import writers.WriteCsvTh;
 
     }
 
+    /**
+     *
+     */
     public class gate_counter{
             String type;
             int counter;
@@ -523,7 +536,7 @@ import writers.WriteCsvTh;
 
         String f = this.circuit.getName().replace("_"+filter, "");
        // f = f.replace("")
-       System.out.println("CIRC: "+this.circuitNameStr + "  " + this.circuit.getName() + " f: " + f);
+       System.out.println("             CIRC: "+this.circuitNameStr + "  " + this.circuit.getName() + " string: " + f);
        if(files.contains(f) || (id == 0)) {
            //System.out.println("FINDED: " + this.circuit.getName());
            for (Gate i : this.circuit.getGates()) {
@@ -1192,7 +1205,6 @@ import writers.WriteCsvTh;
         return sum_proportion;
     }
 
-
     public ArrayList <Integer> passProportionPercentage(ArrayList<Float> mtf_list, int sample){
 
         float sum_proportion = sumProportionPercentage(mtf_list);
@@ -1858,6 +1870,38 @@ import writers.WriteCsvTh;
         return thread_list;
 
     }
+
+    public List parseVerilogToSpiceNetList() throws ScriptException, Exception{
+
+        System.out.println("- Parsing Verilog mapped to Spice Netlist ");
+
+        ArrayList <Integer> inputVector = new ArrayList<>();
+        inputVector.add(0);
+
+        ArrayList<TestVectorInformation> ItemxSimulationList = new ArrayList<>();
+        List thread_list = new ArrayList();
+
+            TestVectorInformation temp = new TestVectorInformation(inputVector, this.signals_to_inject_faults.get(0), 0);
+            ItemxSimulationList.add(temp);
+
+            LogicSimulator threadItem = new LogicSimulator(ItemxSimulationList, this.circuit, this.cellLibrary, this.levelCircuit, 0, 0, this.genlib , this.circuitNameStr); // Thread contex info
+            threadItem.setMode("Generate_Netlist");
+            //threadItem.setSensitiveCellsMap(sensitive_cells);
+            itemx_list.add(threadItem);
+
+            Runnable runnable = threadItem;
+            Thread thread = new Thread(runnable);
+            thread.setName(Integer.toString(threadItem.hashCode()));
+            thread_list.add(thread);
+
+
+
+        return thread_list;
+
+    }
+
+
+
 
     public long factorialUsingRecursion(int n) {
         if (n <= 2) {
@@ -2741,7 +2785,7 @@ import writers.WriteCsvTh;
 
                 System.out.println(" ----- Monte Carlo version Single Transient Fault (STF) -------");
                 long loadTimeStart = System.nanoTime();//System.currentTimeMillis();
-        Instant start = Instant.now();
+                Instant start = Instant.now();
                 LocalDateTime myDateObj = LocalDateTime.now();
                 DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
                 String formattedDate = myDateObj.format(myFormatObj);
@@ -3556,6 +3600,161 @@ import writers.WriteCsvTh;
         System.out.println("- Simulation TimeElapsed: " + propagateTime + "(s)");
         System.out.println("--------------------------------------------");
 
+        this.Performance_Time = "Simulation started at: " + formattedDate + " and finished at: " + formattedDate2;
+
+        System.out.println(" ----------------------------------------------------------------------------------------------------------------------------\n\n");
+        /*
+         */
+    }
+
+    public void generateSpiceNetlist(String path) throws IOException, Exception{ //Test All possibilities
+        System.out.println(" ----- Start to generate the Spice Netlist -------");
+        //System.out.println("File: " + file);
+        //file = "teste\\lookup_table.csv";
+        //System.out.println("File: " + file);
+
+        //Map <String, SensitiveCell> sensitive_cells = readCsvFileAndMapSensitiveCellsArea(file, ",");
+
+        //System.out.println("Sensitive Cells: " + sensitive_cells);
+
+        long loadTimeStart = System.nanoTime();//System.currentTimeMillis();
+
+        LocalDateTime myDateObj = LocalDateTime.now();
+        DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+        String formattedDate = myDateObj.format(myFormatObj);
+        System.out.println("    - Simulation start in : " + formattedDate);
+        System.out.println("    - Threads in execution: " + this.threads);
+
+        /*Reading CellLibrary*/
+        CellLibrary cellLib = new CellLibrary();
+
+        // System.out.println("1");
+        this.cellLibrary = cellLib;
+        // System.out.println("2");
+        this.cellLibrary.initLibrary(this.genlib);
+        System.out.println("3"
+                + "");
+        System.out.println("    ... Reading Genlib " + " at -> " + this.genlib  + " ... ok");
+        //System.out.println("  - Avaliable logic gatesin this library: "+cellLib.getCells());
+
+
+        /*Reading verilog*/
+        MappedVerilogReader verilog_circuit = new MappedVerilogReader(this.circuitNameStr, this.cellLibrary);
+        this.verilog_circuit = verilog_circuit;
+        /*Circuit linked to verilog_circuit - init circuit*/
+        this.circuit = verilog_circuit.getCircuit();
+        System.out.println("    ... Reading verilog "+ " at -> " + this.circuitNameStr  + " ... ok");
+        //System.out.println("Patterns : " + this.verilog_circuit.getGatePattern());
+
+
+
+        /* Print circuit Specs*/
+        //System.out.println("\n        ------ Printing Circuit Specs: --------");
+        //this.PrintSpecsThesis();
+        //System.out.println("          ---------------------------------------\n");
+        /*----------------------*/
+
+
+        /*Circuit Probabilities */
+        this.initLevelCircuit();
+
+        /*Init ProbCircuits*/
+        this.initProbCircuit();
+
+        /*Init PTMs Const*/
+        cellLib.setPTMCells2(Float.valueOf(this.reliabilityConst));
+        cellLib.setPTMCells(new BigDecimal(this.reliabilityConst));
+
+        long loadTimeEnd = System.nanoTime();//System.currentTimeMillis();
+        long loadTime =   TimeUnit.NANOSECONDS.toMillis(loadTimeEnd - loadTimeStart);
+        //System.out.println("- Load Time m(s): " + loadTime);
+
+        this.sampleSize = (int) Math.pow(2, this.probCircuit.getInputs().size());  //(int) Math.pow(2, this.probCircuit.getInputs().size());
+        int N = this.sampleSize; // random_input_vectors.size();//testNumber;
+
+        int sizeExasuticTest;
+
+        System.out.println("-   Sample size (N = 2^ENTRADAS): " + "2^"+ this.circuit.getInputs().size() + " = " + this.sampleSize);
+
+        this.signals_to_inject_faults = this.signalsToInjectFault("ALL_SIGNALS"); // Consider all signals to fault inject
+
+        sizeExasuticTest = this.sampleSize;//(this.sampleSize * this.signals_to_inject_faults.size());
+
+        //ArrayList <String> random_input_vectors =  this.generateInputVector("TRUE_TABLE"); //this.calcInputTableVector(this.probCircuit.getInputs().size(), this.sampleSize);
+
+        //ArrayList <ArrayList<Integer>> ListInputVectors =  this.splitInputPatternsInInt(random_input_vectors, this.probCircuit.getInputs().size());
+
+        //System.out.println("LIST:::::: "+ ListInputVectors.size());
+
+        List thread_list = parseVerilogToSpiceNetList();  // TESTE ALL GATES ///particionateVectorPerThread(ListInputVectors); // x - vectors per thread
+
+        long propagateTimeStart = System.nanoTime();
+
+        /*Execução das threads*/
+        Thread thread_temp = null;
+        for (int i=0; i < thread_list.size() ; i++) {
+            thread_temp = (Thread) thread_list.get(i);
+            thread_temp.start();
+
+        }
+        /*Esperando termino das threads*/
+        for (int i=0; i < thread_list.size() ; i++) {
+            thread_temp = (Thread) thread_list.get(i);
+            thread_temp.join();
+        }
+
+        /* Compilando os resultados - Falhas detectadas Ne*/
+        //for (int i=0; i < this.itemx_list.size() ; i++) {
+        //    this.unmasked_faults = this.unmasked_faults +  itemx_list.get(i).getPropagatedFaults();
+        //}
+        for (int i = 0; i < this.itemx_list.size(); i++) {
+            List <TestVectorInformation> x =  this.itemx_list.get(i).get_threadSimulationList();
+            for (int j = 0; j < x.size(); j++) {
+                System.out.println(" index: " + x.get(j).getSimulationIndex() + " content parsed file" + this.itemx_list.get(i).getParsedNetlistContent());
+            }
+        }
+        System.out.println("PATH: " + path);
+        this.writeInformationInFileLog(path, "", this.itemx_list.get(0).getParsedNetlistContent(), "netlist_"+this.circuit.getName());
+        System.out.println("Created parsed netlist file: " + path + "netlist_"+this.circuit.getName() + ".txt");
+        // this.writeSimpleLogMultipleTransientFaultProportion(option + "_MULTIPLE_MonteCarlo_Simple_Log_" + this.circuit.getName() + "_Threads-" + this.threads + "_sampleSize-" + this.sampleSize, formattedDate, formattedDate2, timeElapsed_Instant, arrayList_mtf_original);
+        //System.out.println("SIZE: " + this.itemx_list.size());
+
+        /*circuit reliability SER (Soft Error Rate)*/
+        // this.circuitReliaibility = (float) (1.0 - ((float) this.unmasked_faults / (float) sizeExasuticTest));
+
+        //System.out.println("-> Umasked Faults: " + this.unmasked_faults);
+        //System.out.println("-> Sample: " + sizeExasuticTest);
+        //System.out.println("-> SER : " + this.circuitReliaibility);
+
+
+        long propagateTimeEnd = System.nanoTime();
+        //long propagateTime =    TimeUnit.NANOSECONDS.toSeconds(propagateTimeEnd - propagateTimeStart);
+        long propagateTime =  TimeUnit.NANOSECONDS.toMillis(propagateTimeEnd - propagateTimeStart);
+
+
+        LocalDateTime myDateObj2 = LocalDateTime.now();
+        DateTimeFormatter myFormatObj2 = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+        String formattedDate2 = myDateObj2.format(myFormatObj2);
+
+        this.sampleSize = sizeExasuticTest;
+
+        //this.writeSimpleLog("ExausticSimulation_" +this.circuit.getName()+"_Threads-"+ this.threads + "_sampleSize-" + this.sampleSize, formattedDate,  formattedDate2, propagateTime);
+
+        //this.writeCsvFileCompleteTh("ExausticSimulation_"+this.circuit.getName()+"_Theads-"+ this.threads + "_sampleSize-" + this.sampleSize, itemx_list);
+
+            /*
+        //System.out.println("\n\n-----------------------------------");
+        System.out.println("Circuit: " + this.circuit.getName());
+        System.out.println("- Simulation finished at: " + formattedDate2);
+        //System.out.println("- PropagatedTime (s): " + propagateTime);
+        System.out.println("- Sample (N): " + this.sampleSize);
+        //System.out.println("- Detected faults (Ne): " + this.unmasked_faults);
+        //System.out.println("- Fault Masking Rate (FMR): " + "(1-(" + this.unmasked_faults + "/" + this.sampleSize + ")) = " + this.circuitReliaibility);
+        // System.out.println("- MTBF (Mean Time Between failure) : " + this.MTBF);
+        System.out.println("- Simulation TimeElapsed: " + propagateTime + "(s)");
+        System.out.println("--------------------------------------------");
+        */
+        System.out.println("- Simulation TimeElapsed: " + propagateTime + "(s)");
         this.Performance_Time = "Simulation started at: " + formattedDate + " and finished at: " + formattedDate2;
 
         System.out.println(" ----------------------------------------------------------------------------------------------------------------------------\n\n");

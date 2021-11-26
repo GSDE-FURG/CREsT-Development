@@ -48,7 +48,9 @@ import signalProbability.ProbCircuit;
         private LevelCircuit levelCircuit;
         private  ArrayList <Cell>  cells; 
         private final ConcurrentLinkedQueue<String> linkedQueueFaultFree; //= new ConcurrentLinkedQueue<Integer>(); 
-        private final ConcurrentLinkedQueue<String> linkedQueueFault; //= new ConcurrentLinkedQueue<Integer>(); 
+        private final ConcurrentLinkedQueue<String> linkedQueueFault; //= new ConcurrentLinkedQueue<Integer>();
+
+        public String parsedNetlistContent = "";
 
         private String inGate;
         //private final Map<String, String> concurrentMap_output_free = new ConcurrentHashMap<>();;
@@ -135,7 +137,17 @@ import signalProbability.ProbCircuit;
             this.sensitive_cells = sensitive_cells;
         }
 
-        public String getStartendPos(){
+    public String getParsedNetlistContent() {
+            if(this.parsedNetlistContent.isEmpty()){
+                System.err.println("Please do not import this String without properly run the paersed netlist methods before !");
+                return "ERRROR !!!!";
+            }else{
+                return this.parsedNetlistContent;
+            }
+       // return parsedNetlistContent;
+    }
+
+    public String getStartendPos(){
           return ("Pos: " + this.startPos + " - " + this.endPosition);
         }
        
@@ -158,6 +170,22 @@ import signalProbability.ProbCircuit;
             }
 
         }
+
+    private void parseVerilogToGenerateSpiceNetList() throws IOException, WriteException{
+
+       // for (int i = 0; i < this.threadSimulationList.size(); i++){
+            //this.insertInputVectors("selected", this.threadSimulationList.get(i).getinputVector());
+            int i = 0;
+            String parsedNetlist = this.createSpiceNetlist();
+
+            this.parsedNetlistContent = parsedNetlist;
+
+            //this.getPropagateFaultFreeResults( this.threadSimulationList.get(i).getinputVector(), this.threadSimulationList.get(i).getSimulationIndex(), this.threadSimulationList.get(i), i+1);
+            //System.out.println("------------------------- vec: " +  this.threadSimulationList.get(i).getSimulationIndex() +  " sum: " + this.threadSimulationList.get(i).getSum_sensitive_cells_area() + "--------------------------------\n");
+       // }
+
+    }
+
         public List <TestVectorInformation> get_threadSimulationList(){
             return this.threadSimulationList;
         }
@@ -354,6 +382,98 @@ import signalProbability.ProbCircuit;
         }
 
 
+    }
+
+    private String createSpiceNetlist() throws IOException, WriteException{
+
+            String template = "" +
+                    "* Função Transiente\n" +
+                    ".include 45nm_HP.pm\n" +
+                    ".include Library.txt\n" +
+                    "\n" +
+                    "* Definindo a temperatura de operação\n" +
+                    "   .TEMP 25\n" +
+                    "\n" +
+                    "* Declarando parâmetros que serão utilizados nas simulações\n" +
+                    "   .param supply = 1.0\n" +
+                    "\n" +
+                    "* Declaração das fontes\n" +
+                    "\tVvdd vdd 0 1.0\n" +
+                    "\tVvss vss 0 0" +
+                    "\n " +
+                    "" +
+                    "* Fontes de Tensão\n";
+
+
+        this.threadID = (long) Thread.currentThread().getId();
+        //thread_item.setThreadID(this.threadID);
+
+        ArrayList <GateLevel> gatesLevels = this.levelCircuit.getGateLevels();
+
+        ArrayList <String> gatesNetlist = new ArrayList<>();
+
+        int id_node = 1;
+
+        /*vA A 0 PULSE (0 1.0 8n 1p 1p 8n 16n)
+         vB B 0 PULSE (0 1.0 4n 1p 1p 4n 8n)
+         vC C 0 PULSE (0 1.0 2n 1p 1p 2n 4n)
+         vd D 0 PULSE (0 1.0 1n 1p 1p 1n 2n)
+         */
+        int sizeInputs =  (int) Math.pow(2, this.circuit.getInputs().size())/2;
+        ArrayList <String> concat_inputs = new ArrayList<>();
+        for (Signal x: this.circuit.getInputs()){
+            template = template + "v"+x.getId().toString() + " " + x.getId().toString() + " 0 PULSE (0 1.0 "+ sizeInputs + "n 1p 1p " + sizeInputs + "n " + sizeInputs*2 + "n)"  + "\n";
+            sizeInputs = sizeInputs/2;
+        }
+
+        template = template + "\n * Portas Logicas";
+
+        System.out.println("INPUTS TENSION (v): " + concat_inputs);
+
+        for (int j = 0; j < gatesLevels.size(); j++) {
+
+            ArrayList <Object> gatesInThisLevel = gatesLevels.get(j).getGates();
+
+            for (int k = 0; k < gatesInThisLevel.size(); k++) {
+                String AwnsString = gatesInThisLevel.get(k).getClass().toString();
+                //System.out.println("Aws: "+ AwnsString);
+                if(AwnsString.equals("class levelDatastructures.DepthGate")) {
+                    Object object = gatesInThisLevel.get(k);
+                    DepthGate gate = (DepthGate) object;
+                    template = template + "\n" + this.generateGateNetlist(gate.getGate().getType(), gate, gate.getGate().getInputs(), id_node) + "\n";  //Method calc the output from the gate
+                    id_node++;
+                }
+            }
+        }
+
+        template = template + "\n* SET no nodo 'Inv1'\n" +
+                //"\t\t*Iexp 0 out exp(0 190u 1n 40p 1.00001n 320p) \n" +
+                "\t\tIexp 0 out exp(0 190u 10n 10p 1.00001n 320p) \n" +
+                "\t*transicao 0-1-0\n" +
+                "\n" +
+                "* Declarando uma capacitância de saída que pode ser usada para emular uma carga\n" +
+                "Cload out 0 1f\n" +
+                "\n" +
+                "\n" +
+                ".control\n" +
+                "run\t\t\t\t\n" +
+                "\t\t\t\t\t\tset color0=white\n" +
+                "\t\t\t            set xbrushwidth = 3\n" +
+                "\t\t *plot i(Vfonte)\n" +
+                "\t     plot v(A)+8 V(B)+6 V(C)+4 V(out)+2\n" +
+                "\n" +
+                ".endc\t     \n" +
+                "\n" +
+                "* Declarando o tipo de simulação *Precisa mudar para 15 (0 - 15 = 16 unidades de tempo) pois senão nao exitira descida para entrada A\n" +
+                ".tran 0.001n 16n \n" +
+                "\n" +
+                "* Definindo comandos measure para fazer medidas\n" +
+                "\n" +
+                ".end";
+
+        //System.out.println(template);
+
+        return template;
     }
 
 
@@ -2756,6 +2876,53 @@ import signalProbability.ProbCircuit;
     }
 
 
+    private String generateGateNetlist(Cell cells, DepthGate gate,ArrayList <Signal> inputsSignals, int id_node){
+
+        Map<ArrayList<Boolean>, Boolean> comb = cells.getComb();
+       // ArrayList <Boolean> input = new ArrayList<>();
+       // ArrayList <Integer> signals = new ArrayList<>();
+       // String concat_inputs = "";
+        //System.out.println("Circuit level: " + gate.getGate());
+
+        String gate_netlist = inputsSignals.toString();
+        String id_node_A = "X" + id_node;
+        String inputs = "";
+        String sources = " vdd vss";
+        String gateOutputName = "";// +gate.getGate().getOutputs().toString();
+        String gateType = " " + gate.getGate().getType().toString();
+        String concat = "";
+
+        for (Signal x: inputsSignals){
+            inputs = inputs + " " + x.getId().toString();
+        }
+
+        for (Signal x: gate.getGate().getOutputs()){
+            gateOutputName = gateOutputName+ " " + x.getId().toString();
+        }
+        System.out.println(" --> : " + id_node_A + inputs + sources + gateOutputName + gateType);
+
+        concat = id_node_A + inputs + sources + gateOutputName + gateType;
+        /*
+        for (int index = 0; index < inputsSignals.size(); index++) {
+
+            signals.add(inputsSignals.get(index).getLogicValue());
+
+            if(inputsSignals.get(index).getLogicValue() == 0){
+                input.add(Boolean.FALSE);
+                concat_inputs = concat_inputs + "0";
+            }
+            if(inputsSignals.get(index).getLogicValue() == 1){
+                input.add(Boolean.TRUE);
+                concat_inputs = concat_inputs + "1";
+            }
+        }
+        */
+
+        return concat;
+    }
+
+
+
     private  boolean calculateFaultFreeOutputGateValueMTF(Cell cells, DepthGate gate,ArrayList <Signal> inputsSignals, TestVectorInformation thread_item){
 
         Map<ArrayList<Boolean>, Boolean> comb = cells.getComb();
@@ -2849,6 +3016,15 @@ import signalProbability.ProbCircuit;
         public  void run() {
 
             switch (this.mode){
+                case ("Generate_Netlist"):
+                    System.out.println(" ~~~~~~ Generate Spice Netlist ~~~~~~");
+                    try {
+                        parseVerilogToGenerateSpiceNetList();
+                    }
+                    catch (IOException | WriteException ex) {
+                        Logger.getLogger(LogicSimulator.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                    break;
 
                 case ("Sensitive_Area"):
                     System.out.println(" ~~~~~~ Calculate Sensitive Area ~~~~~~");
