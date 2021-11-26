@@ -412,6 +412,25 @@ import signalProbability.ProbCircuit;
 
         ArrayList <String> gatesNetlist = new ArrayList<>();
 
+        String outputsCapacitance = " ";
+        String plotOutput = " ";
+        int sizeInputs =  (int) Math.pow(2, this.circuit.getInputs().size())/2;
+        int size = sizeInputs;
+        for (Signal z: this.circuit.getOutputs()){
+            //Cload G6gat 0 1f
+            //template = template + "v"+x.getId().toString() + " " + x.getId().toString() + " 0 PULSE (0 1.0 "+ sizeInputs + "n 1p 1p " + sizeInputs + "n " + sizeInputs*2 + "n)"  + "\n";
+            //plot = plot + "v(" + x.getId().toString() + ")+" + sizeInputs + " ";//;"plot v(G1gat)+8 V(G2gat)+6 V(G6gat)"
+            //sizeInputs = sizeInputs/2;
+            outputsCapacitance = outputsCapacitance + " Cload " + z.getId().toString() + " 0 1f\n";
+
+            plotOutput = plotOutput + "v(" + z.getId().toString() + ")+" + size*4 + " ";
+            size = size/2;
+
+        }
+
+
+        String plot= "plot ";
+
         int id_node = 1;
 
         /*vA A 0 PULSE (0 1.0 8n 1p 1p 8n 16n)
@@ -419,10 +438,11 @@ import signalProbability.ProbCircuit;
          vC C 0 PULSE (0 1.0 2n 1p 1p 2n 4n)
          vd D 0 PULSE (0 1.0 1n 1p 1p 1n 2n)
          */
-        int sizeInputs =  (int) Math.pow(2, this.circuit.getInputs().size())/2;
+
         ArrayList <String> concat_inputs = new ArrayList<>();
         for (Signal x: this.circuit.getInputs()){
             template = template + "v"+x.getId().toString() + " " + x.getId().toString() + " 0 PULSE (0 1.0 "+ sizeInputs + "n 1p 1p " + sizeInputs + "n " + sizeInputs*2 + "n)"  + "\n";
+            plot = plot + "v(" + x.getId().toString() + ")+" + sizeInputs*2 + " ";//;"plot v(G1gat)+8 V(G2gat)+6 V(G6gat)"
             sizeInputs = sizeInputs/2;
         }
 
@@ -448,11 +468,12 @@ import signalProbability.ProbCircuit;
 
         template = template + "\n* SET no nodo 'Inv1'\n" +
                 //"\t\t*Iexp 0 out exp(0 190u 1n 40p 1.00001n 320p) \n" +
-                "\t\tIexp 0 out exp(0 190u 10n 10p 1.00001n 320p) \n" +
+                "\t\t*Iexp 0 out exp(0 190u 10n 10p 1.00001n 320p) \n" +
                 "\t*transicao 0-1-0\n" +
                 "\n" +
                 "* Declarando uma capacitância de saída que pode ser usada para emular uma carga\n" +
-                "Cload out 0 1f\n" +
+                "*Cload out 0 1f\n" +
+                 outputsCapacitance +
                 "\n" +
                 "\n" +
                 ".control\n" +
@@ -460,7 +481,8 @@ import signalProbability.ProbCircuit;
                 "\t\t\t\t\t\tset color0=white\n" +
                 "\t\t\t            set xbrushwidth = 3\n" +
                 "\t\t *plot i(Vfonte)\n" +
-                "\t     plot v(A)+8 V(B)+6 V(C)+4 V(out)+2\n" +
+                "\t     *plot v(A)+8 V(B)+6 V(C)+4 V(out)+2\n" +
+                plot + plotOutput +
                 "\n" +
                 ".endc\t     \n" +
                 "\n" +
