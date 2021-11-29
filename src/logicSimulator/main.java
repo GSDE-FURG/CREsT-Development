@@ -109,13 +109,13 @@ public class main{
                      String genlib = relativePath + Psthzs_lib.get(i);
                      main experimento = new main(threads, constReliability, relativePath, genlib);
                      experimento.preparingEnviroment();
-
+                     int sampleSizeMonteCarlo = 20000;
                      //experimento.PrintCircuitsSpecs(threads, genlib);
                      //experimento.multithreadingSimulationExaustic();
                      //experimento.multithreadingSimulation("ALL_SIGNALS");
 
                      // STF - SET
-                    // experimento.monteCarloSimulation(sampleSizeMonteCarlo, "ALL_SIGNALS"); //ou Signals =  "ALL_SIGNALS" ou "INTERMEDIATE" ou "INTERMEDIATE_AND_OUTPUTS" ou "INPUTS" ou "INPUTS_OUTPUTS"
+                     experimento.monteCarloSimulation(sampleSizeMonteCarlo, "ALL_SIGNALS"); //ou Signals =  "ALL_SIGNALS" ou "INTERMEDIATE" ou "INTERMEDIATE_AND_OUTPUTS" ou "INPUTS" ou "INPUTS_OUTPUTS"
 
                     // experimento.parseVerilogToSpiceNetlist(20000, "ALL_SIGNALS");
                      experimento.parseVerilogToSpiceNetlist(20000, "ALL_SIGNALS");
@@ -215,8 +215,8 @@ public class main{
             for (String s : this.circuitList) {
                 Orchestrator simulacaoMultithreading = new Orchestrator(this.threads, this.reliabilityConst,
                         this.relativePath, this.genlib, this.relativePath + s);
-                simulacaoMultithreading.runMultithreadingMonteCarlo(monteCarloSample, positionToFaultInjection); //ou Signals =  "ALL_SIGNALS" ou "INTERMEDIATE" ou "INTERMEDIATE_AND_OUTPUTS" ou "INPUTS" ou "INPUTS_OUTPUTS"
-                this.OUTPUT_INFO = simulacaoMultithreading.getFRM(" Sample(Monte Carlo = N)");
+                        simulacaoMultithreading.runMultithreadingMonteCarlo(monteCarloSample, positionToFaultInjection); //ou Signals =  "ALL_SIGNALS" ou "INTERMEDIATE" ou "INTERMEDIATE_AND_OUTPUTS" ou "INPUTS" ou "INPUTS_OUTPUTS"
+                        this.OUTPUT_INFO = simulacaoMultithreading.getFRM(" Sample(Monte Carlo = N)");
             }
         }
 

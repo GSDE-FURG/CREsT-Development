@@ -11,6 +11,7 @@ import datastructures.Circuit;
 import datastructures.Gate;
 import datastructures.Signal;
 
+import java.awt.datatransfer.StringSelection;
 import java.io.*;
 import java.math.BigDecimal;
 import java.nio.file.Files;
@@ -2652,6 +2653,14 @@ import writers.WriteCsvTh;
              */
      }
 
+    /**
+     * @deprecated DO NOT USE IT
+     * @param sampleSize
+     * @param option
+     * @param smallestGatesIncicuitsSimulation
+     * @throws IOException
+     * @throws Exception
+     */
     public void runMultithreading_MonteCarloSample_per_Area_Analisys(int sampleSize, String option, int smallestGatesIncicuitsSimulation) throws IOException, Exception{
 
                 System.out.println(" ----- Monte Carlo per area analysis version -------");
@@ -2780,6 +2789,28 @@ import writers.WriteCsvTh;
              */
      }
 
+     public int parseResultsAndCalculateFMR(){
+
+         int bitfipCcounter = 0;
+
+         for (int i=0; i < this.itemx_list.size() ; i++) {
+             this.unmasked_faults = this.unmasked_faults +  itemx_list.get(i).getPropagatedFaults();
+             bitfipCcounter = bitfipCcounter + itemx_list.get(i).bitflipcounter;
+         }
+
+         this.circuitReliaibility = (float) (1.0 - ((float) this.unmasked_faults / (float) this.sampleSize));
+
+         return bitfipCcounter;
+     }
+
+    /**
+     * @deprecated
+     * This method orchestrates the settup enviroment for run Multithreading SET evalaution (LOGICAL SIMULATOR)
+     * @param sampleSize
+     * @param option
+     * @throws IOException
+     * @throws Exception
+     */
     public void runMultithreadingMonteCarlo(int sampleSize, String option) throws IOException, Exception{
 
                 System.out.println(" ----- Monte Carlo version Single Transient Fault (STF) -------");
@@ -2792,13 +2823,9 @@ import writers.WriteCsvTh;
                 System.out.println("    - Threads in execution: " + this.threads);
 
                 /*Reading CellLibrary*/
-                System.out.println("1");
                 CellLibrary cellLib = new CellLibrary();
-                System.out.println("2");
                 this.cellLibrary = cellLib;
-                System.out.println("3");
                 this.cellLibrary.initLibrary(this.genlib);
-                System.out.println("4");
                 System.out.println("    ... Reading Genlib " + " at -> " + this.genlib  + " ... ok");
                 System.out.println("  - Avaliable logic gatesin this library: "+cellLib.getCells());
 
@@ -2821,7 +2848,7 @@ import writers.WriteCsvTh;
                 cellLib.setPTMCells2(Float.valueOf(this.reliabilityConst));
                 cellLib.setPTMCells(new BigDecimal(this.reliabilityConst));
 
-        Instant loadTimeElapsed = Instant.now();
+                Instant loadTimeElapsed = Instant.now();
 
                 long loadTimeEnd = System.nanoTime();//System.currentTimeMillis();
                 long loadTime =   TimeUnit.NANOSECONDS.toMillis(loadTimeEnd - loadTimeStart);
@@ -2944,6 +2971,189 @@ import writers.WriteCsvTh;
                         + " and finished at: " + formattedDate2;
                 this.sampleSize = N;
                 System.out.println(" ----------------------------------------------------------------------------------------------------------------------");
+
+
+
+    }
+
+    /**
+     * Run the thread simulation in parallel
+     * @param thread_list
+     * @throws Exception
+     */
+    public void executeThreadsSimulation(List thread_list) throws Exception {
+        Thread thread_temp = null;
+        for (int i=0; i < thread_list.size() ; i++) {
+            thread_temp = (Thread) thread_list.get(i);
+            thread_temp.start();
+
+        }
+        /*Esperando termino das threads*/
+        for (int i=0; i < thread_list.size() ; i++) {
+            thread_temp = (Thread) thread_list.get(i);
+            thread_temp.join();
+        }
+
+    }
+
+    /**
+     * Generate input vectors according with sampleSize and signalsOption defition
+     * @param sampleSize eg: 20000 SET faults (Particle generating SET)
+     * @param signalsOption
+     * @return
+             * @throws Exception
+     */
+    public List createVectorsAndParticionate(int sampleSize, String signalsOption, String option) throws Exception {
+
+        List thread_list = new ArrayList();
+
+        this.sampleSize = sampleSize; //(int) Math.pow(2, this.probCircuit.getInputs().size());  //(int) Math.pow(2, this.probCircuit.getInputs().size());
+
+        this.signals_to_inject_faults = this.signalsToInjectFault(signalsOption); // Consider all signals to fault inject
+
+        ArrayList <String> random_input_vectors = this.generateInputVector(option); // Generate Random Input Vectors or InputTrueTable
+
+        switch (option) {
+            case "RANDOM":
+                    ArrayList <ArrayList<Integer>> ListInputVectors =  this.splitInputPatternsInInt(random_input_vectors, this.probCircuit.getInputs().size());
+                    thread_list = this.particionateVectorPerThread(ListInputVectors); // x - vectors per thread
+                break;
+
+        }
+
+        return (thread_list);
+    }
+
+    /**
+     * This methods setup genlib and verilog to proceed any simulation
+     * @param simulation_type
+     * @throws IOException
+     * @throws Exception
+     */
+    public void setupEnviroment(String simulation_type) throws IOException, Exception{
+
+        System.out.println(simulation_type);
+
+        /*Reading CellLibrary*/
+        CellLibrary cellLib = new CellLibrary();
+        this.cellLibrary = cellLib;
+        this.cellLibrary.initLibrary(this.genlib);
+        System.out.println("    ... Reading Genlib " + " at -> " + this.genlib  + " ... ok");
+        System.out.println("  - Avaliable logic gatesin this library: "+cellLib.getCells());
+
+        System.out.println("    ... Reading verilog "+ " at -> " + this.circuitNameStr  + " ... ok");
+        /*Reading verilog*/
+        MappedVerilogReader verilog_circuit = new MappedVerilogReader(this.circuitNameStr, this.cellLibrary);
+        this.verilog_circuit = verilog_circuit;
+        /*Circuit linked to verilog_circuit - init circuit*/
+        this.circuit = verilog_circuit.getCircuit();
+        System.out.println("    ... Reading verilog "+ " at -> " + this.circuitNameStr  + " ... ok");
+        //System.out.println("Patterns : " + this.verilog_circuit.getGatePattern());
+        /* Print circuit Specs*/
+        /*Circuit Probabilities */
+        this.initLevelCircuit();
+
+        /*Init ProbCircuits*/
+        this.initProbCircuit();
+
+        /*Init PTMs Const*/
+        cellLib.setPTMCells2(Float.valueOf(this.reliabilityConst));
+        cellLib.setPTMCells(new BigDecimal(this.reliabilityConst));
+
+        System.out.println("\n        ------ Printing Circuit Specs: --------");
+            this.PrintSpecs();
+        System.out.println("          ---------------------------------------\n");
+        /*----------------------*/
+    }
+
+    /**
+     * This method orchestrates the settup enviroment for run Multithreading SET evalaution (LOGICAL SIMULATOR)
+     * @param sampleSize
+     * @param option
+     * @throws IOException
+     * @throws Exception
+     */
+    public void runMultithreadingMonteCarloGOF(int sampleSize, String option) throws IOException, Exception{
+
+        Instant start = Instant.now();
+
+            LocalDateTime myDateObj = LocalDateTime.now();
+            DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+            String formattedDate = myDateObj.format(myFormatObj);
+
+            this.setupEnviroment(" ----- Monte Carlo version Single Transient Fault (STF) -------");
+
+        System.out.println("    - Simulation start in : " + formattedDate);
+        System.out.println("    - Threads in execution: " + this.threads);
+
+        Instant loadTimeElapsed = Instant.now();
+
+        Instant startPreparingSimulationTimeElapsed = Instant.now();
+
+            //this.sampleSize = sampleSize; //(int) Math.pow(2, this.probCircuit.getInputs().size());  //(int) Math.pow(2, this.probCircuit.getInputs().size());
+
+            int N = this.sampleSize; // random_input_vectors.size();//testNumber;
+
+            System.out.println("-  (input) Sample size = " + this.sampleSize);
+
+            List thread_list =  this.createVectorsAndParticionate(sampleSize, option, "RANDOM");
+
+        Instant endPreparingSimulationTimeElapsed = Instant.now();
+
+        Instant startThreadingTimeElapsed = Instant.now();
+
+            //long propagateTimeStart = System.nanoTime();
+
+            this.executeThreadsSimulation(thread_list);  // Prepare and run the thread simulation
+
+        Instant endThreadingTimeElapsed = Instant.now();
+
+            int bitfipCcounter = this.parseResultsAndCalculateFMR();  // FMR
+
+            Instant finish = Instant.now();
+
+        long timeElapsed_Instant = Duration.between(start, finish).toSeconds();
+
+            LocalDateTime myDateObj2 = LocalDateTime.now();
+            DateTimeFormatter myFormatObj2 = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+            String formattedDate2 = myDateObj2.format(myFormatObj2);
+
+        Instant startTimelogGeneration = Instant.now();
+
+            long timeElapsed_loadTime = Duration.between(start, loadTimeElapsed).toSeconds();
+            long timeElapsed_PrepareTime = Duration.between(startPreparingSimulationTimeElapsed, endPreparingSimulationTimeElapsed).toSeconds();
+            long timeElapsed_ThreadingTime = Duration.between(startThreadingTimeElapsed, endThreadingTimeElapsed).toSeconds();
+
+        this.writeSimpleLog(option + "_MonteCarlo_Simple_Log_" +this.circuit.getName()+"_Threads-"+ this.threads +  "_sampleSize-" + this.sampleSize, formattedDate,  formattedDate2, timeElapsed_Instant);
+
+        this.writeCsvFileCompleteTh(option+"_MonteCarlo_Complete_Log_"+this.circuit.getName()+"_Theads-"+ this.threads + "_sampleSize"+ this.sampleSize, itemx_list);
+
+        Instant endTimelogGeneration = Instant.now();
+
+        long timeElapsed_logGeneration = Duration.between(startTimelogGeneration, endTimelogGeneration).toSeconds();
+
+        System.out.println("\n\n----------------- Results ------------------");
+        System.out.println("Circuit: " + this.circuit.getName());
+        System.out.println("- Simulation started at: " + formattedDate + " and finished at: "+ formattedDate2); //formattedDate
+
+        // System.out.println("- PropagatedTime (s): " + propagateTime);
+        System.out.println("- Sample Size (N): " + N);
+        System.out.println("- Propagated fault(s) (Ne): " + this.unmasked_faults);
+        System.out.println("- Fault Mask Rate (FMR): " + " 1 - Ne/N = (1-(" + this.unmasked_faults + "/" + N + ")) = " + this.circuitReliaibility);
+        //System.out.println("- MTBF (Mean Time Between failure) : " + this.MTBF);
+        // System.out.println("- Simulation TimeElapsed: " + propagateTimems + "(ms)");
+
+        String time = "- Load Time : " + timeElapsed_loadTime + "(s) - Setup Time: " + timeElapsed_PrepareTime  + "(s) - Threading Execution Time: " + timeElapsed_ThreadingTime
+                + "(s) - Log Generation: " + timeElapsed_logGeneration
+                + "(s) - Simulation Instant TimeElapsed: " + timeElapsed_Instant +" (s)";
+        System.out.println("- Bitflip Counter: " + bitfipCcounter);
+        System.out.println(time);
+
+        System.out.println("--------------------------------------------");
+        this.Performance_Time = "Simulation started at: " + formattedDate
+                + " and finished at: " + formattedDate2;
+        this.sampleSize = N;
+        System.out.println(" ----------------------------------------------------------------------------------------------------------------------");
 
 
 
@@ -3749,7 +3959,7 @@ import writers.WriteCsvTh;
         DateTimeFormatter myFormatObj2 = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
         String formattedDate2 = myDateObj2.format(myFormatObj2);
 
-        this.sampleSize = sizeExasuticTest;
+        //this.sampleSize = sizeExasuticTest;
 
         //this.writeSimpleLog("ExausticSimulation_" +this.circuit.getName()+"_Threads-"+ this.threads + "_sampleSize-" + this.sampleSize, formattedDate,  formattedDate2, propagateTime);
 
