@@ -115,10 +115,10 @@ public class main{
                      //experimento.multithreadingSimulation("ALL_SIGNALS");
 
                      // STF - SET
-                     //experimento.monteCarloSimulation(sampleSizeMonteCarlo, "ALL_SIGNALS"); //ou Signals =  "ALL_SIGNALS" ou "INTERMEDIATE" ou "INTERMEDIATE_AND_OUTPUTS" ou "INPUTS" ou "INPUTS_OUTPUTS"
+                     experimento.monteCarloSimulation(sampleSizeMonteCarlo, "ALL_SIGNALS"); //ou Signals =  "ALL_SIGNALS" ou "INTERMEDIATE" ou "INTERMEDIATE_AND_OUTPUTS" ou "INPUTS" ou "INPUTS_OUTPUTS"
 
                      //PARSE CIRCUIT TO NETLIST (SPICE)
-                    // experimento.parseVerilogToSpiceNetlist(20000, "ALL_SIGNALS");
+                     experimento.parseVerilogToSpiceNetlist(20000, "ALL_SIGNALS");
 
 
                         //-- MTF - PROP SET --

@@ -176,7 +176,7 @@ import signalProbability.ProbCircuit;
        // for (int i = 0; i < this.threadSimulationList.size(); i++){
             //this.insertInputVectors("selected", this.threadSimulationList.get(i).getinputVector());
             int i = 0;
-            String parsedNetlist = this.createSpiceNetlist("G1gat", "1");
+            String parsedNetlist = this.createSpiceNetlist("A", "1");
             this.parsedNetlistContent = parsedNetlist;
             //this.getPropagateFaultFreeResults( this.threadSimulationList.get(i).getinputVector(), this.threadSimulationList.get(i).getSimulationIndex(), this.threadSimulationList.get(i), i+1);
             //System.out.println("------------------------- vec: " +  this.threadSimulationList.get(i).getSimulationIndex() +  " sum: " + this.threadSimulationList.get(i).getSum_sensitive_cells_area() + "--------------------------------\n");
@@ -2924,6 +2924,7 @@ import signalProbability.ProbCircuit;
         String gateType = " " + gate.getGate().getType().toString();
         String concat = "";
 
+        System.out.println("Inputs: " + inputsSignals + " GATE: " + gate.getGate().getType() + " inputs: " + gate.getGate().getInputs());
         for (Signal x: inputsSignals){
             inputs = inputs + " " + x.getId().toString();
         }
