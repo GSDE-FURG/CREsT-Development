@@ -260,7 +260,7 @@ public class WriteCsvTh {
         this.FileNameCsv = this.FileName + ".csv";
         
             
-        System.out.println("Creating .csv -> file: "+ this.FileNameCsv);
+        //System.out.println("- Creating .csv -> file: "+ this.FileNameCsv);
              
             /*
             List<List<String>> rows = Arrays.asList(
@@ -430,7 +430,7 @@ public class WriteCsvTh {
                    
             }
              */
-             System.out.println("Propagated faults (SET): " + propagated_faults);
+             //System.out.println("Propagated faults (SET): " + propagated_faults);
              csvWriter.flush();
              csvWriter.close();
     }

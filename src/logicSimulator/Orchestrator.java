@@ -2803,6 +2803,13 @@ import writers.WriteCsvTh;
          return bitfipCcounter;
      }
 
+     public void printResultLog(){
+         System.out.println("\n\n----------------- Printing Result ------------------");
+
+
+         System.out.println("--------------------------------------------");
+     }
+
     /**
      * @deprecated
      * This method orchestrates the settup enviroment for run Multithreading SET evalaution (LOGICAL SIMULATOR)
@@ -2811,7 +2818,7 @@ import writers.WriteCsvTh;
      * @throws IOException
      * @throws Exception
      */
-    public void runMultithreadingMonteCarlo(int sampleSize, String option) throws IOException, Exception{
+    public void runMultithreadingMonteCarloDEPRECIATED(int sampleSize, String option) throws IOException, Exception{
 
                 System.out.println(" ----- Monte Carlo version Single Transient Fault (STF) -------");
                 long loadTimeStart = System.nanoTime();//System.currentTimeMillis();
@@ -2977,6 +2984,29 @@ import writers.WriteCsvTh;
     }
 
     /**
+     * Write Simple and Complete logs, showing the simulation results: FMR, Failure Rate, Sensitive Nodes, ...., another informations
+     * @param fileName
+     * @param date
+     * @param dateend
+     * @param propagateTimems
+     * @param itemx_list
+     * @throws IOException
+     * @throws WriteException
+     */
+    public void writeLogs(String fileName, String date, String dateend, long propagateTimems,  ArrayList<LogicSimulator> itemx_list ) throws IOException, WriteException {
+
+        System.out.println("- Writing logs ...");
+
+        this.writeSimpleLog(fileName, date,  dateend, propagateTimems);
+
+        System.out.println("- Simple Log " + fileName + "  (.txt)");
+
+        this.writeCsvFileCompleteTh(fileName, itemx_list);
+
+        System.out.println("- Complete Log " + fileName + "  (.csv)");
+    }
+
+    /**
      * Run the thread simulation in parallel
      * @param thread_list
      * @throws Exception
@@ -3039,8 +3069,7 @@ import writers.WriteCsvTh;
         this.cellLibrary = cellLib;
         this.cellLibrary.initLibrary(this.genlib);
         System.out.println("    ... Reading Genlib " + " at -> " + this.genlib  + " ... ok");
-        System.out.println("  - Avaliable logic gatesin this library: "+cellLib.getCells());
-
+        System.out.println("    ... Avaliable logic gates in this library: "+ cellLib.getCells().size());
         System.out.println("    ... Reading verilog "+ " at -> " + this.circuitNameStr  + " ... ok");
         /*Reading verilog*/
         MappedVerilogReader verilog_circuit = new MappedVerilogReader(this.circuitNameStr, this.cellLibrary);
@@ -3060,9 +3089,9 @@ import writers.WriteCsvTh;
         cellLib.setPTMCells2(Float.valueOf(this.reliabilityConst));
         cellLib.setPTMCells(new BigDecimal(this.reliabilityConst));
 
-        System.out.println("\n        ------ Printing Circuit Specs: --------");
-            this.PrintSpecs();
-        System.out.println("          ---------------------------------------\n");
+        //System.out.println("\n        ------ Printing Circuit Specs: --------");
+            //this.PrintSpecs();
+        //System.out.println("          ---------------------------------------\n");
         /*----------------------*/
     }
 
@@ -3073,7 +3102,7 @@ import writers.WriteCsvTh;
      * @throws IOException
      * @throws Exception
      */
-    public void runMultithreadingMonteCarloGOF(int sampleSize, String option) throws IOException, Exception{
+    public void runMultithreadingMonteCarlo(int sampleSize, String option) throws IOException, Exception{
 
         Instant start = Instant.now();
 
@@ -3081,7 +3110,7 @@ import writers.WriteCsvTh;
             DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
             String formattedDate = myDateObj.format(myFormatObj);
 
-            this.setupEnviroment(" ----- Monte Carlo version Single Transient Fault (STF) -------");
+            this.setupEnviroment("\n ----- Monte Carlo version Single Transient Fault (STF) -------");
 
         System.out.println("    - Simulation start in : " + formattedDate);
         System.out.println("    - Threads in execution: " + this.threads);
@@ -3089,8 +3118,6 @@ import writers.WriteCsvTh;
         Instant loadTimeElapsed = Instant.now();
 
         Instant startPreparingSimulationTimeElapsed = Instant.now();
-
-            //this.sampleSize = sampleSize; //(int) Math.pow(2, this.probCircuit.getInputs().size());  //(int) Math.pow(2, this.probCircuit.getInputs().size());
 
             int N = this.sampleSize; // random_input_vectors.size();//testNumber;
 
@@ -3101,8 +3128,6 @@ import writers.WriteCsvTh;
         Instant endPreparingSimulationTimeElapsed = Instant.now();
 
         Instant startThreadingTimeElapsed = Instant.now();
-
-            //long propagateTimeStart = System.nanoTime();
 
             this.executeThreadsSimulation(thread_list);  // Prepare and run the thread simulation
 
@@ -3124,38 +3149,28 @@ import writers.WriteCsvTh;
             long timeElapsed_PrepareTime = Duration.between(startPreparingSimulationTimeElapsed, endPreparingSimulationTimeElapsed).toSeconds();
             long timeElapsed_ThreadingTime = Duration.between(startThreadingTimeElapsed, endThreadingTimeElapsed).toSeconds();
 
-        this.writeSimpleLog(option + "_MonteCarlo_Simple_Log_" +this.circuit.getName()+"_Threads-"+ this.threads +  "_sampleSize-" + this.sampleSize, formattedDate,  formattedDate2, timeElapsed_Instant);
-
-        this.writeCsvFileCompleteTh(option+"_MonteCarlo_Complete_Log_"+this.circuit.getName()+"_Theads-"+ this.threads + "_sampleSize"+ this.sampleSize, itemx_list);
-
         Instant endTimelogGeneration = Instant.now();
 
         long timeElapsed_logGeneration = Duration.between(startTimelogGeneration, endTimelogGeneration).toSeconds();
 
-        System.out.println("\n\n----------------- Results ------------------");
-        System.out.println("Circuit: " + this.circuit.getName());
-        System.out.println("- Simulation started at: " + formattedDate + " and finished at: "+ formattedDate2); //formattedDate
 
-        // System.out.println("- PropagatedTime (s): " + propagateTime);
-        System.out.println("- Sample Size (N): " + N);
-        System.out.println("- Propagated fault(s) (Ne): " + this.unmasked_faults);
-        System.out.println("- Fault Mask Rate (FMR): " + " 1 - Ne/N = (1-(" + this.unmasked_faults + "/" + N + ")) = " + this.circuitReliaibility);
-        //System.out.println("- MTBF (Mean Time Between failure) : " + this.MTBF);
-        // System.out.println("- Simulation TimeElapsed: " + propagateTimems + "(ms)");
+        this.writeLogs(option + "_MonteCarlo_Simple_Log_" +this.circuit.getName()+"_Threads-"+ this.threads +  "_sampleSize-" + this.sampleSize, formattedDate,  formattedDate2, timeElapsed_Instant, itemx_list);
 
-        String time = "- Load Time : " + timeElapsed_loadTime + "(s) - Setup Time: " + timeElapsed_PrepareTime  + "(s) - Threading Execution Time: " + timeElapsed_ThreadingTime
+        System.out.println("----------------------------------------------------------------------");
+
+        System.out.println("- Simulation started at: " + formattedDate + " and finished at: "+ formattedDate2);
+        System.out.println("- Circuit: " + this.circuit.getName());
+        System.out.println("- Sample Size (N): " + this.sampleSize );
+        System.out.println("- Fault Mask Rate (FMR): " + " 1 - Ne/N = (1-(" + this.unmasked_faults + "/" + this.sampleSize + ")) = " + this.circuitReliaibility);
+        System.out.println("- Bitflip Counter: " + bitfipCcounter );
+        System.out.println("- Load Time : " + timeElapsed_loadTime + "(s) - Setup Time: " + timeElapsed_PrepareTime  + "(s) - Threading Execution Time: " + timeElapsed_ThreadingTime
                 + "(s) - Log Generation: " + timeElapsed_logGeneration
-                + "(s) - Simulation Instant TimeElapsed: " + timeElapsed_Instant +" (s)";
-        System.out.println("- Bitflip Counter: " + bitfipCcounter);
-        System.out.println(time);
+                + "(s) - Simulation Instant TimeElapsed: " + timeElapsed_Instant +" (s)" );
 
-        System.out.println("--------------------------------------------");
-        this.Performance_Time = "Simulation started at: " + formattedDate
-                + " and finished at: " + formattedDate2;
-        this.sampleSize = N;
-        System.out.println(" ----------------------------------------------------------------------------------------------------------------------");
+        System.out.println("-----------------------END SIMULATION---------------------------------");
 
-
+            this.Performance_Time = "Simulation started at: " + formattedDate + " and finished at: " + formattedDate2;
+            //this.sampleSize = N;
 
     }
 
