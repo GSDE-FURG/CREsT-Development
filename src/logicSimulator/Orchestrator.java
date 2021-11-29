@@ -51,6 +51,8 @@ import writers.WriteCsvTh;
     private String Performance_Time;
     private int sizeExaustiveCompleteSimulation;
 
+    private ArrayList <Float> mtf_list = new ArrayList<>();
+
     private ArrayList <Signal> signals_to_inject_faults = new ArrayList<>();
     private final ArrayList <String> inputListValues = new ArrayList<>();
     private final ArrayList <ArrayList<String>> inputListValuesStr = new ArrayList<>();
@@ -942,17 +944,16 @@ import writers.WriteCsvTh;
             content = content + "Circuit: " + this.circuit.getName() + "\n";
             content = content+  "Number of Simulations (sample size = N): " + this.sampleSize + "\n";
 
-            for (int i = 0; i < mtf_list.size(); i++) {
-                content = content +  "      - For each  (" + mtf_list.get(i) + ") faults happens a MTF of order (" + (i+2) + ")\n" ;
+            for (int i = 1; i < mtf_list.size(); i++) {
+                content = content +  "      - (" + mtf_list.get(i) + "%) faults are MTF of order (" + (i) + ")\n" ;
             }
-            content = content + "- Sample = " + this.sampleSize + "\n";
+            content = content+  "Threads: " + this.threads + "\n";
+            content = content + "Sample Size (Monte Carlo)= " + this.sampleSize + "\n";
             //content = content+  "For each  (" + period + ") faults happens a Multiple Transient Fault (" + order + ") with frequency: (" + frequency + ") - Sample = " + this.sampleSize + "\n";
-            content = content+  "Number of Threads: " + this.threads + "\n";
-            content = content + "Number of detected faults (Ne): " + this.unmasked_faults + "\n";
-            content = content + "Fault Mask Rate (FMR): "+ " 1 - Ne/N = (1-(" + this.unmasked_faults + "/" + this.sampleSize + ")) = " + this.circuitReliaibility + "\n";
-            //content = content +  "MTBF: " + this.MTBF + "\n\n";
 
-            content = content +  "Performance time m(s): " + (timeElapsedSimulation) + "\n";
+            content = content + "Detected faults (Ne): " + this.unmasked_faults + "\n";
+            content = content + "Fault Masking Rate (FMR): "+ " 1 - Ne/N = (1-(" + this.unmasked_faults + "/" + this.sampleSize + ")) = " + this.circuitReliaibility + "\n";
+            content = content + "Performance time m(s): " + (timeElapsedSimulation) + "\n";
 
 
             /*
@@ -2368,6 +2369,12 @@ import writers.WriteCsvTh;
          */
     }
 
+    /**
+     * Exhaustic STF (SET) Simulation
+     * @param option
+     * @throws IOException
+     * @throws Exception
+     */
     public void runMultithreadingExausticSimulationComplete(String option) throws IOException, Exception{ //Test All possibilities
 
 
@@ -2530,6 +2537,12 @@ import writers.WriteCsvTh;
 
     }
 
+    /**
+     * @deprecated
+     * @param option
+     * @throws IOException
+     * @throws Exception
+     */
     public void runMultithreadingSimulation(String option) throws IOException, Exception{
 
 
@@ -2803,12 +2816,6 @@ import writers.WriteCsvTh;
          return bitfipCcounter;
      }
 
-     public void printResultLog(){
-         System.out.println("\n\n----------------- Printing Result ------------------");
-
-
-         System.out.println("--------------------------------------------");
-     }
 
     /**
      * @deprecated
@@ -2993,17 +3000,23 @@ import writers.WriteCsvTh;
      * @throws IOException
      * @throws WriteException
      */
-    public void writeLogs(String fileName, String date, String dateend, long propagateTimems,  ArrayList<LogicSimulator> itemx_list ) throws IOException, WriteException {
+    public void writeLogs(String fileName, String date, String dateend, long propagateTimems,  ArrayList<LogicSimulator> itemx_list, String mode) throws IOException, WriteException {
 
         System.out.println("- Writing logs ...");
-
-        this.writeSimpleLog(fileName, date,  dateend, propagateTimems);
-
         System.out.println("- Simple Log " + fileName + "  (.txt)");
-
-        this.writeCsvFileCompleteTh(fileName, itemx_list);
-
         System.out.println("- Complete Log " + fileName + "  (.csv)");
+
+        switch (mode) {
+
+            case "STF":
+                this.writeSimpleLog(fileName, date, dateend, propagateTimems);
+                this.writeCsvFileCompleteTh(fileName, itemx_list);
+                break;
+            case "MTF":
+                this.writeSimpleLogMultipleTransientFaultProportion(fileName, date, dateend, propagateTimems, this.mtf_list);
+                this.writeCsvFileCompleteThMTF(fileName, itemx_list);
+                break;
+        }
     }
 
     /**
@@ -3036,19 +3049,28 @@ import writers.WriteCsvTh;
     public List createVectorsAndParticionate(int sampleSize, String signalsOption, String option) throws Exception {
 
         List thread_list = new ArrayList();
-
+        ArrayList <String> random_input_vectors;
+        ArrayList <ArrayList<Integer>> ListInputVectors;
         this.sampleSize = sampleSize; //(int) Math.pow(2, this.probCircuit.getInputs().size());  //(int) Math.pow(2, this.probCircuit.getInputs().size());
-
         this.signals_to_inject_faults = this.signalsToInjectFault(signalsOption); // Consider all signals to fault inject
 
-        ArrayList <String> random_input_vectors = this.generateInputVector(option); // Generate Random Input Vectors or InputTrueTable
+
 
         switch (option) {
             case "RANDOM":
-                    ArrayList <ArrayList<Integer>> ListInputVectors =  this.splitInputPatternsInInt(random_input_vectors, this.probCircuit.getInputs().size());
-                    thread_list = this.particionateVectorPerThread(ListInputVectors); // x - vectors per thread
+                System.out.println("STF - RANDOM");
+                 random_input_vectors = this.generateInputVector(option); // Generate Random Input Vectors or InputTrueTable
+                 ListInputVectors =  this.splitInputPatternsInInt(random_input_vectors, this.probCircuit.getInputs().size());
+                 thread_list = this.particionateVectorPerThread(ListInputVectors); // x - vectors per thread
                 break;
 
+            case "MTF-RANDOM":
+                System.out.println("MTF - RANDOM");
+                random_input_vectors = this.generateInputVector("RANDOM"); // Generate Random Input Vectors or InputTrueTable
+                ListInputVectors = this.splitInputPatternsInInt(random_input_vectors, this.probCircuit.getInputs().size());
+               // System.out.println(ListInputVectors.size());
+                thread_list = this.particionateMultipletransientFaultInjectionVectorPerThreadProportion(ListInputVectors, mtf_list); // x - vectors per thread
+                break;
         }
 
         return (thread_list);
@@ -3154,7 +3176,7 @@ import writers.WriteCsvTh;
         long timeElapsed_logGeneration = Duration.between(startTimelogGeneration, endTimelogGeneration).toSeconds();
 
 
-        this.writeLogs(option + "_MonteCarlo_Simple_Log_" +this.circuit.getName()+"_Threads-"+ this.threads +  "_sampleSize-" + this.sampleSize, formattedDate,  formattedDate2, timeElapsed_Instant, itemx_list);
+        this.writeLogs(option + "_STF_MonteCarlo_Simple_Log_" +this.circuit.getName()+"_Threads-"+ this.threads +  "_sampleSize-" + this.sampleSize, formattedDate,  formattedDate2, timeElapsed_Instant, itemx_list, "STF");
 
         System.out.println("----------------------------------------------------------------------");
 
@@ -3174,6 +3196,16 @@ import writers.WriteCsvTh;
 
     }
 
+    /**
+     * @deprecated
+     * @param base
+     * @param order
+     * @param frequency
+     * @param sampleSize
+     * @param option
+     * @throws IOException
+     * @throws Exception
+     */
     public void runMultipleFaultInjectionMultithreadingMonteCarlo(int base, int order, int frequency, int sampleSize, String option) throws IOException, Exception{
 
         System.out.println(" ----- Monte Carlo version  for Multiple Transient Fault Injection -------");
@@ -3307,6 +3339,13 @@ import writers.WriteCsvTh;
 
     }
 
+    /**
+     * @deprecated
+     * @param mtf_list
+     * @param option
+     * @throws IOException
+     * @throws Exception
+     */
     public void runMultipleFaultInjectionMultithreadingMonteCarloSimulation(ArrayList <Integer> mtf_list, String option) throws IOException, Exception{
 
 
@@ -3470,9 +3509,18 @@ import writers.WriteCsvTh;
 
     }
 
-    public void runMultipleFaultInjectionMultithreadingMonteCarloSimulationProportion(int sample, ArrayList <Float> mtf_list, String option) throws IOException, Exception{
+    /**
+     * @deprecated
+     * @param sample
+     * @param mtf_list
+     * @param option
+     * @throws IOException
+     * @throws Exception
+     */
+    public void runMultipleFaultInjectionMultithreadingMonteCarloSimulationProportionOLD(int sample, ArrayList <Float> mtf_list, String option) throws IOException, Exception{
 
         System.out.println("SUM PROPORTION: " + sumProportionPercentage(mtf_list));
+
         if (sumProportionPercentage(mtf_list) == 1.0) {  // 100%
 
             System.out.println(" ----- Monte Carlo version  for Multiple Transient Fault Injection -------");
@@ -3626,7 +3674,7 @@ import writers.WriteCsvTh;
                     + "(s) - Log Generation: " + timeElapsed_logGeneration
                     + "(s) - Simulation Instant TimeElapsed: " + timeElapsed_Instant + " (s)";
 
-           // ArrayList <Integer> new_MTF = passProportionPercentage(arrayList_mtf_original, sample);
+            // ArrayList <Integer> new_MTF = passProportionPercentage(arrayList_mtf_original, sample);
             System.out.println("- MTF order list: " + mtf_list);
 
             System.out.println("- Bitflip Counter: " + bitfipCcounter);
@@ -3643,6 +3691,104 @@ import writers.WriteCsvTh;
         }
 
     }
+
+    /**
+     * This method run Multiple Transient Faults (MTF's)
+     * @param sample
+     * @param mtf_list
+     * @param option
+     * @throws IOException
+     * @throws Exception
+     */
+    public void runMultipleFaultInjectionMultithreadingMonteCarloSimulationProportion(int sample, ArrayList <Float> mtf_list, String option) throws IOException, Exception{
+
+        System.out.println("- SUM PROPORTION: " + sumProportionPercentage(mtf_list));
+
+        if (sumProportionPercentage(mtf_list) == 1.0) {  // 100%
+
+
+            Instant start = Instant.now();
+
+            LocalDateTime myDateObj = LocalDateTime.now();
+            DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+            String formattedDate = myDateObj.format(myFormatObj);
+
+            int sampleSize = sample;//mtf_list.get(0);
+
+            this.setupEnviroment(" ----- Monte Carlo version  for Multiple Transient Fault Injection -------");
+
+            Instant loadTimeElapsed = Instant.now();
+
+            Instant startPreparingSimulationTimeElapsed = Instant.now();
+
+            this.sampleSize = sampleSize; //(int) Math.pow(2, this.probCircuit.getInputs().size());  //(int) Math.pow(2, this.probCircuit.getInputs().size());
+            int N = this.sampleSize; // random_input_vectors.size();//testNumber;
+
+            System.out.println("-  (input) Sample size = " + this.sampleSize);
+
+            this.signals_to_inject_faults = this.signalsToInjectFault(option); // Consider all signals to fault inject
+
+            this.mtf_list = mtf_list;
+
+            List thread_list =  this.createVectorsAndParticionate(sampleSize, option, "MTF-RANDOM");
+
+            System.out.println("THREAD LIST: " + thread_list);
+
+            ArrayList<Float> tt = new ArrayList<>(mtf_list);
+            tt.remove(0); // 20k
+
+            Instant endPreparingSimulationTimeElapsed = Instant.now();
+
+            Instant startThreadingTimeElapsed = Instant.now();
+
+            this.executeThreadsSimulation(thread_list);
+
+            Instant endThreadingTimeElapsed = Instant.now();
+
+            int bitfipCcounter = this.parseResultsAndCalculateFMR();  // FMR
+
+            Instant finish = Instant.now();
+            long timeElapsed_Instant = Duration.between(start, finish).toSeconds();
+
+            LocalDateTime myDateObj2 = LocalDateTime.now();
+            DateTimeFormatter myFormatObj2 = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+            String formattedDate2 = myDateObj2.format(myFormatObj2);
+
+            Instant startTimelogGeneration = Instant.now();
+
+            long timeElapsed_loadTime = Duration.between(start, loadTimeElapsed).toSeconds();
+            long timeElapsed_PrepareTime = Duration.between(startPreparingSimulationTimeElapsed, endPreparingSimulationTimeElapsed).toSeconds();
+            long timeElapsed_ThreadingTime = Duration.between(startThreadingTimeElapsed, endThreadingTimeElapsed).toSeconds();
+
+            Instant endTimelogGeneration = Instant.now();
+
+            this.writeLogs(option + "_MTF_MonteCarlo_Simple_Log_" +this.circuit.getName()+"_Threads-"+ this.threads +  "_sampleSize-" + this.sampleSize, formattedDate,  formattedDate2, timeElapsed_Instant, itemx_list, "MTF");
+
+            long timeElapsed_logGeneration = Duration.between(startTimelogGeneration, endTimelogGeneration).toSeconds();
+
+            System.out.println("----------------------------------------------------------------------");
+
+            System.out.println("- Simulation started at: " + formattedDate + " and finished at: "+ formattedDate2);
+            System.out.println("- Circuit: " + this.circuit.getName());
+            System.out.println("- Sample Size (N): " + this.sampleSize );
+            System.out.println("- Fault Mask Rate (FMR): " + " 1 - Ne/N = (1-(" + this.unmasked_faults + "/" + this.sampleSize + ")) = " + this.circuitReliaibility);
+            System.out.println("- Bitflip Counter: " + bitfipCcounter );
+            System.out.println("- Load Time : " + timeElapsed_loadTime + "(s) - Setup Time: " + timeElapsed_PrepareTime  + "(s) - Threading Execution Time: " + timeElapsed_ThreadingTime
+                    + "(s) - Log Generation: " + timeElapsed_logGeneration
+                    + "(s) - Simulation Instant TimeElapsed: " + timeElapsed_Instant +" (s)" );
+
+            System.out.println("-----------------------END SIMULATION---------------------------------");
+
+            this.Performance_Time = "Simulation started at: " + formattedDate + " and finished at: " + formattedDate2;
+            this.sampleSize = N;
+            System.out.println(" ----------------------------------------------------------------------------------------------------------------------\n\n...");
+        }
+        else{
+            System.err.println("- Inputs inserted sum up ("+sumProportionPercentage(mtf_list)+") above 1 (100%), these were the inserted commands: " + mtf_list);
+        }
+
+    }
+
 
     public Map<String, SensitiveCell> readCsvFileAndMapSensitiveCellsArea(String input, String comma){
 

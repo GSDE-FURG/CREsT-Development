@@ -115,21 +115,23 @@ public class main{
                      //experimento.multithreadingSimulation("ALL_SIGNALS");
 
                      // STF - SET
-                     experimento.monteCarloSimulation(sampleSizeMonteCarlo, "ALL_SIGNALS"); //ou Signals =  "ALL_SIGNALS" ou "INTERMEDIATE" ou "INTERMEDIATE_AND_OUTPUTS" ou "INPUTS" ou "INPUTS_OUTPUTS"
+                     //experimento.monteCarloSimulation(sampleSizeMonteCarlo, "ALL_SIGNALS"); //ou Signals =  "ALL_SIGNALS" ou "INTERMEDIATE" ou "INTERMEDIATE_AND_OUTPUTS" ou "INPUTS" ou "INPUTS_OUTPUTS"
 
 
                     // experimento.parseVerilogToSpiceNetlist(20000, "ALL_SIGNALS");
 
 
-                     /*   -- MTF - PROP SET --
+                        //-- MTF - PROP SET --
                          ArrayList<Float> mtf_sizes = new ArrayList<>();
                          int sample = 20000;
                          mtf_sizes.add((float) sample);
-                         mtf_sizes.add((float) 1);
+                         mtf_sizes.add((float) 0.9);
+                         mtf_sizes.add((float) 0.09);
+                         mtf_sizes.add((float) 0.01);
                          System.out.println(mtf_sizes);
                          experimento.setSample(sample);
                          experimento.monteCarloSimulationMultipleTransientFaultsProportion(sample, mtf_sizes, "ALL_SIGNALS");
-                      */
+
 
                      //experimento.readResultsInLot("Resultados Proporção 0.0 0.09 0.01/min/", "ALL_SIGNALS");
                      //experimento.readResultsInLot("teste/mapped/EPFL2015/1-minimal_no_cost/Results/", "ALL_SIGNALS");
@@ -318,16 +320,16 @@ public class main{
 
 
                 for (int i = 0; i < this.circuitList.size(); i++) {
-                    System.out.println("_"+i);
+                    System.out.println("_"+this.circuitList.get(i));
 
-                    try {
+                   // try {
                         Orchestrator simulacaoMultithreading = new Orchestrator(this.threads, this.reliabilityConst, this.relativePath, this.genlib, this.relativePath + this.circuitList.get(i));
                         simulacaoMultithreading.runMultipleFaultInjectionMultithreadingMonteCarloSimulationProportion(monteCarloSample, mtf_sizes, positionToFaultInjection);
                         this.OUTPUT_INFO = simulacaoMultithreading.getFRM(" MTFT Sample (Monte Carlo = N)");
-                        }
-                    catch (Exception e){
-                        System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~");
-                    }
+                     //   }
+                    //catch (Exception e){
+                    //    System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~");
+                    //}
 
                 }
 
