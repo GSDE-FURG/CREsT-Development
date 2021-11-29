@@ -117,11 +117,12 @@ public class main{
                      // STF - SET
                      //experimento.monteCarloSimulation(sampleSizeMonteCarlo, "ALL_SIGNALS"); //ou Signals =  "ALL_SIGNALS" ou "INTERMEDIATE" ou "INTERMEDIATE_AND_OUTPUTS" ou "INPUTS" ou "INPUTS_OUTPUTS"
 
-
+                     //PARSE CIRCUIT TO NETLIST (SPICE)
                     // experimento.parseVerilogToSpiceNetlist(20000, "ALL_SIGNALS");
 
 
                         //-- MTF - PROP SET --
+                     /*
                          ArrayList<Float> mtf_sizes = new ArrayList<>();
                          int sample = 20000;
                          mtf_sizes.add((float) sample);
@@ -131,7 +132,7 @@ public class main{
                          System.out.println(mtf_sizes);
                          experimento.setSample(sample);
                          experimento.monteCarloSimulationMultipleTransientFaultsProportion(sample, mtf_sizes, "ALL_SIGNALS");
-
+                    */
 
                      //experimento.readResultsInLot("Resultados Proporção 0.0 0.09 0.01/min/", "ALL_SIGNALS");
                      //experimento.readResultsInLot("teste/mapped/EPFL2015/1-minimal_no_cost/Results/", "ALL_SIGNALS");

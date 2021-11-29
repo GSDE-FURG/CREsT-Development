@@ -1267,7 +1267,6 @@ import writers.WriteCsvTh;
 
     /**
      *
-     *
      * @param ListInputVectors
      * @param mtf_list
      * @return
@@ -1477,8 +1476,8 @@ import writers.WriteCsvTh;
 
     public List particionateMultipletransientFaultInjectionVectorPerThreadProportion(ArrayList <ArrayList<Integer>> ListInputVectors, ArrayList <Float> mtf_list) throws ScriptException, Exception{
 
-        System.out.println("\n\n         +++++++    Dev mode Percentage (Proportion mode)  ++++++");
-        System.out.println("                     -   MTF LIST = " + mtf_list);
+        //System.out.println("\n\n         +++++++    Dev mode Percentage (Proportion mode)  ++++++");
+        System.out.println("-   MTF LIST = " + mtf_list);
 
         List thread_list = new ArrayList();
         int count = 0;
@@ -1593,7 +1592,7 @@ import writers.WriteCsvTh;
             Thread thread = new Thread(runnable);
             thread.setName(Integer.toString(threadItem.hashCode()));
             thread_list.add(thread);
-            System.out.println("\n x-x-x ->>>>>> " + i + " Start: " + start + " End: " + end + "  ThreadItem: " + threadItem.getStartendPos() + " size inputss: " + threadItem.getThreadSimulatinArray().size() + " real: " + temp.size());
+            System.out.println("\n ->>>>>> " + i + " Start: " + start + " End: " + end + "  ThreadItem: " + threadItem.getStartendPos() + " size inputss: " + threadItem.getThreadSimulatinArray().size() + " real: " + temp.size());
 
         }
         //System.out.println("Signal to inject fault: " + this.signals_to_inject_faults);
@@ -1901,9 +1900,6 @@ import writers.WriteCsvTh;
 
     }
 
-
-
-
     public long factorialUsingRecursion(int n) {
         if (n <= 2) {
             return n;
@@ -2100,6 +2096,12 @@ import writers.WriteCsvTh;
 
     }
 
+    /**
+     * Exhaustic Single STF (SET) Simulation
+     * @param option
+     * @throws IOException
+     * @throws Exception
+     */
     public void runMultithreadingExausticSimulation(String option) throws IOException, Exception{ //Test All possibilities
 
 
@@ -2237,140 +2239,46 @@ import writers.WriteCsvTh;
              */
      }
 
+    /**
+     * Extracts the INPUTS, SIGNALS AND GATES from circuit
+     * @param option
+     * @return
+     * @throws IOException
+     * @throws Exception
+     */
     public String estimateMultithreadingExausticSimulationSize_AND_PRINT_INPUTS_SIGNALS_GATES(String option) throws IOException, Exception{ //Test All possibilities
 
 
-        //System.out.println(" ----- Estimate Exaustive Simulation Size -------");
-        long loadTimeStart = System.nanoTime();//System.currentTimeMillis();
+        System.out.println(" ----- Estimate Exaustive Simulation Size -------");
 
+        long loadTimeStart = System.nanoTime();//System.currentTimeMillis();
 
         LocalDateTime myDateObj = LocalDateTime.now();
         DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
         String formattedDate = myDateObj.format(myFormatObj);
 
-
-        /*Reading CellLibrary*/
         CellLibrary cellLib = new CellLibrary();
-
 
         this.cellLibrary = cellLib;
         this.cellLibrary.initLibrary(this.genlib);
 
-        //System.out.println("    ... Reading Genlib " + " at -> " + this.genlib  + " ... ok");
-        //System.out.println("  - Avaliable logic gatesin this library: "+cellLib.getCells());
-
-
-        /*Reading verilog*/
         MappedVerilogReader verilog_circuit = new MappedVerilogReader(this.circuitNameStr, this.cellLibrary);
         this.verilog_circuit = verilog_circuit;
-        /*Circuit linked to verilog_circuit - init circuit*/
+
         this.circuit = verilog_circuit.getCircuit();
-        //System.out.println("    ... Reading verilog "+ " at -> " + this.circuitNameStr  + " ... ok");
-        //System.out.println("Patterns : " + this.verilog_circuit.getGatePattern());
-
-
-
-        /* Print circuit Specs*/
-       // System.out.println("\n        ------ Printing Circuit Specs: --------");
-         // this.PrintSpecsThesis();
-       // this.PrintSpecs();
-       // System.out.println("          ---------------------------------------\n");
 
         int sizeExasuticTest;
 
-        //System.out.println("-   Sample size (N = 2^ENTRADAS): " + "2^"+ this.circuit.getInputs().size() + " = " + this.sampleSize);
-
         this.signals_to_inject_faults = this.signalsToInjectFault(option); // Consider all signals to fault inject
-
-        //sizeExasuticTest = (this.sampleSize * this.signals_to_inject_faults.size());
-
-        //ArrayList <String> random_input_vectors =  this.generateInputVector("TRUE_TABLE"); //this.calcInputTableVector(this.probCircuit.getInputs().size(), this.sampleSize);
-
-        //System.out.println("SIZE: " + sizeExasuticTest)
-
-        //ArrayList <ArrayList<Integer>> ListInputVectors =  this.splitInputPatternsInInt(random_input_vectors, this.probCircuit.getInputs().size());
-
-        //System.out.println("LIST:::::: "+ ListInputVectors);
-
-        //List thread_list = particionateExausticVector(ListInputVectors);  // TESTE ALL GATES ///particionateVectorPerThread(ListInputVectors); // x - vectors per thread
-
-        //long propagateTimeStart = System.nanoTime();
 
         String str = this.circuit.getName() + ";" + this.circuit.getInputs().size() + ";" + this.circuit.getSignals().size() + ";" + this.PrintGatesCounter(); //this.PrintTransistorsNumber();
         System.out.println("           - Extracted string (circuit; inputs; signals; gates): " + str);
         return str;
 
-        /*Execução das threads*/
-        /*
-        Thread thread_temp = null;
-        for (int i=0; i < thread_list.size() ; i++) {
-            thread_temp = (Thread) thread_list.get(i);
-            thread_temp.start();
-
-        }
-
-         */
-        /*Esperando termino das threads*/
-        /*
-        for (int i=0; i < thread_list.size() ; i++) {
-            thread_temp = (Thread) thread_list.get(i);
-            thread_temp.join();
-        }
-        */
-        /* Compilando os resultados - Falhas detectadas Ne*/
-         /*
-        for (int i=0; i < this.itemx_list.size() ; i++) {
-            this.unmasked_faults = this.unmasked_faults +  itemx_list.get(i).getPropagatedFaults();
-        }
-         */
-        /*circuit reliability SER (Soft Error Rate)*/
-        /*
-        this.circuitReliaibility = (float) (1.0 - ((float) this.unmasked_faults / (float) sizeExasuticTest));
-
-        System.out.println("-> Umasked Faults: " + this.unmasked_faults);
-        System.out.println("-> Sample: " + sizeExasuticTest);
-        System.out.println("-> SER : " + this.circuitReliaibility);
-        */
-        /*
-        long propagateTimeEnd = System.nanoTime();
-        //long propagateTime =    TimeUnit.NANOSECONDS.toSeconds(propagateTimeEnd - propagateTimeStart);
-        long propagateTime =  TimeUnit.NANOSECONDS.toMillis(propagateTimeEnd - propagateTimeStart);
-
-
-        LocalDateTime myDateObj2 = LocalDateTime.now();
-        DateTimeFormatter myFormatObj2 = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
-        String formattedDate2 = myDateObj2.format(myFormatObj2);
-
-        this.sampleSize = sizeExasuticTest;
-
-        this.writeSimpleLog("ExausticSimulation_" +this.circuit.getName()+"_Threads-"+ this.threads + "_sampleSize-" + this.sampleSize, formattedDate,  formattedDate2, propagateTime);
-
-        this.writeCsvFileCompleteTh("ExausticSimulation_"+this.circuit.getName()+"_Theads-"+ this.threads + "_sampleSize-" + this.sampleSize, itemx_list);
-
-
-        System.out.println("\n\n----------------- Results ------------------");
-        System.out.println("Circuit: " + this.circuit.getName());
-        System.out.println("- Simulation finished at: " + formattedDate2);
-        //System.out.println("- PropagatedTime (s): " + propagateTime);
-        System.out.println("- Sample (N): " + this.sampleSize);
-        System.out.println("- Detected faults (Ne): " + this.unmasked_faults);
-        System.out.println("- Fault Masking Rate (FMR): " + "(1-(" + this.unmasked_faults + "/" + this.sampleSize + ")) = " + this.circuitReliaibility);
-        // System.out.println("- MTBF (Mean Time Between failure) : " + this.MTBF);
-        System.out.println("- Simulation TimeElapsed: " + propagateTime + "(s)");
-        System.out.println("--------------------------------------------");
-
-        this.Performance_Time = "Simulation started at: " + formattedDate + " and finished at: " + formattedDate2;
-
-        System.out.println(" ----------------------------------------------------------------------------------------------------------------------------\n\n");
-
-        */
-
-        /*
-         */
     }
 
     /**
-     * Exhaustic STF (SET) Simulation
+     * Exhaustic Complete MTF (SET) Simulation
      * @param option
      * @throws IOException
      * @throws Exception
@@ -3788,7 +3696,6 @@ import writers.WriteCsvTh;
         }
 
     }
-
 
     public Map<String, SensitiveCell> readCsvFileAndMapSensitiveCellsArea(String input, String comma){
 

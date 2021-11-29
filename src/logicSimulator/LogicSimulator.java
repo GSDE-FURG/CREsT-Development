@@ -3069,7 +3069,7 @@ import signalProbability.ProbCircuit;
                     break;
 
                 case ("Single"):
-                    //System.out.println("- Single Transient Event - SET");
+                    System.out.println("~~~~~~ Single Transient Event - SET ~~~~~~ thd: " + this.threadID);
                     try {
                         startSimulationFaultFree();
                         startSimulationFaultInjection();
