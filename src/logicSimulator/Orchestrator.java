@@ -3083,7 +3083,6 @@ import writers.WriteCsvTh;
 
         long timeElapsed_logGeneration = Duration.between(startTimelogGeneration, endTimelogGeneration).toSeconds();
 
-
         this.writeLogs(option + "_STF_MonteCarlo_Simple_Log_" +this.circuit.getName()+"_Threads-"+ this.threads +  "_sampleSize-" + this.sampleSize, formattedDate,  formattedDate2, timeElapsed_Instant, itemx_list, "STF");
 
         System.out.println("----------------------------------------------------------------------");

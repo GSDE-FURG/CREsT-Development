@@ -76,7 +76,7 @@ public class main{
             //Psthzs.add("teste/mapped/EPFL2015/1-minimal_no_cost/"); Psthzs_lib.add("1-minimal_no_cost.genlib");
             //Psthzs.add("teste/mapped/LGSynth91/Comb/COMB - Minimal/"); Psthzs_lib.add("lib_min_no_cost.genlib");
 
-            Psthzs.add("teste/cccc/"); Psthzs_lib.add("cadence.genlib");
+            Psthzs.add("teste/cccc/"); Psthzs_lib.add("lib_full_no_cost.genlib");//Psthzs_lib.add("cadence.genlib");
             /*
             Psthzs.add("teste/mapped/LGSynth91/Comb/COMB - Minimal/"); Psthzs_lib.add("lib_min_no_cost.genlib");
             Psthzs.add("teste/mapped/LGSynth91/Comb/COMB - Complex/"); Psthzs_lib.add("lib_complex_no_cost_no_xor.genlib");

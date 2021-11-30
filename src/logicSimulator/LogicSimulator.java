@@ -176,7 +176,14 @@ import signalProbability.ProbCircuit;
        // for (int i = 0; i < this.threadSimulationList.size(); i++){
             //this.insertInputVectors("selected", this.threadSimulationList.get(i).getinputVector());
             int i = 0;
-            String parsedNetlist = this.createSpiceNetlist("A", "1");
+            String parsedNetlist = "";
+            if(this.circuit.getInputs().size() <= 8){ //small benchmark circuits
+                parsedNetlist = this.createSpiceNetlist("A", "1");
+            }
+            else{
+                parsedNetlist = this.createSpiceNetlistLargerCircuits("A", "1");
+            }
+
             this.parsedNetlistContent = parsedNetlist;
             //this.getPropagateFaultFreeResults( this.threadSimulationList.get(i).getinputVector(), this.threadSimulationList.get(i).getSimulationIndex(), this.threadSimulationList.get(i), i+1);
             //System.out.println("------------------------- vec: " +  this.threadSimulationList.get(i).getSimulationIndex() +  " sum: " + this.threadSimulationList.get(i).getSum_sensitive_cells_area() + "--------------------------------\n");
@@ -491,7 +498,133 @@ import signalProbability.ProbCircuit;
                 "\t\t\t            set xbrushwidth = 3\n" +
                 "\t\t *plot i(Vfonte)\n" +
                 "\t     *plot v(A)+8 V(B)+6 V(C)+4 V(out)+2\n" +
-                plot + plotOutput +
+                 "*" + plot + plotOutput +
+                "\n"
+                + "plot " + plotOutput + "\n"+
+                ".endc\t     \n" +
+                "\n" +
+                "* Declarando o tipo de simulação *Precisa mudar para 15 (0 - 15 = 16 unidades de tempo) pois senão nao exitira descida para entrada A\n" +
+                ".tran 0.1n " + size_final + "n \n" +
+                "\n" +
+                "* Definindo comandos measure para fazer medidas\n" +
+                "\n" +
+                ".end";
+
+        //System.out.println(template);
+
+        return template;
+    }
+
+    private String createSpiceNetlistLargerCircuits(String SensitiveNode, String bitflipValue) throws IOException, WriteException{
+
+        String template = "" +
+                "* Função Transiente\n" +
+                ".include 45nm_HP.pm\n" +
+                ".include Library.txt\n" +
+                "\n" +
+                "* Definindo a temperatura de operação\n" +
+                "   .TEMP 25\n" +
+                "\n" +
+                "* Declarando parâmetros que serão utilizados nas simulações\n" +
+                "   .param supply = 1.0\n" +
+                "\n" +
+                "* Declaração das fontes\n" +
+                "\tVvdd vdd 0 1.0\n" +
+                "\tVvss vss 0 0" +
+                "\n " +
+                "" +
+                "* Fontes de Tensão\n";
+
+
+        this.threadID = (long) Thread.currentThread().getId();
+        //thread_item.setThreadID(this.threadID);
+
+        ArrayList <GateLevel> gatesLevels = this.levelCircuit.getGateLevels();
+
+        ArrayList <String> gatesNetlist = new ArrayList<>();
+
+        String outputsCapacitance = " ";
+        String plotOutput = " ";
+        int sizeInputs =  this.circuit.getInputs().size();
+        int size = sizeInputs;
+
+
+
+        String plot= "plot ";
+
+        int id_node = 1;
+
+        /*vA A 0 PULSE (0 1.0 8n 1p 1p 8n 16n)
+         vB B 0 PULSE (0 1.0 4n 1p 1p 4n 8n)
+         vC C 0 PULSE (0 1.0 2n 1p 1p 2n 4n)
+         vd D 0 PULSE (0 1.0 1n 1p 1p 1n 2n)
+         */
+
+        ArrayList <String> concat_inputs = new ArrayList<>();
+        int size_temp = sizeInputs;
+        int size_final = size_temp;
+        int sum = 5 ;
+        for (Signal x: this.circuit.getInputs()){
+            template = template + "v"+x.getId().toString() + " " + x.getId().toString() + " 0 PULSE (0 1.0 "+ size_temp + "n 1p 1p " + size_temp + "n " + size_temp + "n)"  + "\n";
+            //plot = plot + "v(" + x.getId().toString() + ")+" + sizeInputs*2 + " ";//;"plot v(G1gat)+8 V(G2gat)+6 V(G6gat)"
+            plot = plot + "v(" + x.getId().toString() + ")+" + sum + " ";;//plot + "v(" + x.getId().toString() + ")+" + sizeInputs + " ";//;"plot v(G1gat)+8 V(G2gat)+6 V(G6gat)"
+            //sizeInputs = sizeInputs/2;
+            //sizeInputs = sizeInputs - 2;
+            size_temp = size_temp - 1;
+            sizeInputs = sizeInputs - 1;
+            sum = sum + 5;
+        }
+        int temp = sizeInputs;
+        for (Signal z: this.circuit.getOutputs()){
+            //Cload G6gat 0 1f
+            //template = template + "v"+x.getId().toString() + " " + x.getId().toString() + " 0 PULSE (0 1.0 "+ sizeInputs + "n 1p 1p " + sizeInputs + "n " + sizeInputs*2 + "n)"  + "\n";
+            //plot = plot + "v(" + x.getId().toString() + ")+" + sizeInputs + " ";//;"plot v(G1gat)+8 V(G2gat)+6 V(G6gat)"
+            //sizeInputs = sizeInputs/2;
+            outputsCapacitance = outputsCapacitance + "* Cload " + z.getId().toString() + " 0 1f\n";
+
+            plotOutput = plotOutput + "v(" + z.getId().toString() + ")+" + sum + " ";
+            temp = temp/2;//sizeInputs/2;
+            sum = sum + 20;
+
+        }
+
+        template = template + "\n * Portas Logicas";
+
+        System.out.println("INPUTS TENSION (v): " + concat_inputs);
+
+        for (int j = 0; j < gatesLevels.size(); j++) {
+
+            ArrayList <Object> gatesInThisLevel = gatesLevels.get(j).getGates();
+
+            for (int k = 0; k < gatesInThisLevel.size(); k++) {
+                String AwnsString = gatesInThisLevel.get(k).getClass().toString();
+                //System.out.println("Aws: "+ AwnsString);
+                if(AwnsString.equals("class levelDatastructures.DepthGate")) {
+                    Object object = gatesInThisLevel.get(k);
+                    DepthGate gate = (DepthGate) object;
+                    template = template + "\n" + this.generateGateNetlist(gate.getGate().getType(), gate, gate.getGate().getInputs(), id_node);  //Method calc the output from the gate
+                    id_node++;
+                }
+            }
+        }
+
+        template = template + "\n* SET no nodo 'Inv1'\n" +
+                //"\t\t*Iexp 0 out exp(0 190u 1n 40p 1.00001n 320p) \n" +
+                "\t\tIexp 0 " + SensitiveNode + " exp(" + bitflipValue + " 190u 1n 10p 1.00001n 320p) \n" +
+                "\t*transicao 0-1-0\n" +
+                "\n" +
+                "* Declarando uma capacitância de saída que pode ser usada para emular uma carga\n" +
+                "*Cload out 0 1f\n" +
+                outputsCapacitance +
+                "\n" +
+                "\n" +
+                ".control\n" +
+                "run\t\t\t\t\n" +
+                "\t\t\t\t\t\tset color0=white\n" +
+                "\t\t\t            set xbrushwidth = 3\n" +
+                "\t\t *plot i(Vfonte)\n" +
+                "\t     *plot v(A)+8 V(B)+6 V(C)+4 V(out)+2\n" +
+                "*" + plot + plotOutput +
                 "\n"
                 + "plot " + plotOutput + "\n"+
                 ".endc\t     \n" +
@@ -2934,7 +3067,7 @@ import signalProbability.ProbCircuit;
         }
         System.out.println(" --> : " + id_node_A + inputs + sources + gateOutputName + gateType);
 
-        concat = id_node_A + inputs + sources + gateOutputName + gateType;
+        concat = id_node_A + inputs + sources + gateOutputName + gateType + "X1";
         /*
         for (int index = 0; index < inputsSignals.size(); index++) {
 
