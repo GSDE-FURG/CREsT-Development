@@ -608,7 +608,7 @@ import signalProbability.ProbCircuit;
             }
         }
 
-        template = template + "\n* SET no nodo 'Inv1'\n" +
+        template = template + "\n\n\n ****** SET Injection in ramdom node Inv1\n" +
                 //"\t\t*Iexp 0 out exp(0 190u 1n 40p 1.00001n 320p) \n" +
                 "\t\tIexp 0 " + SensitiveNode + " exp(" + bitflipValue + " 190u 1n 10p 1.00001n 320p) \n" +
                 "\t*transicao 0-1-0\n" +
@@ -3066,8 +3066,11 @@ import signalProbability.ProbCircuit;
             gateOutputName = gateOutputName+ " " + x.getId().toString();
         }
         System.out.println(" --> : " + id_node_A + inputs + sources + gateOutputName + gateType);
-
-        concat = id_node_A + inputs + sources + gateOutputName + gateType + "X1";
+        if(!gateType.contains("X1")) {
+            concat = id_node_A + inputs + sources + gateOutputName + gateType + "X1";
+        }else{
+            concat = id_node_A + inputs + sources + gateOutputName + gateType ;
+        }
         /*
         for (int index = 0; index < inputsSignals.size(); index++) {
 
