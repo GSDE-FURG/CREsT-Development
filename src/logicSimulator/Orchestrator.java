@@ -3528,7 +3528,7 @@ import writers.WriteCsvTh;
                 if(!this.itemx_list.get(i).getParsedNetlistContent().equals("") && (!this.itemx_list.get(i).getParsedNetlistContent().contains("ERROR"))) {
                     String circuitSpiceName = "netlist_" + this.circuit.getName() + "_vec_" + i + ".txt";
                     this.writeInformationInFileLog(this.relativePath, "", this.itemx_list.get(i).getParsedNetlistContent(), circuitSpiceName);
-                    System.out.println("- Created parsed netlist file: " + electricalFolderSimulation + circuitSpiceName + "  size: " + this.itemx_list.get(i).getParsedNetlistContent().isBlank());
+                    //System.out.println("- Created parsed netlist file: " + electricalFolderSimulation + circuitSpiceName + "  size: " + this.itemx_list.get(i).getParsedNetlistContent().isBlank());
                     this.runElectricalSimulator(this.relativePath, electricalFolderSimulation + circuitSpiceName);
                 }
             }

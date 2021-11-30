@@ -383,16 +383,16 @@ public class main{
             //java.nio.file.Files;
             Files.createDirectories(path);
 
-            System.out.println("File is created!");
-            if (!content_file.contains("\n" +
-                    "ERRROR !!!!")) {
+
+            if (!content_file.isBlank()) {
+                System.out.println("--> File : " + outputFilename + " was created...");
                 try (FileWriter file = new FileWriter(relativePath + "/" + outputFilename)) {
                     file.write(content_file);
                 }catch (IOException e) {
                     e.printStackTrace();
                 }
             }else{
-                System.out.println("Could not create file " + outputFilename);
+                System.out.println("- Could not create file " + outputFilename + " because is not propagate SET in logical level");
             }
         } catch (IOException e) {
             e.printStackTrace();

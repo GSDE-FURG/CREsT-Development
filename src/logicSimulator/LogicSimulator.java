@@ -138,9 +138,9 @@ import signalProbability.ProbCircuit;
         }
 
     public String getParsedNetlistContent() {
-            if(this.parsedNetlistContent.isEmpty()){
-                System.err.println("Please do not import this String without properly run the paersed netlist methods before !");
-                return "ERRROR !!!!";
+            if(this.parsedNetlistContent.isBlank()){
+                //System.err.println("Please do not import this String without properly run the paersed netlist methods before !");
+                return "";
             }else{
                 return this.parsedNetlistContent;
             }
