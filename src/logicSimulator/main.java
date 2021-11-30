@@ -76,7 +76,7 @@ public class main{
             //Psthzs.add("teste/mapped/EPFL2015/1-minimal_no_cost/"); Psthzs_lib.add("1-minimal_no_cost.genlib");
             //Psthzs.add("teste/mapped/LGSynth91/Comb/COMB - Minimal/"); Psthzs_lib.add("lib_min_no_cost.genlib");
 
-            Psthzs.add("teste/cccc/"); Psthzs_lib.add("lib_full_no_cost.genlib");//Psthzs_lib.add("cadence.genlib"); // Psthzs_lib.add("lib_full_no_cost.genlib");
+            Psthzs.add("teste/cccc/"); Psthzs_lib.add("cadence.genlib");//Psthzs_lib.add("cadence.genlib"); // Psthzs_lib.add("lib_full_no_cost.genlib");
             /*
             Psthzs.add("teste/mapped/LGSynth91/Comb/COMB - Minimal/"); Psthzs_lib.add("lib_min_no_cost.genlib");
             Psthzs.add("teste/mapped/LGSynth91/Comb/COMB - Complex/"); Psthzs_lib.add("lib_complex_no_cost_no_xor.genlib");
@@ -115,16 +115,16 @@ public class main{
                      //experimento.multithreadingSimulation("ALL_SIGNALS");
 
                      // STF - SET
-                     experimento.monteCarloSimulation(sampleSizeMonteCarlo, "ALL_SIGNALS"); //ou Signals =  "ALL_SIGNALS" ou "INTERMEDIATE" ou "INTERMEDIATE_AND_OUTPUTS" ou "INPUTS" ou "INPUTS_OUTPUTS"
+                     //experimento.monteCarloSimulation(sampleSizeMonteCarlo, "ALL_SIGNALS"); //ou Signals =  "ALL_SIGNALS" ou "INTERMEDIATE" ou "INTERMEDIATE_AND_OUTPUTS" ou "INPUTS" ou "INPUTS_OUTPUTS"
 
                      //PARSE CIRCUIT TO NETLIST (SPICE)
-                     experimento.parseVerilogToSpiceNetlist(20000, "ALL_SIGNALS");
+                     //experimento.parseVerilogToSpiceNetlist(20000, "ALL_SIGNALS");
 
 
                         //-- MTF - PROP SET --
-                     /*
+
                          ArrayList<Float> mtf_sizes = new ArrayList<>();
-                         int sample = 20000;
+                         int sample = 10;
                          mtf_sizes.add((float) sample);
                          mtf_sizes.add((float) 0.9);
                          mtf_sizes.add((float) 0.09);
@@ -132,7 +132,7 @@ public class main{
                          System.out.println(mtf_sizes);
                          experimento.setSample(sample);
                          experimento.monteCarloSimulationMultipleTransientFaultsProportion(sample, mtf_sizes, "ALL_SIGNALS");
-                    */
+
 
                      //experimento.readResultsInLot("Resultados Proporção 0.0 0.09 0.01/min/", "ALL_SIGNALS");
                      //experimento.readResultsInLot("teste/mapped/EPFL2015/1-minimal_no_cost/Results/", "ALL_SIGNALS");
@@ -219,6 +219,7 @@ public class main{
                 Orchestrator simulacaoMultithreading = new Orchestrator(this.threads, this.reliabilityConst,
                         this.relativePath, this.genlib, this.relativePath + s);
                         simulacaoMultithreading.runMultithreadingMonteCarlo(monteCarloSample, positionToFaultInjection); //ou Signals =  "ALL_SIGNALS" ou "INTERMEDIATE" ou "INTERMEDIATE_AND_OUTPUTS" ou "INPUTS" ou "INPUTS_OUTPUTS"
+                        //simulacaoMultithreading.runMultithreadingMonteCarlo_runElectricalSimulation(monteCarloSample, positionToFaultInjection);
                         this.OUTPUT_INFO = simulacaoMultithreading.getFRM(" Sample(Monte Carlo = N)");
             }
         }
@@ -325,7 +326,9 @@ public class main{
 
                    // try {
                         Orchestrator simulacaoMultithreading = new Orchestrator(this.threads, this.reliabilityConst, this.relativePath, this.genlib, this.relativePath + this.circuitList.get(i));
-                        simulacaoMultithreading.runMultipleFaultInjectionMultithreadingMonteCarloSimulationProportion(monteCarloSample, mtf_sizes, positionToFaultInjection);
+                        //simulacaoMultithreading.runMultipleFaultInjectionMultithreadingMonteCarloSimulationProportion(monteCarloSample, mtf_sizes, positionToFaultInjection);
+                        //simulacaoMultithreading.runMTFMonteCarlo_runElectricalSimulation(monteCarloSample, mtf_sizes, positionToFaultInjection);
+                            simulacaoMultithreading.runMTFMonteCarlo_calulateSensitiveArea_runElectricalSimulation(monteCarloSample, mtf_sizes, positionToFaultInjection, "teste/lookup_table.csv");
                         this.OUTPUT_INFO = simulacaoMultithreading.getFRM(" MTFT Sample (Monte Carlo = N)");
                      //   }
                     //catch (Exception e){
@@ -380,11 +383,18 @@ public class main{
             //java.nio.file.Files;
             Files.createDirectories(path);
 
-            System.out.println("Directory is created!");
-            try (FileWriter file = new FileWriter(relativePath + "/" + outputFilename + ".txt")) {
-                file.write(content_file);
+            System.out.println("File is created!");
+            if (!content_file.contains("\n" +
+                    "ERRROR !!!!")) {
+                try (FileWriter file = new FileWriter(relativePath + "/" + outputFilename)) {
+                    file.write(content_file);
+                }catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }else{
+                System.out.println("Could not create file " + outputFilename);
             }
-        }catch (IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }

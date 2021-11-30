@@ -15,6 +15,8 @@ import java.awt.datatransfer.StringSelection;
 import java.io.*;
 import java.math.BigDecimal;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.time.Duration;
 import java.time.Instant;
@@ -23,6 +25,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import javax.script.ScriptException;
+import javax.sound.midi.Soundbank;
 
 import jxl.write.WriteException;
 import levelDatastructures.LevelCircuit;
@@ -52,6 +55,7 @@ import writers.WriteCsvTh;
     private int sizeExaustiveCompleteSimulation;
 
     private ArrayList <Float> mtf_list = new ArrayList<>();
+    private Map <String, SensitiveCell> sensitive_cells;
 
     private ArrayList <Signal> signals_to_inject_faults = new ArrayList<>();
     private final ArrayList <String> inputListValues = new ArrayList<>();
@@ -750,6 +754,10 @@ import writers.WriteCsvTh;
                         //System.out.println("Signal sorted: "+ this.internSignals.get(randomSignalIndex));
 
                         return randomSignalIndex;
+     }
+
+     public void setSensitiveCells(Map <String, SensitiveCell> sensitive_cells){
+        this.sensitive_cells = sensitive_cells;
      }
 
     public void writeCsvFileCompleteTh(String filename, ArrayList <LogicSimulator> itemx_list) throws IOException, WriteException{
@@ -1599,6 +1607,132 @@ import writers.WriteCsvTh;
             return thread_list;
     }
 
+    public List particionateMultipletransientFaultInjectionVectorPerThreadProportionForElectricalSimulation(ArrayList <ArrayList<Integer>> ListInputVectors, ArrayList <Float> mtf_list) throws ScriptException, Exception{
+
+        //System.out.println("\n\n         +++++++    Dev mode Percentage (Proportion mode)  ++++++");
+        System.out.println("-   MTF LIST = " + mtf_list);
+
+        List thread_list = new ArrayList();
+        int count = 0;
+        float sum_proportion;
+        int N = this.sampleSize;
+
+        int partition;
+        if(this.threads == 1){
+            partition = N; //final_pos/NThreads ;
+        }
+        else{
+            double temp;
+            temp = Math.floor(N/this.threads);
+            partition =  (int) temp ;//(ints) Math.round(collapsed_faults/NThreads);
+        }
+
+
+
+        //HashMap  <Integer, multiple_faults_object> arraylist_mtf = new HashMap<>();
+        sum_proportion = sumProportionPercentage(mtf_list);
+        int sample_base = Math.round(mtf_list.get(0));
+        ArrayList <Integer> new_MTF = passProportionPercentage(mtf_list, sample_base);
+        System.out.println("- new MTF LIST " + new_MTF + "  size: " + new_MTF.size());
+
+        final ArrayList<Float> arrayList_mtf_original = new ArrayList<>(mtf_list); // Original ArrayList
+
+        ArrayList <TestVectorInformation> listOflist = new ArrayList<>();
+
+        ArrayList <Integer> combined_MTF = new ArrayList<>();
+        combined_MTF.add(new_MTF.get(0));
+        int base_sum = new_MTF.get(0);
+
+        //Loop for Single, Double or tripple
+        int start = 0;
+        int end = partition;
+
+        //System.out.println("");
+        ArrayList<TestVectorInformation> ItemxSimulationList = new ArrayList<>();
+
+        for (int prop_index = 0; prop_index < new_MTF.size(); prop_index++) {
+            System.out.println(new_MTF.get(prop_index));
+
+            if(prop_index >0){
+                base_sum = base_sum + new_MTF.get(prop_index);
+                combined_MTF.add(base_sum);
+            }
+
+            for (int index = 0; index < new_MTF.get(prop_index); index++){
+                // For prop_index
+
+                ArrayList<Integer> inputVector = new ArrayList<>();
+
+                inputVector = this.get_Input_Vectors(ListInputVectors, count); //input Test n
+
+                if (prop_index == 0){ // Single Transient Fault
+                    int SigIndex = this.sortRandomFaultInjection(); //int SigIndex = decide_Random_Signals_Contrains(Signals_CTE_ONE_ZERO);
+                    TestVectorInformation temp = new TestVectorInformation(inputVector, this.signals_to_inject_faults.get(SigIndex), count );
+                    ArrayList <Integer> SigIndexList = new ArrayList<Integer>();
+                    SigIndexList.add(SigIndex);
+                    ItemxSimulationList.add(temp);
+                    /// System.out.println("~ Injection Single TF number : " + count + " - Sig Index" + SigIndexList + "  temp: "+ temp.getMTFPERSONAL_LIST_Identities() + "  " +  temp.getSimulationIndex());
+                }
+                else{ // Double , Tripple
+                    int SigIndex = this.sortRandomFaultInjection(); //int SigIndex = decide_Random_Signals_Contrains(Signals_CTE_ONE_ZERO);
+                    TestVectorInformation temp = new TestVectorInformation(inputVector, this.signals_to_inject_faults.get(SigIndex), count );
+                    ArrayList <Integer> SigIndexList = new ArrayList<Integer>();
+                    SigIndexList.add(SigIndex);
+                    for (int k = 1; k <= prop_index; k ++){
+                        int new_pos = sortExclusiveFaultIndex(SigIndexList, temp);
+                        temp.setMultipleTransientFaultInjection( this.signals_to_inject_faults.get(new_pos));
+                        SigIndexList.add(new_pos); // Do no reapet signals
+                    }
+                    //System.out.println("~ Injection MTF number : " + count + " - Sig Index" + SigIndexList + "  temp: "+ temp.getMTFPERSONAL_LIST_Identities()  + "  " +  temp.getSimulationIndex());
+                    ItemxSimulationList.add(temp);
+                }
+                count++;
+            }
+            System.out.println(prop_index + " Count: " + count + " ItemxSimulation: " + ItemxSimulationList.size() + "  order: ");
+        }
+
+        System.out.println("- End Count: " + count);
+        System.out.println("- Combined: " + combined_MTF);
+        System.out.println("- Itemx Size: " + ItemxSimulationList.size());
+        System.out.println("- ThreadList: " + thread_list.size());
+
+        start = 0;
+        end = partition;
+        for (int i = 0; i < this.threads; i++) { //Loop of simulations
+
+            System.out.println("Start: " + start + " End: " + end);
+            if ((this.threads - 1) == (i)) {
+                start = end;
+                end = N;
+            } else {
+                if (i == 0) {
+                    //start = 1;
+                    start = 0;
+                    end = partition;
+                } else {
+                    start = start + partition;
+                    end = start + partition;
+                }
+            }
+
+            ArrayList<TestVectorInformation> temp = new ArrayList<TestVectorInformation>(ItemxSimulationList.subList(start, end));
+            LogicSimulator threadItem = new LogicSimulator(temp, this.circuit, this.cellLibrary, this.levelCircuit, start, end, this.genlib , this.circuitNameStr); // Thread contex info
+
+            threadItem.setMode("MTF-Generate_Netlist");
+            itemx_list.add(threadItem);
+
+            Runnable runnable = threadItem;
+            Thread thread = new Thread(runnable);
+            thread.setName(Integer.toString(threadItem.hashCode()));
+            thread_list.add(thread);
+            System.out.println("\n ->>>>>> " + i + " Start: " + start + " End: " + end + "  ThreadItem: " + threadItem.getStartendPos() + " size inputss: " + threadItem.getThreadSimulatinArray().size() + " real: " + temp.size());
+
+        }
+        //System.out.println("Signal to inject fault: " + this.signals_to_inject_faults);
+        return thread_list;
+    }
+
+
     public List particionateMultipletransientFaultInjectionVectorPerThread(ArrayList <ArrayList<Integer>> ListInputVectors,int period, int order, int frequency) throws ScriptException, Exception{
 
         System.out.println("\n\n         +++++++    Dev mode  ++++++");
@@ -1789,9 +1923,9 @@ import writers.WriteCsvTh;
 
     }
 
-    public List particionateExausticVectorForSensitiveAreas(ArrayList <ArrayList<Integer>> ListInputVectors,  Map <String, SensitiveCell> sensitive_cells) throws ScriptException, Exception{
+    public List particionateExausticVectorForSensitiveAreas(ArrayList <ArrayList<Integer>> ListInputVectors,  Map <String, SensitiveCell> sensitive_cells, String mode) throws ScriptException, Exception{
 
-        System.out.println("- Sensitive Area inputs ...");
+        //System.out.println("- Sensitive Area inputs ...");
 
         List thread_list = new ArrayList();
 
@@ -1850,13 +1984,13 @@ import writers.WriteCsvTh;
                     TestVectorInformation temp = new TestVectorInformation(inputVector, this.signals_to_inject_faults.get(SigIndex), j+1);
                     ItemxSimulationList.add(temp);
 
-                    System.out.println(j + " Vec: " + inputVector + " Fault Signal: " +  this.signals_to_inject_faults.get(SigIndex));
+                    //System.out.println(j + " Vec: " + inputVector + " Fault Signal: " +  this.signals_to_inject_faults.get(SigIndex));
                 }
 
             }
 
             LogicSimulator threadItem = new LogicSimulator(ItemxSimulationList, this.circuit, this.cellLibrary, this.levelCircuit, start, end, this.genlib , this.circuitNameStr); // Thread contex info
-            threadItem.setMode("Sensitive_Area");
+            threadItem.setMode(mode);
             threadItem.setSensitiveCellsMap(sensitive_cells);
             itemx_list.add(threadItem);
 
@@ -2976,9 +3110,35 @@ import writers.WriteCsvTh;
                 System.out.println("MTF - RANDOM");
                 random_input_vectors = this.generateInputVector("RANDOM"); // Generate Random Input Vectors or InputTrueTable
                 ListInputVectors = this.splitInputPatternsInInt(random_input_vectors, this.probCircuit.getInputs().size());
-               // System.out.println(ListInputVectors.size());
+                // System.out.println(ListInputVectors.size());
                 thread_list = this.particionateMultipletransientFaultInjectionVectorPerThreadProportion(ListInputVectors, mtf_list); // x - vectors per thread
                 break;
+
+            case "MTF-Generate_Netlist":
+                System.out.println("MTF - RANDOM");
+                random_input_vectors = this.generateInputVector("RANDOM"); // Generate Random Input Vectors or InputTrueTable
+                ListInputVectors = this.splitInputPatternsInInt(random_input_vectors, this.probCircuit.getInputs().size());
+                // System.out.println(ListInputVectors.size());
+                thread_list = this.particionateMultipletransientFaultInjectionVectorPerThreadProportionForElectricalSimulation(ListInputVectors, mtf_list); // x - vectors per thread
+                break;
+
+            case "MTF-Sensitive_Area-Generate_Netlist":
+                System.out.println("MTF-Sensitive_Area-Generate_Netlist");
+                random_input_vectors = this.generateInputVector("RANDOM"); // Generate Random Input Vectors or InputTrueTable
+                ListInputVectors = this.splitInputPatternsInInt(random_input_vectors, this.probCircuit.getInputs().size());
+                // System.out.println(ListInputVectors.size());
+                thread_list = particionateExausticVectorForSensitiveAreas(ListInputVectors, this.sensitive_cells, "MTF-Generate_Netlist");//thread_list = this.particionateMultipletransientFaultInjectionVectorPerThreadProportionForElectricalSimulation(ListInputVectors, mtf_list); // x - vectors per thread
+                break;
+
+
+            case "STF-Generate_Netlist":
+                System.out.println("STF-Generate_Netlist");
+                random_input_vectors = this.generateInputVector("RANDOM"); // Generate Random Input Vectors or InputTrueTable
+                ListInputVectors =  this.splitInputPatternsInInt(random_input_vectors, this.probCircuit.getInputs().size());
+                thread_list = this.particionateVectorPerThread(ListInputVectors); // x - vectors per thread
+                break;
+
+
         }
 
         return (thread_list);
@@ -3100,6 +3260,287 @@ import writers.WriteCsvTh;
 
             this.Performance_Time = "Simulation started at: " + formattedDate + " and finished at: " + formattedDate2;
             //this.sampleSize = N;
+
+    }
+
+    public void moveFiles(String source, String fileName, String destinationFolder) throws IOException {
+        //"netlist_files/"
+
+        try {
+
+            Path path = Paths.get(destinationFolder);
+
+            //java.nio.file.Files;
+            Files.createDirectories(path);
+
+            System.out.println("Directory is created : " + destinationFolder);
+        }catch (Exception e){
+            System.out.println("Error Folder already exists: " + destinationFolder);
+        }
+
+        //System.out.println("- Moving file: " + destinationFolder + fileName);
+        //System.out.println("Source: " + source + fileName);
+        //System.out.println("Destination: " + destinationFolder + fileName);
+
+        List<File> files = new ArrayList<>();
+        files.add(new File(source + fileName));
+
+        for(File file : files) {
+            Files.copy(file.toPath(),
+                    (new File(destinationFolder + file.getName())).toPath(),
+                    StandardCopyOption.REPLACE_EXISTING);
+        }
+    }
+
+    /**
+     * This method orchestrates the settup enviroment for run Multithreading SET evalaution (LOGICAL SIMULATOR)
+     * @param sample
+     * @param option
+     * @throws IOException
+     * @throws Exception
+     */
+    public void runMTFMonteCarlo_runElectricalSimulation(int sample, ArrayList <Float> mtf_list, String option) throws IOException, Exception{
+
+        System.out.println("- SUM PROPORTION: " + sumProportionPercentage(mtf_list));
+        //List thread_list =  this.createVectorsAndParticionate(sampleSize, option, "MTF-Generate_Netlist");
+        //this.runElectricalSimulator(this.relativePath, this.relativePath + "netlist_files/" +"netlist_"+this.circuit.getName() + ".txt");
+        //this.sampleSize = N;
+
+        if (sumProportionPercentage(mtf_list) == 1.0) {  // 100%
+
+
+            Instant start = Instant.now();
+
+            LocalDateTime myDateObj = LocalDateTime.now();
+            DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+            String formattedDate = myDateObj.format(myFormatObj);
+
+            int sampleSize = sample;//mtf_list.get(0);
+
+            this.setupEnviroment(" ----- Monte Carlo version  for Multiple Transient Fault Injection -------");
+
+            Instant loadTimeElapsed = Instant.now();
+
+            Instant startPreparingSimulationTimeElapsed = Instant.now();
+
+            this.sampleSize = sampleSize; //(int) Math.pow(2, this.probCircuit.getInputs().size());  //(int) Math.pow(2, this.probCircuit.getInputs().size());
+            int N = this.sampleSize; // random_input_vectors.size();//testNumber;
+
+            System.out.println("-  (input) Sample size = " + this.sampleSize);
+
+            this.signals_to_inject_faults = this.signalsToInjectFault(option); // Consider all signals to fault inject
+
+            this.mtf_list = mtf_list;
+
+            //List thread_list =  this.createVectorsAndParticionate(sampleSize, option, "MTF-RANDOM");
+            List thread_list =  this.createVectorsAndParticionate(sampleSize, option, "MTF-Generate_Netlist");
+
+            System.out.println("THREAD LIST: " + thread_list);
+
+            ArrayList<Float> tt = new ArrayList<>(mtf_list);
+            tt.remove(0); // 20k
+
+            Instant endPreparingSimulationTimeElapsed = Instant.now();
+
+            Instant startThreadingTimeElapsed = Instant.now();
+
+            this.executeThreadsSimulation(thread_list);
+
+            Instant endThreadingTimeElapsed = Instant.now();
+
+            int bitfipCcounter = this.parseResultsAndCalculateFMR();  // FMR
+
+            Instant finish = Instant.now();
+            long timeElapsed_Instant = Duration.between(start, finish).toSeconds();
+
+            LocalDateTime myDateObj2 = LocalDateTime.now();
+            DateTimeFormatter myFormatObj2 = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+            String formattedDate2 = myDateObj2.format(myFormatObj2);
+
+            Instant startTimelogGeneration = Instant.now();
+
+            long timeElapsed_loadTime = Duration.between(start, loadTimeElapsed).toSeconds();
+            long timeElapsed_PrepareTime = Duration.between(startPreparingSimulationTimeElapsed, endPreparingSimulationTimeElapsed).toSeconds();
+            long timeElapsed_ThreadingTime = Duration.between(startThreadingTimeElapsed, endThreadingTimeElapsed).toSeconds();
+
+            Instant endTimelogGeneration = Instant.now();
+
+            this.writeLogs(option + "_MTF_MonteCarlo_Simple_Log_" +this.circuit.getName()+"_Threads-"+ this.threads +  "_sampleSize-" + this.sampleSize, formattedDate,  formattedDate2, timeElapsed_Instant, itemx_list, "MTF");
+
+            long timeElapsed_logGeneration = Duration.between(startTimelogGeneration, endTimelogGeneration).toSeconds();
+
+            System.out.println("----------------------------------------------------------------------");
+
+            System.out.println("- Simulation started at: " + formattedDate + " and finished at: "+ formattedDate2);
+            System.out.println("- Circuit: " + this.circuit.getName());
+            System.out.println("- Sample Size (N): " + this.sampleSize );
+            System.out.println("- Fault Mask Rate (FMR): " + " 1 - Ne/N = (1-(" + this.unmasked_faults + "/" + this.sampleSize + ")) = " + this.circuitReliaibility);
+            System.out.println("- Bitflip Counter: " + bitfipCcounter );
+            System.out.println("- Load Time : " + timeElapsed_loadTime + "(s) - Setup Time: " + timeElapsed_PrepareTime  + "(s) - Threading Execution Time: " + timeElapsed_ThreadingTime
+                    + "(s) - Log Generation: " + timeElapsed_logGeneration
+                    + "(s) - Simulation Instant TimeElapsed: " + timeElapsed_Instant +" (s)" );
+
+            System.out.println("-----------------------END SIMULATION---------------------------------");
+
+            this.Performance_Time = "Simulation started at: " + formattedDate + " and finished at: " + formattedDate2;
+            this.sampleSize = N;
+
+            /*----------*/
+            System.out.println("- Moving files....");
+            String electricalFolderSimulation = this.relativePath + "netlist_files/";
+            this.moveFiles(this.relativePath,  "45nm_HP.pm", electricalFolderSimulation);
+            this.moveFiles(this.relativePath,"Library.txt", electricalFolderSimulation);
+
+            for (int i = 0; i < 2; i++) {
+                if(this.itemx_list.get(0).getParsedNetlistContent() != "") {
+                    String circuitSpiceName = "netlist_" + this.circuit.getName() + "_vec_" + i + ".txt";
+                    System.out.println("- Created parsed netlist file: " + electricalFolderSimulation + circuitSpiceName);
+                    this.writeInformationInFileLog(this.relativePath, "", this.itemx_list.get(0).getParsedNetlistContent(), circuitSpiceName);
+                    this.runElectricalSimulator(this.relativePath, electricalFolderSimulation + circuitSpiceName);
+                }
+            }
+
+            System.out.println(" ----------------------------------------------------------------------------------------------------------------------\n\n...");
+        }
+        else{
+            System.err.println("- Inputs inserted sum up ("+sumProportionPercentage(mtf_list)+") above 1 (100%), these were the inserted commands: " + mtf_list);
+        }
+
+
+
+    }
+
+    /**
+     * This method orchestrates the settup enviroment for run Multithreading SET evalaution (LOGICAL SIMULATOR)
+     * @param sample
+     * @param option
+     * @throws IOException
+     * @throws Exception
+     */
+    public void runMTFMonteCarlo_calulateSensitiveArea_runElectricalSimulation(int sample, ArrayList <Float> mtf_list, String option, String file) throws IOException, Exception{
+
+        System.out.println("- SUM PROPORTION: " + sumProportionPercentage(mtf_list));
+        //List thread_list =  this.createVectorsAndParticionate(sampleSize, option, "MTF-Generate_Netlist");
+        //this.runElectricalSimulator(this.relativePath, this.relativePath + "netlist_files/" +"netlist_"+this.circuit.getName() + ".txt");
+        //this.sampleSize = N;
+
+
+
+        if (sumProportionPercentage(mtf_list) == 1.0) {  // 100%
+
+            Map <String, SensitiveCell> sensitive_cells = readCsvFileAndMapSensitiveCellsArea(file, ",");
+            System.out.println("Sensitive Cells: " + sensitive_cells.size());
+            this.setSensitiveCells(sensitive_cells);
+
+            Instant start = Instant.now();
+
+            LocalDateTime myDateObj = LocalDateTime.now();
+            DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+            String formattedDate = myDateObj.format(myFormatObj);
+
+            int sampleSize = sample;//mtf_list.get(0);
+
+            this.setupEnviroment(" ----- Monte Carlo version  for Multiple Transient Fault Injection -------");
+
+            Instant loadTimeElapsed = Instant.now();
+
+            Instant startPreparingSimulationTimeElapsed = Instant.now();
+
+            this.sampleSize = sampleSize; //(int) Math.pow(2, this.probCircuit.getInputs().size());  //(int) Math.pow(2, this.probCircuit.getInputs().size());
+            int N = this.sampleSize; // random_input_vectors.size();//testNumber;
+
+            //System.out.println("-  (input) Sample size = " + this.sampleSize);
+
+            this.signals_to_inject_faults = this.signalsToInjectFault(option); // Consider all signals to fault inject
+
+            this.mtf_list = mtf_list;
+
+            //List thread_list =  this.createVectorsAndParticionate(sampleSize, option, "MTF-RANDOM");
+            List thread_list =  this.createVectorsAndParticionate(sampleSize, option, "MTF-Sensitive_Area-Generate_Netlist");
+
+            //System.out.println("THREAD LIST: " + thread_list);
+
+            ArrayList<Float> tt = new ArrayList<>(mtf_list);
+            tt.remove(0); // 20k
+
+            Instant endPreparingSimulationTimeElapsed = Instant.now();
+
+            Instant startThreadingTimeElapsed = Instant.now();
+
+            this.executeThreadsSimulation(thread_list);
+
+            Instant endThreadingTimeElapsed = Instant.now();
+
+            int bitfipCcounter = this.parseResultsAndCalculateFMR();  // FMR
+
+            Instant finish = Instant.now();
+            long timeElapsed_Instant = Duration.between(start, finish).toSeconds();
+
+            LocalDateTime myDateObj2 = LocalDateTime.now();
+            DateTimeFormatter myFormatObj2 = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+            String formattedDate2 = myDateObj2.format(myFormatObj2);
+
+            Instant startTimelogGeneration = Instant.now();
+
+            long timeElapsed_loadTime = Duration.between(start, loadTimeElapsed).toSeconds();
+            long timeElapsed_PrepareTime = Duration.between(startPreparingSimulationTimeElapsed, endPreparingSimulationTimeElapsed).toSeconds();
+            long timeElapsed_ThreadingTime = Duration.between(startThreadingTimeElapsed, endThreadingTimeElapsed).toSeconds();
+
+            Instant endTimelogGeneration = Instant.now();
+
+            this.writeLogs(option + "_MTF_MonteCarlo_Simple_Log_" +this.circuit.getName()+"_Threads-"+ this.threads +  "_sampleSize-" + this.sampleSize, formattedDate,  formattedDate2, timeElapsed_Instant, itemx_list, "MTF");
+
+            long timeElapsed_logGeneration = Duration.between(startTimelogGeneration, endTimelogGeneration).toSeconds();
+
+            System.out.println("----------------------------------------------------------------------");
+
+            System.out.println("- Simulation started at: " + formattedDate + " and finished at: "+ formattedDate2);
+            System.out.println("- Circuit: " + this.circuit.getName());
+            System.out.println("- Sample Size (N): " + this.sampleSize );
+            System.out.println("- Fault Mask Rate (FMR): " + " 1 - Ne/N = (1-(" + this.unmasked_faults + "/" + this.sampleSize + ")) = " + this.circuitReliaibility);
+            System.out.println("- Bitflip Counter: " + bitfipCcounter );
+            System.out.println("- Load Time : " + timeElapsed_loadTime + "(s) - Setup Time: " + timeElapsed_PrepareTime  + "(s) - Threading Execution Time: " + timeElapsed_ThreadingTime
+                    + "(s) - Log Generation: " + timeElapsed_logGeneration
+                    + "(s) - Simulation Instant TimeElapsed: " + timeElapsed_Instant +" (s)" );
+
+            System.out.println("-----------------------END SIMULATION---------------------------------");
+
+            this.Performance_Time = "Simulation started at: " + formattedDate + " and finished at: " + formattedDate2;
+            this.sampleSize = N;
+
+            System.out.println("--------  Sensitive Area Analysis ---------");
+            for (int i = 0; i < this.itemx_list.size(); i++) {
+                List <TestVectorInformation> x =  this.itemx_list.get(i).get_threadSimulationList();
+                for (int j = 0; j < x.size(); j++) {
+                    System.out.println(" index: " + x.get(j).getSimulationIndex() + " vec: " + x.get(j).getinputVector() + " sensitive area sum: " + x.get(j).getSum_sensitive_cells_area() );
+                }
+            }
+            System.out.println("--------  Sensitive Area Analysis ---------");
+
+            System.out.println("--------  Electrical Simulation Analysis ---------");
+            System.out.println("- Moving files....");
+            String electricalFolderSimulation = this.relativePath + "netlist_files/";
+            String folder = "netlist_files/";
+            this.moveFiles(this.relativePath,  "45nm_HP.pm", electricalFolderSimulation);
+            this.moveFiles(this.relativePath,"Library.txt", electricalFolderSimulation);
+
+            for (int i = 0; i < this.itemx_list.size(); i++) {
+                if(!this.itemx_list.get(i).getParsedNetlistContent().equals("") && (!this.itemx_list.get(i).getParsedNetlistContent().contains("ERROR"))) {
+                    String circuitSpiceName = "netlist_" + this.circuit.getName() + "_vec_" + i + ".txt";
+                    this.writeInformationInFileLog(this.relativePath, "", this.itemx_list.get(i).getParsedNetlistContent(), circuitSpiceName);
+                    System.out.println("- Created parsed netlist file: " + electricalFolderSimulation + circuitSpiceName + "  size: " + this.itemx_list.get(i).getParsedNetlistContent().isBlank());
+                    this.runElectricalSimulator(this.relativePath, electricalFolderSimulation + circuitSpiceName);
+                }
+            }
+            System.out.println("--------  Electrical Simulation Analysis ---------");
+
+            System.out.println(" ----------------------------------------------------------------------------------------------------------------------\n\n...");
+        }
+        else{
+            System.err.println("- Inputs inserted sum up ("+sumProportionPercentage(mtf_list)+") above 1 (100%), these were the inserted commands: " + mtf_list);
+        }
+
+
 
     }
 
@@ -3722,7 +4163,7 @@ import writers.WriteCsvTh;
 
                     sensitive_cells.put(concat, cell);
 
-                    System.out.println(line + " splitted " + outputString);
+                    //System.out.println(line + " splitted " + outputString);
 
                 }
             } catch (IOException e) {
@@ -3811,7 +4252,7 @@ import writers.WriteCsvTh;
 
         System.out.println("LIST:::::: "+ ListInputVectors.size());
 
-        List thread_list = particionateExausticVectorForSensitiveAreas(ListInputVectors, sensitive_cells);  // TESTE ALL GATES ///particionateVectorPerThread(ListInputVectors); // x - vectors per thread
+        List thread_list = particionateExausticVectorForSensitiveAreas(ListInputVectors, sensitive_cells, "Sensitive_Area");  // TESTE ALL GATES ///particionateVectorPerThread(ListInputVectors); // x - vectors per thread
 
         long propagateTimeStart = System.nanoTime();
 
@@ -3992,7 +4433,7 @@ import writers.WriteCsvTh;
         System.out.println("PATH: " + path);
         this.writeInformationInFileLog(path, "", this.itemx_list.get(0).getParsedNetlistContent(), "netlist_"+this.circuit.getName());
         System.out.println("Created parsed netlist file: " + path + "netlist_"+this.circuit.getName() + ".txt");
-        System.out.println("- Calling eletric simulator....");
+        System.out.println("- Calling eletrictrical simulator....");
         //path = path + "netlist_files/";
         List<File> files = new ArrayList<>();
 
@@ -4005,7 +4446,11 @@ import writers.WriteCsvTh;
                     (new File(path + "netlist_files/" + file.getName())).toPath(),
                     StandardCopyOption.REPLACE_EXISTING);
         }
+
         this.runElectricalSimulator(path, path + "netlist_files/" +"netlist_"+this.circuit.getName() + ".txt");
+
+        //this.runElectricalSimulator(path, path + "netlist_files/" +"netlist_"+this.circuit.getName() + ".txt");
+
         // this.writeSimpleLogMultipleTransientFaultProportion(option + "_MULTIPLE_MonteCarlo_Simple_Log_" + this.circuit.getName() + "_Threads-" + this.threads + "_sampleSize-" + this.sampleSize, formattedDate, formattedDate2, timeElapsed_Instant, arrayList_mtf_original);
         //System.out.println("SIZE: " + this.itemx_list.size());
 
@@ -4056,9 +4501,17 @@ import writers.WriteCsvTh;
         try {
             Runtime runTime = Runtime.getRuntime();
 
-            String executablePath = path + "ngspice.exe " + spiceCircuito;//"C:\\Users\\sdkca\\AppData\\Local\\Programs\\Microsoft VS Code\\Code.exe";
+            File f = new File(spiceCircuito);
 
-            Process process = runTime.exec(executablePath);
+            // Checking if the specified file exists or not
+            if (f.exists()) {
+
+                String executablePath = path + "ngspice.exe " + spiceCircuito;//"C:\\Users\\sdkca\\AppData\\Local\\Programs\\Microsoft VS Code\\Code.exe";
+
+                Process process = runTime.exec(executablePath);
+            }else{
+                System.out.println("File dont exist: " + spiceCircuito);
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
