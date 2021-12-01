@@ -17,6 +17,8 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.script.ScriptException;
+
+import jxl.StringFormulaCell;
 import jxl.write.WriteException;
 import levelDatastructures.DepthGate;
 import levelDatastructures.GateLevel;
@@ -438,6 +440,7 @@ import signalProbability.ProbCircuit;
         int size_temp = sizeInputs;
         int size_final = size_temp;
         int sum = 5 ;
+        String input_values = "";
         for (Signal x: this.circuit.getInputs()){
             template = template + "v"+x.getId().toString() + " " + x.getId().toString() + " 0 PULSE (0 1.0 "+ size_temp/2 + "n 1p 1p " + size_temp/2 + "n " + size_temp + "n)"  + "\n";
             //plot = plot + "v(" + x.getId().toString() + ")+" + sizeInputs*2 + " ";//;"plot v(G1gat)+8 V(G2gat)+6 V(G6gat)"
@@ -447,15 +450,18 @@ import signalProbability.ProbCircuit;
             size_temp = size_temp / 2;
             sizeInputs = sizeInputs/2;
             sum = sum + 5;
+
+            //input_values = input_values +
         }
         int temp = sizeInputs;
+        String ouputs = "";
         for (Signal z: this.circuit.getOutputs()){
             //Cload G6gat 0 1f
             //template = template + "v"+x.getId().toString() + " " + x.getId().toString() + " 0 PULSE (0 1.0 "+ sizeInputs + "n 1p 1p " + sizeInputs + "n " + sizeInputs*2 + "n)"  + "\n";
             //plot = plot + "v(" + x.getId().toString() + ")+" + sizeInputs + " ";//;"plot v(G1gat)+8 V(G2gat)+6 V(G6gat)"
             //sizeInputs = sizeInputs/2;
             outputsCapacitance = outputsCapacitance + "* Cload " + z.getId().toString() + " 0 1f\n";
-
+            ouputs = ouputs + " " + z.getId().toString();
             plotOutput = plotOutput + "v(" + z.getId().toString() + ")+" + sum + " ";
             temp = temp/2;//sizeInputs/2;
             sum = sum + 20;
@@ -500,7 +506,8 @@ import signalProbability.ProbCircuit;
                 "\t     *plot v(A)+8 V(B)+6 V(C)+4 V(out)+2\n" +
                  "*" + plot + plotOutput +
                 "\n"
-                + "plot " + plotOutput + "\n"+
+                + "*plot " + plotOutput + "\n"+
+                 "wrdata  outputFile_" + SensitiveNode + "_" + ".txt" + ouputs + " \n"+
                 ".endc\t     \n" +
                 "\n" +
                 "* Declarando o tipo de simulação *Precisa mudar para 15 (0 - 15 = 16 unidades de tempo) pois senão nao exitira descida para entrada A\n" +
@@ -703,11 +710,11 @@ import signalProbability.ProbCircuit;
         int sum = 5 ;
 
         // Va  a  gnd  PWL (0n 0 4.0n 0 4.01n supply 10.0n supply 10.01n 0 14n 0 14.01n supply 16.0n supply 16.01n 0)
-
+        String input_values = "";
         for (Signal x: this.circuit.getInputs()){
             //template = template + "v"+x.getId().toString() + " " + x.getId().toString() + " 0 PULSE (0 1.0 "+ size_temp + "n 1p 1p " + size_temp + "n " + size_temp + "n)"  + "\n";
             template = template + "v"+x.getId().toString() + " " + x.getId().toString() + " 0 PWL (0n " + Integer.toString(x.getOriginalLogicValue()) + "  " + "10n " + Integer.toString(x.getOriginalLogicValue()) + " )"  + "\n";
-
+            input_values = input_values + Integer.toString(x.getOriginalLogicValue());
             //plot = plot + "v(" + x.getId().toString() + ")+" + sizeInputs*2 + " ";//;"plot v(G1gat)+8 V(G2gat)+6 V(G6gat)"
             plot = plot + "v(" + x.getId().toString() + ")+" + sum + " ";;//plot + "v(" + x.getId().toString() + ")+" + sizeInputs + " ";//;"plot v(G1gat)+8 V(G2gat)+6 V(G6gat)"
             //sizeInputs = sizeInputs/2;
@@ -717,13 +724,14 @@ import signalProbability.ProbCircuit;
             sum = sum + 5;
         }
         int temp = sizeInputs;
+        String ouputs = "";
         for (Signal z: this.circuit.getOutputs()){
             //Cload G6gat 0 1f
             //template = template + "v"+x.getId().toString() + " " + x.getId().toString() + " 0 PULSE (0 1.0 "+ sizeInputs + "n 1p 1p " + sizeInputs + "n " + sizeInputs*2 + "n)"  + "\n";
             //plot = plot + "v(" + x.getId().toString() + ")+" + sizeInputs + " ";//;"plot v(G1gat)+8 V(G2gat)+6 V(G6gat)"
             //sizeInputs = sizeInputs/2;
             outputsCapacitance = outputsCapacitance + "* Cload " + z.getId().toString() + " 0 1f\n";
-
+            ouputs = ouputs + " " + z.getId().toString();
             plotOutput = plotOutput + "v(" + z.getId().toString() + ")+" + sum + " ";
             temp = temp/2;//sizeInputs/2;
             sum = sum + 20;
@@ -752,7 +760,7 @@ import signalProbability.ProbCircuit;
 
         template = template + "\n\n\n ****** SET Injection in ramdom node Inv1\n" +
                 //"\t\t*Iexp 0 out exp(0 190u 1n 40p 1.00001n 320p) \n" +
-                "\t\t*Iexp 0 " + SensitiveNode + " exp(" + bitflipValue + " 190u 1n 10p 1.00001n 320p) \n" +
+                "\t\tIexp 0 " + SensitiveNode + " exp(" + bitflipValue + " 190u 1n 10p 1.00001n 320p) \n" +
                 "\t*transicao 0-1-0\n" +
                 "\n" +
                 "* Declarando uma capacitância de saída que pode ser usada para emular uma carga\n" +
@@ -769,10 +777,11 @@ import signalProbability.ProbCircuit;
                 "*" + plot + plotOutput +
                 "\n"
                 + "*plot " + plotOutput + "\n"+
+                "wrdata  " + this.genlibPATH +"-"+ this.circuit.getName() +  "_" + SensitiveNode + "_" + input_values + ".txt  " + SensitiveNode + " " + ouputs + " \n"+
                 ".endc\t     \n" +
                 "\n" +
                 "* Declarando o tipo de simulação *Precisa mudar para 15 (0 - 15 = 16 unidades de tempo) pois senão nao exitira descida para entrada A\n" +
-                ".tran 0.1n " + size_final + "n \n" +
+                ".tran 1p " + size_final + "n \n" +
                 "\n" +
                 "* Definindo comandos measure para fazer medidas\n" +
                 "\n" +
