@@ -15,6 +15,7 @@ public class debug {
         logger.info("Iniciando procedimentos");
         //Venda venda = new Venda();
         logger.info("Criando novo objeto venda");
+
         //venda.setNumeroOcorrencia("1234");
         //venda.setObs("MINHA VENDA XX");
         //VendaDao vendaDao = new VendaDao();
