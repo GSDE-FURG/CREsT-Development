@@ -39,18 +39,26 @@ public class SimulationInLotParser {
 
         public void circuitListParser(String genlib, String signalsToinjectFault, int threads, String reliabilityConst, int sampleSize){
 
-                for (String file: this.circuitList){
-                        SimulationCircuit circuit = new SimulationCircuit(file, this.circuitfilesPath, genlib, signalsToinjectFault, threads, reliabilityConst, sampleSize); //String circuit, String relativePath, String genlib, String signalsToinjectFault, int threads, String reliabilityConst, int sampleSize
+                if ( sampleSize > 0 ) {
+                        for (String file : this.circuitList) {
+                                SimulationCircuit circuit = new SimulationCircuit(file, this.circuitfilesPath, genlib, signalsToinjectFault, threads, reliabilityConst, sampleSize); //String circuit, String relativePath, String genlib, String signalsToinjectFault, int threads, String reliabilityConst, int sampleSize
                                 //System.out.println("   ~~~~~ sample: " + circuit.getSample());
-                        this.simulationCircuitsList.add(circuit);
+                                this.simulationCircuitsList.add(circuit);
+                        }
+                }else{
+                        System.err.println("Sample Size <= 0 !!!!");
                 }
         }
 
         public void circuitListParser(String genlib, String signalsToinjectFault, int threads, String reliabilityConst,  ArrayList <Float> mtf_sizes){
-
-                for (String file: this.circuitList){
-                        SimulationCircuit circuit = new SimulationCircuit(file, this.circuitfilesPath, genlib, signalsToinjectFault, threads, reliabilityConst, mtf_sizes); //String circuit, String relativePath, String genlib, String signalsToinjectFault, int threads, String reliabilityConst, int sampleSize
-                        this.simulationCircuitsList.add(circuit);
+                if ( mtf_sizes.size() >= 0 ) {
+                        for (String file : this.circuitList) {
+                                SimulationCircuit circuit = new SimulationCircuit(file, this.circuitfilesPath, genlib, signalsToinjectFault, threads, reliabilityConst, mtf_sizes); //String circuit, String relativePath, String genlib, String signalsToinjectFault, int threads, String reliabilityConst, int sampleSize
+                                this.simulationCircuitsList.add(circuit);
+                        }
+                }
+                else{
+                        System.err.println(" MTF_LIST <= 0 !!!!");
                 }
         }
 

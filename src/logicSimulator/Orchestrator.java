@@ -1732,7 +1732,6 @@ import writers.WriteCsvTh;
         return thread_list;
     }
 
-
     public List particionateMultipletransientFaultInjectionVectorPerThread(ArrayList <ArrayList<Integer>> ListInputVectors,int period, int order, int frequency) throws ScriptException, Exception{
 
         System.out.println("\n\n         +++++++    Dev mode  ++++++");
@@ -2580,13 +2579,11 @@ import writers.WriteCsvTh;
     }
 
     /**
-     * @deprecated
      * @param option
      * @throws IOException
      * @throws Exception
      */
     public void runMultithreadingSimulation(String option) throws IOException, Exception{
-
 
                  System.out.println(" ----- Multithreading Version -------");
                  long loadTimeStart = System.nanoTime();//System.currentTimeMillis();
@@ -2612,10 +2609,6 @@ import writers.WriteCsvTh;
                 this.circuit = verilog_circuit.getCircuit();
                 System.out.println("    ... Reading verilog "+ " at -> " + this.circuitNameStr  + " ... ok");
                 //System.out.println("Patterns : " + this.verilog_circuit.getGatePattern());
-
-
-
-
 
                 /*Circuit Probabilities */
                 this.initLevelCircuit();
@@ -2857,7 +2850,6 @@ import writers.WriteCsvTh;
 
          return bitfipCcounter;
      }
-
 
     /**
      * @deprecated

@@ -3,8 +3,14 @@ package simulation;
 import java.util.ArrayList;
 
 public class MAIN {
+    int threads;
+    int sample;
+    String reliabilityConst;
+    String relativePath;
+    String genlib;
+    String OUTPUT_INFO;
 
-    public MAIN(){
+    public MAIN(int threads, String reliabilityConst, String relativePath, String genlib){
 
     }
 
@@ -16,22 +22,39 @@ public class MAIN {
         String signalsToinjectFault = "ALL_SIGNALS";
         String constReliability = "0.9999";
 
-        ArrayList<Float> mtf_sizes = new ArrayList<>();  //MTF's
+
 
         int sampleSize = 20000;
         int threads = 8;
 
         SimulationInLot simulationInLot = new SimulationInLot();
         simulationInLot.setup(relativePath, genlib, threads);
-
         simulationInLot.processParser(signalsToinjectFault, constReliability, sampleSize);  //STF's - String signalsToinjectFault, String reliabilityConst, int sampleSize
                 //simulationInLot.processParser(signalsToinjectFault, constReliability, mtf_sizes); // MTF's
-        simulationInLot.print();
+                simulationInLot.print();
 
-        SimulationMode proportion_mtf = new SimulationMode(simulationInLot.getCircuitListSpecs().get(0)); // first Circuit c.v
+        SimulationMode sim_stf = new SimulationMode(simulationInLot.getCircuitListSpecs().get(0)); // first Circuit c.v
 
-        proportion_mtf.monteCarloSTFSimulation();
-            //proportion_mtf.monteCarloSimulationMultipleTransientFaultsProportion();
+
+
+        ///sim_stf.monteCarloSTFSimulation();
+                //sim_stf.multithreadingSimulationExaustic();
+                   //sim_stf.multithreadingSimulationExausticComplete();
+                        //     sim_stf.monteCarloSimulationMultipleTransientFaultsProportion();
+
+        ArrayList<Float> mtf_sizes = new ArrayList<>();  //MTF's
+        mtf_sizes.add((float) 1000);
+        mtf_sizes.add((float) 0.9);
+        mtf_sizes.add((float) 0.09);
+        mtf_sizes.add((float) 0.01);
+        SimulationInLot simulationInLotMTF = new SimulationInLot();
+        simulationInLotMTF.setup(relativePath, genlib, threads);
+        simulationInLotMTF.processParser(signalsToinjectFault, constReliability, mtf_sizes);
+        SimulationMode sim_mtf = new SimulationMode(simulationInLotMTF.getCircuitListSpecs().get(0)); // first Circuit c.v
+        //sim_mtf.monteCarloSimulationMultipleTransientFaults();
+        sim_mtf.monteCarloSimulationMultipleTransientFaultsProportionAndCalculationOfSensitiveArea("netlist_files/", "45nm_HP.pm", "Library.txt");
+        //sim_mtf.monteCarloSimulationMultipleTransientFaultsProportionAndCalculationOfSensitiveArea();
+
 
     }
 }

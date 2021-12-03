@@ -179,7 +179,7 @@ import signalProbability.ProbCircuit;
             //this.insertInputVectors("selected", this.threadSimulationList.get(i).getinputVector());
             int i = 0;
             String parsedNetlist = "";
-            if(this.circuit.getInputs().size() <= 8){ //small benchmark circuits
+            if(this.circuit.getInputs().size() <= 10){ //small benchmark circuits
                 parsedNetlist = this.createSpiceNetlist("A", "1");
             }
             else{
@@ -3157,7 +3157,7 @@ import signalProbability.ProbCircuit;
 
         /* Calculate Sensitive Area of This Gate */
         SensitiveCell cell = this.sensitive_cells.get(gate.getGate().getType()  + "_" + concat_inputs);;
-        System.out.println("-> " + gate.getGate().getType());
+        //System.out.println("-> " + gate.getGate().getType());
         if((cell != null)){
 
             //this.sum_sensitive_cells_area = this.sum_sensitive_cells_area + Float.parseFloat(cell.getSensitive_are());
@@ -3168,7 +3168,6 @@ import signalProbability.ProbCircuit;
 
         return output_converted;
     }
-
 
     private boolean checkIfSignalIsInFaultList(Signal signal, TestVectorInformation thread_item){
 
@@ -3264,8 +3263,6 @@ import signalProbability.ProbCircuit;
 
         return output_converted;
     }
-
-
 
     private  boolean calculateOutputFacultInjectionGateValue(Cell cells, DepthGate gate, ArrayList <Signal> inputsSignals, Signal faultSig,  TestVectorInformation thread_item){
                 //System.out.println("inn... + " + thread_item.getItem().toString());      
@@ -3395,7 +3392,6 @@ import signalProbability.ProbCircuit;
          
          return (boolean) output;
      }    
-
 
      public void setMode(String mode_var){
             this.mode = mode_var;
@@ -3560,7 +3556,6 @@ import signalProbability.ProbCircuit;
         return (boolean) output;
     }
 
-
     private String generateGateNetlist(Cell cells, DepthGate gate,ArrayList <Signal> inputsSignals, int id_node){
 
         Map<ArrayList<Boolean>, Boolean> comb = cells.getComb();
@@ -3609,8 +3604,6 @@ import signalProbability.ProbCircuit;
 
         return concat;
     }
-
-
 
     private  boolean calculateFaultFreeOutputGateValueMTF(Cell cells, DepthGate gate,ArrayList <Signal> inputsSignals, TestVectorInformation thread_item){
 
@@ -3700,7 +3693,6 @@ import signalProbability.ProbCircuit;
         return (boolean) output;
     }
 
-
     @Override
         public  void run() {
 
@@ -3767,6 +3759,7 @@ import signalProbability.ProbCircuit;
 
 
         }
+
         private void PrintSpecs() {
          Thread t = Thread.currentThread();
          System.out.println("\n"
