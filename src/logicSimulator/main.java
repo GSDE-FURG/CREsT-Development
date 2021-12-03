@@ -34,7 +34,7 @@ public class main{
      * @param relativePath Relative Path for simulation files (folder: /test_folder/ --- example circuit.v and cadence.genlib)
      * @param genlib Genlib name (example: cadence.genlib)
      */
-        public main(int threads, String reliabilityConst, String relativePath, String genlib) {
+    public main(int threads, String reliabilityConst, String relativePath, String genlib) {
             this.threads = threads;
             this.reliabilityConst = reliabilityConst;
             this.relativePath = relativePath;
