@@ -17,6 +17,8 @@ public class SimulationCircuit {
     String OUTPUT_INFO;
     String signalsToinjectFault = "ALL_SIGNALS";
     ArrayList <Float> mtf_sizes = new ArrayList<>();
+    String mode = "";
+
 
     /**
      * Constructor for STF specs simulation
@@ -37,6 +39,7 @@ public class SimulationCircuit {
         this.OUTPUT_INFO = "";
         this.sample = sampleSize;
         this.signalsToinjectFault = signalsToinjectFault;
+        this.mode = "STF";
     }
 
     /**
@@ -58,10 +61,15 @@ public class SimulationCircuit {
         this.OUTPUT_INFO = "";
         this.mtf_sizes = mtf_sizes;
         this.signalsToinjectFault = signalsToinjectFault;
+        this.mode = "MTF";
     }
 
     public void setSample(int sample) {
         this.sample = sample;
+    }
+
+    public String getMode() {
+        return mode;
     }
 
     public int getSample() {

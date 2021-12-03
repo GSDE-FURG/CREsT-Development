@@ -4,11 +4,13 @@ import java.util.ArrayList;
 
 public class SimulationInLot {
 
-    private ArrayList <SimulationCircuit> circuitSpecs;
+    private ArrayList <SimulationCircuit> circuitListSpecs;
+    private ArrayList <String> circuitsListName;
     private SimulationInLotParser simulationCircuits;
     private String relativePath;
     private String genlib;
     int threads;
+
     /**
      * Constructor
      */
@@ -29,17 +31,31 @@ public class SimulationInLot {
         System.out.println("Path: " + this.relativePath + " ~ Genlib: " + this.genlib + " ~ Threads: " + this.threads);
     }
 
+    public ArrayList<SimulationCircuit> getCircuitListSpecs() {
+        return circuitListSpecs;
+    }
+
+    public SimulationInLotParser getSimulationCircuits() {
+        return simulationCircuits;
+    }
+
+    /**
+     * Method for STF construction
+     * @param signalsToinjectFault
+     * @param reliabilityConst
+     * @param sampleSize
+     */
     public void processParser(String signalsToinjectFault, String reliabilityConst, int sampleSize){ // FOR STF's
             SimulationInLotParser parserFiles = new SimulationInLotParser(this.relativePath);
 
             parserFiles.getVerilogCircuitFilesPath();
             parserFiles.circuitListParser(this.genlib, signalsToinjectFault, threads, reliabilityConst, sampleSize); //String genlib, String signalsToinjectFault, int threads, String reliabilityConst, int sampleSize
-                //System.out.println("Sample: " + sampleSize);
-            ArrayList <String> circuitListNames = parserFiles.getCircuitList();  /// List of circuits
-            ArrayList <SimulationCircuit> circuitList = parserFiles.getSimulationCircuitsList();
 
-            System.out.println("- STF: CircuitList: " + circuitListNames );
-            System.out.println("- STF: Circuits object parsed: " + circuitList );
+            this.circuitsListName = parserFiles.getCircuitList();  /// List of circuits
+            this.circuitListSpecs = parserFiles.getSimulationCircuitsList();
+
+            System.out.println("- STF: CircuitList: " + this.circuitsListName );
+            System.out.println("- STF: Circuits object parsed: " + this.circuitListSpecs );
 
 
             parserFiles.printCircuitsSpecs();
@@ -47,22 +63,24 @@ public class SimulationInLot {
 
     }
 
+    /**
+     * Method for MTF's construction
+     * @param signalsToinjectFault
+     * @param reliabilityConst
+     * @param mtf_sizes
+     */
     public void processParser(String signalsToinjectFault, String reliabilityConst,  ArrayList <Float> mtf_sizes){
             SimulationInLotParser parserFiles = new SimulationInLotParser(this.relativePath);
 
             parserFiles.getVerilogCircuitFilesPath();
             parserFiles.circuitListParser(this.genlib, signalsToinjectFault, threads, reliabilityConst, mtf_sizes); //String genlib, String signalsToinjectFault, int threads, String reliabilityConst, int sampleSize
 
-            ArrayList <String> circuitListNames = parserFiles.getCircuitList();  /// List of circuits
-            ArrayList <SimulationCircuit> circuitList = parserFiles.getSimulationCircuitsList();
+            this.circuitsListName = parserFiles.getCircuitList();  /// List of circuits
+            this.circuitListSpecs = parserFiles.getSimulationCircuitsList();
 
-
-            System.out.println("- MTF: CircuitList: " + circuitListNames );
-            System.out.println("- MTF: Circuits object parsed: " + circuitList );
+            System.out.println("- MTF: CircuitList: " + this.circuitsListName );
+            System.out.println("- MTF: Circuits object parsed: " + this.circuitListSpecs );
             parserFiles.printCircuitsSpecs();
     }
-
-    pub
-
 
 }
