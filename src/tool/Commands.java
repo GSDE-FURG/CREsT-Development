@@ -198,95 +198,87 @@ public class Commands {
     private String circuit_analysis;
     private String genlib;
     private String relative_path;
-    
+
+    /**
+     *
+     * @param genlib
+     * @param circuit
+     * @param mc_sample
+     * @throws IOException
+     * @throws ScriptException
+     * @throws Exception
+     */
     public void Monte_Carlo_Fault_injection(String genlib, String circuit, String mc_sample) throws IOException, ScriptException, Exception {
         //String path = CommonOps.getWorkPath(this) + "abc" + File.separator + filename;
-        System.out.println("Genlib: "+ genlib);
-        System.out.println("Circuit: "+ circuit);
-        System.out.println("MC_Sample: "+ mc_sample);
-        
+        //String path = CommonOps.getWorkPath(this) + "abc" + File.separator + filename;
+        System.out.println("Monte Carlo SF Simulation ....");
+        //System.out.println("--> Genlib: "+ genlib);
+        //System.out.println("Circuit: "+ circuit);
+        //System.out.println("MC_Sample: "+ flag);
+
         /* Chamar a muinha ferramenta */
-        
-         int threads = 4; //Numero de threads
-         int sampleSizeMonteCarlo = Integer.parseInt(mc_sample);
-         String constReliability = "0.9999"; //Used for internal structures
-         
-         
-         
+
+        int threads = 8; //Numero de threads
+        //int sampleSizeMonteCarlo = Integer.parseInt(mc_sample);
+        String constReliability = "0.9999"; //Used for internal structures
+
+
+
         //String[] arrOfStr = circuit.split("/", 2);
-         
-        
-          ///String relativePath = "/" + arrOfStr[0];
-         // String relativePath = "abc/" ;
-                  
+
+
+        ///String relativePath = "/" + arrOfStr[0];
+        // String relativePath = "abc/" ;
+
         // genlib = "abc/" + "cadence.genlib";
-          
-             
-         constReliability = "0.9999"; //Used for internal structures
+
+
+        constReliability = "0.9999"; //Used for internal structures
         // String relativePath = "abc/";
         String relativePath = "";
+
+        checkFiles checkFiles = new checkFiles();
+        relativePath = checkFiles.split_PathString(genlib);
+
         try {
-              String[] textoSeparado = genlib.split("/");
-              String[] circ = circuit.split("/");
-             
-              for (int i = 0; i < textoSeparado.length - 1; i++) {
-                relativePath = relativePath + textoSeparado[i] + "/"; 
-              }
-              
-              this.relative_path = relativePath;
-              this.genlib = textoSeparado[textoSeparado.length-1];
-              this.circuit_analysis = circ[circ.length-1];
-              
+            String[] textoSeparado = genlib.split("/");
+            String[] circ = circuit.split("/");
+
+            for (int i = 0; i < textoSeparado.length - 1; i++) {
+                relativePath = relativePath + textoSeparado[i] + "/";
+            }
+
+            this.relative_path = relativePath;
+            this.genlib = textoSeparado[textoSeparado.length-1];
+            this.circuit_analysis = circ[circ.length-1];
+
         } catch (Exception e) {
-            
-             System.out.println("Error... ");
-             this.relative_path = "";
-             this.circuit_analysis = circuit;
-             this.genlib = genlib;
+
+            System.out.println("Error... ");
+            this.relative_path = "";
+            this.circuit_analysis = circuit;
+            this.genlib = genlib;
         }
-         
-         
-         
-          
-             
-             //String genlib =  relativePath  + "lib_basic_no_cost.genlib";
-            
-             //genlib =  relativePath  + "cadence.genlib";
-              File tmpDir = new File(circuit);
-              boolean exists = tmpDir.exists();
-              
-              File genDir = new File(genlib);
-              boolean exists2 = genDir.exists();
-              
-              if (exists && exists2){
-                            System.out.println(" ------ In"
-                                    + "side -------");
-                      System.out.println("Relative Path: " + relativePath);
-                      System.out.println("Genlib : " + genlib);
-                      System.out.println("Genlib Texto Separado: " + this.relative_path);
-
-                        main experimento = new main(threads, constReliability, relativePath, this.relative_path  + this.genlib);
-
-                        experimento.preparingEnviromentSingleFile(this.circuit_analysis);
 
 
-                       experimento.monteCarloSimulation(sampleSizeMonteCarlo, "ALL_SIGNALS");
 
-                       System.out.println("Simulation results:\n"
-                               
-                               + experimento.getFMR());
+        //main experimento = new main(threads, constReliability, relativePath, this.relative_path  + this.genlib);
+        //experimento.preparingEnviromentSingleFile(this.circuit_analysis);
+        //experimento.multithreadingSimulationExaustic();
+
+        SimulationCircuit simulationCircuit = new SimulationCircuit(circuit, relativePath, genlib , "ALL_SIGNALS", threads, constReliability,  Integer.parseInt(mc_sample));
+        //simulationCircuit.print();
+        SimulationMode experimento = new SimulationMode(simulationCircuit);
+        experimento.printSpecSimulation();
+        experimento.monteCarloSTFSimulation();
+
+        System.out.println("Simulation results:\n"
+
+                + experimento.getFMR());
 
 
-                       
-                        Terminal.getInstance().terminalOutput("Simulation results with " + threads + " threads "
-                                + ": " + experimento.getFMR());
-                }
-              
-              else{
-                    System.out.println("File or genlib not exist : " + circuit + "   -  " + genlib);
-                }
-           
-           
+        Terminal.getInstance().terminalOutput("Simulation results with " + threads + " threads "
+                + ": " + experimento.getFMR());
         
     }
 

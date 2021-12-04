@@ -223,7 +223,7 @@ class TerminalWrapper {
                         String command = args[3];
                         String sampleSTF = args[4];
 
-                        if (args_size == 4) { // Define Single Faults  [-mc_fault_injection teste/cadence.genlib teste/c.v -mc 20000]
+                        if (args_size == 5) { // Define Single Faults  [-mc_fault_injection teste/cadence.genlib teste/c.v -mc 20000]
                             option = "Single";
                         } else {
                             option = "Multiple";  // Define Multiple Faults [-mc_fault_injection teste/cadence.genlib teste/c.v -mc 20000 1 1 1]

@@ -532,11 +532,21 @@ class CommandProcessor {
 
                         }else{
 
-                            if((splittedCommand.get(3).equals("-mc")) && (splittedCommand.size() == 4)){
-                                cmd.Monte_Carlo_Fault_injection(splittedCommand.get(1), splittedCommand.get(2),splittedCommand.get(4)); // MC 20000
-                                success = true;
+                            if((splittedCommand.get(3).equals("-mc")) && (splittedCommand.size() == 5)){
+
+                                //System.out.println("- Dev Mode  ->>>>>>>>> Inside Multiple Fault injection ..... : " + splittedCommand);
+                                checkFiles checkFiles = new checkFiles();
+                                String path = checkFiles.split_PathString(splittedCommand.get(1));
+                                //System.out.println(path);
+                                if(checkFiles.dirExists(path) && checkFiles.fileExists(splittedCommand.get(2))){
+                                    cmd.Monte_Carlo_Fault_injection(splittedCommand.get(1), splittedCommand.get(2),splittedCommand.get(4)); // MC 20000
+                                    success = true;
+                                }else{
+                                    System.err.println("- Files not founded (genlib or circuit)");
+                                    success = false;
+                                }
                             }
-                            if((splittedCommand.get(3).equals("-mc")) && (splittedCommand.size() > 4)){
+                            if((splittedCommand.get(3).equals("-mc")) && (splittedCommand.size() > 5)){
                                 //System.out.println("- Dev Mode  ->>>>>>>>> Inside Multiple Fault injection ..... : " + splittedCommand);
                                 checkFiles checkFiles = new checkFiles();
                                     String path = checkFiles.split_PathString(splittedCommand.get(1));
