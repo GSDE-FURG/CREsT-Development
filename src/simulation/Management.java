@@ -1817,7 +1817,6 @@ public class Management extends MAIN {
 
         }
 
-
         /**
          * This method orchestrates the settup enviroment for run Multithreading SET evalaution (LOGICAL SIMULATOR)
          * @param sample
