@@ -52,7 +52,7 @@ import signalProbability.ProbCircuit;
         private final ConcurrentLinkedQueue<String> linkedQueueFaultFree; //= new ConcurrentLinkedQueue<Integer>(); 
         private final ConcurrentLinkedQueue<String> linkedQueueFault; //= new ConcurrentLinkedQueue<Integer>();
 
-        public String parsedNetlistContent = "";
+        public ArrayList <String> parsedNetlistContent = new ArrayList<>();
 
         private String inGate;
         //private final Map<String, String> concurrentMap_output_free = new ConcurrentHashMap<>();;
@@ -135,18 +135,18 @@ import signalProbability.ProbCircuit;
                 this.cellLibrary.setPTMCells(new BigDecimal("0.9999"));
         
         }
+
         public void setSensitiveCellsMap(Map <String, SensitiveCell> sensitive_cells){
             this.sensitive_cells = sensitive_cells;
         }
 
-    public String getParsedNetlistContent() {
-            if(this.parsedNetlistContent.isBlank()){
-                //System.err.println("Please do not import this String without properly run the paersed netlist methods before !");
-                return "";
-            }else{
-                return this.parsedNetlistContent;
-            }
-       // return parsedNetlistContent;
+        public List<TestVectorInformation> getthreadSimulationList(){
+            return this.threadSimulationList;
+        }
+
+
+    public ArrayList <String> getParsedNetlistContent() {
+            return this.parsedNetlistContent;
     }
 
     public String getStartendPos(){
@@ -186,7 +186,7 @@ import signalProbability.ProbCircuit;
                 parsedNetlist = this.createSpiceNetlistLargerCircuits(this.threadSimulationList.get(0));
             }
 
-            this.parsedNetlistContent = parsedNetlist;
+            //this.parsedNetlistContent = parsedNetlist;
             //this.getPropagateFaultFreeResults( this.threadSimulationList.get(i).getinputVector(), this.threadSimulationList.get(i).getSimulationIndex(), this.threadSimulationList.get(i), i+1);
             //System.out.println("------------------------- vec: " +  this.threadSimulationList.get(i).getSimulationIndex() +  " sum: " + this.threadSimulationList.get(i).getSum_sensitive_cells_area() + "--------------------------------\n");
        // }
@@ -313,7 +313,6 @@ import signalProbability.ProbCircuit;
            
          
      }
-
 
     private  void propagateInputVectorsForSensitiveAreaCalculation(int testNumber, ArrayList <Integer> vector, TestVectorInformation thread_item) throws IOException, WriteException{
 
@@ -792,7 +791,6 @@ import signalProbability.ProbCircuit;
         return template;
     }
 
-
     private  void propagateInputVectorsMTF(int testNumber, ArrayList <Integer> vector, TestVectorInformation thread_item) throws IOException, WriteException{
 
         this.threadID = (long) Thread.currentThread().getId();
@@ -879,8 +877,6 @@ import signalProbability.ProbCircuit;
 
 
     }
-
-
 
     public String getVectorString(ArrayList <Integer> vector){
             String O = vector.toString();
@@ -1102,7 +1098,6 @@ import signalProbability.ProbCircuit;
 
 
     }
-
 
     public  ArrayList <String> get_inputListValuesStr(){
             return this.inputVectors;
@@ -1354,7 +1349,6 @@ import signalProbability.ProbCircuit;
 
 
     }
-
 
         private  void propagateFaultInjections(int testNumber, ArrayList <Integer> vector, Signal faultSig, int index, TestVectorInformation thread_item) throws IOException, WriteException{
            
@@ -2024,7 +2018,6 @@ import signalProbability.ProbCircuit;
 
     }
 
-
     private  void propagateMultipleFaultInjectionsAndCalculateSensitiveAreas(TestVectorInformation thread_item) throws IOException, WriteException{
 
         this.threadID = (long) Thread.currentThread().getId();
@@ -2232,8 +2225,6 @@ import signalProbability.ProbCircuit;
 
     }
 
-
-
     private  void propagateMultipleFaultInjectionsV2NEWMOD(TestVectorInformation thread_item) throws IOException, WriteException{
 
         this.threadID = (long) Thread.currentThread().getId();
@@ -2426,7 +2417,6 @@ import signalProbability.ProbCircuit;
 
     }
 
-
     public  void startSimulationFaultInjection() throws IOException, WriteException{
 
             for (int i = 0; i < this.threadSimulationList.size(); i++) {
@@ -2486,48 +2476,33 @@ import signalProbability.ProbCircuit;
             this.settingFaultInjectionResultsMTF();
     }
 
+    public ArrayList<String> getparsedNetlistContent(){
+      return this.parsedNetlistContent;
+    }
+
     public void startSimulationMultipleFaultInjectionCalculateSensitiveAreaGenerateSpiceNetLists() throws IOException, WriteException{
 
+        System.out.println("- threadSimulationList: " + this.threadSimulationList.size());
         for (int i = 0; i < this.threadSimulationList.size(); i++) {
 
             this.insertInputVectors("selected", this.threadSimulationList.get(i).getinputVector());
-
-            //                this.propagateMultipleFaultInjectionsV2NEWMOD(this.threadSimulationList.get(i));
-            //this.propagateMultipleFaultInjectionsV2NEWMODMODULAR(this.threadSimulationList.get(i)); //WORKS PERFECT
             this.propagateMultipleFaultInjectionsAndCalculateSensitiveAreas(this.threadSimulationList.get(i)); //SOLVE MTF PROBLEMS
-
-
-            //this.getFaultInjectionResults(this.threadSimulationList.get(i).getinputVector(), this.threadSimulationList.get(i).getSimulationIndex(), this.threadSimulationList.get(i));
-
             this.getFaultInjectionResultsMTF(this.threadSimulationList.get(i).getinputVector(), this.threadSimulationList.get(i).getSimulationIndex(), this.threadSimulationList.get(i));
 
-
-            //if(i < 10){
-
-                System.out.println("- Generate the Electrical simulation:  " + i);
-
                 String freeFaultOutput_i, faultOutput_i;
-
                 freeFaultOutput_i = this.threadSimulationList.get(i).getOrignalOutput();
                 faultOutput_i = this.threadSimulationList.get(i).getFaultOutput();
 
-
                 if(!freeFaultOutput_i.equals(faultOutput_i)){
-                    System.out.println(i + "  freeFaultOutput_i: " + freeFaultOutput_i + "   faultOutput_i: " + faultOutput_i);
+                    String set = i + "  freeFaultOutput_i: " + freeFaultOutput_i + "   faultOutput_i: " + faultOutput_i;
+
+                    System.out.println("- SET propaget " + " vec: " + this.threadSimulationList.get(i).getinputVector() + " - threadSimulationList: " + i + "  thd: " + this.getThreadId() + "     info: " + set);
                     //this.propagated_faults++;
-                    this.parsedNetlistContent = this.createSpiceNetlistLargerCircuits(this.threadSimulationList.get(i));
+                    //this.parsedNetlistContent = this.createSpiceNetlistLargerCircuits(this.threadSimulationList.get(i));
+                    this.parsedNetlistContent.add(this.createSpiceNetlistLargerCircuits(this.threadSimulationList.get(i)));
+                }else{
+                    this.parsedNetlistContent.add("");
                 }
-
-           // }
-
-                /*
-                if(i == (this.threadSimulationList.size()/2)){
-                     LocalDateTime myDateObj = LocalDateTime.now();
-                        DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
-                        String formattedDate = myDateObj.format(myFormatObj);
-                     System.out.println("->" + formattedDate + " HALF Simulation test ended: " + this.threadID + "   size: "+this.threadSimulationList.size());
-                }
-                */
 
         }
 

@@ -26,22 +26,25 @@ public class TestVectorInformation {
     private int faultSignalValue;
     private int index;
     private long threadID;
-
     private float sum_sensitive_cells_area;
 
     private boolean MTF;
-
     private final  ArrayList <Signal> MTF_FaultSignal_List;
-
     private final List <Signal> MTF_FaultSignal_List_thd = Collections.synchronizedList(new ArrayList<Signal>());
-
     private final List <itemnize> MTF_PERSONAL_LIST = Collections.synchronizedList(new ArrayList<itemnize>());
-
 
 
     public ConcurrentHashMap <String, Signal>  MTF_Fault_LIST_thd = new ConcurrentHashMap<>();
     //private ArrayList <Signal> MTF_FaultSignal_List_Base;
     //private ArrayList <SignalExtendedProperties> MTF_FaultSignal_List_Extended;
+
+    public String concatInputVector(){
+            String inputConcat = "";
+            for (int x: this.inputVector){
+                inputConcat = inputConcat + x;
+            }
+            return inputConcat;
+    }
     
     public TestVectorInformation(ArrayList <Integer> inputVector, Signal faultSignal, int input_pos) {
             this.faultSignals = faultSignal;

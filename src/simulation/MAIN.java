@@ -37,7 +37,6 @@ public class MAIN {  // Class to run debug tests
         SimulationMode sim_stf = new SimulationMode(simulationInLot.getCircuitListSpecs().get(0)); // first Circuit c.v
 
 
-
         ///sim_stf.monteCarloSTFSimulation();
                 //sim_stf.multithreadingSimulationExaustic();
                    //sim_stf.multithreadingSimulationExausticComplete();
@@ -53,9 +52,9 @@ public class MAIN {  // Class to run debug tests
         simulationInLotMTF.processParser(signalsToinjectFault, constReliability, mtf_sizes);
 
             SimulationMode sim_mtf = new SimulationMode(simulationInLotMTF.getCircuitListSpecs().get(0)); // first Circuit c.v
-            sim_mtf.monteCarloSimulationMultipleTransientFaults();
-            //sim_mtf.monteCarloSimulationMultipleTransientFaultsProportionAndCalculationOfSensitiveArea("netlist_files/", "45nm_HP.pm", "Library.txt");
-            //sim_mtf.monteCarloSimulationMultipleTransientFaultsProportionAndCalculationOfSensitiveArea();
+                //sim_mtf.monteCarloSimulationMultipleTransientFaults();
+                sim_mtf.monteCarloSimulationMultipleTransientFaultsProportionAndCalculationOfSensitiveArea("netlist_files/", "45nm_HP.pm", "Library.txt");
+                //sim_mtf.monteCarloSimulationMultipleTransientFaultsProportionAndCalculationOfSensitiveArea();
 
 
     }

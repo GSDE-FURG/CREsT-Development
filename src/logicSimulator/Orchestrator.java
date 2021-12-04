@@ -3382,7 +3382,7 @@ import writers.WriteCsvTh;
             String electricalFolderSimulation = this.relativePath + "netlist_files/";
             this.moveFiles(this.relativePath,  "45nm_HP.pm", electricalFolderSimulation);
             this.moveFiles(this.relativePath,"Library.txt", electricalFolderSimulation);
-
+            /*
             for (int i = 0; i < 2; i++) {
                 if(this.itemx_list.get(0).getParsedNetlistContent() != "") {
                     String circuitSpiceName = "netlist_" + this.circuit.getName() + "_vec_" + i + ".txt";
@@ -3391,6 +3391,8 @@ import writers.WriteCsvTh;
                     this.runElectricalSimulator(this.relativePath, electricalFolderSimulation + circuitSpiceName);
                 }
             }
+
+             */
 
             System.out.println(" ----------------------------------------------------------------------------------------------------------------------\n\n...");
         }
@@ -3516,6 +3518,7 @@ import writers.WriteCsvTh;
             this.moveFiles(this.relativePath,  "45nm_HP.pm", electricalFolderSimulation);
             this.moveFiles(this.relativePath,"Library.txt", electricalFolderSimulation);
 
+            /*
             for (int i = 0; i < this.itemx_list.size(); i++) {
                 if(!this.itemx_list.get(i).getParsedNetlistContent().equals("") && (!this.itemx_list.get(i).getParsedNetlistContent().contains("ERROR"))) {
                     String circuitSpiceName = "netlist_" + this.circuit.getName() + "_vec_" + i + ".txt";
@@ -3524,6 +3527,8 @@ import writers.WriteCsvTh;
                     this.runElectricalSimulator(this.relativePath, electricalFolderSimulation + circuitSpiceName);
                 }
             }
+
+             */
             System.out.println("--------  Electrical Simulation Analysis ---------");
 
             System.out.println(" ----------------------------------------------------------------------------------------------------------------------\n\n...");
@@ -4423,7 +4428,7 @@ import writers.WriteCsvTh;
             }
         }
         System.out.println("PATH: " + path);
-        this.writeInformationInFileLog(path, "", this.itemx_list.get(0).getParsedNetlistContent(), "netlist_"+this.circuit.getName());
+       // this.writeInformationInFileLog(path, "", this.itemx_list.get(0).getParsedNetlistContent(), "netlist_"+this.circuit.getName());
         System.out.println("Created parsed netlist file: " + path + "netlist_"+this.circuit.getName() + ".txt");
         System.out.println("- Calling eletrictrical simulator....");
         //path = path + "netlist_files/";

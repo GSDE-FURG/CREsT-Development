@@ -1928,8 +1928,8 @@ public class Management extends MAIN {
 
         public void generateSensitiveNodesForSETSpiceFile(String spiceScriptsFolder, String PTMLibrary, String SpiceNetListLibrary) throws IOException {
 
-                System.out.println("--------  Electrical Simulation Analysis ---------");
-                System.out.println("- Moving files....");
+                System.out.println("--------  Generate NetList and Run Electrical Simulation Analysis ---------");
+                //System.out.println("- Moving files....");
                 //String electricalFolderSimulation = this.relativePath + "netlist_files/";
                 String electricalFolderSimulation = this.relativePath + spiceScriptsFolder;
 
@@ -1943,13 +1943,31 @@ public class Management extends MAIN {
                 //System.out.println("---- > 3 RElative Path: " + this.relativePath + "     R: " + spiceScriptsFolder);
 
                 System.out.println(" SIZE: " + this.itemx_list.size());
+                int counter = 0;
                 for (int i = 0; i < this.itemx_list.size(); i++) {
-                        if(!this.itemx_list.get(i).getParsedNetlistContent().equals("") && (!this.itemx_list.get(i).getParsedNetlistContent().contains("ERROR"))) {
+                        for (int j = 0; j < this.itemx_list.get(i).getthreadSimulationList().size(); j++) {
+                                //System.out.println(i + " >> thd: " + this.itemx_list.get(i).getthreadSimulationList().get(j).getinputVector() + "   content " + this.itemx_list.get(i).getparsedNetlistContent().get(j));
+                                if(!(this.itemx_list.get(i).getparsedNetlistContent().get(j) == "")){
+                                        TestVectorInformation testVectorInformation =  this.itemx_list.get(i).getthreadSimulationList().get(0);
+                                        String SensitiveNode = testVectorInformation.getMTFPERSONAL_LIST_Identities().get(0);
+
+                                        System.out.println("Sensitive Node: " + SensitiveNode);
+                                        //System.out.println("    III i:" + i + " j:" + j + " >> thd: " + this.itemx_list.get(i).getthreadSimulationList().get(j).getinputVector() + "  content blanck: " + this.itemx_list.get(i).getparsedNetlistContent().get(j).equals(""));
+                                        counter+=1;
+                                        String circuitSpiceName = this.circuit.getName() + "_vec_" +
+                                                this.itemx_list.get(i).getthreadSimulationList().get(j).getinputVector() + "_" + SensitiveNode + ".txt";
+                                       // this.writeInformationInFileLog(this.relativePath + spiceScriptsFolder, "", this.itemx_list.get(i).getParsedNetlistContent().get(j), circuitSpiceName);
+                                }
+                        }
+                        //System.out.println(" SET counter: " + counter);
+                        /*
+                        if(!this.itemx_list.get(i).getParsedNetlistContent().equals("") && (!this.itemx_list.get(i).getParsedNetlistContent().contains("ERROR"))){
                                 String circuitSpiceName = this.circuit.getName() + "_vec_" + i + ".txt";
                                 this.writeInformationInFileLog(this.relativePath + spiceScriptsFolder, "", this.itemx_list.get(i).getParsedNetlistContent(), circuitSpiceName);
                                         //System.out.println("- Created parsed netlist file: " + electricalFolderSimulation + circuitSpiceName + "  size: " + this.itemx_list.get(i).getParsedNetlistContent().isBlank());
-                                this.runElectricalSimulator(this.relativePath , electricalFolderSimulation + circuitSpiceName);
+                                //this.runElectricalSimulator(this.relativePath , electricalFolderSimulation + circuitSpiceName);
                         }
+                         */
                 }
                 System.out.println("--------  Electrical Simulation Analysis ---------");
 
