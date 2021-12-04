@@ -13,6 +13,17 @@ public class checkFiles{
             return r;
         }
 
+    public String split_Genlib(String path){
+
+        String[] result = path.split("/");
+        String r = "";
+
+            r = result[result.length-1];
+
+        //System.out.println("R: " + r);
+        return r;
+    }
+
         public  boolean fileExists(String fileName){
 
             // test to see if a file exists
@@ -20,7 +31,7 @@ public class checkFiles{
 
             if (file.exists())
             {
-                System.out.println("- File founded: " + file.getPath());
+                System.out.println("- File founded: " + fileName);
                 return true;
             }else{
                 System.err.println("- File was not founded :" + fileName);
@@ -48,7 +59,7 @@ public class checkFiles{
             checkFiles a = new checkFiles();
             System.out.println(a.dirExists("teste/cccc/circuitos_pequenos/"));
             System.out.println(a.fileExists("teste/cccc/circuitos_pequenos/c.v"));
-
+            a.split_Genlib("teste/cccc/circuitos_pequenos/cadence.genlib");
         }
     }
 

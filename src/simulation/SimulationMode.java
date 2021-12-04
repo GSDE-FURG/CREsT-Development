@@ -12,6 +12,10 @@ public class SimulationMode {
         this.simulationCircuit = simulationCircuit;
     }
 
+    public String getFMR(){
+        return this.OUTPUT_INFO;
+    }
+
     public void monteCarloSimulationMultipleTransientFaultsProportionAndCalculationOfSensitiveArea(String spiceScriptsFolder, String PTMLibrary, String SpiceNetListLibrary) throws Exception{
 
         this.printSpecSimulation();
@@ -26,10 +30,18 @@ public class SimulationMode {
 
     public void monteCarloSimulationMultipleTransientFaults() throws Exception{
 
-        this.printSpecSimulation();
 
+        System.out.println("\n\n ------");
+
+        /*
         Management simulacaoMultithreading = new Management(simulationCircuit.getThreads(), simulationCircuit.getReliabilityConst(), simulationCircuit.getRelativePath(),
                 simulationCircuit.getRelativePath() +  simulationCircuit.getGenlib(), simulationCircuit.getRelativePath() + simulationCircuit.getCircuit());
+        */
+
+        Management simulacaoMultithreading = new Management(simulationCircuit.getThreads(), simulationCircuit.getReliabilityConst(), simulationCircuit.getRelativePath(),
+              simulationCircuit.getGenlib(), simulationCircuit.getCircuit());
+
+        //this.printSpecSimulation();
 
                 simulacaoMultithreading.runMultipleFaultInjectionMultithreadingMonteCarloSimulationProportion(Math.round(simulationCircuit.getMtf_sizes().get(0)),
                 simulationCircuit.getMtf_sizes(), simulationCircuit.getSignalsToinjectFault());
@@ -54,8 +66,14 @@ public class SimulationMode {
      * @throws Exception e e
      */
     public void multithreadingSimulationExaustic() throws Exception { //ou Signals =  "ALL_SIGNALS" for exaustive consider all_signals
+
+        /*
         Management simulacaoMultithreading = new Management(simulationCircuit.getThreads(), simulationCircuit.getReliabilityConst(), simulationCircuit.getRelativePath(),
                 simulationCircuit.getRelativePath() + simulationCircuit.getGenlib(), simulationCircuit.getRelativePath() + simulationCircuit.getCircuit());
+
+         */
+        Management simulacaoMultithreading = new Management(simulationCircuit.getThreads(), simulationCircuit.getReliabilityConst(), simulationCircuit.getRelativePath(),
+                simulationCircuit.getGenlib(), simulationCircuit.getCircuit());
 
             simulacaoMultithreading.runMultithreadingExausticSimulation(simulationCircuit.getSignalsToinjectFault());
         this.OUTPUT_INFO = simulacaoMultithreading.getFRM("Sample (N = "
@@ -68,9 +86,10 @@ public class SimulationMode {
      */
     public void multithreadingSimulationExausticComplete() throws Exception{ //ou Signals =  "ALL_SIGNALS" for exhaustive consider all_signals
         Management simulacaoMultithreading = new Management(simulationCircuit.getThreads(), simulationCircuit.getReliabilityConst(), simulationCircuit.getRelativePath(),
-                simulationCircuit.getRelativePath() + simulationCircuit.getGenlib(), simulationCircuit.getRelativePath() + simulationCircuit.getCircuit());
+                simulationCircuit.getGenlib(), simulationCircuit.getCircuit());
 
-            simulacaoMultithreading.runMultithreadingExausticSimulationComplete(simulationCircuit.getSignalsToinjectFault());
+
+        simulacaoMultithreading.runMultithreadingExausticSimulationComplete(simulationCircuit.getSignalsToinjectFault());
             this.OUTPUT_INFO = simulacaoMultithreading.getFRM("Sample (N = "
                     + "2^Signals * Gates)");
     }
@@ -78,18 +97,25 @@ public class SimulationMode {
     public void printSpecSimulation(){
 
         if(this.simulationCircuit.getMode().equals("STF")){
+            System.out.println();
+            System.out.println("------------SimulationMode------------------");
             System.out.println("- STF's Simulation -");
             System.out.println("- Circuit: " + this.simulationCircuit.getCircuit());
             System.out.println("- MC Single Fault Injection: " + this.simulationCircuit.getMode());
             System.out.println("- Path: " + this.simulationCircuit.getRelativePath());
             System.out.println("- Genlib: " + this.simulationCircuit.getGenlib());
+            System.out.println("----------------");
         }
+
         if(this.simulationCircuit.getMode().equals("MTF")){
+            System.out.println();
+            System.out.println("------------SimulationMode------------------");
             System.out.println("- MTF's Simulation Proportion ");
             System.out.println("- Circuit: " + this.simulationCircuit.getCircuit());
             System.out.println("- MC Multiple Fault Injection : " + this.simulationCircuit.getMtf_sizes());
             System.out.println("- Path: " + this.simulationCircuit.getRelativePath());
             System.out.println("- Genlib: " + this.simulationCircuit.getGenlib());
+            System.out.println("----------------");
 
         }
     }

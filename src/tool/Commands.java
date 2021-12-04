@@ -57,6 +57,9 @@ import signalProbability.ProbGate;
 import signalProbability.ProbSignal;
 
 
+import simulation.SimulationCircuit;
+import simulation.SimulationMode;
+import simulation.checkFiles;
 import writers.GenlibWriter;
 import writers.VerilogWriter;
 import writers.WriteFile;
@@ -500,19 +503,21 @@ public class Commands {
      */
     public void Monte_Carlo_Multiple_Transient_Fault_Injection_Proportion(String genlib, String circuit, ArrayList <String> splittedCommand) throws IOException, ScriptException, Exception {
         //String path = CommonOps.getWorkPath(this) + "abc" + File.separator + filename;
+        /*
         System.out.println(" ---- Proportion METHOD MODE -----");
         System.out.println("Multiple Transient Fault Injection random at Chip Die Areas");
         System.out.println("Genlib: "+ genlib);
         System.out.println("Circuit: "+ circuit);
+         */
         // System.out.println("Order: "+ order);
 
         /* Chamar a minha ferramenta */
-        System.out.println("SplitteCommand: " + splittedCommand);
-        int threads = 4; //Numero de threads
+        //System.out.println("SplitteCommand: " + splittedCommand);
+        int threads = 8; //Numero de threads
         int sampleSizeMonteCarlo = Integer.parseInt(splittedCommand.get(4));//(int) (Math.pow(Integer.parseInt(base), Integer.parseInt(order)) * Integer.parseInt(frequency));// Integer.parseInt(order);
         String constReliability = "0.9999"; //Used for internal structures
 
-        System.out.println("Sample Size: " + sampleSizeMonteCarlo);
+        // System.out.println("Sample Size: " + sampleSizeMonteCarlo);
         //System.out.println("base: " + base + "  Order: " + order  + "  Frequency: " + frequency);
 
         //String[] arrOfStr = circuit.split("/", 2);
@@ -521,9 +526,10 @@ public class Commands {
         for(int i = 4 ; i < splittedCommand.size(); i++) {
             x.add(Float.parseFloat(splittedCommand.get(i)));
         }
-        System.out.println("X array :" + x);
+        //System.out.println("X array :" + x);
         constReliability = "0.9999"; //Used for internal structures
         String relativePath = "";
+
         try {
             String[] textoSeparado = genlib.split("/");
             String[] circ = circuit.split("/");
@@ -531,7 +537,7 @@ public class Commands {
             for (int i = 0; i < textoSeparado.length - 1; i++) {
                 relativePath = relativePath + textoSeparado[i] + "/";
             }
-
+            //System.out.println("Relative Path: " + relativePath + "    mtf: " + x);
             this.relative_path = relativePath;
             this.genlib = textoSeparado[textoSeparado.length-1];
             this.circuit_analysis = circ[circ.length-1];
@@ -543,50 +549,61 @@ public class Commands {
             this.circuit_analysis = circuit;
             this.genlib = genlib;
         }
-
+        /*
         File tmpDir = new File(circuit);
         boolean exists = tmpDir.exists();
 
         File genDir = new File(genlib);
         boolean exists2 = genDir.exists();
+        */
 
-        if (exists && exists2){
+            /*
             System.out.println(" ------ Inside -------");
             System.out.println("Relative Path: " + relativePath);
             System.out.println("Genlib : " + genlib);
             System.out.println("Genlib Texto Separado: " + this.relative_path);
+            */
 
+        /*
             main experimento = new main(threads, constReliability, relativePath, this.relative_path  + this.genlib);
-
             experimento.preparingEnviromentSingleFile(this.circuit_analysis);
-
             experimento.monteCarloSimulationMultipleTransientFaultsProportion(sampleSizeMonteCarlo, x, "ALL_SIGNALS");
+        */
 
-            System.out.println("Simulation results:\n" + experimento.getFMR());
+            SimulationCircuit simulationCircuit = new SimulationCircuit(circuit, relativePath, genlib, "ALL_SIGNALS", threads, constReliability, x);
+                //simulationCircuit.print();
+                SimulationMode experimento = new SimulationMode(simulationCircuit);
+                        experimento.printSpecSimulation();
+                            experimento.monteCarloSimulationMultipleTransientFaults();
+
+                        System.out.println("---> Simulation results:\n" + experimento.getFMR());
 
             Terminal.getInstance().terminalOutput("Simulation results with " + threads + " threads "
                     + ": " + experimento.getFMR());
-        }
-        else{
-            System.out.println("File or genlib not exist : " + circuit + "   -  " + genlib);
-        }
-
-
 
     }
 
 
-
-    public void Exaustive_Fault_injection(String genlib, String circuit, String flag) throws IOException, ScriptException, Exception {
+    /**
+     *
+     * @param genlib
+     * @param circuit
+     * @param flag
+     * @param path
+     * @throws IOException
+     * @throws ScriptException
+     * @throws Exception
+     */
+    public void Exaustive_Fault_injection(String genlib, String circuit, String flag, String path) throws IOException, ScriptException, Exception {
         //String path = CommonOps.getWorkPath(this) + "abc" + File.separator + filename;
-        System.out.println("Exaustive Simulation ....");
-        System.out.println("Genlib: "+ genlib);
-        System.out.println("Circuit: "+ circuit);
-        System.out.println("MC_Sample: "+ flag);
+        System.out.println("Exaustive STF Simulation ....");
+        //System.out.println("--> Genlib: "+ genlib);
+        //System.out.println("Circuit: "+ circuit);
+        //System.out.println("MC_Sample: "+ flag);
         
         /* Chamar a muinha ferramenta */
         
-         int threads = 4; //Numero de threads
+         int threads = 8; //Numero de threads
          //int sampleSizeMonteCarlo = Integer.parseInt(mc_sample);
          String constReliability = "0.9999"; //Used for internal structures
          
@@ -603,7 +620,11 @@ public class Commands {
              
          constReliability = "0.9999"; //Used for internal structures
         // String relativePath = "abc/";
-        String relativePath = "";
+        String relativePath = path;
+
+        checkFiles checkFiles = new checkFiles();
+        relativePath = checkFiles.split_PathString(genlib);
+
         try {
               String[] textoSeparado = genlib.split("/");
               String[] circ = circuit.split("/");
@@ -623,33 +644,18 @@ public class Commands {
              this.circuit_analysis = circuit;
              this.genlib = genlib;
         }
-         
-         
-         
-          
-             
-             //String genlib =  relativePath  + "lib_basic_no_cost.genlib";
-            
-             //genlib =  relativePath  + "cadence.genlib";
-              File tmpDir = new File(circuit);
-              boolean exists = tmpDir.exists();
-              
-              File genDir = new File(genlib);
-              boolean exists2 = genDir.exists();
-              
-              if (exists && exists2){
-                            System.out.println(" ------ In"
-                                    + "side -------");
-                      System.out.println("Relative Path: " + relativePath);
-                      System.out.println("Genlib : " + genlib);
-                      System.out.println("Genlib Texto Separado: " + this.relative_path);
-
-                        main experimento = new main(threads, constReliability, relativePath, this.relative_path  + this.genlib);
-
-                        experimento.preparingEnviromentSingleFile(this.circuit_analysis);
 
 
-                       experimento.multithreadingSimulationExaustic();
+
+                        //main experimento = new main(threads, constReliability, relativePath, this.relative_path  + this.genlib);
+                        //experimento.preparingEnviromentSingleFile(this.circuit_analysis);
+                       //experimento.multithreadingSimulationExaustic();
+
+                          SimulationCircuit simulationCircuit = new SimulationCircuit(circuit, relativePath, path + genlib, "ALL_SIGNALS", threads, constReliability, 1);
+                          //simulationCircuit.print();
+                          SimulationMode experimento = new SimulationMode(simulationCircuit);
+                          experimento.printSpecSimulation();
+                          experimento.multithreadingSimulationExaustic();
 
                        System.out.println("Simulation results:\n"
                                
@@ -659,15 +665,8 @@ public class Commands {
                        
                         Terminal.getInstance().terminalOutput("Simulation results with " + threads + " threads "
                                 + ": " + experimento.getFMR());
-                }
-              
-                else{
-                    System.out.println("File or genlib not exist : " + circuit + "   -  " + genlib);
-                }
-           
-           
-        
     }
+
 
     public void Exaustive_Fault_injectionComplete(String genlib, String circuit, String flag) throws IOException, ScriptException, Exception {
         //String path = CommonOps.getWorkPath(this) + "abc" + File.separator + filename;
@@ -695,52 +694,33 @@ public class Commands {
 
         constReliability = "0.9999"; //Used for internal structures
         // String relativePath = "abc/";
-        String relativePath = "";
-        try {
-            String[] textoSeparado = genlib.split("/");
-            String[] circ = circuit.split("/");
 
-            for (int i = 0; i < textoSeparado.length - 1; i++) {
-                relativePath = relativePath + textoSeparado[i] + "/";
-            }
+        System.out.println("! GEN: " + genlib);
+
+        checkFiles checkFiles = new checkFiles();
+        String relativePath = checkFiles.split_PathString(genlib) ;
+
+        System.out.println("PATH>>>>: " + relativePath);
+
+        genlib = checkFiles.split_Genlib(genlib);
+        System.out.println("GEN: " + genlib);
+
 
             this.relative_path = relativePath;
-            this.genlib = textoSeparado[textoSeparado.length-1];
-            this.circuit_analysis = circ[circ.length-1];
-
-        } catch (Exception e) {
-
-            System.out.println("Error... ");
-            this.relative_path = "";
-            this.circuit_analysis = circuit;
             this.genlib = genlib;
-        }
+            this.circuit_analysis = circuit;
 
 
-
-
-
-        //String genlib =  relativePath  + "lib_basic_no_cost.genlib";
-
-        //genlib =  relativePath  + "cadence.genlib";
-        File tmpDir = new File(circuit);
-        boolean exists = tmpDir.exists();
-
-        File genDir = new File(genlib);
-        boolean exists2 = genDir.exists();
-
-        if (exists && exists2){
-            System.out.println(" ------ In"
-                    + "side -------");
-            System.out.println("Relative Path: " + relativePath);
-            System.out.println("Genlib : " + genlib);
-            System.out.println("Genlib Texto Separado: " + this.relative_path);
-
+            /*
             main experimento = new main(threads, constReliability, relativePath, this.relative_path  + this.genlib);
-
             experimento.preparingEnviromentSingleFile(this.circuit_analysis);
+            experimento.multithreadingSimulationExausticComplete();
+             */
 
-
+            SimulationCircuit simulationCircuit = new SimulationCircuit(circuit, relativePath, relativePath +  genlib, "ALL_SIGNALS", threads, constReliability, 1);
+            //simulationCircuit.print();
+            SimulationMode experimento = new SimulationMode(simulationCircuit);
+            experimento.printSpecSimulation();
             experimento.multithreadingSimulationExausticComplete();
 
             System.out.println("Simulation results:\n"
@@ -751,13 +731,6 @@ public class Commands {
 
             Terminal.getInstance().terminalOutput("Simulation results with " + threads + " threads "
                     + ": " + experimento.getFMR());
-        }
-
-        else{
-            System.out.println("File or genlib not exist : " + circuit + "   -  " + genlib);
-        }
-
-
 
     }
 

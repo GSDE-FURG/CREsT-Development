@@ -504,14 +504,32 @@ class CommandProcessor {
                         //System.out.println("3 position : " +
                         //       splittedCommand.get(3) + "size : " + splittedCommand.size());
                         if(splittedCommand.size() == 5 && splittedCommand.get(4).equals("-complete")){
-                            System.out.println("INSIDEE");
-                            cmd.Exaustive_Fault_injectionComplete(splittedCommand.get(1), splittedCommand.get(2), splittedCommand.get(3)); // Exaustive Simulation
+                            checkFiles checkFiles = new checkFiles();
+                            String path = checkFiles.split_PathString(splittedCommand.get(1));
+                            System.out.println(path);
+                            if(checkFiles.dirExists(path) && checkFiles.fileExists(splittedCommand.get(2))){
+                                cmd.Exaustive_Fault_injectionComplete(splittedCommand.get(1), splittedCommand.get(2), splittedCommand.get(3)); // Exaustive Simulation
+                                success = true;
+                            }else{
+                                System.err.println("- Files not founded (genlib or circuit)");
+                                success = false;
+                            }
                             success = true;
                         }
                         if((splittedCommand.size() <= 4) && (splittedCommand.get(3).equals("-exhaustive"))){
                             //System.out.println("Inside Exaustive");
-                            cmd.Exaustive_Fault_injection(splittedCommand.get(1), splittedCommand.get(2), splittedCommand.get(3)); // Exaustive Simulation
-                            success = true;
+                            checkFiles checkFiles = new checkFiles();
+                            String path = checkFiles.split_PathString(splittedCommand.get(1));
+                            System.out.println(path);
+                            if(checkFiles.dirExists(path) && checkFiles.fileExists(splittedCommand.get(2))){
+                                //cmd.Monte_Carlo_Multiple_Transient_Fault_Injection_Proportion(splittedCommand.get(1), splittedCommand.get(2), splittedCommand); // MC 20000 - MTF SINGLES DOUBLES TRIPLES
+                                cmd.Exaustive_Fault_injection(checkFiles.split_Genlib(splittedCommand.get(1)), splittedCommand.get(2), splittedCommand.get(3), path); // Exaustive Simulation
+                                success = true;
+                            }else{
+                                System.err.println("- Files not founded (genlib or circuit)");
+                                success = false;
+                            }
+
                         }else{
 
                             if((splittedCommand.get(3).equals("-mc")) && (splittedCommand.size() == 4)){
@@ -519,10 +537,10 @@ class CommandProcessor {
                                 success = true;
                             }
                             if((splittedCommand.get(3).equals("-mc")) && (splittedCommand.size() > 4)){
-                                System.out.println("- Dev Mode  ->>>>>>>>> Inside Multiple Fault injection ..... : " + splittedCommand);
+                                //System.out.println("- Dev Mode  ->>>>>>>>> Inside Multiple Fault injection ..... : " + splittedCommand);
                                 checkFiles checkFiles = new checkFiles();
                                     String path = checkFiles.split_PathString(splittedCommand.get(1));
-                                System.out.println(path);
+                                //System.out.println(path);
                                 if(checkFiles.dirExists(path) && checkFiles.fileExists(splittedCommand.get(2))){
                                     cmd.Monte_Carlo_Multiple_Transient_Fault_Injection_Proportion(splittedCommand.get(1), splittedCommand.get(2), splittedCommand); // MC 20000 - MTF SINGLES DOUBLES TRIPLES
                                     success = true;

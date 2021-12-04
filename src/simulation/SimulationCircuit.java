@@ -136,6 +136,20 @@ public class SimulationCircuit {
         this.mtf_sizes = mtf_sizes;
     }
 
+    public void print(){
+        System.out.println();
+        System.out.println("------------simulationCircuit------------------");
+        System.out.println("    -Name: " + this.getCircuit());
+        System.out.println("    -Genlib: " + this.getGenlib());
+        System.out.println("    -Path: " + this.getRelativePath());
+        System.out.println("    -SampleSize: " + this.getSample());
+        System.out.println("    -ReliabilityConst: " + this.getReliabilityConst());
+        System.out.println("    -OUTPUTINFO: " + this.getOUTPUT_INFO());
+        System.out.println("------------------------------");
+
+
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

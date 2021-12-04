@@ -1565,9 +1565,11 @@ public class Management extends MAIN {
                         Instant startPreparingSimulationTimeElapsed = Instant.now();
 
                         this.sampleSize = sampleSize; //(int) Math.pow(2, this.probCircuit.getInputs().size());  //(int) Math.pow(2, this.probCircuit.getInputs().size());
+
                         int N = this.sampleSize; // random_input_vectors.size();//testNumber;
 
                         System.out.println("\n-  (input) Sample size = " + this.sampleSize);
+
                         this.mtf_list = mtf_list;
 
                         this.signals_to_inject_faults = this.signalsToInjectFault("ALL_SIGNALS"); // Consider all signals to fault inject
