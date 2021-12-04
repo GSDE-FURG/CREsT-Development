@@ -6,6 +6,8 @@
 package tool;
 
 
+import simulation.checkFiles;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -467,7 +469,7 @@ class CommandProcessor {
             case "mc_fault_injection":
                 /* Testing block  */
 
-                System.out.println("Command: " + splittedCommand);
+                //System.out.println("Command: " + splittedCommand);
 
                 /*
                 splittedCommand.add(1, "teste/cadence.genlib");
@@ -517,9 +519,18 @@ class CommandProcessor {
                                 success = true;
                             }
                             if((splittedCommand.get(3).equals("-mc")) && (splittedCommand.size() > 4)){
-                                System.out.println("Dev Mode  ->>>>>>>>> Inside Multiple Fault injection ..... : " + splittedCommand);
-                                cmd.Monte_Carlo_Multiple_Transient_Fault_Injection_Proportion(splittedCommand.get(1), splittedCommand.get(2), splittedCommand); // MC 20000 - MTF SINGLES DOUBLES TRIPLES
-                                success = true;
+                                System.out.println("- Dev Mode  ->>>>>>>>> Inside Multiple Fault injection ..... : " + splittedCommand);
+                                checkFiles checkFiles = new checkFiles();
+                                    String path = checkFiles.split_PathString(splittedCommand.get(1));
+                                System.out.println(path);
+                                if(checkFiles.dirExists(path) && checkFiles.fileExists(splittedCommand.get(2))){
+                                    cmd.Monte_Carlo_Multiple_Transient_Fault_Injection_Proportion(splittedCommand.get(1), splittedCommand.get(2), splittedCommand); // MC 20000 - MTF SINGLES DOUBLES TRIPLES
+                                    success = true;
+                                }else{
+                                    System.err.println("- Files not founded (genlib or circuit)");
+                                    success = false;
+                                }
+
                             }
 
                             /*                  OLD METHOD FOR MTF OverWrite

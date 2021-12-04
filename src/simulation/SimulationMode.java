@@ -75,8 +75,6 @@ public class SimulationMode {
                     + "2^Signals * Gates)");
     }
 
-
-
     public void printSpecSimulation(){
 
         if(this.simulationCircuit.getMode().equals("STF")){

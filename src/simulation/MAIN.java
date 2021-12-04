@@ -2,7 +2,7 @@ package simulation;
 
 import java.util.ArrayList;
 
-public class MAIN {
+public class MAIN {  // Class to run debug tests
     int threads;
     int sample;
     String reliabilityConst;
@@ -11,17 +11,18 @@ public class MAIN {
     String OUTPUT_INFO;
 
     public MAIN(int threads, String reliabilityConst, String relativePath, String genlib){
-
+            this.threads = threads;
+            this.reliabilityConst = reliabilityConst;
+            this.relativePath = relativePath;
+            this.genlib = genlib;
     }
 
     public static void main(String[] args) throws Exception{
-        System.out.println("New methodology....");
-
-        String relativePath = "teste/cccc/circuitos_pequenos/";
-        String genlib = "cadence.genlib"; //"cadence.genlib";
-        String signalsToinjectFault = "ALL_SIGNALS";
-        String constReliability = "0.9999";
-
+        System.out.println("- New methodology....");
+            String relativePath = "teste/cccc/circuitos_pequenos/";
+            String genlib = "cadence.genlib"; //"cadence.genlib";
+            String signalsToinjectFault = "ALL_SIGNALS";
+            String constReliability = "0.9999";
 
 
         int sampleSize = 20000;
@@ -50,10 +51,11 @@ public class MAIN {
         SimulationInLot simulationInLotMTF = new SimulationInLot();
         simulationInLotMTF.setup(relativePath, genlib, threads);
         simulationInLotMTF.processParser(signalsToinjectFault, constReliability, mtf_sizes);
-        SimulationMode sim_mtf = new SimulationMode(simulationInLotMTF.getCircuitListSpecs().get(0)); // first Circuit c.v
-        //sim_mtf.monteCarloSimulationMultipleTransientFaults();
-        sim_mtf.monteCarloSimulationMultipleTransientFaultsProportionAndCalculationOfSensitiveArea("netlist_files/", "45nm_HP.pm", "Library.txt");
-        //sim_mtf.monteCarloSimulationMultipleTransientFaultsProportionAndCalculationOfSensitiveArea();
+
+            SimulationMode sim_mtf = new SimulationMode(simulationInLotMTF.getCircuitListSpecs().get(0)); // first Circuit c.v
+            sim_mtf.monteCarloSimulationMultipleTransientFaults();
+            //sim_mtf.monteCarloSimulationMultipleTransientFaultsProportionAndCalculationOfSensitiveArea("netlist_files/", "45nm_HP.pm", "Library.txt");
+            //sim_mtf.monteCarloSimulationMultipleTransientFaultsProportionAndCalculationOfSensitiveArea();
 
 
     }
