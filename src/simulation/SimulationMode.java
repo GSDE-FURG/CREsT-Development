@@ -31,21 +31,19 @@ public class SimulationMode {
                 this.OUTPUT_INFO = simulacaoMultithreading.getFRM(" MTFT Sample (Monte Carlo = N)");
 
     }
-    public void runElectricalSimulation(String relativePath, String folderNGspice,String spiceCircuit) throws Exception{
+    public void runElectricalSimulation(String pathElectricSimulator, String pathSpiceCircuit) throws Exception{
 
         this.printSpecSimulation();
 
         Management simulacaoMultithreading = new Management(simulationCircuit.getThreads(), simulationCircuit.getReliabilityConst(), simulationCircuit.getRelativePath(),
                 simulationCircuit.getRelativePath(), simulationCircuit.getRelativePath() + simulationCircuit.getCircuit());
 
-        //simulacaoMultithreading.runMultithreadingMonteCarlo(Math.round(simulationCircuit.getMtf_sizes().get(0)), "ALL_SIGNALS");
+            //checkFiles a = new checkFiles();
+           // a.fileExists(pathElectricSimulator + pathSpiceCircuit);
 
-           // simulacaoMultithreading.runMTFMonteCarlo_calulateSensitiveArea(Math.round(simulationCircuit.getMtf_sizes().get(0)), simulationCircuit.getMtf_sizes(), simulationCircuit.getSignalsToinjectFault(), simulationCircuit.getRelativePath() + "lookup_table.csv");
-           //     simulacaoMultithreading.generateSensitiveNodesForSETSpiceFile(spiceScriptsFolder, PTMLibrary,spiceCircuit);
-           //      simulacaoMultithreading.printSensitiveAreas();
-        System.out.println(relativePath +  "  --  " + spiceCircuit);
-                simulacaoMultithreading.runElectricalSimulator(relativePath, folderNGspice + spiceCircuit);
-        //this.OUTPUT_INFO = simulacaoMultithreading.getFRM(" MTFT Sample (Monte Carlo = N)");
+                simulacaoMultithreading.runElectricalSimulator(pathElectricSimulator, pathSpiceCircuit);
+
+                //this.OUTPUT_INFO = simulacaoMultithreading.getFRM(" MTFT Sample (Monte Carlo = N)");
 
     }
 

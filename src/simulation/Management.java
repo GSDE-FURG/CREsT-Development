@@ -1638,188 +1638,6 @@ public class Management extends MAIN {
 
         }
 
-        public void runMultipleFaultInjectionMultithreadingMonteCarloSimulationProportionOLD(int sample, ArrayList <Float> mtf_list, String option) throws IOException, Exception{
-
-                System.out.println("SUM PROPORTION: " + sumProportionPercentage(mtf_list));
-
-                if (sumProportionPercentage(mtf_list) == 1.0) {  // 100%
-
-                        System.out.println(" ----- Monte Carlo version  for Multiple Transient Fault Injection -------");
-
-                        Instant start = Instant.now();
-
-                        int sampleSize = sample;//mtf_list.get(0);
-
-                        System.out.println("        - SampleSize: " + sampleSize);
-
-                        LocalDateTime myDateObj = LocalDateTime.now();
-                        DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
-                        String formattedDate = myDateObj.format(myFormatObj);
-                        System.out.println("    - Simulation start in : " + formattedDate);
-                        System.out.println("    - Threads in execution: " + this.threads);
-
-                        /*Reading CellLibrary*/
-                        //System.out.println("1");
-                        CellLibrary cellLib = new CellLibrary();
-                        //System.out.println("2");
-                        this.cellLibrary = cellLib;
-                        //System.out.println("3");
-                        this.cellLibrary.initLibrary(this.genlib);
-                        //System.out.println("4");
-
-                        System.out.println("    ... Reading Genlib " + " at -> " + this.genlib + " ... ok");
-                        //System.out.println("  - Avaliable logic gatesin this library: "+cellLib.getCells());
-
-                        System.out.println("    ... Reading verilog " + " at -> " + this.circuitNameStr + " ... ok");
-                        /*Reading verilog*/
-                        MappedVerilogReader verilog_circuit = new MappedVerilogReader(this.circuitNameStr, this.cellLibrary);
-                        this.verilog_circuit = verilog_circuit;
-                        /*Circuit linked to verilog_circuit - init circuit*/
-                        this.circuit = verilog_circuit.getCircuit();
-
-                        //System.out.println("Patterns : " + this.verilog_circuit.getGatePattern());
-
-
-                        /*Circuit Probabilities */
-                        this.initLevelCircuit();
-
-                        /*Init ProbCircuits*/
-                        this.initProbCircuit();
-
-                        /*Init PTMs Const*/
-                        cellLib.setPTMCells2(Float.valueOf(this.reliabilityConst));
-                        cellLib.setPTMCells(new BigDecimal(this.reliabilityConst));
-
-                        Instant loadTimeElapsed = Instant.now();
-
-                        System.out.println("\n        ------ Printing Circuit Specs: --------");
-                        //this.PrintSpecs();
-                        System.out.println("          ---------------------------------------\n");
-                        /*----------------------*/
-
-                        Instant startPreparingSimulationTimeElapsed = Instant.now();
-
-                        this.sampleSize = sampleSize; //(int) Math.pow(2, this.probCircuit.getInputs().size());  //(int) Math.pow(2, this.probCircuit.getInputs().size());
-                        int N = this.sampleSize; // random_input_vectors.size();//testNumber;
-                        //int period =  (int) Math.pow(base, order);
-                        System.out.println("-  (input) Sample size = " + this.sampleSize);
-
-                        this.signals_to_inject_faults = this.signalsToInjectFault(option); // Consider all signals to fault inject
-
-                        ArrayList<String> random_input_vectors = this.generateInputVector("RANDOM"); // Generate Random Input Vectors or InputTrueTable
-
-                        //Collections.sort(random_input_vectors);
-
-                        ///
-                        //System.out.println(" ....... dev input vectors size: " + random_input_vectors.size());
-
-                        ArrayList<ArrayList<Integer>> ListInputVectors = this.splitInputPatternsInInt(random_input_vectors, this.probCircuit.getInputs().size());
-
-                        ArrayList<Float> tt = new ArrayList<>(mtf_list);
-                        tt.remove(0); // 20k
-
-                        final ArrayList<Float> arrayList_mtf_original = new ArrayList<>(tt); // Original ArrayList
-
-                        //List thread_list = this.particionateMultipletransientFaultInjectionVectorPerThreadMODE(ListInputVectors, mtf_list); // x - vectors per thread
-                        List thread_list = this.particionateMultipletransientFaultInjectionVectorPerThreadProportion(ListInputVectors, mtf_list); // x - vectors per thread
-
-                        Instant endPreparingSimulationTimeElapsed = Instant.now();
-
-                        Instant startThreadingTimeElapsed = Instant.now();
-
-                        /*Execução das threads*/
-                        Thread thread_temp = null;
-                        for (int i = 0; i < thread_list.size(); i++) {
-                                thread_temp = (Thread) thread_list.get(i);
-                                thread_temp.start();
-                        }
-                        /*Esperando termino das threads*/
-                        for (int i = 0; i < thread_list.size(); i++) {
-                                thread_temp = (Thread) thread_list.get(i);
-                                thread_temp.join();
-                        }
-
-                        Instant endThreadingTimeElapsed = Instant.now();
-
-                        /* Compilando os resultados - Falhas detectadas Ne*/
-                        int bitfipCcounter = 0;
-
-                        for (int i = 0; i < this.itemx_list.size(); i++) {
-                                System.out.println(" itemx_list: " + itemx_list.get(i) + " prop: " + itemx_list.get(i).getPropagatedFaults());
-                                this.unmasked_faults = this.unmasked_faults + itemx_list.get(i).getPropagatedFaults();
-                                bitfipCcounter = bitfipCcounter + itemx_list.get(i).bitflipcounter;
-                        }
-
-
-                        this.circuitReliaibility = (float) (1.0 - ((float) this.unmasked_faults / (float) this.sampleSize));
-
-                        /*circuit reliability SER (Soft Error Rate)*/
-                        //this.circuitReliaibility = (1 - (this.unmasked_faults/this.sampleSize));
-
-
-                        Instant finish = Instant.now();
-                        long timeElapsed_Instant = Duration.between(start, finish).toSeconds();
-
-                        LocalDateTime myDateObj2 = LocalDateTime.now();
-                        DateTimeFormatter myFormatObj2 = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
-                        String formattedDate2 = myDateObj2.format(myFormatObj2);
-
-                        Instant startTimelogGeneration = Instant.now();
-
-                        long timeElapsed_loadTime = Duration.between(start, loadTimeElapsed).toSeconds();
-                        long timeElapsed_PrepareTime = Duration.between(startPreparingSimulationTimeElapsed, endPreparingSimulationTimeElapsed).toSeconds();
-                        long timeElapsed_ThreadingTime = Duration.between(startThreadingTimeElapsed, endThreadingTimeElapsed).toSeconds();
-
-                        //this.writeSimpleLogMultipleTransientFault(option + "_MULTIPLE_MonteCarlo_Simple_Log_" +this.circuit.getName()+"_Threads-"+ this.threads +  "_sampleSize-" + this.sampleSize, formattedDate,  formattedDate2, timeElapsed_Instant, arrayList_mtf_original);
-                        //this.writeSimpleLogMultipleTransientFaultProportion(option + "_MULTIPLE_MonteCarlo_Simple_Log_" + this.circuit.getName() + "_Threads-" + this.threads + "_sampleSize-" + this.sampleSize, formattedDate, formattedDate2, timeElapsed_Instant, arrayList_mtf_original);
-                        //this.writeLogs(option + "_MTF_MonteCarlo_Simple_Log_" +this.circuit.getName()+"_Threads-"+ this.threads +  "_sampleSize-" + this.sampleSize, formattedDate,  formattedDate2, timeElapsed_Instant, itemx_list, "MTF-PROP");
-                        WriteLog log_MTF_PROP = new WriteLog(this.sampleSize, this.threads,
-                                this.unmasked_faults, this.circuitReliaibility, this.circuit,
-                                this.verilog_circuit, this.signals_to_inject_faults, this.mtf_list);
-                        log_MTF_PROP.writeSimpleLogMultipleTransientFaultProportion(option + "_MULTIPLE_MonteCarlo_Simple_Log_" + this.circuit.getName() + "_Threads-" + this.threads + "_sampleSize-" + this.sampleSize, formattedDate, formattedDate2, timeElapsed_Instant, arrayList_mtf_original);
-
-                        log_MTF_PROP.writeCsvFileCompleteThMTF(option + "_MULTIPLE_MonteCarlo_Complete_Log_" + this.circuit.getName() + "_Theads-" + this.threads + "_sampleSize" + this.sampleSize, itemx_list);
-
-                        //this.writeCsvFileCompleteThMTF(option + "_MULTIPLE_MonteCarlo_Complete_Log_" + this.circuit.getName() + "_Theads-" + this.threads + "_sampleSize" + this.sampleSize, itemx_list);
-
-                        Instant endTimelogGeneration = Instant.now();
-
-
-                        long timeElapsed_logGeneration = Duration.between(startTimelogGeneration, endTimelogGeneration).toSeconds();
-
-                        System.out.println("\n\n----------------- Results ------------------");
-                        System.out.println("Circuit: " + this.circuit.getName());
-                        System.out.println("- Simulation started at: " + formattedDate + " and finished at: " + formattedDate2); //formattedDate
-
-                        // System.out.println("- PropagatedTime (s): " + propagateTime);
-                        System.out.println("- Sample Size (N): " + N);
-                        System.out.println("- Propagated fault(s) (Ne): " + this.unmasked_faults);
-                        System.out.println("- Fault Mask Rate (FMR): " + " 1 - Ne/N = (1-(" + this.unmasked_faults + "/" + N + ")) = " + this.circuitReliaibility);
-                        //System.out.println("- MTBF (Mean Time Between failure) : " + this.MTBF);
-                        // System.out.println("- Simulation TimeElapsed: " + propagateTimems + "(ms)");
-
-                        String time = "- Load Time : " + timeElapsed_loadTime + "(s) - Setup Time: " + timeElapsed_PrepareTime + "(s) - Threading Execution Time: " + timeElapsed_ThreadingTime
-                                + "(s) - Log Generation: " + timeElapsed_logGeneration
-                                + "(s) - Simulation Instant TimeElapsed: " + timeElapsed_Instant + " (s)";
-
-                        // ArrayList <Integer> new_MTF = passProportionPercentage(arrayList_mtf_original, sample);
-                        System.out.println("- MTF order list: " + mtf_list);
-
-                        System.out.println("- Bitflip Counter: " + bitfipCcounter);
-                        System.out.println(time);
-
-                        System.out.println("--------------------------------------------");
-                        this.Performance_Time = "Simulation started at: " + formattedDate
-                                + " and finished at: " + formattedDate2;
-                        this.sampleSize = N;
-                        System.out.println(" ----------------------------------------------------------------------------------------------------------------------\n\n...");
-                }
-                else{
-                        System.err.println("- Inputs inserted sum up ("+sumProportionPercentage(mtf_list)+") above 1 (100%), these were the inserted commands: " + mtf_list);
-                }
-
-        }
-
         /**
          * This method orchestrates the settup enviroment for run Multithreading SET evalaution (LOGICAL SIMULATOR)
          * @param sample
@@ -2002,22 +1820,25 @@ public class Management extends MAIN {
 
         }
 
-        public void runElectricalSimulator(String path, String spiceCircuito){
+        public void runElectricalSimulator(String electricalSimulator, String spiceCircuit){
+
                 try {
+
                         Runtime runTime = Runtime.getRuntime();
 
-                        File f = new File(path + spiceCircuito);
+                        File f = new File(electricalSimulator + spiceCircuit);
 
                         // Checking if the specified file exists or not
-                        System.out.println("PAth: " + path + " Spice: " + spiceCircuito);
-                        System.out.println( path + "ngspice.exe " + spiceCircuito);
-                        if (f.exists()) {
+                        //System.out.println("PAth: " + electricalSimulator + " Spice: " + spiceCircuit);
+                        //System.out.println( path + "ngspice.exe " + spiceCircuito);
 
-                                String executablePath = path + "ngspice.exe " + spiceCircuito;//"C:\\Users\\sdkca\\AppData\\Local\\Programs\\Microsoft VS Code\\Code.exe";
-                                System.out.println(executablePath);
+                        if (f.exists()) {
+                                System.out.println("- Running Electrical Simulator for file:   " +  electricalSimulator + spiceCircuit);
+                                String executablePath = electricalSimulator + "ngspice.exe " + electricalSimulator + spiceCircuit;//"C:\\Users\\sdkca\\AppData\\Local\\Programs\\Microsoft VS Code\\Code.exe";
+                                //System.out.println(executablePath);
                                 Process process = runTime.exec(executablePath);
                         }else{
-                                System.out.println("File dont exist: " + spiceCircuito);
+                                System.out.println("- File dont exist: " + electricalSimulator + spiceCircuit);
                         }
                 } catch (IOException e) {
                         e.printStackTrace();
@@ -2103,157 +1924,6 @@ public class Management extends MAIN {
                         e.printStackTrace();
                 }
                 return sensitive_cells;
-        }
-
-        public void runCalculationSensitiveAreas(String option, String file) throws IOException, Exception{ //Test All possibilities
-                System.out.println(" ----- Calculate Sensitive Areas -------");
-                System.out.println("File: " + file);
-                //file = "teste\\lookup_table.csv";
-                //System.out.println("File: " + file);
-
-                Map <String, SensitiveCell> sensitive_cells = readCsvFileAndMapSensitiveCellsArea(file, ",");
-
-                System.out.println("Sensitive Cells: " + sensitive_cells);
-
-                long loadTimeStart = System.nanoTime();//System.currentTimeMillis();
-
-                LocalDateTime myDateObj = LocalDateTime.now();
-                DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
-                String formattedDate = myDateObj.format(myFormatObj);
-                System.out.println("    - Simulation start in : " + formattedDate);
-                System.out.println("    - Threads in execution: " + this.threads);
-
-                /*Reading CellLibrary*/
-                CellLibrary cellLib = new CellLibrary();
-
-                // System.out.println("1");
-                this.cellLibrary = cellLib;
-                // System.out.println("2");
-                this.cellLibrary.initLibrary(this.genlib);
-                System.out.println("3"
-                        + "");
-                System.out.println("    ... Reading Genlib " + " at -> " + this.genlib  + " ... ok");
-                //System.out.println("  - Avaliable logic gatesin this library: "+cellLib.getCells());
-
-
-                /*Reading verilog*/
-                MappedVerilogReader verilog_circuit = new MappedVerilogReader(this.circuitNameStr, this.cellLibrary);
-                this.verilog_circuit = verilog_circuit;
-                /*Circuit linked to verilog_circuit - init circuit*/
-                this.circuit = verilog_circuit.getCircuit();
-                System.out.println("    ... Reading verilog "+ " at -> " + this.circuitNameStr  + " ... ok");
-                //System.out.println("Patterns : " + this.verilog_circuit.getGatePattern());
-
-
-
-                /* Print circuit Specs*/
-                System.out.println("\n        ------ Printing Circuit Specs: --------");
-                //this.PrintSpecsThesis();
-                System.out.println("          ---------------------------------------\n");
-                /*----------------------*/
-
-
-                /*Circuit Probabilities */
-                this.initLevelCircuit();
-
-                /*Init ProbCircuits*/
-                this.initProbCircuit();
-
-                /*Init PTMs Const*/
-                cellLib.setPTMCells2(Float.valueOf(this.reliabilityConst));
-                cellLib.setPTMCells(new BigDecimal(this.reliabilityConst));
-
-                long loadTimeEnd = System.nanoTime();//System.currentTimeMillis();
-                long loadTime =   TimeUnit.NANOSECONDS.toMillis(loadTimeEnd - loadTimeStart);
-                //System.out.println("- Load Time m(s): " + loadTime);
-
-                this.sampleSize = (int) Math.pow(2, this.probCircuit.getInputs().size());  //(int) Math.pow(2, this.probCircuit.getInputs().size());
-                int N = this.sampleSize; // random_input_vectors.size();//testNumber;
-
-                int sizeExasuticTest;
-
-                System.out.println("-   Sample size (N = 2^ENTRADAS): " + "2^"+ this.circuit.getInputs().size() + " = " + this.sampleSize);
-
-                this.signals_to_inject_faults = this.signalsToInjectFault(option); // Consider all signals to fault inject
-
-                sizeExasuticTest = this.sampleSize;//(this.sampleSize * this.signals_to_inject_faults.size());
-
-                ArrayList <String> random_input_vectors =  this.generateInputVector("TRUE_TABLE"); //this.calcInputTableVector(this.probCircuit.getInputs().size(), this.sampleSize);
-
-                ArrayList <ArrayList<Integer>> ListInputVectors =  this.splitInputPatternsInInt(random_input_vectors, this.probCircuit.getInputs().size());
-
-                System.out.println("LIST:::::: "+ ListInputVectors.size());
-
-                List thread_list = particionateExausticVectorForSensitiveAreas(ListInputVectors, sensitive_cells, "Sensitive_Area");  // TESTE ALL GATES ///particionateVectorPerThread(ListInputVectors); // x - vectors per thread
-
-                long propagateTimeStart = System.nanoTime();
-
-                /*Execução das threads*/
-                Thread thread_temp = null;
-                for (int i=0; i < thread_list.size() ; i++) {
-                        thread_temp = (Thread) thread_list.get(i);
-                        thread_temp.start();
-
-                }
-                /*Esperando termino das threads*/
-                for (int i=0; i < thread_list.size() ; i++) {
-                        thread_temp = (Thread) thread_list.get(i);
-                        thread_temp.join();
-                }
-
-                /* Compilando os resultados - Falhas detectadas Ne*/
-                //for (int i=0; i < this.itemx_list.size() ; i++) {
-                //    this.unmasked_faults = this.unmasked_faults +  itemx_list.get(i).getPropagatedFaults();
-                //}
-                for (int i = 0; i < this.itemx_list.size(); i++) {
-                        List <TestVectorInformation> x =  this.itemx_list.get(i).get_threadSimulationList();
-                        for (int j = 0; j < x.size(); j++) {
-                                System.out.println(" index: " + x.get(j).getSimulationIndex() + " vec: " + x.get(j).getinputVector() + " sensitive area sum: " + x.get(j).getSum_sensitive_cells_area() );
-                        }
-                }
-
-                //System.out.println("SIZE: " + this.itemx_list.size());
-
-                /*circuit reliability SER (Soft Error Rate)*/
-                // this.circuitReliaibility = (float) (1.0 - ((float) this.unmasked_faults / (float) sizeExasuticTest));
-
-                //System.out.println("-> Umasked Faults: " + this.unmasked_faults);
-                //System.out.println("-> Sample: " + sizeExasuticTest);
-                //System.out.println("-> SER : " + this.circuitReliaibility);
-
-
-                long propagateTimeEnd = System.nanoTime();
-                //long propagateTime =    TimeUnit.NANOSECONDS.toSeconds(propagateTimeEnd - propagateTimeStart);
-                long propagateTime =  TimeUnit.NANOSECONDS.toMillis(propagateTimeEnd - propagateTimeStart);
-
-
-                LocalDateTime myDateObj2 = LocalDateTime.now();
-                DateTimeFormatter myFormatObj2 = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
-                String formattedDate2 = myDateObj2.format(myFormatObj2);
-
-                this.sampleSize = sizeExasuticTest;
-
-                //this.writeSimpleLog("ExausticSimulation_" +this.circuit.getName()+"_Threads-"+ this.threads + "_sampleSize-" + this.sampleSize, formattedDate,  formattedDate2, propagateTime);
-
-                //this.writeCsvFileCompleteTh("ExausticSimulation_"+this.circuit.getName()+"_Theads-"+ this.threads + "_sampleSize-" + this.sampleSize, itemx_list);
-
-
-                System.out.println("\n\n----------------- Sensitive Area ------------------");
-                System.out.println("Circuit: " + this.circuit.getName());
-                System.out.println("- Simulation finished at: " + formattedDate2);
-                //System.out.println("- PropagatedTime (s): " + propagateTime);
-                System.out.println("- Sample (N): " + this.sampleSize);
-                //System.out.println("- Detected faults (Ne): " + this.unmasked_faults);
-                //System.out.println("- Fault Masking Rate (FMR): " + "(1-(" + this.unmasked_faults + "/" + this.sampleSize + ")) = " + this.circuitReliaibility);
-                // System.out.println("- MTBF (Mean Time Between failure) : " + this.MTBF);
-                System.out.println("- Simulation TimeElapsed: " + propagateTime + "(s)");
-                System.out.println("--------------------------------------------");
-
-                this.Performance_Time = "Simulation started at: " + formattedDate + " and finished at: " + formattedDate2;
-
-                System.out.println(" ----------------------------------------------------------------------------------------------------------------------------\n\n");
-                /*
-                 */
         }
 
         public void writeInformationInFileLog(String relativePath,  String header, String content, String outputFilename) throws IOException {

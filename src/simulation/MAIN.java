@@ -58,9 +58,8 @@ public class MAIN {  // Class to run debug tests
                 //sim_mtf.monteCarloSimulationMultipleTransientFaultsProportionAndCalculationOfSensitiveArea();
 
         SimulationSpiceNetlistCircuit simulationElectric= new SimulationSpiceNetlistCircuit();
-        simulationElectric.setup(relativePath + "netlist_files/", relativePath + "Library.txt");
-        simulationElectric.processParserSpiceNetlists();
-            sim_mtf.runElectricalSimulation(relativePath , "netlist_files/", simulationElectric.getCircuitsListName().get(0));  // NEdd to corrrect this art
-
+            simulationElectric.setup(relativePath + "netlist_files/", relativePath + "Library.txt");
+                simulationElectric.processParserSpiceNetlists();
+                    sim_mtf.runElectricalSimulation(relativePath , "netlist_files/" + simulationElectric.getCircuitsListName().get(0));  // fixed
     }
 }
