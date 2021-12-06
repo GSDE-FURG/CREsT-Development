@@ -3161,13 +3161,17 @@ import signalProbability.ProbCircuit;
         boolean output_converted = this.calculateTheOutputGatesInBoolean(comb, input, gate);
 
         /* Calculate Sensitive Area of This Gate */
-        SensitiveCell cell = this.sensitive_cells.get(gate.getGate().getType()  + "_" + concat_inputs);;
-        //System.out.println("-> " + gate.getGate().getType());
+            ///SensitiveCell cell = this.sensitive_cells.get(gate.getGate().getType()  + "_" + concat_inputs);
+            String key = gate.getGate().getType()  + "_" + concat_inputs;
+            SensitiveCell cell = this.sensitive_cells.get(key);
+        //  System.out.println("-> " + gate.getGate().getType() + "  cell: " + cell + "  -- key " + key + " cellList: " + this.sensitive_cells.size());
         if((cell != null)){
 
             //this.sum_sensitive_cells_area = this.sum_sensitive_cells_area + Float.parseFloat(cell.getSensitive_are());
             thread_item.sum_sensitive_cells_area(Float.parseFloat(cell.getSensitive_are()));
-            //System.out.println("idx: " + thread_item.getSimulationIndex() + "  invec: " + thread_item.getinputVector() + " gateid: " + gate.getGate().getId() + " gate: " + gate.getGate().getOutputs() + " sigs: " + gate.getGate().getInputs() +  " CEll founded: " + cell.getCell_id() + " input: " +cell.getInput_vec()  + " out: " + output + " sensitive area: "+ cell.getSensitive_are() + " sum: " + thread_item.getSum_sensitive_cells_area());
+            //System.out.println("idx: " + thread_item.getSimulationIndex() + "  invec: " + thread_item.getinputVector() + " gateid: " + gate.getGate().getId() + " gate: " + gate.getGate().getOutputs() + " sigs: " + gate.getGate().getInputs() +  " CEll founded: " + cell.getCell_id() + " input: " +cell.getInput_vec()  +
+                    //" out: " + output
+                  //   " sensitive area: "+ cell.getSensitive_are() + " sum: " + thread_item.getSum_sensitive_cells_area());
         }
 
 

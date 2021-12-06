@@ -805,6 +805,7 @@ public class Management extends MAIN {
                         LogicSimulator threadItem = new LogicSimulator(temp, this.circuit, this.cellLibrary, this.levelCircuit, start, end, this.genlib , this.circuitNameStr); // Thread contex info
 
                         threadItem.setMode("MTF-Generate_Netlist");
+                        threadItem.setSensitiveCellsMap(this.sensitive_cells);
                         itemx_list.add(threadItem);
 
                         Runnable runnable = threadItem;
@@ -1838,7 +1839,7 @@ public class Management extends MAIN {
                         Map <String, SensitiveCell> sensitive_cells = readCsvFileAndMapSensitiveCellsArea(file, ",");
                         System.out.println("Sensitive Cells: " + sensitive_cells.size());
                         this.setSensitiveCells(sensitive_cells);
-
+                        //this.sensitive_cells = sensitive_cells;
                         Instant start = Instant.now();
 
                         LocalDateTime myDateObj = LocalDateTime.now();
@@ -1905,13 +1906,13 @@ public class Management extends MAIN {
 
                         Instant endTimelogGeneration = Instant.now();
 
-                        this.writeLogs(option + "_MTF_MonteCarlo_Simple_Log_" +this.circuit.getName()+"_Threads-"+ this.threads +  "_sampleSize-" + this.sampleSize, formattedDate,  formattedDate2, timeElapsed_Instant, this.itemx_list, "MTF");
+                        this.writeLogs(this.relativePath + option + "_MTF_MonteCarlo_Simple_Log_" +this.circuit.getName()+"_Threads-"+ this.threads +  "_sampleSize-" + this.sampleSize, formattedDate,  formattedDate2, timeElapsed_Instant, this.itemx_list, "MTF");
 
                         long timeElapsed_logGeneration = Duration.between(startTimelogGeneration, endTimelogGeneration).toSeconds();
 
                         System.out.println("----------------------------------------------------------------------");
 
-                                this.printResults("MTF" , formattedDate, formattedDate2, bitfipCcounter, timeElapsed_loadTime, timeElapsed_PrepareTime, timeElapsed_ThreadingTime, timeElapsed_logGeneration, timeElapsed_Instant);
+                        this.printResults("MTF" , formattedDate, formattedDate2, bitfipCcounter, timeElapsed_loadTime, timeElapsed_PrepareTime, timeElapsed_ThreadingTime, timeElapsed_logGeneration, timeElapsed_Instant);
                         //String specific, String formattedDate, String formattedDate2,
                         // int bitfipCcounter, long timeElapsed_loadTime, long timeElapsed_PrepareTime,
                         // long timeElapsed_ThreadingTime, long timeElapsed_logGeneration, long timeElapsed_Instant){);
@@ -1927,6 +1928,19 @@ public class Management extends MAIN {
                 }
 
 
+
+        }
+
+        public void printSensitiveAreas(){
+                //System.out.println("CElls: " + this.sensitive_cells);
+                System.out.println("------------ Extracting Total vector Sensitive (Cross Sections) -------------------");
+                for (int i = 0; i < this.itemx_list.size(); i++) {
+                        List <TestVectorInformation> x =  this.itemx_list.get(i).get_threadSimulationList();
+                        for (int j = 0; j < x.size(); j++) {
+                                System.out.println(" index: " + x.get(j).getSimulationIndex() + " vec: " + x.get(j).getinputVector() + " sensitive area sum: " + x.get(j).getSum_sensitive_cells_area() );
+                        }
+                }
+                System.out.println("------------ Extracting Total vector Sensitive (Cross Sections) -------------------");
 
         }
 
@@ -1946,18 +1960,19 @@ public class Management extends MAIN {
                 this.moveFiles(this.relativePath, SpiceNetListLibrary, electricalFolderSimulation);
                 //System.out.println("---- > 3 RElative Path: " + this.relativePath + "     R: " + spiceScriptsFolder);
 
-                System.out.println(" SIZE: " + this.itemx_list.size()); //this.itemx_list
+                //System.out.println(" SIZE: " + this.itemx_list.size()); //this.itemx_list
                 int counter = 0;
 
                 // FList: " + this.threadSimulationList.get(i).get_MTF_FaultSignal_List_thd()
+                System.out.println("-Generating the spice SET files....");
                 for (int i = 0; i < this.itemx_list.size(); i++) {
 
                         for (int j = 0; j < this.itemx_list.get(i).getthreadSimulationList().size(); j++) {
 
                                 if(!(this.itemx_list.get(i).getparsedNetlistContent().get(j) == "") && (this.itemx_list.get(i).getparsedNetlistContent().get(j).length() > 0)){  // if fileContentString is not empty
-                                        List <TestVectorInformation> item = this.itemx_list.get(i).getThreadSimulatinArray();
+                                        //List <TestVectorInformation> item = this.itemx_list.get(i).getThreadSimulatinArray();
 
-                                        System.out.println(i + " thd >> vec: " + this.itemx_list.get(i).getthreadSimulationList().get(j).getinputVector() + "   content " + this.itemx_list.get(i).getparsedNetlistContent().get(j).length() + "   itemx_list: " + this.itemx_list.size() );
+                                        //System.out.println(i + " thd >> vec: " + this.itemx_list.get(i).getthreadSimulationList().get(j).getinputVector() + "   content " + this.itemx_list.get(i).getparsedNetlistContent().get(j).length() + "   itemx_list: " + this.itemx_list.size() );
 
                                         //TestVectorInformation testVectorInformation =  this.itemx_list.get(i).get_threadSimulationList().get(j);
 
@@ -2028,12 +2043,12 @@ public class Management extends MAIN {
                 try {
 
                         Path path = Paths.get(destinationFolder);
-                        System.out.println("Path: " + path);
-                        System.out.println(" Source: " + source + "   filename: " + fileName + "   dstFOlder: " +destinationFolder);
+                       // System.out.println("Path: " + path);
+                        System.out.println("-Source: " + source + "   filename: " + fileName + "   dstFolder: " +destinationFolder + "  >>> Directory is created : " + destinationFolder);
                         //java.nio.file.Files;
                         Files.createDirectories(path);
 
-                        System.out.println("Directory is created : " + destinationFolder);
+                        //System.out.println("Directory is created : " + destinationFolder);
                 }catch (Exception e){
                         System.out.println("Error Folder already exists: " + destinationFolder);
                 }
@@ -2251,7 +2266,7 @@ public class Management extends MAIN {
 
 
                         if (!content_file.isBlank()) {
-                                System.out.println("--> File : " + outputFilename + " was created...");
+                                System.out.println(" --> File : " + relativePath + outputFilename + " was created...");
                                 try (FileWriter file = new FileWriter(relativePath + "/" + outputFilename)) {
                                         file.write(content_file);
                                 }catch (IOException e) {
