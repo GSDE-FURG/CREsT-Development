@@ -526,15 +526,21 @@ import signalProbability.ProbCircuit;
         //String SensitiveNode = threadSimulationList.getFaultSignal().toString();
         //item.get(y).getMTFPERSONAL_LIST_Identities()
         //item.get(y).getBitFlipMTFPERSONAL_LIST()
-        String output = "";
-        for (Signal x: threadSimulationList.get_MTF_FaultSignal_List_thd()){
-            String SensitiveNode = threadSimulationList.getFaultSignal().toString();
-            String bitflipValue =  Integer.toString(threadSimulationList.getFaultSignal().getLogicValue());
+
+        String output = "";// + threadSimulationList.get_MTF_FaultSignal_List()  + " " + threadSimulationList.getinputVector()+ "\n";
+
+        //String output = "" + threadSimulationList.get_MTF_FaultSignal_List()  + " " + threadSimulationList.getinputVector()+ "\n";
+        for (Signal x: threadSimulationList.get_MTF_FaultSignal_List()){
+
+            String SensitiveNode = x.getId();//threadSimulationList.getFaultSignal().toString();
+            String bitflipValue =  Integer.toString(x.getLogicValue());//Integer.toString(threadSimulationList.getFaultSignal().getLogicValue());
             //"\t\t*Iexp 0 " + SensitiveNode + " exp(" + bitflipValue + " 190u 1n 10p 1.00001n 320p) \n" +
 
-            output += "\t\t*Iexp 0 " + SensitiveNode + " exp(" + bitflipValue + " 190u 1n 10p 1.00001n 320p) \n" ;
+            output = output +  "\t\t*Iexp 0 " + SensitiveNode + " exp(" + bitflipValue + " 190u 1n 10p 1.00001n 320p)\n" ;
         }
         //"\t\t*Iexp 0 " + SensitiveNode + " exp(" + bitflipValue + " 190u 1n 10p 1.00001n 320p) \n" +
+
+        //System.out.println("  --- >>> " + output + "  <<< ------- \n");
         return  output;
     }
 
@@ -677,7 +683,7 @@ import signalProbability.ProbCircuit;
         String SensitiveNode = threadSimulationList.getFaultSignal().toString();
         String bitflipValue =  Integer.toString(threadSimulationList.getFaultSignal().getLogicValue());
 
-        System.out.println("Sensitive Node: " + SensitiveNode + "   i: " + threadSimulationList.getSimulationIndex());
+        //System.out.println("Sensitive Node: " + SensitiveNode + "   i: " + threadSimulationList.getSimulationIndex());
         String template = "" +
                 "* Função Transiente\n" +
                 ".include 45nm_HP.pm\n" +
@@ -773,13 +779,16 @@ import signalProbability.ProbCircuit;
             }
         }
 
+        //this.setBitFlipInNetListFile(threadSimulationList);
+        String file_output = this.circuit.getName() + threadSimulationList.concatInputVector() + "_" + threadSimulationList.concatMTFFaultSignals() + ".txt";
         template = template + "\n\n\n ****** SET Injection in ramdom node Inv1\n" +
                 //"\t\t*Iexp 0 out exp(0 190u 1n 40p 1.00001n 320p) \n" +
-                "\t\t*Iexp 0 " + SensitiveNode + " exp(" + bitflipValue + " 190u 1n 10p 1.00001n 320p) \n" +
+                this.setBitFlipInNetListFile(threadSimulationList) +
+                //"\t\t*Iexp 0 " + SensitiveNode + " exp(" + bitflipValue + " 190u 1n 10p 1.00001n 320p) \n" +
                 "\t*transicao 0-1-0\n" +
                 "\n" +
                 "* Declarando uma capacitância de saída que pode ser usada para emular uma carga\n" +
-                "*Cload out 0 1f\n" +
+                //"*Cload out 0 1f\n" +
                 outputsCapacitance +
                 "\n" +
                 "\n" +
@@ -792,7 +801,8 @@ import signalProbability.ProbCircuit;
                 "*" + plot + plotOutput +
                 "\n"
                 + "*plot " + plotOutput + "\n"+
-                "wrdata  " + this.genlibPATH +"-"+ this.circuit.getName() +  "_" + SensitiveNode + "_" + input_values + ".txt  " + SensitiveNode + " " + ouputs + " \n"+
+                //"wrdata  " + this.genlibPATH +"-"+ this.circuit.getName() +  "_" + SensitiveNode + "_" + input_values + ".txt  " + SensitiveNode + " " + ouputs + " \n"+
+                "wrdata  "  + file_output + " " + threadSimulationList.concatMTFFaultSignals(" ") + ouputs + " \n" +
                 ".endc\t     \n" +
                 "\n" +
                 "* Declarando o tipo de simulação *Precisa mudar para 15 (0 - 15 = 16 unidades de tempo) pois senão nao exitira descida para entrada A\n" +
@@ -3601,6 +3611,64 @@ import signalProbability.ProbCircuit;
         return concat;
     }
 
+    private String generateGateNetlistMTF(Cell cells, DepthGate gate,ArrayList <Signal> inputsSignals, int id_node){
+
+        Map<ArrayList<Boolean>, Boolean> comb = cells.getComb();
+        // ArrayList <Boolean> input = new ArrayList<>();
+        // ArrayList <Integer> signals = new ArrayList<>();
+        // String concat_inputs = "";
+        //System.out.println("Circuit level: " + gate.getGate());
+
+        String gate_netlist = inputsSignals.toString();
+        String id_node_A = "X" + id_node;
+        String inputs = "";
+        String sources = " vdd vss";
+        String gateOutputName = "";// +gate.getGate().getOutputs().toString();
+        String gateType = " " + gate.getGate().getType().toString();
+        String concat = "";
+
+        //System.out.println("Inputs: " + inputsSignals + " GATE: " + gate.getGate().getType() + " inputs: " + gate.getGate().getInputs());
+        for (Signal x: inputsSignals){
+            inputs = inputs + " " + x.getId().toString();
+        }
+
+        for (Signal x: gate.getGate().getOutputs()){
+            gateOutputName = gateOutputName+ " " + x.getId().toString();
+        }
+
+        //System.out.println(" --> : " + id_node_A + inputs + sources + gateOutputName + gateType);
+        if(!gateType.contains("X1")) {
+            concat = id_node_A + inputs + sources + gateOutputName + gateType + "X1";
+        }else{
+            concat = id_node_A + inputs + sources + gateOutputName + gateType ;
+        }
+        /*
+        for (int index = 0; index < inputsSignals.size(); index++) {
+
+            signals.add(inputsSignals.get(index).getLogicValue());
+
+            if(inputsSignals.get(index).getLogicValue() == 0){
+                input.add(Boolean.FALSE);
+                concat_inputs = concat_inputs + "0";
+            }
+            if(inputsSignals.get(index).getLogicValue() == 1){
+                input.add(Boolean.TRUE);
+                concat_inputs = concat_inputs + "1";
+            }
+        }
+        */
+
+        return concat;
+    }
+
+    /**
+     * @deprecated
+     * @param cells
+     * @param gate
+     * @param inputsSignals
+     * @param thread_item
+     * @return
+     */
     private  boolean calculateFaultFreeOutputGateValueMTF(Cell cells, DepthGate gate,ArrayList <Signal> inputsSignals, TestVectorInformation thread_item){
 
         Map<ArrayList<Boolean>, Boolean> comb = cells.getComb();

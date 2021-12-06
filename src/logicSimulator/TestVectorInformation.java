@@ -60,6 +60,22 @@ public class TestVectorInformation {
             }
             return inputConcat;
     }
+
+    public String concatMTFFaultSignals(){
+        String Concat = "";
+        for (Signal x: this.MTF_FaultSignal_List_thd){
+            Concat = Concat + "_" + x;
+        }
+        return Concat;
+    }
+    public String concatMTFFaultSignals(String separator){
+        String Concat = "";
+        for (Signal x: this.MTF_FaultSignal_List_thd){
+            Concat = Concat + separator + x;
+        }
+        return Concat;
+    }
+
     
     public TestVectorInformation(ArrayList <Integer> inputVector, Signal faultSignal, int input_pos) {
             this.faultSignals = faultSignal;

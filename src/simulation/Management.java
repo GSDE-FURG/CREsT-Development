@@ -1959,9 +1959,9 @@ public class Management extends MAIN {
 
                                         System.out.println(i + " thd >> vec: " + this.itemx_list.get(i).getthreadSimulationList().get(j).getinputVector() + "   content " + this.itemx_list.get(i).getparsedNetlistContent().get(j).length() + "   itemx_list: " + this.itemx_list.size() );
 
-                                        TestVectorInformation testVectorInformation =  this.itemx_list.get(i).get_threadSimulationList().get(j);
+                                        //TestVectorInformation testVectorInformation =  this.itemx_list.get(i).get_threadSimulationList().get(j);
 
-                                        testVectorInformation.printSpecs();
+                                        //testVectorInformation.printSpecs();
                                         //this.itemx_list.get(i).get_threadSimulationList().get(j).printSpecs();
                                                 //String SensitiveNode = testVectorInformation.getFaultSignal().toString(); G1gat
                                                         //String SensitiveNode = testVectorInformation.get_MTF_FaultSignal_List_thd().toString();
@@ -1969,8 +1969,8 @@ public class Management extends MAIN {
                                         //System.out.println("                    - Sensitive Node: " + SensitiveNode);
                                         //System.out.println("    III i:" + i + " j:" + j + " >> thd: " + this.itemx_list.get(i).getthreadSimulationList().get(j).getinputVector() + "  content blanck: " + this.itemx_list.get(i).getparsedNetlistContent().get(j).equals(""));
                                         counter+=1;
-                                        //String circuitSpiceName = this.circuit.getName() + "_vec_" + this.itemx_list.get(i).getthreadSimulationList().get(j).getinputVector() + "_" + SensitiveNode + ".txt";
-                                       // this.writeInformationInFileLog(this.relativePath + spiceScriptsFolder, "", this.itemx_list.get(i).getParsedNetlistContent().get(j), circuitSpiceName);
+                                        String circuitSpiceName = this.circuit.getName() + "_" + this.itemx_list.get(i).getthreadSimulationList().get(j).concatInputVector()  + this.itemx_list.get(i).getthreadSimulationList().get(j).concatMTFFaultSignals() + ".txt";
+                                        this.writeInformationInFileLog(this.relativePath + spiceScriptsFolder, "", this.itemx_list.get(i).getParsedNetlistContent().get(j), circuitSpiceName);
                                 }
                         }
                         //System.out.println(" SET counter: " + counter);
