@@ -37,6 +37,22 @@ public class SimulationInLotParser {
                 //return this.circuitList;
         }
 
+        public void getSpiceCircuitFilesPath(){
+                String[] circuitFiles;
+                File f = new File(this.circuitfilesPath);
+
+                circuitFiles = f.list();
+
+                for (String pathname : circuitFiles) {
+                        if(pathname.endsWith(".txt")){ // test type for verilogs .v
+                                this.circuitList.add(pathname);
+                        }
+                }
+                //System.out.println("Circuits in List: " +  this.circuitList);
+                System.out.println("- Were founded " + this.circuitList.size() + " Spice circuit (.txt) in path folder: " + this.circuitfilesPath);
+                //return this.circuitList;
+        }
+
         public void circuitListParser(String genlib, String signalsToinjectFault, int threads, String reliabilityConst, int sampleSize){
 
                 if ( sampleSize > 0 ) {

@@ -2006,13 +2006,15 @@ public class Management extends MAIN {
                 try {
                         Runtime runTime = Runtime.getRuntime();
 
-                        File f = new File(spiceCircuito);
+                        File f = new File(path + spiceCircuito);
 
                         // Checking if the specified file exists or not
+                        System.out.println("PAth: " + path + " Spice: " + spiceCircuito);
+                        System.out.println( path + "ngspice.exe " + spiceCircuito);
                         if (f.exists()) {
 
                                 String executablePath = path + "ngspice.exe " + spiceCircuito;//"C:\\Users\\sdkca\\AppData\\Local\\Programs\\Microsoft VS Code\\Code.exe";
-
+                                System.out.println(executablePath);
                                 Process process = runTime.exec(executablePath);
                         }else{
                                 System.out.println("File dont exist: " + spiceCircuito);
