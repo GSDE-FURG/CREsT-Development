@@ -521,6 +521,23 @@ import signalProbability.ProbCircuit;
         return template;
     }
 
+    private String setBitFlipInNetListFile(TestVectorInformation threadSimulationList){
+        //this.threadSimulationList.get(i).get_MTF_FaultSignal_List_thd();
+        //String SensitiveNode = threadSimulationList.getFaultSignal().toString();
+        //item.get(y).getMTFPERSONAL_LIST_Identities()
+        //item.get(y).getBitFlipMTFPERSONAL_LIST()
+        String output = "";
+        for (Signal x: threadSimulationList.get_MTF_FaultSignal_List_thd()){
+            String SensitiveNode = threadSimulationList.getFaultSignal().toString();
+            String bitflipValue =  Integer.toString(threadSimulationList.getFaultSignal().getLogicValue());
+            //"\t\t*Iexp 0 " + SensitiveNode + " exp(" + bitflipValue + " 190u 1n 10p 1.00001n 320p) \n" +
+
+            output += "\t\t*Iexp 0 " + SensitiveNode + " exp(" + bitflipValue + " 190u 1n 10p 1.00001n 320p) \n" ;
+        }
+        //"\t\t*Iexp 0 " + SensitiveNode + " exp(" + bitflipValue + " 190u 1n 10p 1.00001n 320p) \n" +
+        return  output;
+    }
+
     /**
      * @deprecated OLD VERSION BUT WORKS
      * @param SensitiveNode
@@ -758,7 +775,7 @@ import signalProbability.ProbCircuit;
 
         template = template + "\n\n\n ****** SET Injection in ramdom node Inv1\n" +
                 //"\t\t*Iexp 0 out exp(0 190u 1n 40p 1.00001n 320p) \n" +
-                "\t\tIexp 0 " + SensitiveNode + " exp(" + bitflipValue + " 190u 1n 10p 1.00001n 320p) \n" +
+                "\t\t*Iexp 0 " + SensitiveNode + " exp(" + bitflipValue + " 190u 1n 10p 1.00001n 320p) \n" +
                 "\t*transicao 0-1-0\n" +
                 "\n" +
                 "* Declarando uma capacitância de saída que pode ser usada para emular uma carga\n" +
