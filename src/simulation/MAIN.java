@@ -43,7 +43,7 @@ public class MAIN {  // Class to run debug tests
                         //     sim_stf.monteCarloSimulationMultipleTransientFaultsProportion();
 
         ArrayList<Float> mtf_sizes = new ArrayList<>();  //MTF's
-        mtf_sizes.add((float) 1000);
+        mtf_sizes.add((float) 100);
         mtf_sizes.add((float) 0.9);
         mtf_sizes.add((float) 0.09);
         mtf_sizes.add((float) 0.01);

@@ -660,6 +660,7 @@ import signalProbability.ProbCircuit;
         String SensitiveNode = threadSimulationList.getFaultSignal().toString();
         String bitflipValue =  Integer.toString(threadSimulationList.getFaultSignal().getLogicValue());
 
+        System.out.println("Sensitive Node: " + SensitiveNode + "   i: " + threadSimulationList.getSimulationIndex());
         String template = "" +
                 "* Função Transiente\n" +
                 ".include 45nm_HP.pm\n" +
@@ -690,8 +691,6 @@ import signalProbability.ProbCircuit;
         String plotOutput = " ";
         int sizeInputs =  this.circuit.getInputs().size();
         int size = sizeInputs;
-
-
 
         String plot= "plot ";
 
@@ -739,7 +738,7 @@ import signalProbability.ProbCircuit;
 
         template = template + "\n * Portas Logicas";
 
-        System.out.println("INPUTS TENSION (v): " + concat_inputs);
+                //System.out.println("INPUTS TENSION (v): " + concat_inputs);
 
         for (int j = 0; j < gatesLevels.size(); j++) {
 
@@ -2482,7 +2481,7 @@ import signalProbability.ProbCircuit;
 
     public void startSimulationMultipleFaultInjectionCalculateSensitiveAreaGenerateSpiceNetLists() throws IOException, WriteException{
 
-        System.out.println("- threadSimulationList: " + this.threadSimulationList.size());
+       // System.out.println("- threadSimulationList: " + this.threadSimulationList.size());
         for (int i = 0; i < this.threadSimulationList.size(); i++) {
 
             this.insertInputVectors("selected", this.threadSimulationList.get(i).getinputVector());
@@ -2493,11 +2492,15 @@ import signalProbability.ProbCircuit;
                 freeFaultOutput_i = this.threadSimulationList.get(i).getOrignalOutput();
                 faultOutput_i = this.threadSimulationList.get(i).getFaultOutput();
 
-                if(!freeFaultOutput_i.equals(faultOutput_i)){
+                if(!freeFaultOutput_i.equals(faultOutput_i)){ // Set identified
                     String set = i + "  freeFaultOutput_i: " + freeFaultOutput_i + "   faultOutput_i: " + faultOutput_i;
 
-                    System.out.println("- SET propaget " + " vec: " + this.threadSimulationList.get(i).getinputVector() + " - threadSimulationList: " + i + "  thd: " + this.getThreadId() + "     info: " + set);
+                    /*
+                    System.out.println("- SET propaget faultSig: " + this.threadSimulationList.get(i).getFaultSignals() +
+                            "   FList: " + this.threadSimulationList.get(i).get_MTF_FaultSignal_List_thd() + " vec: " + this.threadSimulationList.get(i).getinputVector() + " - threadSimulationList: " + i + "  thd: " + this.getThreadId() + "  info: " + set);
+                    */
                     //this.propagated_faults++;
+
                     //this.parsedNetlistContent = this.createSpiceNetlistLargerCircuits(this.threadSimulationList.get(i));
                     this.parsedNetlistContent.add(this.createSpiceNetlistLargerCircuits(this.threadSimulationList.get(i)));
                 }else{
@@ -3547,7 +3550,7 @@ import signalProbability.ProbCircuit;
         String gateType = " " + gate.getGate().getType().toString();
         String concat = "";
 
-        System.out.println("Inputs: " + inputsSignals + " GATE: " + gate.getGate().getType() + " inputs: " + gate.getGate().getInputs());
+                //System.out.println("Inputs: " + inputsSignals + " GATE: " + gate.getGate().getType() + " inputs: " + gate.getGate().getInputs());
         for (Signal x: inputsSignals){
             inputs = inputs + " " + x.getId().toString();
         }
@@ -3555,7 +3558,8 @@ import signalProbability.ProbCircuit;
         for (Signal x: gate.getGate().getOutputs()){
             gateOutputName = gateOutputName+ " " + x.getId().toString();
         }
-        System.out.println(" --> : " + id_node_A + inputs + sources + gateOutputName + gateType);
+
+            //System.out.println(" --> : " + id_node_A + inputs + sources + gateOutputName + gateType);
         if(!gateType.contains("X1")) {
             concat = id_node_A + inputs + sources + gateOutputName + gateType + "X1";
         }else{

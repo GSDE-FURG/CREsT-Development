@@ -305,7 +305,7 @@ public class WriteLog {
 
     }
 
-    public void writeCsvFileCompleteThMTF(String filename, ArrayList <LogicSimulator> itemx_list) throws IOException, WriteException{
+    public void writeCsvFileCompleteThMTF(String filename, ArrayList <LogicSimulator> itemx_list) throws IOException, WriteException{ //here
 
         //System.out.println("Creating Complete log .....");
         ArrayList <Signal> outputSignals = this.circuit.getOutputs();

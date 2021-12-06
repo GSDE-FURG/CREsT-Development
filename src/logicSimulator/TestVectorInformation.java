@@ -38,6 +38,21 @@ public class TestVectorInformation {
     //private ArrayList <Signal> MTF_FaultSignal_List_Base;
     //private ArrayList <SignalExtendedProperties> MTF_FaultSignal_List_Extended;
 
+    public void printSpecs(){
+        System.out.println("         -------- ");
+        System.out.println("        faultSingnals: " + this.faultSignals);
+        System.out.println("        allfaultSignals: " + this.allfaultSignals);
+        System.out.println("        MTF_FaultSignal_List" + this.MTF_FaultSignal_List);
+        System.out.println("        MTF_FaultSignal_List_thd" + this.MTF_FaultSignal_List_thd);
+        System.out.println("        MTF_PERSONAL_LIST: " + this.MTF_PERSONAL_LIST.size());
+        System.out.println("        -------- ");
+
+    }
+
+    public Signal getFaultSignals() {
+        return faultSignals;
+    }
+
     public String concatInputVector(){
             String inputConcat = "";
             for (int x: this.inputVector){

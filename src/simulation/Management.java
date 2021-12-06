@@ -719,7 +719,7 @@ public class Management extends MAIN {
                 sum_proportion = sumProportionPercentage(mtf_list);
                 int sample_base = Math.round(mtf_list.get(0));
                 ArrayList <Integer> new_MTF = passProportionPercentage(mtf_list, sample_base);
-                System.out.println("- new MTF LIST " + new_MTF + "  size: " + new_MTF.size());
+                //System.out.println("- new MTF LIST " + new_MTF + "  size: " + new_MTF.size());
 
                 final ArrayList<Float> arrayList_mtf_original = new ArrayList<>(mtf_list); // Original ArrayList
 
@@ -774,7 +774,7 @@ public class Management extends MAIN {
                                 }
                                 count++;
                         }
-                        System.out.println(prop_index + " Count: " + count + " ItemxSimulation: " + ItemxSimulationList.size() + "  order: ");
+                       /// System.out.println(prop_index + " Count: " + count + " ItemxSimulation: " + ItemxSimulationList.size() + "  order: ");
                 }
 
                 System.out.println("- End Count: " + count);
@@ -811,7 +811,7 @@ public class Management extends MAIN {
                         Thread thread = new Thread(runnable);
                         thread.setName(Integer.toString(threadItem.hashCode()));
                         thread_list.add(thread);
-                        System.out.println("\n ->>>>>> " + i + " Start: " + start + " End: " + end + "  ThreadItem: " + threadItem.getStartendPos() + " size inputss: " + threadItem.getThreadSimulatinArray().size() + " real: " + temp.size());
+                        //System.out.println("\n ->>>>>> " + i + " Start: " + start + " End: " + end + "  ThreadItem: " + threadItem.getStartendPos() + " size inputss: " + threadItem.getThreadSimulatinArray().size() + " real: " + temp.size());
 
                 }
                 //System.out.println("Signal to inject fault: " + this.signals_to_inject_faults);
@@ -1253,18 +1253,20 @@ public class Management extends MAIN {
 
                         case "MTF-Generate_Netlist":
                                 System.out.println("MTF - RANDOM");
+                                System.out.println("MTF - RANDOM");
+                                random_input_vectors = this.generateInputVector("RANDOM"); // Generate Random Input Vectors or InputTrueTable
+                                ListInputVectors = this.splitInputPatternsInInt(random_input_vectors, this.probCircuit.getInputs().size());
+                                thread_list = this.particionateMultipletransientFaultInjectionVectorPerThreadProportion(ListInputVectors, this.mtf_list); // x - vectors per thread
+                                 break;
+
+                        case "MTF-Sensitive_Area-Generate_Netlist":
+                                System.out.println("MTF - RANDOM");
                                 random_input_vectors = this.generateInputVector("RANDOM"); // Generate Random Input Vectors or InputTrueTable
                                 ListInputVectors = this.splitInputPatternsInInt(random_input_vectors, this.probCircuit.getInputs().size());
                                 // System.out.println(ListInputVectors.size());
                                 thread_list = this.particionateMultipletransientFaultInjectionVectorPerThreadProportionForElectricalSimulation(ListInputVectors, mtf_list); // x - vectors per thread
-                                break;
 
-                        case "MTF-Sensitive_Area-Generate_Netlist":
-                                System.out.println("MTF-Sensitive_Area-Generate_Netlist");
-                                random_input_vectors = this.generateInputVector("RANDOM"); // Generate Random Input Vectors or InputTrueTable
-                                ListInputVectors = this.splitInputPatternsInInt(random_input_vectors, this.probCircuit.getInputs().size());
-                                // System.out.println(ListInputVectors.size());
-                                thread_list = particionateExausticVectorForSensitiveAreas(ListInputVectors, this.sensitive_cells, "MTF-Generate_Netlist");//thread_list = this.particionateMultipletransientFaultInjectionVectorPerThreadProportionForElectricalSimulation(ListInputVectors, mtf_list); // x - vectors per thread
+                                 System.out.println(">>>>>> Input Vec: " + random_input_vectors.size() + " L: " + ListInputVectors.size() + " THD:  " + thread_list.size()) ;
                                 break;
 
 
@@ -1868,6 +1870,8 @@ public class Management extends MAIN {
 
                         this.mtf_list = mtf_list;
 
+                        System.out.println("Signals: " + this.signals_to_inject_faults);
+
                         //List thread_list =  this.createVectorsAndParticionate(sampleSize, option, "MTF-RANDOM");
                         List thread_list =  this.createVectorsAndParticionate(this.sampleSize, option, "MTF-Sensitive_Area-Generate_Netlist");
 
@@ -1880,11 +1884,11 @@ public class Management extends MAIN {
 
                         Instant startThreadingTimeElapsed = Instant.now();
 
-                        this.executeThreadsSimulation(thread_list);
+                                this.executeThreadsSimulation(thread_list);
 
                         Instant endThreadingTimeElapsed = Instant.now();
 
-                        int bitfipCcounter = this.parseResultsAndCalculateFMR();  // FMR
+                                int bitfipCcounter = this.parseResultsAndCalculateFMR();  // FMR
 
                         Instant finish = Instant.now();
                         long timeElapsed_Instant = Duration.between(start, finish).toSeconds();
@@ -1901,7 +1905,7 @@ public class Management extends MAIN {
 
                         Instant endTimelogGeneration = Instant.now();
 
-                        this.writeLogs(option + "_MTF_MonteCarlo_Simple_Log_" +this.circuit.getName()+"_Threads-"+ this.threads +  "_sampleSize-" + this.sampleSize, formattedDate,  formattedDate2, timeElapsed_Instant, itemx_list, "MTF");
+                        this.writeLogs(option + "_MTF_MonteCarlo_Simple_Log_" +this.circuit.getName()+"_Threads-"+ this.threads +  "_sampleSize-" + this.sampleSize, formattedDate,  formattedDate2, timeElapsed_Instant, this.itemx_list, "MTF");
 
                         long timeElapsed_logGeneration = Duration.between(startTimelogGeneration, endTimelogGeneration).toSeconds();
 
@@ -1942,20 +1946,30 @@ public class Management extends MAIN {
                 this.moveFiles(this.relativePath, SpiceNetListLibrary, electricalFolderSimulation);
                 //System.out.println("---- > 3 RElative Path: " + this.relativePath + "     R: " + spiceScriptsFolder);
 
-                System.out.println(" SIZE: " + this.itemx_list.size());
+                System.out.println(" SIZE: " + this.itemx_list.size()); //this.itemx_list
                 int counter = 0;
-                for (int i = 0; i < this.itemx_list.size(); i++) {
-                        for (int j = 0; j < this.itemx_list.get(i).getthreadSimulationList().size(); j++) {
-                                //System.out.println(i + " >> thd: " + this.itemx_list.get(i).getthreadSimulationList().get(j).getinputVector() + "   content " + this.itemx_list.get(i).getparsedNetlistContent().get(j));
-                                if(!(this.itemx_list.get(i).getparsedNetlistContent().get(j) == "")){
-                                        TestVectorInformation testVectorInformation =  this.itemx_list.get(i).getthreadSimulationList().get(0);
-                                        String SensitiveNode = testVectorInformation.getMTFPERSONAL_LIST_Identities().get(0);
 
-                                        System.out.println("Sensitive Node: " + SensitiveNode);
+                // FList: " + this.threadSimulationList.get(i).get_MTF_FaultSignal_List_thd()
+                for (int i = 0; i < this.itemx_list.size(); i++) {
+
+                        for (int j = 0; j < this.itemx_list.get(i).getthreadSimulationList().size(); j++) {
+
+                                if(!(this.itemx_list.get(i).getparsedNetlistContent().get(j) == "") && (this.itemx_list.get(i).getparsedNetlistContent().get(j).length() > 0)){  // if fileContentString is not empty
+                                        List <TestVectorInformation> item = this.itemx_list.get(i).getThreadSimulatinArray();
+
+                                        System.out.println(i + " thd >> vec: " + this.itemx_list.get(i).getthreadSimulationList().get(j).getinputVector() + "   content " + this.itemx_list.get(i).getparsedNetlistContent().get(j).length() + "   itemx_list: " + this.itemx_list.size() );
+
+                                        TestVectorInformation testVectorInformation =  this.itemx_list.get(i).get_threadSimulationList().get(j);
+
+                                        testVectorInformation.printSpecs();
+                                        //this.itemx_list.get(i).get_threadSimulationList().get(j).printSpecs();
+                                                //String SensitiveNode = testVectorInformation.getFaultSignal().toString(); G1gat
+                                                        //String SensitiveNode = testVectorInformation.get_MTF_FaultSignal_List_thd().toString();
+                                                                //testVectorInformation.printSpecs();
+                                        //System.out.println("                    - Sensitive Node: " + SensitiveNode);
                                         //System.out.println("    III i:" + i + " j:" + j + " >> thd: " + this.itemx_list.get(i).getthreadSimulationList().get(j).getinputVector() + "  content blanck: " + this.itemx_list.get(i).getparsedNetlistContent().get(j).equals(""));
                                         counter+=1;
-                                        String circuitSpiceName = this.circuit.getName() + "_vec_" +
-                                                this.itemx_list.get(i).getthreadSimulationList().get(j).getinputVector() + "_" + SensitiveNode + ".txt";
+                                        //String circuitSpiceName = this.circuit.getName() + "_vec_" + this.itemx_list.get(i).getthreadSimulationList().get(j).getinputVector() + "_" + SensitiveNode + ".txt";
                                        // this.writeInformationInFileLog(this.relativePath + spiceScriptsFolder, "", this.itemx_list.get(i).getParsedNetlistContent().get(j), circuitSpiceName);
                                 }
                         }
