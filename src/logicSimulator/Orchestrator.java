@@ -171,18 +171,27 @@ import writers.WriteCsvTh;
             int counter;
             int index;
             float sensitive_area;
+            int gatesCounter;
 
         public gate_counter(String type, int counter) {
             this.type = type;
             this.counter = counter;
             this.index = -1;
             this.sensitive_area = 0;
+            this.gatesCounter = 0;
         }
 
         public int get_gate_counter(){
             return this.counter;
         }
+        public float get_gate_counterFloat(){
+            Integer a = this.counter;
 
+            // Convert Integer number to float value
+            float b = a.floatValue();
+
+            return b;
+        }
         public String get_gate_type(){
             return this.type;
         }
@@ -201,10 +210,15 @@ import writers.WriteCsvTh;
 
         public void sumSensitiveArea(Float area){
             this.sensitive_area += area;
+            this.gatesCounter++;
         }
 
-        public float getSensitive_area() {
+        public float getSensitive_areasum() {
             return sensitive_area;
+        }
+
+        public int getGatesCounter() {
+            return gatesCounter;
         }
     }
 

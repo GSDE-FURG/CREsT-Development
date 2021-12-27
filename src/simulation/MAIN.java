@@ -54,15 +54,23 @@ public class MAIN {  // Class to run debug tests
 
             SimulationMode sim_mtf = new SimulationMode(simulationInLotMTF.getCircuitListSpecs().get(0)); // first Circuit c.v
                 //sim_mtf.monteCarloSimulationMultipleTransientFaults();
-                sim_mtf.monteCarloSimulationMultipleTransientFaultsProportionAndCalculationOfSensitiveArea("netlist_files/", "45nm_HP.pm", "Library.txt");
+                    //sim_mtf.monteCarloSimulationMultipleTransientFaultsProportionAndCalculationOfSensitiveArea("netlist_files/", "45nm_HP.pm", "Library.txt");
+                     //sim_mtf.monteCarloSimulationMultipleTransientFaultsProportionAndCalculationOfSensitiveArea();
 
-                //sim_mtf.monteCarloSimulationMultipleTransientFaultsProportionAndCalculationOfSensitiveArea();
 
-
-        SimulationSpiceNetlistCircuit simulationElectric= new SimulationSpiceNetlistCircuit();
+        //SimulationSpiceNetlistCircuit simulationElectric= new SimulationSpiceNetlistCircuit();
             //simulationElectric.setup(relativePath + "netlist_files/", relativePath + "Library.txt");
                 //simulationElectric.processParserSpiceNetlists();
                     //sim_mtf.runElectricalSimulation(relativePath , "netlist_files/" + simulationElectric.getCircuitsListName().get(4));  // fixed
+
+
+
+        SimulationInLot simulationInLotDebug = new SimulationInLot();
+        simulationInLotDebug.setup("circuitos/fullv2/", "lib_full_no_cost.genlib", threads);
+        simulationInLotDebug.processParser(signalsToinjectFault, constReliability, mtf_sizes);
+
+        SimulationMode sim_mtf_debug = new SimulationMode(simulationInLotDebug.getCircuitListSpecs().get(0)); // first Circuit c.v
+            sim_mtf_debug.PrintAVGSensitiveAreasCompiled("ok/", "45nm_HP.pm", "Library.txt");
 
     }
 }
