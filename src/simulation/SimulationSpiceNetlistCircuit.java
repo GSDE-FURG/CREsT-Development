@@ -56,8 +56,8 @@ public class SimulationSpiceNetlistCircuit{
 
     public void printCircuitsSpecs(){
         System.out.println("\n");
-        for (String circ: this.circuitsListName){
-            System.out.println("Circ: " + circ);
+        for(int i = 0; i < this.circuitsListName.size(); i++){
+            System.out.println("Circ: " + this.circuitsListName.get(i) + "  (" + i + ")");
         }
     }
 

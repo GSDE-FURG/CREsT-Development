@@ -2,20 +2,19 @@ package simulation;
 
 import datastructures.CellLibrary;
 import datastructures.Circuit;
+import datastructures.Gate;
 import datastructures.Signal;
-import jxl.StringFormulaCell;
 import jxl.write.WriteException;
 import levelDatastructures.LevelCircuit;
 import logicSimulator.LogicSimulator;
+import logicSimulator.Orchestrator;
 import logicSimulator.SensitiveCell;
-//import logicSimulator.main;
 import logicSimulator.TestVectorInformation;
 import readers.MappedVerilogReader;
 import signalProbability.ProbCircuit;
 import writers.WriteLog;
 
 import javax.script.ScriptException;
-import javax.sound.midi.Soundbank;
 import java.io.*;
 import java.math.BigDecimal;
 import java.nio.file.Files;
@@ -27,7 +26,8 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
-import java.util.concurrent.TimeUnit;
+
+//import logicSimulator.main;
 
 //public class Management extends MAIN{
 
@@ -42,8 +42,6 @@ public class Management extends MAIN {
         private ProbCircuit probCircuit;
         private LevelCircuit lCircuit;
         private int unmasked_faults;
-        private double MTBF;
-        private long time_seconds;
         private float circuitReliaibility;
         private MappedVerilogReader verilog_circuit;
         private String Performance_Time;
@@ -1638,6 +1636,108 @@ public class Management extends MAIN {
 
         }
 
+        public boolean searchGateInList(String x, ArrayList <Orchestrator.gate_counter> arraylist){
+
+                for(int i = 0; i < arraylist.size(); i++){
+                        //temp = arraylist.get(i);
+                        if(arraylist.get(i).get_gate_type().equals(x)){
+                                //System.out.println("Achou -> " + x);
+                                //arraylist.get(i).update_count();
+                                arraylist.get(i).setIndex(i);
+                                //System.out.println("Atualizar -> " + x +  "   c: " + arraylist.get(i).get_gate_counter());
+                                return true;
+                        }
+
+                }
+
+                return false;
+        }
+
+
+
+
+        public String PrintGatesCounterDetailsSortedCompliled(int id, String file){
+                System.out.println("           Circuit Name : " + this.circuit.getName());
+                //System.out.println("- Logic Gates : " + this.circuit.getGates());
+                System.out.println("               - Logic Gates (size): " + this.circuit.getGates().size() );
+                ///System.out.println("               - Levels (size): " + this.levelCircuit.getGateLevels().size());
+
+                ArrayList <Orchestrator.gate_counter> temp = new ArrayList<>();
+
+                temp.add(new Orchestrator.gate_counter("ZEROX1", 0));
+                temp.add(new Orchestrator.gate_counter("ONEX1", 0));
+                temp.add(new Orchestrator.gate_counter("BUFX1", 0));
+                temp.add(new Orchestrator.gate_counter("INVX1", 0));
+
+                temp.add(new Orchestrator.gate_counter("NOR2X1", 0));
+                temp.add(new Orchestrator.gate_counter("NOR3X1", 0));
+                temp.add(new Orchestrator.gate_counter("NOR4X1", 0));
+                temp.add(new Orchestrator.gate_counter("NAND2X1", 0));
+
+                temp.add(new Orchestrator.gate_counter("NAND3X1", 0));
+                temp.add(new Orchestrator.gate_counter("NAND4X1", 0));
+                temp.add(new Orchestrator.gate_counter("OAI21X1", 0));
+                temp.add(new Orchestrator.gate_counter("OAI211X1", 0));
+
+                temp.add(new Orchestrator.gate_counter("OAI22X1", 0));
+                temp.add(new Orchestrator.gate_counter("OAI221X1", 0));
+                temp.add(new Orchestrator.gate_counter("OAI222X1", 0));
+                temp.add(new Orchestrator.gate_counter("AOI21X1", 0));
+
+                temp.add(new Orchestrator.gate_counter("AOI211X1", 0));
+                temp.add(new Orchestrator.gate_counter("AOI22X1", 0));
+                temp.add(new Orchestrator.gate_counter("AOI221X1", 0));
+                temp.add(new Orchestrator.gate_counter("AOI222X1", 0));
+                temp.add(new Orchestrator.gate_counter("XOR2X1", 0));
+
+
+
+                for(Gate i: this.circuit.getGates()) { // Update counters
+
+                        System.out.println("-" + i.getType().toString());
+
+                        if(searchGateInList(i.getType().toString(), temp) == true)
+                        {
+                                //System.out.println("In: " );
+                                for (Orchestrator.gate_counter x: temp){
+                                        if(x.get_gate_type().equals(i.getType().toString())){
+                                                x.update_count();
+
+                                                //System.out.println("------ ELEMENT: " + x.get_gate_type() + " c: " + x.get_gate_counter());
+                                        }
+                                }
+                        }
+                }
+
+                for (Orchestrator.gate_counter x: temp) {
+
+                        for (Map.Entry<String, SensitiveCell> e : this.sensitive_cells.entrySet()) {
+
+                                if (e.getKey().startsWith(x.get_gate_type()+"_")) {
+                                        //add to my result list
+                                        System.out.println(e + "                    - INSIDE Key: " + e.getKey() + "    "  + x.get_gate_type() + "  AS: " + e.getValue().getSensitive_are());
+                                }
+                        }
+
+                        System.out.println("\n --------");
+                }
+
+              /****linkar com as areas sensíveis****/
+                for (Orchestrator.gate_counter x: temp){
+                                System.out.println("------ >>>> ELEMENT: " + x.get_gate_type() + " c: " + x.get_gate_counter());
+
+                                /*** Loop to calc Sensitive Area ***/
+
+                                /*** Chamar método para cada vetor ***/
+
+                }
+
+                System.out.println("\n\n\nCells: " + this.sensitive_cells);
+
+                return "";
+
+        }
+
         /**
          * This method orchestrates the settup enviroment for run Multithreading SET evalaution (LOGICAL SIMULATOR)
          * @param sample
@@ -1655,7 +1755,9 @@ public class Management extends MAIN {
                 if (sumProportionPercentage(mtf_list) == 1.0 && (sample > 0)) {  // 100%
 
                         Map <String, SensitiveCell> sensitive_cells = readCsvFileAndMapSensitiveCellsArea(file, ",");
+
                         System.out.println("Sensitive Cells: " + sensitive_cells.size());
+
                         this.setSensitiveCells(sensitive_cells);
                         //this.sensitive_cells = sensitive_cells;
                         Instant start = Instant.now();
@@ -1749,6 +1851,36 @@ public class Management extends MAIN {
 
         }
 
+        public void classifySensitiveAreas(){
+                System.out.println("- Classification of top 10 Sensitive Areas per input vector: ");
+                Map < Float, String > map = new HashMap<>();
+
+                //ArrayList <String> InputVec = new ArrayList<>();
+                //ArrayList <Float> SensitiveAreaInputVector = new ArrayList<>();
+
+                for (int i = 0; i < this.itemx_list.size(); i++) {
+                        List <TestVectorInformation> x =  this.itemx_list.get(i).get_threadSimulationList();
+                        for (int j = 0; j < x.size(); j++) {
+                                ///System.out.println(" index: " + x.get(j).getSimulationIndex() + " vec: " + x.get(j).getinputVector() + " sensitive area sum: " + x.get(j).getSum_sensitive_cells_area() );
+                                map.put( x.get(j).getSum_sensitive_cells_area() , x.get(j).concatInputVector() );
+                                //InputVec.add( x.get(j).concatInputVector());
+                                //SensitiveAreaInputVector.add(x.get(j).getSum_sensitive_cells_area());
+                        }
+                }
+                System.out.println("MAP : " + map);
+                System.out.println("MAP Size : " + map.size());
+                List<Float> employeeById = new ArrayList<>(map.keySet());
+                Collections.sort(employeeById);
+
+                System.out.println("Sorted :  " + employeeById);
+
+                System.out.println("        ---- ");
+                for (int i = employeeById.size()-1; i > employeeById.size() - 10; i--){
+                        System.out.println(" Sensitive Area: " + employeeById.get(i) + "  Vector: " + map.get(employeeById.get(i)));
+                }
+                System.out.println("        ---- ");
+        }
+
         public void printSensitiveAreas(){
                 //System.out.println("CElls: " + this.sensitive_cells);
                 System.out.println("------------ Extracting Total vector Sensitive (Cross Sections) -------------------");
@@ -1758,6 +1890,7 @@ public class Management extends MAIN {
                                 System.out.println(" index: " + x.get(j).getSimulationIndex() + " vec: " + x.get(j).getinputVector() + " sensitive area sum: " + x.get(j).getSum_sensitive_cells_area() );
                         }
                 }
+                this.classifySensitiveAreas();
                 System.out.println("------------ Extracting Total vector Sensitive (Cross Sections) -------------------");
 
         }

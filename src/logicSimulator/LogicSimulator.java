@@ -55,6 +55,7 @@ import signalProbability.ProbCircuit;
         public ArrayList <String> parsedNetlistContent = new ArrayList<>();
 
         private String inGate;
+        private int lastposPlot;
         //private final Map<String, String> concurrentMap_output_free = new ConcurrentHashMap<>();;
         //private final Map<String, String> concurrentMap_output_fault = new ConcurrentHashMap<>();;
         
@@ -86,6 +87,8 @@ import signalProbability.ProbCircuit;
            //this.genlibPATH = "abc\\" + genlib;
            
            this.propagated_faults = 0;
+
+           this.lastposPlot = 0;
 
            this.bitflipcounter = 0;
 
@@ -536,12 +539,39 @@ import signalProbability.ProbCircuit;
             String bitflipValue =  Integer.toString(x.getLogicValue());//Integer.toString(threadSimulationList.getFaultSignal().getLogicValue());
             //"\t\t*Iexp 0 " + SensitiveNode + " exp(" + bitflipValue + " 190u 1n 10p 1.00001n 320p) \n" +
 
-            output = output +  "\t\t*Iexp 0 " + SensitiveNode + " exp(" + bitflipValue + " 190u 1n 10p 1.00001n 320p)\n" ;
+            output = output +  "\t\tIexp 0 " + SensitiveNode + " exp(" + bitflipValue + " 190u 1n 10p 1.00001n 320p)\n" ;
         }
         //"\t\t*Iexp 0 " + SensitiveNode + " exp(" + bitflipValue + " 190u 1n 10p 1.00001n 320p) \n" +
 
         //System.out.println("  --- >>> " + output + "  <<< ------- \n");
         return  output;
+    }
+
+    private String setPlotSensitiveNodesNetlistFile(String x, int ini){
+
+            String out = "";
+            int base = ini;
+            //int b = ini;
+            String [] exploit = x.split(" ");
+
+                //System.out.println("Explot: " + Arrays.toString(exploit));
+
+                for (int i = 1; i < exploit.length; i++) {
+                    if(ini != 0) {
+                        out += " v(" + exploit[i] + ")+" + base + " ";
+                        base = base + ini;
+                    }else{
+                        if(i==1){
+                            out = exploit[i];
+                        }else {
+                            out += ", " + exploit[i];
+                        }
+                    }
+                }
+
+                this.lastposPlot = base;
+
+            return out;
     }
 
     /**
@@ -680,8 +710,8 @@ import signalProbability.ProbCircuit;
 
     private String createSpiceNetlistLargerCircuits(TestVectorInformation threadSimulationList) throws IOException, WriteException{
 
-        String SensitiveNode = threadSimulationList.getFaultSignal().toString();
-        String bitflipValue =  Integer.toString(threadSimulationList.getFaultSignal().getLogicValue());
+        //String SensitiveNode = threadSimulationList.getFaultSignal().toString();
+        //String bitflipValue =  Integer.toString(threadSimulationList.getFaultSignal().getLogicValue());
 
         //System.out.println("Sensitive Node: " + SensitiveNode + "   i: " + threadSimulationList.getSimulationIndex());
         String template = "" +
@@ -780,7 +810,16 @@ import signalProbability.ProbCircuit;
         }
 
         //this.setBitFlipInNetListFile(threadSimulationList);
-        String file_output = this.circuit.getName() + threadSimulationList.concatInputVector() + "_" + threadSimulationList.concatMTFFaultSignals() + ".txt";
+        String[] relativePath =  this.genlibPATH.split("/");
+        String c = "";
+        String d = ouputs.replace(" ", "_");
+        for (int i = 0; i < relativePath.length-1; i++) {
+            c = c + relativePath[i] + "/";
+        }
+        String file_output = c +  this.circuit.getName() + threadSimulationList.concatInputVector() + "_" + threadSimulationList.concatMTFFaultSignals() + "_Outputs" + d  + ".txt";
+
+        //String plotVSensitiveNodes = "";
+
         template = template + "\n\n\n ****** SET Injection in ramdom node Inv1\n" +
                 //"\t\t*Iexp 0 out exp(0 190u 1n 40p 1.00001n 320p) \n" +
                 this.setBitFlipInNetListFile(threadSimulationList) +
@@ -801,8 +840,11 @@ import signalProbability.ProbCircuit;
                 "*" + plot + plotOutput +
                 "\n"
                 + "*plot " + plotOutput + "\n"+
+                "plot " + this.setPlotSensitiveNodesNetlistFile(threadSimulationList.concatMTFFaultSignals(" "), 0) + " , "+ this.setPlotSensitiveNodesNetlistFile(ouputs, 0) + "\n"
+                +"plot " + this.setPlotSensitiveNodesNetlistFile(threadSimulationList.concatMTFFaultSignals(" "), 5) + this.setPlotSensitiveNodesNetlistFile(ouputs, this.lastposPlot) + "\n"
+
                 //"wrdata  " + this.genlibPATH +"-"+ this.circuit.getName() +  "_" + SensitiveNode + "_" + input_values + ".txt  " + SensitiveNode + " " + ouputs + " \n"+
-                "wrdata  "  + file_output + " " + threadSimulationList.concatMTFFaultSignals(" ") + ouputs + " \n" +
+             +   "wrdata  "  + file_output + " " + threadSimulationList.concatMTFFaultSignals(" ") + ouputs + " \n" +
                 ".endc\t     \n" +
                 "\n" +
                 "* Declarando o tipo de simulação *Precisa mudar para 15 (0 - 15 = 16 unidades de tempo) pois senão nao exitira descida para entrada A\n" +
@@ -2520,7 +2562,7 @@ import signalProbability.ProbCircuit;
                 faultOutput_i = this.threadSimulationList.get(i).getFaultOutput();
 
                 if(!freeFaultOutput_i.equals(faultOutput_i)){ // Set identified
-                    String set = i + "  freeFaultOutput_i: " + freeFaultOutput_i + "   faultOutput_i: " + faultOutput_i;
+                    ///String set = i + "  freeFaultOutput_i: " + freeFaultOutput_i + "   faultOutput_i: " + faultOutput_i;
 
                     /*
                     System.out.println("- SET propaget faultSig: " + this.threadSimulationList.get(i).getFaultSignals() +

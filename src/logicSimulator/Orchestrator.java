@@ -166,13 +166,17 @@ import writers.WriteCsvTh;
     /**
      *
      */
-    public class gate_counter{
+    public static class gate_counter{
             String type;
             int counter;
+            int index;
+            float sensitive_area;
 
         public gate_counter(String type, int counter) {
             this.type = type;
             this.counter = counter;
+            this.index = -1;
+            this.sensitive_area = 0;
         }
 
         public int get_gate_counter(){
@@ -187,8 +191,21 @@ import writers.WriteCsvTh;
             this.counter++;
         }
 
+        public void setIndex(int index) {
+            this.index = index;
+        }
 
+        public int getIndex(){
+            return this.index;
+        }
 
+        public void sumSensitiveArea(Float area){
+            this.sensitive_area += area;
+        }
+
+        public float getSensitive_area() {
+            return sensitive_area;
+        }
     }
 
     public String PrintSpecs(){
