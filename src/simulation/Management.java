@@ -1657,9 +1657,9 @@ public class Management extends MAIN {
 
 
         public String PrintGatesCounterDetailsSortedCompliled(int id, String file){
-                System.out.println("           Circuit Name : " + this.circuit.getName());
+                //System.out.println("           Circuit Name : " + this.circuit.getName());
                 //System.out.println("- Logic Gates : " + this.circuit.getGates());
-                System.out.println("               - Logic Gates (size): " + this.circuit.getGates().size() );
+                //System.out.println("               - Logic Gates (size): " + this.circuit.getGates().size() );
                 ///System.out.println("               - Levels (size): " + this.levelCircuit.getGateLevels().size());
 
                 ArrayList <Orchestrator.gate_counter> temp = new ArrayList<>();
@@ -1723,9 +1723,9 @@ public class Management extends MAIN {
                                         //System.out.println(e + "                    - INSIDE Key: " + e.getKey() + "    "  + x.get_gate_type() + "  AS: " + e.getValue().getSensitive_are() + "  sum: " + x.getSensitive_areasum());
                                 }
                         }
-                        if(x.get_gate_counter() > 0) {
+                       if(x.get_gate_counter() > 0) {
                                 System.out.println(" Finded:    ASavg : " + x.get_gate_type() + "  " + (x.getSensitive_areasum() / x.getGatesCounter()) + "  c: " + x.get_gate_counter());
-                        }
+                       }
 
                         //System.out.println("\n --------");
                 }
@@ -1736,18 +1736,18 @@ public class Management extends MAIN {
 
                         float b = x.get_gate_counter();
 
-                        if(b>0) {
+                        if(b>0 && !(x.get_gate_type().equals("ZERO") || x.get_gate_type().equals("ONE"))) {
                                 float AS = x.getSensitive_areasum() / x.getGatesCounter();
                                 sum = (AS * b) + sum;
 
-                                System.out.println("     ASavg : " + x.get_gate_type() + "  AS: " + AS + "   Gates: " + b + "   sum: " + sum);
+                                System.out.println("     avgSA: " + x.get_gate_type() + "  AS: " + AS + "   Gates: " + b + "   sum: " + sum);
 
                         }
 
                 }
 
                 //System.out.println("\n\n\nCells: " + this.sensitive_cells);
-                System.out.println(" Total Sensitive Avg Area Sum (" + this.circuit.getName() + "): " + sum );
+                System.out.println(" Total Sensitive Avg Sensitive Area Sum (" + this.circuit.getName() + "): " + sum );
                 return "";
 
         }

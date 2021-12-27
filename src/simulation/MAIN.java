@@ -69,7 +69,7 @@ public class MAIN {  // Class to run debug tests
         simulationInLotDebug.setup("circuitos/fullv2/", "lib_full_no_cost.genlib", threads);
         simulationInLotDebug.processParser(signalsToinjectFault, constReliability, mtf_sizes);
 
-        SimulationMode sim_mtf_debug = new SimulationMode(simulationInLotDebug.getCircuitListSpecs().get(0)); // first Circuit c.v
+        SimulationMode sim_mtf_debug = new SimulationMode(simulationInLotDebug.getCircuitListSpecs().get(4)); // first Circuit c.v
             sim_mtf_debug.PrintAVGSensitiveAreasCompiled("ok/", "45nm_HP.pm", "Library.txt");
 
     }
