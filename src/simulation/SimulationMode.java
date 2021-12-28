@@ -28,7 +28,7 @@ public class SimulationMode {
         simulacaoMultithreading.runMTFMonteCarlo_calulateSensitiveArea(Math.round(simulationCircuit.getMtf_sizes().get(0)), simulationCircuit.getMtf_sizes(), simulationCircuit.getSignalsToinjectFault(), simulationCircuit.getRelativePath() + "lookup_table.csv");
                 simulacaoMultithreading.generateSensitiveNodesForSETSpiceFile(spiceScriptsFolder, PTMLibrary, SpiceNetListLibrary);
                     simulacaoMultithreading.printSensitiveAreas();
-                         simulacaoMultithreading.PrintGatesCounterDetailsSortedCompliled(0, simulationCircuit.getRelativePath() + simulationCircuit.getCircuit());
+                         //simulacaoMultithreading.PrintGatesCounterDetailsSortedCompliled(0, simulationCircuit.getRelativePath() + simulationCircuit.getCircuit());
                 this.OUTPUT_INFO = simulacaoMultithreading.getFRM(" MTFT Sample (Monte Carlo = N)");
 
     }
@@ -42,10 +42,10 @@ public class SimulationMode {
 
                     //simulacaoMultithreading.runMultithreadingMonteCarlo(Math.round(simulationCircuit.getMtf_sizes().get(0)), "ALL_SIGNALS");
                     System.out.println("> : " + simulationCircuit.getMtf_sizes().get(0));
-                         simulacaoMultithreading.runMTFMonteCarlo_calulateSensitiveArea(Math.round(simulationCircuit.getMtf_sizes().get(0)), simulationCircuit.getMtf_sizes(), simulationCircuit.getSignalsToinjectFault(), simulationCircuit.getRelativePath() + "lookup_table.csv");
-                              simulacaoMultithreading.PrintGatesCounterDetailsSortedCompliled(0, simulationCircuit.getRelativePath() + simulationCircuit.getCircuit());
-                    this.OUTPUT_INFO = simulacaoMultithreading.getFRM(" MTFT Sample (Monte Carlo = N)");
-
+                        simulacaoMultithreading.runMTFMonteCarlo_calulateSensitiveArea(Math.round(simulationCircuit.getMtf_sizes().get(0)), simulationCircuit.getMtf_sizes(), simulationCircuit.getSignalsToinjectFault(), simulationCircuit.getRelativePath() + "lookup_table.csv");
+                          //String output = simulacaoMultithreading.PrintGatesCounterDetailsSortedCompliled();
+                    this.OUTPUT_INFO = simulacaoMultithreading.getMTBF(" MTFT Sample (Monte Carlo = N): ");
+        System.out.println(this.OUTPUT_INFO);
     }
 
     public void runElectricalSimulation(String pathElectricSimulator, String pathSpiceCircuit) throws Exception{

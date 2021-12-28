@@ -42,13 +42,15 @@ public class Management extends MAIN {
         private ProbCircuit probCircuit;
         private LevelCircuit lCircuit;
         private int unmasked_faults;
-        private float circuitReliaibility;
+        private float FMR;
         private MappedVerilogReader verilog_circuit;
         private String Performance_Time;
         private int sizeExaustiveCompleteSimulation;
 
         private ArrayList<Float> mtf_list = new ArrayList<>();
         private Map<String, SensitiveCell> sensitive_cells;
+        private float MTBF;
+        private float avgASFLOAT;
 
         private ArrayList<Signal> signals_to_inject_faults = new ArrayList<>();
         private final ArrayList<String> inputListValues = new ArrayList<>();
@@ -169,9 +171,9 @@ public class Management extends MAIN {
 
                         case "STF":
                                 WriteLog log_STF = new WriteLog(this.sampleSize, this.threads,
-                                        this.unmasked_faults, this.circuitReliaibility, this.circuit,
-                                        this.verilog_circuit, this.signals_to_inject_faults); //(int sampleSize, int threads, int unmasked_faults,  float circuitReliaibility, Circuit circuit, MappedVerilogReader verilog_circuit ,ArrayList<Signal> signals_to_inject_faults){
-                                                                                                        //(int sampleSize, int threads, int unmasked_faults,  float circuitReliaibility, Circuit circuit, MappedVerilogReader verilog_circuit ,ArrayList<Signal> signals_to_inject_faults, ArrayList <Float> mtf_sizes){
+                                        this.unmasked_faults, this.FMR, this.circuit,
+                                        this.verilog_circuit, this.signals_to_inject_faults); //(int sampleSize, int threads, int unmasked_faults,  float FMR, Circuit circuit, MappedVerilogReader verilog_circuit ,ArrayList<Signal> signals_to_inject_faults){
+                                                                                                        //(int sampleSize, int threads, int unmasked_faults,  float FMR, Circuit circuit, MappedVerilogReader verilog_circuit ,ArrayList<Signal> signals_to_inject_faults, ArrayList <Float> mtf_sizes){
                                 log_STF.WriteSimpleLog(fileName, date, dateend, propagateTimems);
                                         //this.writeSimpleLog(fileName, date, dateend, propagateTimems);
                                 log_STF.writeCsvFileCompleteTh(fileName, itemx_list);
@@ -180,7 +182,7 @@ public class Management extends MAIN {
 
                         case "MTF":
                                 WriteLog log_MTF = new WriteLog(this.sampleSize, this.threads,
-                                        this.unmasked_faults, this.circuitReliaibility, this.circuit,
+                                        this.unmasked_faults, this.FMR, this.circuit,
                                         this.verilog_circuit, this.signals_to_inject_faults, this.mtf_list);
                                 log_MTF.writeSimpleLogMultipleTransientFaultProportion(fileName, date, dateend, propagateTimems, this.mtf_list);
                                 log_MTF.writeCsvFileCompleteThMTF(fileName, itemx_list);
@@ -470,7 +472,7 @@ public class Management extends MAIN {
                 result = result + "         Signals: " + this.circuit.getSignals().size() + " - Gates: " + this.circuit.getGates().size() + " \n";
                 result = result + "         Simulation " + identification + " : " + this.sampleSize + "\n";
                 result = result + "         Detected Faults (Ne): " + this.unmasked_faults + "\n";
-                result = result + "         Fault Mask Rate (FMR): " + this.circuitReliaibility + "\n";
+                result = result + "         Fault Mask Rate (FMR): " + this.FMR + "\n";
                 return result;
         }
 
@@ -483,7 +485,7 @@ public class Management extends MAIN {
                         bitfipCcounter = bitfipCcounter + itemx_list.get(i).bitflipcounter;
                 }
 
-                this.circuitReliaibility = (float) (1.0 - ((float) this.unmasked_faults / (float) this.sampleSize));
+                this.FMR = (float) (1.0 - ((float) this.unmasked_faults / (float) this.sampleSize));
 
                 return bitfipCcounter;
         }
@@ -1287,7 +1289,7 @@ public class Management extends MAIN {
                 System.out.println("- Simulation started at: " + formattedDate + " and finished at: "+ formattedDate2);
                 System.out.println("- Circuit: " + this.circuit.getName());
                 System.out.println("- Sample Size (N): " + this.sampleSize );
-                System.out.println("- Fault Mask Rate (FMR): " + " 1 - Ne/N = (1-(" + this.unmasked_faults + "/" + this.sampleSize + ")) = " + this.circuitReliaibility);
+                System.out.println("- Fault Mask Rate (FMR): " + " 1 - Ne/N = (1-(" + this.unmasked_faults + "/" + this.sampleSize + ")) = " + this.FMR);
                 System.out.println("- Bitflip Counter: " + bitfipCcounter );
                 System.out.println("- Load Time : " + timeElapsed_loadTime + "(s) - Setup Time: " + timeElapsed_PrepareTime  + "(s) - Threading Execution Time: " + timeElapsed_ThreadingTime
                         + "(s) - Log Generation: " + timeElapsed_logGeneration
@@ -1618,7 +1620,7 @@ public class Management extends MAIN {
                         System.out.println("- Simulation started at: " + formattedDate + " and finished at: "+ formattedDate2);
                         System.out.println("- Circuit: " + this.circuit.getName());
                         System.out.println("- Sample Size (N): " + this.sampleSize );
-                        System.out.println("- Fault Mask Rate (FMR): " + " 1 - Ne/N = (1-(" + this.unmasked_faults + "/" + this.sampleSize + ")) = " + this.circuitReliaibility);
+                        System.out.println("- Fault Mask Rate (FMR): " + " 1 - Ne/N = (1-(" + this.unmasked_faults + "/" + this.sampleSize + ")) = " + this.FMR);
                         System.out.println("- Bitflip Counter: " + bitfipCcounter );
                         System.out.println("- Load Time : " + timeElapsed_loadTime + "(s) - Setup Time: " + timeElapsed_PrepareTime  + "(s) - Threading Execution Time: " + timeElapsed_ThreadingTime
                                 + "(s) - Log Generation: " + timeElapsed_logGeneration
@@ -1656,7 +1658,7 @@ public class Management extends MAIN {
 
 
 
-        public String PrintGatesCounterDetailsSortedCompliled(int id, String file){
+        public String PrintGatesCounterDetailsSortedCompliled(){
                 //System.out.println("           Circuit Name : " + this.circuit.getName());
                 //System.out.println("- Logic Gates : " + this.circuit.getGates());
                 //System.out.println("               - Logic Gates (size): " + this.circuit.getGates().size() );
@@ -1724,7 +1726,7 @@ public class Management extends MAIN {
                                 }
                         }
                        if(x.get_gate_counter() > 0) {
-                                System.out.println(" Finded:    ASavg : " + x.get_gate_type() + "  " + (x.getSensitive_areasum() / x.getGatesCounter()) + "  c: " + x.get_gate_counter());
+                                //System.out.println(" Finded:    ASavg : " + x.get_gate_type() + "  " + (x.getSensitive_areasum() / x.getGatesCounter()) + "  c: " + x.get_gate_counter());
                        }
 
                         //System.out.println("\n --------");
@@ -1739,17 +1741,16 @@ public class Management extends MAIN {
                         if(b>0 && !(x.get_gate_type().equals("ZERO") || x.get_gate_type().equals("ONE"))) {
                                 float AS = x.getSensitive_areasum() / x.getGatesCounter();
                                 sum = (AS * b) + sum;
-
                                 System.out.println("     avgSA: " + x.get_gate_type() + "  AS: " + AS + "   Gates: " + b + "   sum: " + sum);
-
                         }
-
                 }
 
                 //System.out.println("\n\n\nCells: " + this.sensitive_cells);
-                System.out.println(" Total Sensitive Avg Sensitive Area Sum (" + this.circuit.getName() + "): " + sum );
-                return "";
+                System.out.println("\n");
 
+                System.out.println("Total Sensitive Avg Sensitive Area Sum (" + this.circuit.getName() + "): " + sum );
+
+                return Float.toString(sum);
         }
 
         /**
@@ -1853,7 +1854,17 @@ public class Management extends MAIN {
 
                         System.out.println("-----------------------END SIMULATION---------------------------------");
 
+                        String avgAs = PrintGatesCounterDetailsSortedCompliled();
 
+                        this.avgASFLOAT = Float.parseFloat(avgAs);
+
+                                float particle_flux = 0.000036F;
+                                float one = 1.0F;
+                                this.MTBF = one /(particle_flux * (1 - this.FMR) * this.avgASFLOAT);
+
+                        System.out.println("TFD = 1 - FMR = " + (1-this.FMR));
+
+                        System.out.println("MTBF = (1 / (" + (1 - this.FMR )+  " x " + this.avgASFLOAT + " x 3,6 * 10-5) ) = " + this.MTBF);
 
                         System.out.println(" ----------------------------------------------------------------------------------------------------------------------\n\n...");
                 }
@@ -1861,8 +1872,23 @@ public class Management extends MAIN {
                         System.err.println("- Inputs inserted sum up ("+sumProportionPercentage(mtf_list)+") above 1 (100%), these were the inserted commands: " + mtf_list);
                 }
 
+        }
 
+        public String getMTBF(String identification) {
 
+                String result;
+
+                result = "\n";
+                //result = result + "         " + this.Performance_Time + "\n";
+                result = result + "         Circuit: " + this.circuit.getName() + " \n";  //+ " P(I): " + this.circuit.getInputs().size() + " Gates: " + this.circuit.getGates().size() +
+                result = result + "         Signals: " + this.circuit.getSignals().size() + " - Gates: " + this.circuit.getGates().size() + " \n";
+                result = result + "         Simulation " + identification + " : " + this.sampleSize + "\n";
+                result = result + "         Detected Faults (Ne): " + this.unmasked_faults + "\n";
+                result = result + "         Fault Mask Rate (FMR): " + this.FMR + "\n";
+                result = result + "         Average Sensitive Areas (extracted from Cells Layouts): " + this.avgASFLOAT + "\n";
+                result = result + "         Reliability (MTBF): " + this.MTBF + "\n";
+
+                return result;
         }
 
         public void classifySensitiveAreas(){
