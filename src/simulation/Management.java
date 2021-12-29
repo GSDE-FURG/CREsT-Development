@@ -184,6 +184,8 @@ public class Management extends MAIN {
                                 WriteLog log_MTF = new WriteLog(this.sampleSize, this.threads,
                                         this.unmasked_faults, this.FMR, this.circuit,
                                         this.verilog_circuit, this.signals_to_inject_faults, this.mtf_list);
+                                log_MTF.setavgASFLOAT(this.avgASFLOAT);
+                                log_MTF.setMTBF(this.MTBF);
                                 log_MTF.writeSimpleLogMultipleTransientFaultProportion(fileName, date, dateend, propagateTimems, this.mtf_list);
                                 log_MTF.writeCsvFileCompleteThMTF(fileName, itemx_list);
                                 break;
@@ -1460,7 +1462,7 @@ public class Management extends MAIN {
          * @throws IOException
          * @throws Exception
          */
-        public void runMultithreadingExausticSimulationComplete(String option) throws IOException, Exception{ //Test All possibilities
+        public void faultToleranceExhaustiveCompleteMET(String option) throws IOException, Exception{ //Test All possibilities
 
 
                 Instant start = Instant.now();
@@ -1754,13 +1756,13 @@ public class Management extends MAIN {
         }
 
         /**
-         * This method orchestrates the settup enviroment for run Multithreading SET evalaution (LOGICAL SIMULATOR)
+         * This method orchestrates the settup enviroment for run Multithreading SET evaluation (Circuits Reliability (MTBF))
          * @param sample
          * @param option
          * @throws IOException
          * @throws Exception
          */
-        public void runMTFMonteCarlo_calulateSensitiveArea(int sample, ArrayList <Float> mtf_list, String option, String file) throws IOException, Exception{
+        public void monteCarloReliability(int sample, ArrayList <Float> mtf_list, String option, String file) throws IOException, Exception{
 
                 System.out.println("- SUM PROPORTION: " + sumProportionPercentage(mtf_list));
                 //List thread_list =  this.createVectorsAndParticionate(sampleSize, option, "MTF-Generate_Netlist");
@@ -1780,7 +1782,6 @@ public class Management extends MAIN {
                         LocalDateTime myDateObj = LocalDateTime.now();
                         DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
                         String formattedDate = myDateObj.format(myFormatObj);
-
 
 
                         this.setupEnviroment(" ----- Monte Carlo version  for Multiple Transient Fault Injection -------");
@@ -1806,7 +1807,7 @@ public class Management extends MAIN {
 
                         this.mtf_list = mtf_list;
 
-                        System.out.println("Signals: " + this.signals_to_inject_faults);
+                        System.out.println("Signals: " + this.signals_to_inject_faults.size());
 
                         //List thread_list =  this.createVectorsAndParticionate(sampleSize, option, "MTF-RANDOM");
                         List thread_list =  this.createVectorsAndParticionate(this.sampleSize, option, "MTF-Sensitive_Area-Generate_Netlist");
@@ -1841,14 +1842,7 @@ public class Management extends MAIN {
 
                         Instant endTimelogGeneration = Instant.now();
 
-                        this.writeLogs(this.relativePath + option + "_MTF_MonteCarlo_Simple_Log_" +this.circuit.getName()+"_Threads-"+ this.threads +  "_sampleSize-" + this.sampleSize, formattedDate,  formattedDate2, timeElapsed_Instant, this.itemx_list, "MTF");
-
-                        long timeElapsed_logGeneration = Duration.between(startTimelogGeneration, endTimelogGeneration).toSeconds();
-
-                        System.out.println("----------------------------------------------------------------------");
-
-                        this.printResults("MTF" , formattedDate, formattedDate2, bitfipCcounter, timeElapsed_loadTime, timeElapsed_PrepareTime, timeElapsed_ThreadingTime, timeElapsed_logGeneration, timeElapsed_Instant);
-                        //String specific, String formattedDate, String formattedDate2,
+                         //String specific, String formattedDate, String formattedDate2,
                         // int bitfipCcounter, long timeElapsed_loadTime, long timeElapsed_PrepareTime,
                         // long timeElapsed_ThreadingTime, long timeElapsed_logGeneration, long timeElapsed_Instant){);
 
@@ -1867,6 +1861,15 @@ public class Management extends MAIN {
                         System.out.println("MTBF = (1 / (" + (1 - this.FMR )+  " x " + this.avgASFLOAT + " x 3,6 * 10-5) ) = " + this.MTBF);
 
                         System.out.println(" ----------------------------------------------------------------------------------------------------------------------\n\n...");
+
+                        this.writeLogs(this.relativePath + option + "_MTF_MonteCarlo_Simple_Log_" +this.circuit.getName()+"_Threads-"+ this.threads +  "_sampleSize-" + this.sampleSize, formattedDate,  formattedDate2, timeElapsed_Instant, this.itemx_list, "MTF");
+
+                        long timeElapsed_logGeneration = Duration.between(startTimelogGeneration, endTimelogGeneration).toSeconds();
+
+                        System.out.println("----------------------------------------------------------------------");
+
+                        this.printResults("MTF" , formattedDate, formattedDate2, bitfipCcounter, timeElapsed_loadTime, timeElapsed_PrepareTime, timeElapsed_ThreadingTime, timeElapsed_logGeneration, timeElapsed_Instant);
+
                 }
                 else{
                         System.err.println("- Inputs inserted sum up ("+sumProportionPercentage(mtf_list)+") above 1 (100%), these were the inserted commands: " + mtf_list);

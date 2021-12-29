@@ -19,7 +19,8 @@ public class WriteLog {
     private MappedVerilogReader verilog_circuit;
     private ArrayList<Signal> signals_to_inject_faults;
     private ArrayList<Float> mtf_list = new ArrayList<>();
-
+    private float avgASFLOAT;
+    private float MTBF;
 
     public WriteLog(int sampleSize, int threads, int unmasked_faults,  float circuitReliaibility, Circuit circuit, MappedVerilogReader verilog_circuit ,ArrayList<Signal> signals_to_inject_faults){
             this.sampleSize = sampleSize;
@@ -39,6 +40,8 @@ public class WriteLog {
         this.verilog_circuit = verilog_circuit;
         this.signals_to_inject_faults = signals_to_inject_faults;
         this.mtf_list = mtf_list;
+        this.avgASFLOAT = 0;
+        this.MTBF = 0;
     }
 
     //fileName, date, dateend, propagateTimems, itemx_list
@@ -186,6 +189,12 @@ public class WriteLog {
             file.write(content);
         }
     }
+    public void setavgASFLOAT(float a){
+            this.avgASFLOAT = a;
+    }
+    public void setMTBF(float a){
+        this.MTBF = a;
+    }
 
     public void writeSimpleLogMultipleTransientFaultProportion(String filename, String date, String dateend, long timeElapsedSimulation, ArrayList <Float> mtf_list) throws IOException{
 
@@ -212,6 +221,9 @@ public class WriteLog {
 
             content = content + "Detected faults (Ne): " + this.unmasked_faults + "\n";
             content = content + "Fault Masking Rate (FMR): "+ " 1 - Ne/N = (1-(" + this.unmasked_faults + "/" + this.sampleSize + ")) = " + this.circuitReliaibility + "\n";
+            content = content + "DTF: " + (1-this.circuitReliaibility) + "\n";
+            content = content + "avgSA: " + this.avgASFLOAT + "\n";
+            content = content + "MTBF: " + this.MTBF + "\n";
             content = content + "Performance time m(s): " + (timeElapsedSimulation) + "\n";
 
 

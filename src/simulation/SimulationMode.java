@@ -1,7 +1,5 @@
 package simulation;
 
-import java.util.ArrayList;
-
 public class SimulationMode {
 
     private SimulationCircuit simulationCircuit;
@@ -16,7 +14,8 @@ public class SimulationMode {
         return this.OUTPUT_INFO;
     }
 
-    public void monteCarloSimulationMultipleTransientFaultsProportionAndCalculationOfSensitiveArea(String spiceScriptsFolder, String PTMLibrary, String SpiceNetListLibrary) throws Exception{
+
+    public void monteCarloReliability_SpiceGeneration_ElectricalSimulationAPI(String spiceScriptsFolder, String PTMLibrary, String SpiceNetListLibrary) throws Exception{
 
         this.printSpecSimulation();
 
@@ -25,7 +24,7 @@ public class SimulationMode {
 
         //simulacaoMultithreading.runMultithreadingMonteCarlo(Math.round(simulationCircuit.getMtf_sizes().get(0)), "ALL_SIGNALS");
         System.out.println("> : " + simulationCircuit.getMtf_sizes().get(0));
-        simulacaoMultithreading.runMTFMonteCarlo_calulateSensitiveArea(Math.round(simulationCircuit.getMtf_sizes().get(0)), simulationCircuit.getMtf_sizes(), simulationCircuit.getSignalsToinjectFault(), simulationCircuit.getRelativePath() + "lookup_table.csv");
+        simulacaoMultithreading.monteCarloReliability(Math.round(simulationCircuit.getMtf_sizes().get(0)), simulationCircuit.getMtf_sizes(), simulationCircuit.getSignalsToinjectFault(), simulationCircuit.getRelativePath() + "lookup_table.csv");
                 simulacaoMultithreading.generateSensitiveNodesForSETSpiceFile(spiceScriptsFolder, PTMLibrary, SpiceNetListLibrary);
                     simulacaoMultithreading.printSensitiveAreas();
                          //simulacaoMultithreading.PrintGatesCounterDetailsSortedCompliled(0, simulationCircuit.getRelativePath() + simulationCircuit.getCircuit());
@@ -33,7 +32,7 @@ public class SimulationMode {
 
     }
 
-    public void PrintAVGSensitiveAreasCompiled(String spiceScriptsFolder, String PTMLibrary, String SpiceNetListLibrary) throws Exception{
+    public void monteCarloReliabilityAPI(String spiceScriptsFolder, String PTMLibrary, String SpiceNetListLibrary) throws Exception{
 
         this.printSpecSimulation();
 
@@ -42,7 +41,7 @@ public class SimulationMode {
 
                     //simulacaoMultithreading.runMultithreadingMonteCarlo(Math.round(simulationCircuit.getMtf_sizes().get(0)), "ALL_SIGNALS");
                     System.out.println("> : " + simulationCircuit.getMtf_sizes().get(0));
-                        simulacaoMultithreading.runMTFMonteCarlo_calulateSensitiveArea(Math.round(simulationCircuit.getMtf_sizes().get(0)), simulationCircuit.getMtf_sizes(), simulationCircuit.getSignalsToinjectFault(), simulationCircuit.getRelativePath() + "lookup_table.csv");
+                        simulacaoMultithreading.monteCarloReliability(Math.round(simulationCircuit.getMtf_sizes().get(0)), simulationCircuit.getMtf_sizes(), simulationCircuit.getSignalsToinjectFault(), simulationCircuit.getRelativePath() + "lookup_table.csv");
                           //String output = simulacaoMultithreading.PrintGatesCounterDetailsSortedCompliled();
                     this.OUTPUT_INFO = simulacaoMultithreading.getMTBF(" MTFT Sample (Monte Carlo = N): ");
         System.out.println(this.OUTPUT_INFO);
@@ -64,7 +63,7 @@ public class SimulationMode {
 
     }
 
-    public void monteCarloSimulationMultipleTransientFaults() throws Exception{
+    public void faultToleranceMonteCarloMETAPI() throws Exception{
 
 
         System.out.println("\n\n ------");
@@ -77,8 +76,7 @@ public class SimulationMode {
         Management simulacaoMultithreading = new Management(simulationCircuit.getThreads(), simulationCircuit.getReliabilityConst(), simulationCircuit.getRelativePath(),
                 simulationCircuit.getRelativePath() + simulationCircuit.getGenlib(), simulationCircuit.getRelativePath() + simulationCircuit.getCircuit());
 
-        //this.printSpecSimulation();
-
+                //this.printSpecSimulation();
                 simulacaoMultithreading.runMultipleFaultInjectionMultithreadingMonteCarloSimulationProportion(Math.round(simulationCircuit.getMtf_sizes().get(0)),
                 simulationCircuit.getMtf_sizes(), simulationCircuit.getSignalsToinjectFault());
 
@@ -86,7 +84,7 @@ public class SimulationMode {
 
     }
 
-    public void monteCarloSTFSimulation() throws Exception{
+    public void faultToleranceMonteCarloAPI() throws Exception{
             this.printSpecSimulation();
            //System.out.println(" >>>> PATH AND FILE: " + simulationCircuit.getRelativePath() + simulationCircuit.getCircuit());
         Management simulacaoMultithreading = new Management(simulationCircuit.getThreads(), simulationCircuit.getReliabilityConst(), simulationCircuit.getRelativePath(),
@@ -101,7 +99,7 @@ public class SimulationMode {
      * Method to link the Logic Simulator and run method Exhaustive Simulation for SET evaluation (Extracts the Fault Masking Rate - FMR)
      * @throws Exception e e
      */
-    public void multithreadingSimulationExaustic() throws Exception { //ou Signals =  "ALL_SIGNALS" for exaustive consider all_signals
+    public void faultToleranceExhaustiveSETAPI() throws Exception { //ou Signals =  "ALL_SIGNALS" for exaustive consider all_signals
 
         /*
         Management simulacaoMultithreading = new Management(simulationCircuit.getThreads(), simulationCircuit.getReliabilityConst(), simulationCircuit.getRelativePath(),
@@ -120,12 +118,12 @@ public class SimulationMode {
      * Method to link the Logic Simulator and run method Exhaustive Complete Simulation for MET evaluation (All combinations) (Extracts the Fault Masking Rate - FMR)
      * @throws Exception e e
      */
-    public void multithreadingSimulationExausticComplete() throws Exception{ //ou Signals =  "ALL_SIGNALS" for exhaustive consider all_signals
+    public void faultToleranceExhaustiveCompleteMETAPI() throws Exception{ //ou Signals =  "ALL_SIGNALS" for exhaustive consider all_signals
         Management simulacaoMultithreading = new Management(simulationCircuit.getThreads(), simulationCircuit.getReliabilityConst(), simulationCircuit.getRelativePath(),
                 simulationCircuit.getGenlib(), simulationCircuit.getCircuit());
 
 
-        simulacaoMultithreading.runMultithreadingExausticSimulationComplete(simulationCircuit.getSignalsToinjectFault());
+        simulacaoMultithreading.faultToleranceExhaustiveCompleteMET(simulationCircuit.getSignalsToinjectFault());
             this.OUTPUT_INFO = simulacaoMultithreading.getFRM("Sample (N = "
                     + "2^Signals * Gates)");
     }

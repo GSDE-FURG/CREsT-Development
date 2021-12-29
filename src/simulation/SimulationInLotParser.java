@@ -80,8 +80,10 @@ public class SimulationInLotParser {
 
         public void printCircuitsSpecs(){
                 System.out.println("\n");
+                int id = 0;
                 for (SimulationCircuit circ: this.simulationCircuitsList){
-                        System.out.println("Circ: " + circ.getCircuit() + " genlib: " + circ.getGenlib() + "  threads: " + circ.getThreads() + " STF or MTF: " + circ.getSample()+ " " + circ.getMtf_sizes());
+                        System.out.println("(" +id + ") - Circuit: " + circ.getCircuit() + " genlib: " + circ.getGenlib() + "  threads: " + circ.getThreads() + " STF or MTF: " + circ.getSample()+ " " + circ.getMtf_sizes());
+                        id++;
                 }
         }
 }
