@@ -1280,6 +1280,8 @@ public class Management extends MAIN {
                 System.out.println("- Circuit: " + this.circuit.getName());
                 System.out.println("- Sample Size (N): " + this.sampleSize);
                 System.out.println("- Fault Mask Rate (FMR): " + " 1 - Ne/N = (1-(" + this.unmasked_faults + "/" + this.sampleSize + ")) = " + this.FMR);
+                System.out.println("- Sensitive Area (u.m²): " + this.avgASFLOAT );
+                System.out.println("- Reliability (MTBF) = (1 / (" + (1 - this.FMR )+  " x " + this.avgASFLOAT + " x 3,6 * 10-5) ) = " + this.MTBF);
                 System.out.println("- Bitflip Counter: " + bitfipCcounter);
                 System.out.println("- Load Time : " + timeElapsed_loadTime + "(s) - Setup Time: " + timeElapsed_PrepareTime + "(s) - Threading Execution Time: " + timeElapsed_ThreadingTime
                         + "(s) - Log Generation: " + timeElapsed_logGeneration
@@ -1629,7 +1631,7 @@ public class Management extends MAIN {
 
                 System.out.println("----------------------------------------------------------------------");
 
-                this.printResults("STF" , formattedDate, formattedDate2, bitfipCcounter, timeElapsed_loadTime, timeElapsed_PrepareTime, timeElapsed_ThreadingTime, timeElapsed_logGeneration, timeElapsed_Instant);
+                this.printResults("MTF" , formattedDate, formattedDate2, bitfipCcounter, timeElapsed_loadTime, timeElapsed_PrepareTime, timeElapsed_ThreadingTime, timeElapsed_logGeneration, timeElapsed_Instant);
 
 
 
@@ -1829,7 +1831,7 @@ public class Management extends MAIN {
 
                         float b = x.get_gate_counter();
 
-                        System.out.println("Temp: " + x.get_gate_counter());
+                        //System.out.println("Temp: " + x.get_gate_counter());
                         if(b>0 && !(x.get_gate_type().equals("ZERO") || x.get_gate_type().equals("ONE"))) {
                                 float AS = x.getSensitive_areasum() / x.getGatesCounter();
                                 sum = (AS * b) + sum;
