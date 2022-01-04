@@ -2,7 +2,7 @@ package simulation;
 
 import java.util.ArrayList;
 
-public class MAIN {  // Class to run debug tests
+public class MAIN {  //Class to run debug tests
     int threads;
     int sample;
     String reliabilityConst;
@@ -67,14 +67,18 @@ public class MAIN {  // Class to run debug tests
 
         SimulationInLot simulationInLotDebug = new SimulationInLot();
         //simulationInLotDebug.setup("circuitos/fullv2/", "lib_full_no_cost.genlib", threads);
-        simulationInLotDebug.setup("circuitos/ISCAS89/min/", "lib_min_no_cost.genlib", threads);
+        //simulationInLotDebug.setup("circuitos/ISCAS89/min/", "lib_min_no_cost.genlib", threads);
+        simulationInLotDebug.setup("teste/", "cadence.genlib", threads);
         simulationInLotDebug.processParser(signalsToinjectFault, constReliability, mtf_sizes);
         simulationInLotDebug.print();
 
-        for (int i = 6; i < simulationInLotDebug.getCircuitListSpecs().size(); i++) {
-            SimulationMode sim_mtf_debug = new SimulationMode(simulationInLotDebug.getCircuitListSpecs().get(i)); // first Circuit c.v
-                sim_mtf_debug.monteCarloReliabilityAPI("ok/", "45nm_HP.pm", "Library.txt");
-        }
+        //for (int i = 1; i < simulationInLotDebug.getCircuitListSpecs().size(); i++) {
+            SimulationMode sim_mtf_debug = new SimulationMode(simulationInLotDebug.getCircuitListSpecs().get(1)); // first Circuit c.v
+               // sim_mtf_debug.monteCarloReliabilityAPI("ok/", "45nm_HP.pm", "Library.txt");
+                sim_mtf_debug.faultToleranceExhaustiveCompleteMETAPI();
+            //sim_mtf_debug.faultToleranceExhaustiveSETAPI();
+            //sim_mtf_debug.monteCarloReliabilityAPI("ok/", "45nm_HP.pm", "Library.txt");
+       // }
         //SimulationMode sim_mtf_debug = new SimulationMode(simulationInLotDebug.getCircuitListSpecs().get(4)); // first Circuit c.v
         //    sim_mtf_debug.PrintAVGSensitiveAreasCompiled("ok/", "45nm_HP.pm", "Library.txt");
 

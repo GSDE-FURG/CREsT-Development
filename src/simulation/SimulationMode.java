@@ -106,9 +106,11 @@ public class SimulationMode {
                 simulationCircuit.getRelativePath() + simulationCircuit.getGenlib(), simulationCircuit.getRelativePath() + simulationCircuit.getCircuit());
 
          */
+        System.out.println("Exaustive");
         Management simulacaoMultithreading = new Management(simulationCircuit.getThreads(), simulationCircuit.getReliabilityConst(), simulationCircuit.getRelativePath(),
-                simulationCircuit.getGenlib(), simulationCircuit.getCircuit());
+                simulationCircuit.getRelativePath()+ simulationCircuit.getGenlib(), simulationCircuit.getRelativePath()+ simulationCircuit.getCircuit());
 
+            //simulacaoMultithreading.SampleSizeExausticSimulation(simulationCircuit.getSignalsToinjectFault());
             simulacaoMultithreading.runMultithreadingExausticSimulation(simulationCircuit.getSignalsToinjectFault());
         this.OUTPUT_INFO = simulacaoMultithreading.getFRM("Sample (N = "
                 + "2^Signals * Gates)");
@@ -120,10 +122,10 @@ public class SimulationMode {
      */
     public void faultToleranceExhaustiveCompleteMETAPI() throws Exception{ //ou Signals =  "ALL_SIGNALS" for exhaustive consider all_signals
         Management simulacaoMultithreading = new Management(simulationCircuit.getThreads(), simulationCircuit.getReliabilityConst(), simulationCircuit.getRelativePath(),
-                simulationCircuit.getGenlib(), simulationCircuit.getCircuit());
+                simulationCircuit.getRelativePath() +   simulationCircuit.getGenlib(), simulationCircuit.getRelativePath() + simulationCircuit.getCircuit());
 
-
-        simulacaoMultithreading.faultToleranceExhaustiveCompleteMET(simulationCircuit.getSignalsToinjectFault());
+        //simulacaoMultithreading.SampleSizeExhaustiveCompleteMET(simulationCircuit.getSignalsToinjectFault());
+            simulacaoMultithreading.faultToleranceExhaustiveCompleteMET(simulationCircuit.getSignalsToinjectFault());
             this.OUTPUT_INFO = simulacaoMultithreading.getFRM("Sample (N = "
                     + "2^Signals * Gates)");
     }

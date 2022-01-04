@@ -1,6 +1,7 @@
 package simulation;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class SimulationInLot {
 
@@ -76,6 +77,7 @@ public class SimulationInLot {
             parserFiles.circuitListParser(this.genlib, signalsToinjectFault, threads, reliabilityConst, mtf_sizes); //String genlib, String signalsToinjectFault, int threads, String reliabilityConst, int sampleSize
 
             this.circuitsListName = parserFiles.getCircuitList();  /// List of circuits
+
             this.circuitListSpecs = parserFiles.getSimulationCircuitsList();
 
             System.out.println("- MTF: CircuitList: " + this.circuitsListName );

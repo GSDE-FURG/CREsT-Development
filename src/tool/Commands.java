@@ -270,7 +270,7 @@ public class Commands {
         //simulationCircuit.print();
         SimulationMode experimento = new SimulationMode(simulationCircuit);
         experimento.printSpecSimulation();
-        experimento.faultToleranceMonteCarlo();
+        experimento.faultToleranceMonteCarloAPI();
 
         System.out.println("Simulation results:\n"
 
@@ -647,7 +647,7 @@ public class Commands {
                           //simulationCircuit.print();
                           SimulationMode experimento = new SimulationMode(simulationCircuit);
                           experimento.printSpecSimulation();
-                          experimento.multithreadingSimulationExaustic();
+                          experimento.faultToleranceExhaustiveSETAPI();
 
                        System.out.println("Simulation results:\n"
                                

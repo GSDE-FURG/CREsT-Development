@@ -1,7 +1,8 @@
 package simulation;
 
 import java.io.File;
-import java.util.ArrayList;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class SimulationInLotParser {
 
@@ -14,7 +15,31 @@ public class SimulationInLotParser {
         }
 
         public ArrayList<String> getCircuitList() {
-                return circuitList;
+                /*
+                ArrayList <String> temp = new ArrayList<>(this.circuitList);
+
+                ArrayList <String> backup = new ArrayList<>();
+
+                System.out.println("----OLD >>>> " + temp);
+                for (int i = 0; i < temp.size() ; i++) {
+                        temp.set(i, temp.get(i).replace("_lib_min_no_cost.v", ""));
+                        //System.out.println("file: " + temp.get(i) + "  - size" +  temp.get(i).length());
+                        if(temp.get(i).length() <= 4){
+                                backup.add(temp.get(i));
+                        }
+                        //temp.set(i, temp.get(i).replace("s", ""));
+                }
+
+                //System.out.println("Before Sorting:");
+
+                Collections.sort(temp);
+
+
+
+                System.out.println("\nAfter Sorting: " + backup);
+                */
+
+                return this.circuitList;
         }
 
         public ArrayList<SimulationCircuit> getSimulationCircuitsList() {

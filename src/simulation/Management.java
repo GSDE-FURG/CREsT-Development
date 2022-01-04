@@ -52,6 +52,8 @@ public class Management extends MAIN {
         private float MTBF;
         private float avgASFLOAT;
 
+        private long sumSet = 0;
+
         private ArrayList<Signal> signals_to_inject_faults = new ArrayList<>();
         private final ArrayList<String> inputListValues = new ArrayList<>();
         private final ArrayList<ArrayList<String>> inputListValuesStr = new ArrayList<>();
@@ -69,18 +71,18 @@ public class Management extends MAIN {
          * @throws IOException
          */
         public Management(int threads, String reliabilityConst, String relativePath, String genlib, String circuitName) throws IOException {
-            super(threads, reliabilityConst, relativePath, genlib);
-            this.cellLibrary = new CellLibrary();
-            this.circuitNameStr = circuitName;
-            this.genlib = genlib;
-            this.reliabilityConst = reliabilityConst;
-            this.relativePath = relativePath;
-            this.threads = threads;
-            this.mtf_list = new ArrayList<>();
+                super(threads, reliabilityConst, relativePath, genlib);
+                this.cellLibrary = new CellLibrary();
+                this.circuitNameStr = circuitName;
+                this.genlib = genlib;
+                this.reliabilityConst = reliabilityConst;
+                this.relativePath = relativePath;
+                this.threads = threads;
+                this.mtf_list = new ArrayList<>();
         }
 
         public void initProbCircuit() {
-                if(this.circuit != null) {
+                if (this.circuit != null) {
 
                         this.lCircuit = this.levelCircuit; //Terminal.getInstance().getLevelCircuit();
                         this.probCircuit = new ProbCircuit(this.circuit);
@@ -91,33 +93,32 @@ public class Management extends MAIN {
                 }
         }
 
-        public void initLevelCircuit(){
-                if(this.circuit != null) {
+        public void initLevelCircuit() {
+                if (this.circuit != null) {
                         //System.out.println("InitLevelCircuit");
                         this.levelCircuit = new LevelCircuit(this.circuit);
-                }
-                else
-                {
+                } else {
                         System.out.println("Circuit is null!!");
                 }
         }
 
-        public void printSpecsSimulation(){
-                System.out.println("    ... Reading Genlib " + " at -> " + this.genlib  + " ... ok");
-                System.out.println("    ... Avaliable logic gates in this library: "+ this.cellLibrary.getCells().size());
-                System.out.println("    ... Reading verilog "+ " at -> " + this.circuitNameStr  + " ... ok");
+        public void printSpecsSimulation() {
+                System.out.println("    ... Reading Genlib " + " at -> " + this.genlib + " ... ok");
+                System.out.println("    ... Avaliable logic gates in this library: " + this.cellLibrary.getCells().size());
+                System.out.println("    ... Reading verilog " + " at -> " + this.circuitNameStr + " ... ok");
         }
 
         /**
          * This methods setup genlib and verilog to proceed any simulation
+         *
          * @param simulation_type
          * @throws IOException
          * @throws Exception
          */
-        public void setupEnviroment(String simulation_type) throws IOException, Exception{
+        public void setupEnviroment(String simulation_type) throws IOException, Exception {
 
                 System.out.println(simulation_type);
-                System.out.println("GENLIB: " + this.genlib);
+                System.out.println("- Genlibrary: " + this.genlib);
                 CellLibrary cellLib = new CellLibrary();
                 this.cellLibrary = cellLib;
                 this.cellLibrary.initLibrary(this.genlib);
@@ -147,10 +148,15 @@ public class Management extends MAIN {
                 //this.PrintSpecs();
                 //System.out.println("          ---------------------------------------\n");
                 /*----------------------*/
+
+                //if(this.circuit.getGates().size() > 3000){
+                System.out.println("- Gates: " + this.circuit.getGates().size());
+                //}
         }
 
         /**
          * Write Simple and Complete logs, showing the simulation results: FMR, Failure Rate, Sensitive Nodes, ...., another informations
+         *
          * @param fileName
          * @param date
          * @param dateend
@@ -159,12 +165,11 @@ public class Management extends MAIN {
          * @throws IOException
          * @throws WriteException
          */
-        public void writeLogs(String fileName, String date, String dateend, long propagateTimems,  ArrayList<LogicSimulator> itemx_list, String mode) throws IOException, WriteException {
+        public void writeLogs(String fileName, String date, String dateend, long propagateTimems, ArrayList<LogicSimulator> itemx_list, String mode) throws IOException, WriteException {
 
                 System.out.println("- Writing logs ...");
                 System.out.println("- Simple Log " + fileName + "  (.txt)");
                 System.out.println("- Complete Log " + fileName + "  (.csv)");
-
 
 
                 switch (mode) {
@@ -173,11 +178,11 @@ public class Management extends MAIN {
                                 WriteLog log_STF = new WriteLog(this.sampleSize, this.threads,
                                         this.unmasked_faults, this.FMR, this.circuit,
                                         this.verilog_circuit, this.signals_to_inject_faults); //(int sampleSize, int threads, int unmasked_faults,  float FMR, Circuit circuit, MappedVerilogReader verilog_circuit ,ArrayList<Signal> signals_to_inject_faults){
-                                                                                                        //(int sampleSize, int threads, int unmasked_faults,  float FMR, Circuit circuit, MappedVerilogReader verilog_circuit ,ArrayList<Signal> signals_to_inject_faults, ArrayList <Float> mtf_sizes){
+                                //(int sampleSize, int threads, int unmasked_faults,  float FMR, Circuit circuit, MappedVerilogReader verilog_circuit ,ArrayList<Signal> signals_to_inject_faults, ArrayList <Float> mtf_sizes){
                                 log_STF.WriteSimpleLog(fileName, date, dateend, propagateTimems);
-                                        //this.writeSimpleLog(fileName, date, dateend, propagateTimems);
+                                //this.writeSimpleLog(fileName, date, dateend, propagateTimems);
                                 log_STF.writeCsvFileCompleteTh(fileName, itemx_list);
-                                        //this.writeCsvFileCompleteTh(fileName, itemx_list);
+                                //this.writeCsvFileCompleteTh(fileName, itemx_list);
                                 break;
 
                         case "MTF":
@@ -196,18 +201,19 @@ public class Management extends MAIN {
 
         /**
          * Run the thread simulation in parallel
+         *
          * @param thread_list
          * @throws Exception
          */
         public void executeThreadsSimulation(List thread_list) throws Exception {
                 Thread thread_temp = null;
-                for (int i=0; i < thread_list.size() ; i++) {
+                for (int i = 0; i < thread_list.size(); i++) {
                         thread_temp = (Thread) thread_list.get(i);
                         thread_temp.start();
 
                 }
                 /*Esperando termino das threads*/
-                for (int i=0; i < thread_list.size() ; i++) {
+                for (int i = 0; i < thread_list.size(); i++) {
                         thread_temp = (Thread) thread_list.get(i);
                         thread_temp.join();
                 }
@@ -215,28 +221,27 @@ public class Management extends MAIN {
         }
 
         /**
-         *
          * @param option
          * @return
          */
-        public ArrayList <Signal> signalsToInjectFault(String option){
+        public ArrayList<Signal> signalsToInjectFault(String option) {
 
-                ArrayList <Signal> signalList = new ArrayList<>();
+                ArrayList<Signal> signalList = new ArrayList<>();
                 signalList = this.circuit.getSignals();
-                ArrayList <Signal> r = new ArrayList<>();
+                ArrayList<Signal> r = new ArrayList<>();
 
-                switch (option){
+                switch (option) {
 
                         case "INPUTS":
 
                                 for (int i = 0; i < signalList.size(); i++) {
-                                        if(((this.circuit.getInputs().contains(signalList.get(i))))){
+                                        if (((this.circuit.getInputs().contains(signalList.get(i))))) {
 
                                                 r.add(signalList.get(i));
                                         }
 
                                 }
-                                System.out.println("  --- Input Signals (total): " + r.size() );
+                                System.out.println("  --- Input Signals (total): " + r.size());
                                 return r;
                         //break;
 
@@ -244,38 +249,37 @@ public class Management extends MAIN {
                         case "INTERMEDIATE_AND_OUTPUTS":
 
                                 for (int i = 0; i < signalList.size(); i++) {
-                                        if(!((this.circuit.getInputs().contains(signalList.get(i))))){
+                                        if (!((this.circuit.getInputs().contains(signalList.get(i))))) {
                                                 r.add(signalList.get(i));
                                         }
 
                                 }
-                                System.out.println("  --- Intermediate and output Signals (total): " + r.size() );
+                                System.out.println("  --- Intermediate and output Signals (total): " + r.size());
                                 return r;
-
 
 
                         case "INTERMEDIATE":
 
                                 for (int i = 0; i < signalList.size(); i++) {
-                                        if(!((this.circuit.getInputs().contains(signalList.get(i))) || (this.circuit.getOutputs().contains(signalList.get(i))))){
+                                        if (!((this.circuit.getInputs().contains(signalList.get(i))) || (this.circuit.getOutputs().contains(signalList.get(i))))) {
 
                                                 r.add(signalList.get(i));
                                         }
 
                                 }
-                                System.out.println("  --- Intermediate Signals (total): " + r.size() );
+                                System.out.println("  --- Intermediate Signals (total): " + r.size());
                                 return r;
 
                         case "INPUTS_OUTPUTS":
 
                                 for (int i = 0; i < signalList.size(); i++) {
-                                        if(((this.circuit.getInputs().contains(signalList.get(i))) || (this.circuit.getOutputs().contains(signalList.get(i))))){
+                                        if (((this.circuit.getInputs().contains(signalList.get(i))) || (this.circuit.getOutputs().contains(signalList.get(i))))) {
 
                                                 r.add(signalList.get(i));
                                         }
 
                                 }
-                                System.out.println("  --- Intermediate Signals (total): " + r.size() );
+                                System.out.println("  --- Intermediate Signals (total): " + r.size());
                                 return r;
 
 
@@ -284,7 +288,7 @@ public class Management extends MAIN {
                                 for (int i = 0; i < signalList.size(); i++) {
                                         r.add(signalList.get(i));
                                 }
-                                System.out.println("     --> Considering all signals (input, intermediate, output): "+r.size());
+                                System.out.println("     --> Considering all signals (input, intermediate, output): " + r.size());
                                 return r;
 
 
@@ -296,23 +300,23 @@ public class Management extends MAIN {
 
         }
 
-        public ArrayList<String> generateInputVector(String input_option){
+        public ArrayList<String> generateInputVector(String input_option) {
 
 
-                if(input_option.equals("TRUE_TABLE")){
+                if (input_option.equals("TRUE_TABLE")) {
                         //this.probCircuit.getInputs().size(), this.sampleSize
-                        ArrayList <String> vector = new ArrayList<>();
-                        int numLines = (int) Math.pow(2 ,this.probCircuit.getInputs().size());
-                        int n_inputs  = this.probCircuit.getInputs().size();
+                        ArrayList<String> vector = new ArrayList<>();
+                        int numLines = (int) Math.pow(2, this.probCircuit.getInputs().size());
+                        int n_inputs = this.probCircuit.getInputs().size();
 
-                        for (int i = 0; i < numLines; i++){
-                                if(i < (numLines/2)){
+                        for (int i = 0; i < numLines; i++) {
+                                if (i < (numLines / 2)) {
                                         //System.out.println(i + " - " + Integer.toBinaryString(i) +" len " +Integer.toBinaryString(i).length());
 
                                         int len = Integer.toBinaryString(i).length();
                                         String str = Integer.toBinaryString(i); //Transform in binary
-                                        if(len < n_inputs){
-                                                while(len < n_inputs){
+                                        if (len < n_inputs) {
+                                                while (len < n_inputs) {
                                                         str = "0" + str;
                                                         len++;
                                                 }
@@ -320,8 +324,7 @@ public class Management extends MAIN {
 
                                         //System.out.println("" + (i+1) + " - " + str);
                                         vector.add(str);
-                                }
-                                else{
+                                } else {
                                         //System.out.println("" + (i+1) + " - " + Integer.toBinaryString(i) );
                                         vector.add(Integer.toBinaryString(i));
                                 }
@@ -332,11 +335,11 @@ public class Management extends MAIN {
                         return vector;
 
                 }
-                if(input_option.equals("RANDOM")){
+                if (input_option.equals("RANDOM")) {
 
                         int inputSignaisSize = this.circuit.getInputs().size();
 
-                        ArrayList <String> vector = new ArrayList<>();
+                        ArrayList<String> vector = new ArrayList<>();
                         Random gerador = new Random();
 
                         //Collections Sorted
@@ -357,16 +360,16 @@ public class Management extends MAIN {
                 return null;
         }
 
-        public ArrayList <ArrayList<Integer>> splitInputPatternsInInt(ArrayList <String> vector, int n_input){
+        public ArrayList<ArrayList<Integer>> splitInputPatternsInInt(ArrayList<String> vector, int n_input) {
 
-                ArrayList <ArrayList<Integer>> v = new ArrayList<>();
+                ArrayList<ArrayList<Integer>> v = new ArrayList<>();
 
                 for (int i = 0; i < vector.size(); i++) {
-                        ArrayList <Integer>  temp =  new ArrayList<>();
+                        ArrayList<Integer> temp = new ArrayList<>();
 
                         String str = vector.get(i);
-                        for (int j = 0; j < n_input ; j++) {
-                                temp.add(Integer.parseInt(str.substring(j, j+1)));
+                        for (int j = 0; j < n_input; j++) {
+                                temp.add(Integer.parseInt(str.substring(j, j + 1)));
                         }
                         //System.out.println("TEMP: "+ temp);
 
@@ -379,20 +382,19 @@ public class Management extends MAIN {
 
         }
 
-        public List particionateVectorPerThread(ArrayList <ArrayList<Integer>> ListInputVectors) throws ScriptException, Exception{
+        public List particionateVectorPerThread(ArrayList<ArrayList<Integer>> ListInputVectors) throws ScriptException, Exception {
 
                 List thread_list = new ArrayList();
 
                 int N = this.sampleSize;
 
                 int partition;
-                if(this.threads == 1){
+                if (this.threads == 1) {
                         partition = N; //final_pos/NThreads ;
-                }
-                else{
+                } else {
                         double temp;
-                        temp = Math.floor(N/this.threads);
-                        partition =  (int) temp ;//(ints) Math.round(collapsed_faults/NThreads);
+                        temp = Math.floor(N / this.threads);
+                        partition = (int) temp;//(ints) Math.round(collapsed_faults/NThreads);
                 }
 
                 int start = 0;
@@ -406,19 +408,18 @@ public class Management extends MAIN {
 
                 for (int i = 0; i < this.threads; i++) { //Loop of simulations
 
-                        ArrayList <TestVectorInformation> ItemxSimulationList = new ArrayList<>();
-                        ArrayList <Integer> inputVector = new ArrayList<>();
+                        ArrayList<TestVectorInformation> ItemxSimulationList = new ArrayList<>();
+                        ArrayList<Integer> inputVector = new ArrayList<>();
                         //System.out.println("Start: " + start + " End: " + end);
-                        if((this.threads-1) == (i)){
+                        if ((this.threads - 1) == (i)) {
 
                                 start = end;
                                 end = N;
-                        }
-                        else{
-                                if(i == 0){
+                        } else {
+                                if (i == 0) {
                                         start = 0;
                                         end = partition;
-                                }else{
+                                } else {
                                         start = start + partition;
                                         end = start + partition;
                                 }
@@ -426,17 +427,17 @@ public class Management extends MAIN {
                         }
 
 
-                        System.out.println(" - starting thread: "+i  + " - simulate fault injection (number): " + partition);
-                        for (int j = start; j < end ; j++) {
+                        System.out.println(" - starting thread: " + i + " - simulate fault injection (number): " + partition);
+                        for (int j = start; j < end; j++) {
 
                                 inputVector = this.get_Input_Vectors(ListInputVectors, j); //input Test n
                                 int SigIndex = this.sortRandomFaultInjection(); //int SigIndex = decide_Random_Signals_Contrains(Signals_CTE_ONE_ZERO);
 
-                                TestVectorInformation temp = new TestVectorInformation(inputVector, this.signals_to_inject_faults.get(SigIndex), j+1);
+                                TestVectorInformation temp = new TestVectorInformation(inputVector, this.signals_to_inject_faults.get(SigIndex), j + 1);
                                 ItemxSimulationList.add(temp);
                         }
 
-                        LogicSimulator threadItem = new LogicSimulator(ItemxSimulationList, this.circuit, this.cellLibrary, this.levelCircuit, start, end, this.genlib , this.circuitNameStr); // Thread contex info
+                        LogicSimulator threadItem = new LogicSimulator(ItemxSimulationList, this.circuit, this.cellLibrary, this.levelCircuit, start, end, this.genlib, this.circuitNameStr); // Thread contex info
                         threadItem.setMode("Single");
                         itemx_list.add(threadItem);
 
@@ -451,7 +452,7 @@ public class Management extends MAIN {
 
         }
 
-        public int sortRandomFaultInjection(){
+        public int sortRandomFaultInjection() {
                 //vetor de entrada aleatório
 
                 Random gerador = new Random();
@@ -462,7 +463,7 @@ public class Management extends MAIN {
                 return randomSignalIndex;
         }
 
-        public String getFRM(String identification){
+        public String getFRM(String identification) {
 
                 //float FMR, int sample, int unmasked_faults, long propagatedTime
                 String result;
@@ -478,12 +479,12 @@ public class Management extends MAIN {
                 return result;
         }
 
-        public int parseResultsAndCalculateFMR(){
+        public int parseResultsAndCalculateFMR() {
 
                 int bitfipCcounter = 0;
 
-                for (int i=0; i < this.itemx_list.size() ; i++) {
-                        this.unmasked_faults = this.unmasked_faults +  itemx_list.get(i).getPropagatedFaults();
+                for (int i = 0; i < this.itemx_list.size(); i++) {
+                        this.unmasked_faults = this.unmasked_faults + itemx_list.get(i).getPropagatedFaults();
                         bitfipCcounter = bitfipCcounter + itemx_list.get(i).bitflipcounter;
                 }
 
@@ -492,8 +493,8 @@ public class Management extends MAIN {
                 return bitfipCcounter;
         }
 
-        public long combination(int n, int p){
-                int combination = (int) (factorialUsingRecursion(n)/ ((factorialUsingRecursion(p) * (factorialUsingRecursion(n-p)))));
+        public long combination(int n, int p) {
+                int combination = (int) (factorialUsingRecursion(n) / ((factorialUsingRecursion(p) * (factorialUsingRecursion(n - p)))));
                 return combination;
         }
 
@@ -517,16 +518,16 @@ public class Management extends MAIN {
 
         public static List<int[]> generate(int n, int r) {
                 List<int[]> combinations = new ArrayList<>();
-                helper(combinations, new int[r], 0, n-1, 0);
+                helper(combinations, new int[r], 0, n - 1, 0);
                 return combinations;
         }
 
-        public ArrayList <Integer> get_Input_Vectors(ArrayList <ArrayList<Integer>> ListInputVectors, int i){
+        public ArrayList<Integer> get_Input_Vectors(ArrayList<ArrayList<Integer>> ListInputVectors, int i) {
 
 
-                ArrayList <Integer> inputVectorTemp = ListInputVectors.get(i);
+                ArrayList<Integer> inputVectorTemp = ListInputVectors.get(i);
 
-                ArrayList <Integer> inputVector = new ArrayList<>();
+                ArrayList<Integer> inputVector = new ArrayList<>();
 
                 //  System.out.println(">>: "+ ListInputVectors.get(i) + " SIZE: "+ ListInputVectors.size());
 
@@ -538,21 +539,20 @@ public class Management extends MAIN {
 
         }
 
-        public int sortExclusiveFaultIndex(ArrayList <Integer> SigIndexList, TestVectorInformation temp ){
+        public int sortExclusiveFaultIndex(ArrayList<Integer> SigIndexList, TestVectorInformation temp) {
 
                 boolean flag = true;
 
-                while(flag){
+                while (flag) {
 
                         int new_pos = this.sortRandomFaultInjection();
 
-                        if(!SigIndexList.contains(new_pos)){
+                        if (!SigIndexList.contains(new_pos)) {
                                 //
                                 // System.out.println(" New position Founded : " +  this.signals_to_inject_faults.get(new_pos) + "   faultList:" + temp.get_MTF_FaultSignal_List() + "     complete signalslist: " + this.signals_to_inject_faults );
                                 flag = false;
                                 return new_pos;
-                        }
-                        else{
+                        } else {
                                 //System.out.println(" Alread exist in faultlist : " + this.signals_to_inject_faults.get(new_pos) +  "     list: " + temp.get_MTF_FaultSignal_List());
                         }
 
@@ -564,13 +564,12 @@ public class Management extends MAIN {
             */
 
 
-
                 }
 
-                return  -1;
+                return -1;
         }
 
-        public List particionateMultipletransientFaultInjectionVectorPerThreadProportion(ArrayList <ArrayList<Integer>> ListInputVectors, ArrayList <Float> mtf_list) throws ScriptException, Exception{
+        public List particionateMultipletransientFaultInjectionVectorPerThreadProportion(ArrayList<ArrayList<Integer>> ListInputVectors, ArrayList<Float> mtf_list) throws ScriptException, Exception {
 
                 //System.out.println("\n\n         +++++++    Dev mode Percentage (Proportion mode)  ++++++");
                 System.out.println("-   MTF LIST = " + mtf_list);
@@ -581,28 +580,26 @@ public class Management extends MAIN {
                 int N = this.sampleSize;
 
                 int partition;
-                if(this.threads == 1){
+                if (this.threads == 1) {
                         partition = N; //final_pos/NThreads ;
-                }
-                else{
+                } else {
                         double temp;
-                        temp = Math.floor(N/this.threads);
-                        partition =  (int) temp ;//(ints) Math.round(collapsed_faults/NThreads);
+                        temp = Math.floor(N / this.threads);
+                        partition = (int) temp;//(ints) Math.round(collapsed_faults/NThreads);
                 }
-
 
 
                 //HashMap  <Integer, multiple_faults_object> arraylist_mtf = new HashMap<>();
                 sum_proportion = sumProportionPercentage(mtf_list);
                 int sample_base = Math.round(mtf_list.get(0));
-                ArrayList <Integer> new_MTF = passProportionPercentage(mtf_list, sample_base);
+                ArrayList<Integer> new_MTF = passProportionPercentage(mtf_list, sample_base);
                 System.out.println("- new MTF LIST " + new_MTF + "  size: " + new_MTF.size());
 
                 final ArrayList<Float> arrayList_mtf_original = new ArrayList<>(mtf_list); // Original ArrayList
 
-                ArrayList <TestVectorInformation> listOflist = new ArrayList<>();
+                ArrayList<TestVectorInformation> listOflist = new ArrayList<>();
 
-                ArrayList <Integer> combined_MTF = new ArrayList<>();
+                ArrayList<Integer> combined_MTF = new ArrayList<>();
                 combined_MTF.add(new_MTF.get(0));
                 int base_sum = new_MTF.get(0);
 
@@ -616,34 +613,33 @@ public class Management extends MAIN {
                 for (int prop_index = 0; prop_index < new_MTF.size(); prop_index++) {
                         System.out.println(new_MTF.get(prop_index));
 
-                        if(prop_index >0){
+                        if (prop_index > 0) {
                                 base_sum = base_sum + new_MTF.get(prop_index);
                                 combined_MTF.add(base_sum);
                         }
 
-                        for (int index = 0; index < new_MTF.get(prop_index); index++){
+                        for (int index = 0; index < new_MTF.get(prop_index); index++) {
                                 // For prop_index
 
                                 ArrayList<Integer> inputVector = new ArrayList<>();
 
                                 inputVector = this.get_Input_Vectors(ListInputVectors, count); //input Test n
 
-                                if (prop_index == 0){ // Single Transient Fault
+                                if (prop_index == 0) { // Single Transient Fault
                                         int SigIndex = this.sortRandomFaultInjection(); //int SigIndex = decide_Random_Signals_Contrains(Signals_CTE_ONE_ZERO);
-                                        TestVectorInformation temp = new TestVectorInformation(inputVector, this.signals_to_inject_faults.get(SigIndex), count );
-                                        ArrayList <Integer> SigIndexList = new ArrayList<Integer>();
+                                        TestVectorInformation temp = new TestVectorInformation(inputVector, this.signals_to_inject_faults.get(SigIndex), count);
+                                        ArrayList<Integer> SigIndexList = new ArrayList<Integer>();
                                         SigIndexList.add(SigIndex);
                                         ItemxSimulationList.add(temp);
                                         /// System.out.println("~ Injection Single TF number : " + count + " - Sig Index" + SigIndexList + "  temp: "+ temp.getMTFPERSONAL_LIST_Identities() + "  " +  temp.getSimulationIndex());
-                                }
-                                else{ // Double , Tripple
+                                } else { // Double , Tripple
                                         int SigIndex = this.sortRandomFaultInjection(); //int SigIndex = decide_Random_Signals_Contrains(Signals_CTE_ONE_ZERO);
-                                        TestVectorInformation temp = new TestVectorInformation(inputVector, this.signals_to_inject_faults.get(SigIndex), count );
-                                        ArrayList <Integer> SigIndexList = new ArrayList<Integer>();
+                                        TestVectorInformation temp = new TestVectorInformation(inputVector, this.signals_to_inject_faults.get(SigIndex), count);
+                                        ArrayList<Integer> SigIndexList = new ArrayList<Integer>();
                                         SigIndexList.add(SigIndex);
-                                        for (int k = 1; k <= prop_index; k ++){
+                                        for (int k = 1; k <= prop_index; k++) {
                                                 int new_pos = sortExclusiveFaultIndex(SigIndexList, temp);
-                                                temp.setMultipleTransientFaultInjection( this.signals_to_inject_faults.get(new_pos));
+                                                temp.setMultipleTransientFaultInjection(this.signals_to_inject_faults.get(new_pos));
                                                 SigIndexList.add(new_pos); // Do no reapet signals
                                         }
                                         //System.out.println("~ Injection MTF number : " + count + " - Sig Index" + SigIndexList + "  temp: "+ temp.getMTFPERSONAL_LIST_Identities()  + "  " +  temp.getSimulationIndex());
@@ -679,7 +675,7 @@ public class Management extends MAIN {
                         }
 
                         ArrayList<TestVectorInformation> temp = new ArrayList<TestVectorInformation>(ItemxSimulationList.subList(start, end));
-                        LogicSimulator threadItem = new LogicSimulator(temp, this.circuit, this.cellLibrary, this.levelCircuit, start, end, this.genlib , this.circuitNameStr); // Thread contex info
+                        LogicSimulator threadItem = new LogicSimulator(temp, this.circuit, this.cellLibrary, this.levelCircuit, start, end, this.genlib, this.circuitNameStr); // Thread contex info
 
                         threadItem.setMode("Multiple");
                         itemx_list.add(threadItem);
@@ -695,7 +691,7 @@ public class Management extends MAIN {
                 return thread_list;
         }
 
-        public List particionateMultipletransientFaultInjectionVectorPerThreadProportionForElectricalSimulation(ArrayList <ArrayList<Integer>> ListInputVectors, ArrayList <Float> mtf_list) throws ScriptException, Exception{
+        public List particionateMultipletransientFaultInjectionVectorPerThreadProportionForElectricalSimulation(ArrayList<ArrayList<Integer>> ListInputVectors, ArrayList<Float> mtf_list) throws ScriptException, Exception {
 
                 //System.out.println("\n\n         +++++++    Dev mode Percentage (Proportion mode)  ++++++");
                 System.out.println("-   MTF LIST = " + mtf_list);
@@ -706,28 +702,26 @@ public class Management extends MAIN {
                 int N = this.sampleSize;
 
                 int partition;
-                if(this.threads == 1){
+                if (this.threads == 1) {
                         partition = N; //final_pos/NThreads ;
-                }
-                else{
+                } else {
                         double temp;
-                        temp = Math.floor(N/this.threads);
-                        partition =  (int) temp ;//(ints) Math.round(collapsed_faults/NThreads);
+                        temp = Math.floor(N / this.threads);
+                        partition = (int) temp;//(ints) Math.round(collapsed_faults/NThreads);
                 }
-
 
 
                 //HashMap  <Integer, multiple_faults_object> arraylist_mtf = new HashMap<>();
                 sum_proportion = sumProportionPercentage(mtf_list);
                 int sample_base = Math.round(mtf_list.get(0));
-                ArrayList <Integer> new_MTF = passProportionPercentage(mtf_list, sample_base);
+                ArrayList<Integer> new_MTF = passProportionPercentage(mtf_list, sample_base);
                 //System.out.println("- new MTF LIST " + new_MTF + "  size: " + new_MTF.size());
 
                 final ArrayList<Float> arrayList_mtf_original = new ArrayList<>(mtf_list); // Original ArrayList
 
-                ArrayList <TestVectorInformation> listOflist = new ArrayList<>();
+                ArrayList<TestVectorInformation> listOflist = new ArrayList<>();
 
-                ArrayList <Integer> combined_MTF = new ArrayList<>();
+                ArrayList<Integer> combined_MTF = new ArrayList<>();
                 combined_MTF.add(new_MTF.get(0));
                 int base_sum = new_MTF.get(0);
 
@@ -741,34 +735,33 @@ public class Management extends MAIN {
                 for (int prop_index = 0; prop_index < new_MTF.size(); prop_index++) {
                         System.out.println(new_MTF.get(prop_index));
 
-                        if(prop_index >0){
+                        if (prop_index > 0) {
                                 base_sum = base_sum + new_MTF.get(prop_index);
                                 combined_MTF.add(base_sum);
                         }
 
-                        for (int index = 0; index < new_MTF.get(prop_index); index++){
+                        for (int index = 0; index < new_MTF.get(prop_index); index++) {
                                 // For prop_index
 
                                 ArrayList<Integer> inputVector = new ArrayList<>();
 
                                 inputVector = this.get_Input_Vectors(ListInputVectors, count); //input Test n
 
-                                if (prop_index == 0){ // Single Transient Fault
+                                if (prop_index == 0) { // Single Transient Fault
                                         int SigIndex = this.sortRandomFaultInjection(); //int SigIndex = decide_Random_Signals_Contrains(Signals_CTE_ONE_ZERO);
-                                        TestVectorInformation temp = new TestVectorInformation(inputVector, this.signals_to_inject_faults.get(SigIndex), count );
-                                        ArrayList <Integer> SigIndexList = new ArrayList<Integer>();
+                                        TestVectorInformation temp = new TestVectorInformation(inputVector, this.signals_to_inject_faults.get(SigIndex), count);
+                                        ArrayList<Integer> SigIndexList = new ArrayList<Integer>();
                                         SigIndexList.add(SigIndex);
                                         ItemxSimulationList.add(temp);
                                         /// System.out.println("~ Injection Single TF number : " + count + " - Sig Index" + SigIndexList + "  temp: "+ temp.getMTFPERSONAL_LIST_Identities() + "  " +  temp.getSimulationIndex());
-                                }
-                                else{ // Double , Tripple
+                                } else { // Double , Tripple
                                         int SigIndex = this.sortRandomFaultInjection(); //int SigIndex = decide_Random_Signals_Contrains(Signals_CTE_ONE_ZERO);
-                                        TestVectorInformation temp = new TestVectorInformation(inputVector, this.signals_to_inject_faults.get(SigIndex), count );
-                                        ArrayList <Integer> SigIndexList = new ArrayList<Integer>();
+                                        TestVectorInformation temp = new TestVectorInformation(inputVector, this.signals_to_inject_faults.get(SigIndex), count);
+                                        ArrayList<Integer> SigIndexList = new ArrayList<Integer>();
                                         SigIndexList.add(SigIndex);
-                                        for (int k = 1; k <= prop_index; k ++){
+                                        for (int k = 1; k <= prop_index; k++) {
                                                 int new_pos = sortExclusiveFaultIndex(SigIndexList, temp);
-                                                temp.setMultipleTransientFaultInjection( this.signals_to_inject_faults.get(new_pos));
+                                                temp.setMultipleTransientFaultInjection(this.signals_to_inject_faults.get(new_pos));
                                                 SigIndexList.add(new_pos); // Do no reapet signals
                                         }
                                         //System.out.println("~ Injection MTF number : " + count + " - Sig Index" + SigIndexList + "  temp: "+ temp.getMTFPERSONAL_LIST_Identities()  + "  " +  temp.getSimulationIndex());
@@ -776,7 +769,7 @@ public class Management extends MAIN {
                                 }
                                 count++;
                         }
-                       /// System.out.println(prop_index + " Count: " + count + " ItemxSimulation: " + ItemxSimulationList.size() + "  order: ");
+                        /// System.out.println(prop_index + " Count: " + count + " ItemxSimulation: " + ItemxSimulationList.size() + "  order: ");
                 }
 
                 System.out.println("- End Count: " + count);
@@ -804,7 +797,7 @@ public class Management extends MAIN {
                         }
 
                         ArrayList<TestVectorInformation> temp = new ArrayList<TestVectorInformation>(ItemxSimulationList.subList(start, end));
-                        LogicSimulator threadItem = new LogicSimulator(temp, this.circuit, this.cellLibrary, this.levelCircuit, start, end, this.genlib , this.circuitNameStr); // Thread contex info
+                        LogicSimulator threadItem = new LogicSimulator(temp, this.circuit, this.cellLibrary, this.levelCircuit, start, end, this.genlib, this.circuitNameStr); // Thread contex info
 
                         threadItem.setMode("MTF-Generate_Netlist");
                         threadItem.setSensitiveCellsMap(this.sensitive_cells);
@@ -821,7 +814,7 @@ public class Management extends MAIN {
                 return thread_list;
         }
 
-        public List particionateExausticVectorForSensitiveAreas(ArrayList <ArrayList<Integer>> ListInputVectors,  Map <String, SensitiveCell> sensitive_cells, String mode) throws ScriptException, Exception{
+        public List particionateExausticVectorForSensitiveAreas(ArrayList<ArrayList<Integer>> ListInputVectors, Map<String, SensitiveCell> sensitive_cells, String mode) throws ScriptException, Exception {
 
                 //System.out.println("- Sensitive Area inputs ...");
 
@@ -830,13 +823,12 @@ public class Management extends MAIN {
                 int N = this.sampleSize;
 
                 int partition;
-                if(this.threads == 1){
+                if (this.threads == 1) {
                         partition = N; //final_pos/NThreads ;
-                }
-                else{
+                } else {
                         double temp;
-                        temp = Math.floor(N/this.threads);
-                        partition =  (int) temp ;//(int) Math.round(collapsed_faults/NThreads);
+                        temp = Math.floor(N / this.threads);
+                        partition = (int) temp;//(int) Math.round(collapsed_faults/NThreads);
                 }
 
                 int start = 0;
@@ -849,19 +841,18 @@ public class Management extends MAIN {
 
                 for (int i = 0; i < this.threads; i++) { //Loop of simulations
 
-                        ArrayList <TestVectorInformation> ItemxSimulationList = new ArrayList<>();
-                        ArrayList <Integer> inputVector = new ArrayList<>();
+                        ArrayList<TestVectorInformation> ItemxSimulationList = new ArrayList<>();
+                        ArrayList<Integer> inputVector = new ArrayList<>();
 
-                        if((this.threads-1) == (i)){
+                        if ((this.threads - 1) == (i)) {
 
                                 start = end;
                                 end = N;
-                        }
-                        else{
-                                if(i == 0){
+                        } else {
+                                if (i == 0) {
                                         start = 0;
                                         end = partition;
-                                }else{
+                                } else {
                                         start = start + partition;
                                         end = start + partition;
                                 }
@@ -869,9 +860,9 @@ public class Management extends MAIN {
                         }
 
 
-                        System.out.println(" - starting thread: "+i  + " - simulate fault injection (number): " + partition);
+                        System.out.println(" - starting thread: " + i + " - simulate fault injection (number): " + partition);
 
-                        for (int j = start; j < end ; j++){
+                        for (int j = start; j < end; j++) {
 
                                 for (int aux = 0; aux < 1; aux++) {
 
@@ -879,7 +870,7 @@ public class Management extends MAIN {
 
                                         int SigIndex = aux;//this.sortRandomFaultInjection(); //int SigIndex = decide_Random_Signals_Contrains(Signals_CTE_ONE_ZERO);
 
-                                        TestVectorInformation temp = new TestVectorInformation(inputVector, this.signals_to_inject_faults.get(SigIndex), j+1);
+                                        TestVectorInformation temp = new TestVectorInformation(inputVector, this.signals_to_inject_faults.get(SigIndex), j + 1);
                                         ItemxSimulationList.add(temp);
 
                                         //System.out.println(j + " Vec: " + inputVector + " Fault Signal: " +  this.signals_to_inject_faults.get(SigIndex));
@@ -887,7 +878,7 @@ public class Management extends MAIN {
 
                         }
 
-                        LogicSimulator threadItem = new LogicSimulator(ItemxSimulationList, this.circuit, this.cellLibrary, this.levelCircuit, start, end, this.genlib , this.circuitNameStr); // Thread contex info
+                        LogicSimulator threadItem = new LogicSimulator(ItemxSimulationList, this.circuit, this.cellLibrary, this.levelCircuit, start, end, this.genlib, this.circuitNameStr); // Thread contex info
                         threadItem.setMode(mode);
                         threadItem.setSensitiveCellsMap(sensitive_cells);
                         itemx_list.add(threadItem);
@@ -903,20 +894,19 @@ public class Management extends MAIN {
 
         }
 
-        public List particionateExausticVector(ArrayList <ArrayList<Integer>> ListInputVectors) throws ScriptException, Exception{
+        public List particionateExausticVector(ArrayList<ArrayList<Integer>> ListInputVectors) throws ScriptException, Exception {
 
                 List thread_list = new ArrayList();
 
                 int N = this.sampleSize;
 
                 int partition;
-                if(this.threads == 1){
+                if (this.threads == 1) {
                         partition = N; //final_pos/NThreads ;
-                }
-                else{
+                } else {
                         double temp;
-                        temp = Math.floor(N/this.threads);
-                        partition =  (int) temp ;//(int) Math.round(collapsed_faults/NThreads);
+                        temp = Math.floor(N / this.threads);
+                        partition = (int) temp;//(int) Math.round(collapsed_faults/NThreads);
                 }
 
                 int start = 0;
@@ -929,19 +919,18 @@ public class Management extends MAIN {
 
                 for (int i = 0; i < this.threads; i++) { //Loop of simulations
 
-                        ArrayList <TestVectorInformation> ItemxSimulationList = new ArrayList<>();
-                        ArrayList <Integer> inputVector = new ArrayList<>();
+                        ArrayList<TestVectorInformation> ItemxSimulationList = new ArrayList<>();
+                        ArrayList<Integer> inputVector = new ArrayList<>();
 
-                        if((this.threads-1) == (i)){
+                        if ((this.threads - 1) == (i)) {
 
                                 start = end;
                                 end = N;
-                        }
-                        else{
-                                if(i == 0){
+                        } else {
+                                if (i == 0) {
                                         start = 0;
                                         end = partition;
-                                }else{
+                                } else {
                                         start = start + partition;
                                         end = start + partition;
                                 }
@@ -949,9 +938,9 @@ public class Management extends MAIN {
                         }
 
 
-                        System.out.println(" - starting thread: "+i  + " - simulate fault injection (number): " + partition);
+                        System.out.println(" - starting thread: " + i + " - simulate fault injection (number): " + partition);
 
-                        for (int j = start; j < end ; j++){
+                        for (int j = start; j < end; j++) {
 
                                 for (int aux = 0; aux < this.signals_to_inject_faults.size(); aux++) {
 
@@ -959,15 +948,15 @@ public class Management extends MAIN {
 
                                         int SigIndex = aux;//this.sortRandomFaultInjection(); //int SigIndex = decide_Random_Signals_Contrains(Signals_CTE_ONE_ZERO);
 
-                                        TestVectorInformation temp = new TestVectorInformation(inputVector, this.signals_to_inject_faults.get(SigIndex), j+1);
+                                        TestVectorInformation temp = new TestVectorInformation(inputVector, this.signals_to_inject_faults.get(SigIndex), j + 1);
                                         ItemxSimulationList.add(temp);
 
-                                        System.out.println("Vec: " + inputVector + " Fault Signal: " +  this.signals_to_inject_faults.get(SigIndex));
+                                        //System.out.println("Vec: " + inputVector + " Fault Signal: " + this.signals_to_inject_faults.get(SigIndex));
                                 }
 
                         }
 
-                        LogicSimulator threadItem = new LogicSimulator(ItemxSimulationList, this.circuit, this.cellLibrary, this.levelCircuit, start, end, this.genlib , this.circuitNameStr); // Thread contex info
+                        LogicSimulator threadItem = new LogicSimulator(ItemxSimulationList, this.circuit, this.cellLibrary, this.levelCircuit, start, end, this.genlib, this.circuitNameStr); // Thread contex info
                         threadItem.setMode("Single");
                         itemx_list.add(threadItem);
 
@@ -982,20 +971,19 @@ public class Management extends MAIN {
 
         }
 
-        public List particionateExausticVectorComplete(ArrayList <ArrayList<Integer>> ListInputVectors) throws ScriptException, Exception{
+        public List particionateExausticVectorComplete(ArrayList<ArrayList<Integer>> ListInputVectors) throws ScriptException, Exception {
 
                 List thread_list = new ArrayList();
 
                 int N = this.sampleSize;
 
                 int partition;
-                if(this.threads == 1){
+                if (this.threads == 1) {
                         partition = N; //final_pos/NThreads ;
-                }
-                else{
+                } else {
                         double temp;
-                        temp = Math.floor(N/this.threads);
-                        partition =  (int) temp ;//(int) Math.round(collapsed_faults/NThreads);
+                        temp = Math.floor(N / this.threads);
+                        partition = (int) temp;//(int) Math.round(collapsed_faults/NThreads);
                 }
 
                 int start = 0;
@@ -1007,7 +995,6 @@ public class Management extends MAIN {
                */
 
 
-
                 int vec = (int) Math.pow(2, this.circuit.getInputs().size());
                 long result_computation = 0;
                 for (int i = 1; i < this.signals_to_inject_faults.size(); i++) {
@@ -1015,8 +1002,10 @@ public class Management extends MAIN {
                         long comb = combination(this.circuit.getSignals().size(), i);
 
                         result_computation = result_computation + (comb);
-                        System.out.println("conjunto  " + this.circuit.getSignals().size() + "," + i  + " : " + comb + "  testComplexity = " + comb + " = " + (result_computation)) ;
+                        System.out.println("C(n,p) =  " + this.circuit.getSignals().size() + "," + i + " : " + comb + "  testComplexity = " + comb + " = " + (result_computation));
                 }
+
+                this.sumSet = result_computation;
                 this.sizeExaustiveCompleteSimulation = (int) result_computation * vec;
         /*
         for (int i = 0; i < this.signals_to_inject_faults.size(); i++) {
@@ -1034,19 +1023,18 @@ public class Management extends MAIN {
 
                 for (int i = 0; i < this.threads; i++) { //Loop of simulations
 
-                        ArrayList <TestVectorInformation> ItemxSimulationList = new ArrayList<>();
-                        ArrayList <Integer> inputVector = new ArrayList<>();
+                        ArrayList<TestVectorInformation> ItemxSimulationList = new ArrayList<>();
+                        ArrayList<Integer> inputVector = new ArrayList<>();
 
-                        if((this.threads-1) == (i)){
+                        if ((this.threads - 1) == (i)) {
 
                                 start = end;
                                 end = N;
-                        }
-                        else{
-                                if(i == 0){
+                        } else {
+                                if (i == 0) {
                                         start = 0;
                                         end = partition;
-                                }else{
+                                } else {
                                         start = start + partition;
                                         end = start + partition;
                                 }
@@ -1054,19 +1042,18 @@ public class Management extends MAIN {
                         }
 
 
-                        System.out.println(" - starting thread: "+i  + " - simulate fault injection (number): " + partition);
+                        System.out.println(" - starting thread: " + i + " - simulate fault injection (number): " + partition);
 
 
                         System.out.println("SIGNALS LIST: " + this.signals_to_inject_faults);
 
 
-
-                        for (int j = start; j < end ; j++){
+                        for (int j = start; j < end; j++) {
 
                                 inputVector = this.get_Input_Vectors(ListInputVectors, j);  // Vetores [0000] [00001]
                                 for (int p = 1; p < this.signals_to_inject_faults.size(); p++) { // 1 , 2, 3, 4
 
-                                        String nxp = "  p: " + p + "  vec: "+ inputVector + "  vv2: " + counterv2 + "  j: "+ j;
+                                        String nxp = "  p: " + p + "  vec: " + inputVector + "  vv2: " + counterv2 + "  j: " + j;
 
 
                                         //[20000 100 200 400]
@@ -1076,7 +1063,7 @@ public class Management extends MAIN {
 
                                         List<int[]> combinations = generate(this.signals_to_inject_faults.size(), p); // Combination of 11 and 1 = 11 ~ 11 and 2 = 55 ~ 11and 3
 
-                                        for (int[] combination : combinations){ //
+                                        for (int[] combination : combinations) { //
                                                 TestVectorInformation temp = new TestVectorInformation(inputVector, this.signals_to_inject_faults.get(combination[0
                                                         ]), counterv2);  //Inject in G1 first
 
@@ -1131,7 +1118,7 @@ public class Management extends MAIN {
                         }
 
 
-                        LogicSimulator threadItem = new LogicSimulator(ItemxSimulationList, this.circuit, this.cellLibrary, this.levelCircuit, start, end, this.genlib , this.circuitNameStr); // Thread contex info
+                        LogicSimulator threadItem = new LogicSimulator(ItemxSimulationList, this.circuit, this.cellLibrary, this.levelCircuit, start, end, this.genlib, this.circuitNameStr); // Thread contex info
                         threadItem.setMode("Multiple");
                         itemx_list.add(threadItem);
 
@@ -1141,7 +1128,7 @@ public class Management extends MAIN {
                         thread_list.add(thread);
 
 
-                        System.out.println(i + " Thread - Size simulation" + " " + this.sizeExaustiveCompleteSimulation + "    computation: " + result_computation + "   - SimulatlistionSize: "+itemx_list.get(i).getThreadSimulatinArray().size() + "   counter: " +counter);
+                        System.out.println(i + " Thread - Size simulation" + " " + this.sizeExaustiveCompleteSimulation + "    computation: " + result_computation + "   - SimulatlistionSize: " + itemx_list.get(i).getThreadSimulatinArray().size() + "   counter: " + counter);
                 }
                 this.sizeExaustiveCompleteSimulation = (int) counter;
 
@@ -1149,18 +1136,18 @@ public class Management extends MAIN {
 
         }
 
-        public ArrayList <Integer> passProportionPercentage(ArrayList<Float> mtf_list, int sample){
+        public ArrayList<Integer> passProportionPercentage(ArrayList<Float> mtf_list, int sample) {
 
                 float sum_proportion = sumProportionPercentage(mtf_list);
-                ArrayList <Integer> m = new ArrayList<>();
+                ArrayList<Integer> m = new ArrayList<>();
                 float sum_up = 0;
 
-                if(sum_proportion == 1.0){
+                if (sum_proportion == 1.0) {
                         for (int pos = 1; pos < mtf_list.size(); pos++) {
                                 m.add((int) Math.round(sample * mtf_list.get(pos)));
                         }
                 }
-                if(sum_proportion < 1){
+                if (sum_proportion < 1) {
                         //need complete in this case
                         float dif = 1 - sum_proportion;
                         //int dif = 1 - Math.round(sum_proportion);
@@ -1181,7 +1168,7 @@ public class Management extends MAIN {
 
                         System.out.println("sum up: " + sum_up);
 
-                        if(sum_up <= temp_sample) { // 20k == 20k
+                        if (sum_up <= temp_sample) { // 20k == 20k
 
                                 System.err.println("- Warning:" + " based on your inputs: " + mtf_list + " the sum should be 1 (" + sum_proportion + "), although " +
                                         " in this case the procedure will complete this number of tests (" + least_to_complete + ") because the diference was (1 - " + sum_proportion + " ) = " + dif + " * " + temp_sample + " = " + least_to_complete);
@@ -1199,7 +1186,7 @@ public class Management extends MAIN {
                                 //m.set(m.size(), m.get(0) + least_to_complete);
                                 //System.out.println("m " + m);
                         }
-                }else{
+                } else {
                         System.out.println("Proportion sum up is : " + sum_proportion);
                 }
 
@@ -1210,7 +1197,8 @@ public class Management extends MAIN {
 
         /**
          * Generate input vectors according with sampleSize and signalsOption defition
-         * @param sampleSize eg: 20000 SET faults (Particle generating SET)
+         *
+         * @param sampleSize    eg: 20000 SET faults (Particle generating SET)
          * @param signalsOption
          * @return
          * @throws Exception
@@ -1218,8 +1206,8 @@ public class Management extends MAIN {
         public List createVectorsAndParticionate(int sampleSize, String signalsOption, String option) throws Exception {
 
                 List thread_list = new ArrayList();
-                ArrayList <String> random_input_vectors;
-                ArrayList <ArrayList<Integer>> ListInputVectors;
+                ArrayList<String> random_input_vectors;
+                ArrayList<ArrayList<Integer>> ListInputVectors;
                 this.sampleSize = sampleSize; //(int) Math.pow(2, this.probCircuit.getInputs().size());  //(int) Math.pow(2, this.probCircuit.getInputs().size());
                 this.signals_to_inject_faults = this.signalsToInjectFault(signalsOption); // Consider all signals to fault inject
 
@@ -1228,21 +1216,21 @@ public class Management extends MAIN {
                         case "RANDOM":
                                 System.out.println("STF - RANDOM");
                                 random_input_vectors = this.generateInputVector(option); // Generate Random Input Vectors or InputTrueTable
-                                ListInputVectors =  this.splitInputPatternsInInt(random_input_vectors, this.probCircuit.getInputs().size());
+                                ListInputVectors = this.splitInputPatternsInInt(random_input_vectors, this.probCircuit.getInputs().size());
                                 thread_list = this.particionateVectorPerThread(ListInputVectors); // x - vectors per thread
                                 break;
 
                         case "TRUE_TABLE_SINGLE":
                                 System.out.println("STF - Exhaustive for STF");
                                 random_input_vectors = this.generateInputVector("TRUE_TABLE"); // Generate Random Input Vectors or InputTrueTable
-                                ListInputVectors =  this.splitInputPatternsInInt(random_input_vectors, this.probCircuit.getInputs().size());
+                                ListInputVectors = this.splitInputPatternsInInt(random_input_vectors, this.probCircuit.getInputs().size());
                                 thread_list = particionateExausticVector(ListInputVectors); // x - vectors per thread
                                 break;
 
                         case "TRUE_TABLE_COMPLETE":
                                 System.out.println("STF - Exhaustive for STF");
                                 random_input_vectors = this.generateInputVector("TRUE_TABLE"); // Generate Random Input Vectors or InputTrueTable
-                                ListInputVectors =  this.splitInputPatternsInInt(random_input_vectors, this.probCircuit.getInputs().size());
+                                ListInputVectors = this.splitInputPatternsInInt(random_input_vectors, this.probCircuit.getInputs().size());
                                 thread_list = particionateExausticVectorComplete(ListInputVectors);  // TESTE ALL GATES ///particionateVectorPerThread(ListInputVectors); // x - vectors per thread
 
                                 break;
@@ -1260,7 +1248,7 @@ public class Management extends MAIN {
                                 random_input_vectors = this.generateInputVector("RANDOM"); // Generate Random Input Vectors or InputTrueTable
                                 ListInputVectors = this.splitInputPatternsInInt(random_input_vectors, this.probCircuit.getInputs().size());
                                 thread_list = this.particionateMultipletransientFaultInjectionVectorPerThreadProportion(ListInputVectors, this.mtf_list); // x - vectors per thread
-                                 break;
+                                break;
 
                         case "MTF-Sensitive_Area-Generate_Netlist":
                                 System.out.println("MTF - RANDOM");
@@ -1269,14 +1257,14 @@ public class Management extends MAIN {
                                 // System.out.println(ListInputVectors.size());
                                 thread_list = this.particionateMultipletransientFaultInjectionVectorPerThreadProportionForElectricalSimulation(ListInputVectors, mtf_list); // x - vectors per thread
 
-                                 System.out.println(">>>>>> Input Vec: " + random_input_vectors.size() + " L: " + ListInputVectors.size() + " THD:  " + thread_list.size()) ;
+                                System.out.println(">>>>>> Input Vec: " + random_input_vectors.size() + " L: " + ListInputVectors.size() + " THD:  " + thread_list.size());
                                 break;
 
 
                         case "STF-Generate_Netlist":
                                 System.out.println("STF-Generate_Netlist");
                                 random_input_vectors = this.generateInputVector("RANDOM"); // Generate Random Input Vectors or InputTrueTable
-                                ListInputVectors =  this.splitInputPatternsInInt(random_input_vectors, this.probCircuit.getInputs().size());
+                                ListInputVectors = this.splitInputPatternsInInt(random_input_vectors, this.probCircuit.getInputs().size());
                                 thread_list = this.particionateVectorPerThread(ListInputVectors); // x - vectors per thread
                                 break;
 
@@ -1286,26 +1274,27 @@ public class Management extends MAIN {
                 return (thread_list);
         }
 
-        public void printResults(String specific, String formattedDate, String formattedDate2, int bitfipCcounter, long timeElapsed_loadTime, long timeElapsed_PrepareTime, long timeElapsed_ThreadingTime, long timeElapsed_logGeneration, long timeElapsed_Instant){
+        public void printResults(String specific, String formattedDate, String formattedDate2, int bitfipCcounter, long timeElapsed_loadTime, long timeElapsed_PrepareTime, long timeElapsed_ThreadingTime, long timeElapsed_logGeneration, long timeElapsed_Instant) {
                 System.out.println("    -   " + specific + " -     ");
-                System.out.println("- Simulation started at: " + formattedDate + " and finished at: "+ formattedDate2);
+                System.out.println("- Simulation started at: " + formattedDate + " and finished at: " + formattedDate2);
                 System.out.println("- Circuit: " + this.circuit.getName());
-                System.out.println("- Sample Size (N): " + this.sampleSize );
+                System.out.println("- Sample Size (N): " + this.sampleSize);
                 System.out.println("- Fault Mask Rate (FMR): " + " 1 - Ne/N = (1-(" + this.unmasked_faults + "/" + this.sampleSize + ")) = " + this.FMR);
-                System.out.println("- Bitflip Counter: " + bitfipCcounter );
-                System.out.println("- Load Time : " + timeElapsed_loadTime + "(s) - Setup Time: " + timeElapsed_PrepareTime  + "(s) - Threading Execution Time: " + timeElapsed_ThreadingTime
+                System.out.println("- Bitflip Counter: " + bitfipCcounter);
+                System.out.println("- Load Time : " + timeElapsed_loadTime + "(s) - Setup Time: " + timeElapsed_PrepareTime + "(s) - Threading Execution Time: " + timeElapsed_ThreadingTime
                         + "(s) - Log Generation: " + timeElapsed_logGeneration
-                        + "(s) - Simulation Instant TimeElapsed: " + timeElapsed_Instant +" (s)" );
+                        + "(s) - Simulation Instant TimeElapsed: " + timeElapsed_Instant + " (s)");
         }
 
         /**
          * This method orchestrates the settup enviroment for run Multithreading SET evalaution (LOGICAL SIMULATOR)
+         *
          * @param sampleSize
          * @param option
          * @throws IOException
          * @throws Exception
          */
-        public void runMultithreadingMonteCarlo(int sampleSize, String option) throws IOException, Exception{
+        public void runMultithreadingMonteCarlo(int sampleSize, String option) throws IOException, Exception {
 
                 Instant start = Instant.now();
 
@@ -1326,7 +1315,7 @@ public class Management extends MAIN {
 
                 System.out.println("-  (input) Sample size = " + this.sampleSize);
 
-                List thread_list =  this.createVectorsAndParticionate(sampleSize, option, "RANDOM");
+                List thread_list = this.createVectorsAndParticionate(sampleSize, option, "RANDOM");
 
                 Instant endPreparingSimulationTimeElapsed = Instant.now();
 
@@ -1356,14 +1345,14 @@ public class Management extends MAIN {
 
                 long timeElapsed_logGeneration = Duration.between(startTimelogGeneration, endTimelogGeneration).toSeconds();
 
-                this.writeLogs(option + "_STF_MonteCarlo_Simple_Log_" +this.circuit.getName()+"_Threads-"+ this.threads +  "_sampleSize-" + this.sampleSize, formattedDate,  formattedDate2, timeElapsed_Instant, itemx_list, "STF");
+                this.writeLogs(option + "_STF_MonteCarlo_Simple_Log_" + this.circuit.getName() + "_Threads-" + this.threads + "_sampleSize-" + this.sampleSize, formattedDate, formattedDate2, timeElapsed_Instant, itemx_list, "STF");
 
                 System.out.println("----------------------------------------------------------------------");
 
-                        this.printResults("", formattedDate, formattedDate2, bitfipCcounter, timeElapsed_loadTime, timeElapsed_PrepareTime, timeElapsed_ThreadingTime, timeElapsed_logGeneration, timeElapsed_Instant);
-                        //String specific, String formattedDate, String formattedDate2,
-                        // int bitfipCcounter, long timeElapsed_loadTime, long timeElapsed_PrepareTime,
-                        // long timeElapsed_ThreadingTime, long timeElapsed_logGeneration, long timeElapsed_Instant){
+                this.printResults("", formattedDate, formattedDate2, bitfipCcounter, timeElapsed_loadTime, timeElapsed_PrepareTime, timeElapsed_ThreadingTime, timeElapsed_logGeneration, timeElapsed_Instant);
+                //String specific, String formattedDate, String formattedDate2,
+                // int bitfipCcounter, long timeElapsed_loadTime, long timeElapsed_PrepareTime,
+                // long timeElapsed_ThreadingTime, long timeElapsed_logGeneration, long timeElapsed_Instant){
 
                 System.out.println("-----------------------END SIMULATION---------------------------------");
 
@@ -1372,13 +1361,7 @@ public class Management extends MAIN {
 
         }
 
-        /**
-         * Exhaustic Single STF (SET) Simulation
-         * @param option
-         * @throws IOException
-         * @throws Exception
-         */
-        public void runMultithreadingExausticSimulation(String option) throws IOException, Exception{ //Test All possibilities
+        public void SampleSizeExausticSimulation(String option) throws IOException, Exception { //Test All possibilities
 
                 Instant start = Instant.now();
 
@@ -1401,9 +1384,52 @@ public class Management extends MAIN {
 
                 int sizeExasuticTest; //= (this.sampleSize * this.signals_to_inject_faults.size());;
 
-                List thread_list =  this.createVectorsAndParticionate(sampleSize, option, "TRUE_TABLE_SINGLE");
+                List thread_list = this.createVectorsAndParticionate(sampleSize, option, "TRUE_TABLE_SINGLE");
 
-                System.out.println("-   Sample size (N = 2^ENTRADAS): " + "2^"+ this.circuit.getInputs().size() + " = " + this.sampleSize + "   Sigs: " + this.signals_to_inject_faults.size());
+
+                sizeExasuticTest = (this.sampleSize * this.signals_to_inject_faults.size());
+
+                Instant endPreparingSimulationTimeElapsed = Instant.now();
+
+                System.out.println("\n\n-   Sample size " + this.circuit.getName() + "  (N = 2^(inputs)*Signals): " + "2^" + this.circuit.getInputs().size() + " * " + this.signals_to_inject_faults.size() + " = " + sizeExasuticTest);
+
+
+                // System.out.println("For this Exhuastive STF simulation it is necessary "+ sizeExasuticTest);
+        }
+
+        /**
+         * Exhaustic Single STF (SET) Simulation
+         *
+         * @param option
+         * @throws IOException
+         * @throws Exception
+         */
+        public void runMultithreadingExausticSimulation(String option) throws IOException, Exception { //Test All possibilities
+
+                Instant start = Instant.now();
+
+                LocalDateTime myDateObj = LocalDateTime.now();
+                DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+                String formattedDate = myDateObj.format(myFormatObj);
+
+                this.setupEnviroment("\n ----- Exaustive Simulation Version For SET (SF's) ------");
+
+                System.out.println("    - Simulation start in : " + formattedDate);
+                System.out.println("    - Threads in execution: " + this.threads);
+
+                Instant loadTimeElapsed = Instant.now();
+
+                Instant startPreparingSimulationTimeElapsed = Instant.now();
+
+                this.sampleSize = (int) Math.pow(2, this.probCircuit.getInputs().size());  //(int) Math.pow(2, this.probCircuit.getInputs().size());
+
+                int N = this.sampleSize; // random_input_vectors.size();//testNumber;
+
+                int sizeExasuticTest; //= (this.sampleSize * this.signals_to_inject_faults.size());;
+
+                List thread_list = this.createVectorsAndParticionate(sampleSize, option, "TRUE_TABLE_SINGLE");
+
+                System.out.println("-   Sample size (N = 2^ENTRADAS): " + "2^" + this.circuit.getInputs().size() + " = " + this.sampleSize + "   Sigs: " + this.signals_to_inject_faults.size());
 
                 sizeExasuticTest = (this.sampleSize * this.signals_to_inject_faults.size());
 
@@ -1438,8 +1464,7 @@ public class Management extends MAIN {
                 long timeElapsed_logGeneration = Duration.between(startTimelogGeneration, endTimelogGeneration).toSeconds();
 
 
-
-                        this.writeLogs(option + "_ExausticSTFSimulation_" +this.circuit.getName()+"_Threads-"+ this.threads +  "_sampleSize-" + this.sampleSize, formattedDate,  formattedDate2, timeElapsed_Instant, itemx_list, "STF");
+                this.writeLogs(option + "_ExausticSTFSimulation_" + this.circuit.getName() + "_Threads-" + this.threads + "_sampleSize-" + this.sampleSize, formattedDate, formattedDate2, timeElapsed_Instant, itemx_list, "STF");
 
                 System.out.println("----------------------------------------------------------------------");
 
@@ -1453,9 +1478,43 @@ public class Management extends MAIN {
                 this.Performance_Time = "Simulation started at: " + formattedDate + " and finished at: " + formattedDate2;
 
 
-
         }
 
+        public void SampleSizeExhaustiveCompleteMET(String option) throws IOException, Exception{ //Test All possibilities
+
+
+                Instant start = Instant.now();
+
+                LocalDateTime myDateObj = LocalDateTime.now();
+                DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+                String formattedDate = myDateObj.format(myFormatObj);
+
+                this.setupEnviroment("\n ----- Exaustive Complete (All combinations) Simulation Version -------");
+
+                System.out.println("    - Simulation start in : " + formattedDate);
+
+                System.out.println("    - Threads in execution: " + this.threads);
+
+                Instant loadTimeElapsed = Instant.now();
+
+                Instant startPreparingSimulationTimeElapsed = Instant.now();
+
+                int sizeExasuticTest;
+
+
+                this.sampleSize = (int) Math.pow(2, this.probCircuit.getInputs().size());  //(int) Math.pow(2, this.probCircuit.getInputs().size());
+
+                int N = this.sampleSize; // random_input_vectors.size();//testNumber;
+
+                List thread_list =  this.createVectorsAndParticionate(this.sampleSize, option, "TRUE_TABLE_COMPLETE");
+
+                N = sizeExasuticTest = this.sizeExaustiveCompleteSimulation;//(this.sampleSize * this.signals_to_inject_faults.size());
+
+                this.sampleSize = N;
+
+                System.out.println("\n\n-   Sample size " + this.circuit.getName() +"(N = 2^(inputs) * Comb(n,p)): " + "2^"+ this.circuit.getInputs().size() + " * " +  this.sumSet + " = " + this.sampleSize);
+
+        }
         /**
          * Exhaustic Complete MTF (SET) Simulation
          * @param option
@@ -1464,6 +1523,14 @@ public class Management extends MAIN {
          */
         public void faultToleranceExhaustiveCompleteMET(String option) throws IOException, Exception{ //Test All possibilities
 
+
+                String file = this.relativePath + "lookup_table.csv";
+
+                Map <String, SensitiveCell> sensitive_cells = readCsvFileAndMapSensitiveCellsArea(file, ",");
+
+                System.out.println("Sensitive Cells: " + sensitive_cells.size());
+
+                this.setSensitiveCells(sensitive_cells);
 
                 Instant start = Instant.now();
 
@@ -1536,7 +1603,36 @@ public class Management extends MAIN {
                 System.out.println("-----------------------END SIMULATION---------------------------------");
 
                 this.Performance_Time = "Simulation started at: " + formattedDate + " and finished at: " + formattedDate2;
-                this.sampleSize = N;
+                //this.sampleSize = N;
+
+                System.out.println("-----------------------END SIMULATION---------------------------------");
+
+                String avgAs = PrintGatesCounterDetailsSortedCompliled();
+
+                        this.avgASFLOAT = Float.parseFloat(avgAs);
+
+                System.out.println("- AvgASFLOAT: " + this.avgASFLOAT);
+
+                float particle_flux = 0.000036F;
+                float one = 1.0F;
+                this.MTBF = one /(particle_flux * (1 - this.FMR) * this.avgASFLOAT);
+
+                System.out.println("TFD = 1 - FMR = " + (1-this.FMR));
+
+                System.out.println("MTBF = (1 / (" + (1 - this.FMR )+  " x " + this.avgASFLOAT + " x 3,6 * 10-5) ) = " + this.MTBF);
+
+                System.out.println(" ----------------------------------------------------------------------------------------------------------------------\n\n...");
+
+                //this.writeLogs(this.relativePath + option + "_MTF_MonteCarlo_Simple_Log_" +this.circuit.getName()+"_Threads-"+ this.threads +  "_sampleSize-" + this.sampleSize, formattedDate,  formattedDate2, timeElapsed_Instant, this.itemx_list, "MTF");
+
+                // long timeElapsed_logGeneration = Duration.between(startTimelogGeneration, endTimelogGeneration).toSeconds();
+
+                System.out.println("----------------------------------------------------------------------");
+
+                this.printResults("STF" , formattedDate, formattedDate2, bitfipCcounter, timeElapsed_loadTime, timeElapsed_PrepareTime, timeElapsed_ThreadingTime, timeElapsed_logGeneration, timeElapsed_Instant);
+
+
+
 
         }
 
@@ -1657,11 +1753,8 @@ public class Management extends MAIN {
                 return false;
         }
 
-
-
-
         public String PrintGatesCounterDetailsSortedCompliled(){
-                //System.out.println("           Circuit Name : " + this.circuit.getName());
+                System.out.println("           Circuit Name : " + this.circuit.getName());
                 //System.out.println("- Logic Gates : " + this.circuit.getGates());
                 //System.out.println("               - Logic Gates (size): " + this.circuit.getGates().size() );
                 ///System.out.println("               - Levels (size): " + this.levelCircuit.getGateLevels().size());
@@ -1697,9 +1790,7 @@ public class Management extends MAIN {
 
 
                 for(Gate i: this.circuit.getGates()) { // Update counters
-
-                       // System.out.println("-" + i.getType().toString());
-
+                        System.out.println("-" + i.getType().toString());
                         if(searchGateInList(i.getType().toString(), temp) == true)
                         {
                                 //System.out.println("In: " );
@@ -1713,22 +1804,20 @@ public class Management extends MAIN {
                 }
 
                 /********/
-
+                //System.out.println("---> " +  this.sensitive_cells.size());
                 for (Orchestrator.gate_counter x: temp) {
 
                         for (Map.Entry<String, SensitiveCell> e : this.sensitive_cells.entrySet()) {
 
                                 if (e.getKey().startsWith(x.get_gate_type()+"X1_")) { // OR other word to complite filter
                                         //add to my result list
-
                                         float f= Float.parseFloat (e.getValue().getSensitive_are());
                                         x.sumSensitiveArea(f);
-
-                                        //System.out.println(e + "                    - INSIDE Key: " + e.getKey() + "    "  + x.get_gate_type() + "  AS: " + e.getValue().getSensitive_are() + "  sum: " + x.getSensitive_areasum());
+                                        System.out.println(e + "                    - INSIDE Key: " + e.getKey() + "    "  + x.get_gate_type() + "  AS: " + e.getValue().getSensitive_are() + "  sum: " + x.getSensitive_areasum());
                                 }
                         }
                        if(x.get_gate_counter() > 0) {
-                                //System.out.println(" Finded:    ASavg : " + x.get_gate_type() + "  " + (x.getSensitive_areasum() / x.getGatesCounter()) + "  c: " + x.get_gate_counter());
+                               // System.out.println(" Finded:    ASavg : " + x.get_gate_type() + "  " + (x.getSensitive_areasum() / x.getGatesCounter()) + "  c: " + x.get_gate_counter());
                        }
 
                         //System.out.println("\n --------");
@@ -1740,6 +1829,7 @@ public class Management extends MAIN {
 
                         float b = x.get_gate_counter();
 
+                        System.out.println("Temp: " + x.get_gate_counter());
                         if(b>0 && !(x.get_gate_type().equals("ZERO") || x.get_gate_type().equals("ONE"))) {
                                 float AS = x.getSensitive_areasum() / x.getGatesCounter();
                                 sum = (AS * b) + sum;
@@ -1764,7 +1854,7 @@ public class Management extends MAIN {
          */
         public void monteCarloReliability(int sample, ArrayList <Float> mtf_list, String option, String file) throws IOException, Exception{
 
-                System.out.println("- SUM PROPORTION: " + sumProportionPercentage(mtf_list));
+                //System.out.println("- SUM PROPORTION: " + sumProportionPercentage(mtf_list));
                 //List thread_list =  this.createVectorsAndParticionate(sampleSize, option, "MTF-Generate_Netlist");
                 //this.runElectricalSimulator(this.relativePath, this.relativePath + "netlist_files/" +"netlist_"+this.circuit.getName() + ".txt");
                 //this.sampleSize = N;
@@ -1783,7 +1873,6 @@ public class Management extends MAIN {
                         DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
                         String formattedDate = myDateObj.format(myFormatObj);
 
-
                         this.setupEnviroment(" ----- Monte Carlo version  for Multiple Transient Fault Injection -------");
 
                         Instant loadTimeElapsed = Instant.now();
@@ -1800,14 +1889,13 @@ public class Management extends MAIN {
 
                         this.mtf_list = mtf_list;
 
-                        System.out.println("SAMPLE SIZE: " + this.sampleSize);
+                        System.out.println("-Sample Size: " + this.sampleSize);
 
+                        //this.signals_to_inject_faults = this.signalsToInjectFault(option); // Consider all signals to fault inject
 
-                        this.signals_to_inject_faults = this.signalsToInjectFault(option); // Consider all signals to fault inject
+                        //this.mtf_list = mtf_list;
 
-                        this.mtf_list = mtf_list;
-
-                        System.out.println("Signals: " + this.signals_to_inject_faults.size());
+                        System.out.println("-Signals: " + this.signals_to_inject_faults.size());
 
                         //List thread_list =  this.createVectorsAndParticionate(sampleSize, option, "MTF-RANDOM");
                         List thread_list =  this.createVectorsAndParticionate(this.sampleSize, option, "MTF-Sensitive_Area-Generate_Netlist");
