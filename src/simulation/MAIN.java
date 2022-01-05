@@ -68,17 +68,33 @@ public class MAIN {  //Class to run debug tests
         SimulationInLot simulationInLotDebug = new SimulationInLot();
         //simulationInLotDebug.setup("circuitos/fullv2/", "lib_full_no_cost.genlib", threads);
         //simulationInLotDebug.setup("circuitos/ISCAS89/min/", "lib_min_no_cost.genlib", threads);
-        simulationInLotDebug.setup("teste/", "cadence.genlib", threads);
+        simulationInLotDebug.setup("teste/ISCAS85/", "cadence.genlib", threads);
         simulationInLotDebug.processParser(signalsToinjectFault, constReliability, mtf_sizes);
         simulationInLotDebug.print();
 
-        //for (int i = 1; i < simulationInLotDebug.getCircuitListSpecs().size(); i++) {
-            SimulationMode sim_mtf_debug = new SimulationMode(simulationInLotDebug.getCircuitListSpecs().get(1)); // first Circuit c.v
+        ArrayList <String> samples = new ArrayList<>();
+
+        for (int i = 0; i < simulationInLotDebug.getCircuitListSpecs().size(); i++) {
+
+
+            SimulationMode sim_mtf_debug = new SimulationMode(simulationInLotDebug.getCircuitListSpecs().get(i)); // first Circuit c.v
+
                // sim_mtf_debug.monteCarloReliabilityAPI("ok/", "45nm_HP.pm", "Library.txt");
-                sim_mtf_debug.faultToleranceExhaustiveCompleteMETAPI();
-            //sim_mtf_debug.faultToleranceExhaustiveSETAPI();
+                //sim_mtf_debug.faultToleranceExhaustiveCompleteMETAPI();
+                sim_mtf_debug.faultToleranceExhaustiveSETAPI();
+                samples.add(sim_mtf_debug.getOutput_sample());
             //sim_mtf_debug.monteCarloReliabilityAPI("ok/", "45nm_HP.pm", "Library.txt");
-       // }
+
+
+            //-Xms2G -Xmx7G  para ISCAS89
+       }
+
+        System.out.println("\n\n");
+
+        for (int i = 0; i < samples.size(); i++) {
+
+            System.out.println(samples.get(i) + "   -" + simulationInLotDebug.getCircuitListSpecs().get(i));
+        }
         //SimulationMode sim_mtf_debug = new SimulationMode(simulationInLotDebug.getCircuitListSpecs().get(4)); // first Circuit c.v
         //    sim_mtf_debug.PrintAVGSensitiveAreasCompiled("ok/", "45nm_HP.pm", "Library.txt");
 

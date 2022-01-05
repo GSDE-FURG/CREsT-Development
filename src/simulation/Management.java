@@ -1363,7 +1363,7 @@ public class Management extends MAIN {
 
         }
 
-        public void SampleSizeExausticSimulation(String option) throws IOException, Exception { //Test All possibilities
+        public String SampleSizeExausticSimulation(String option) throws IOException, Exception { //Test All possibilities
 
                 Instant start = Instant.now();
 
@@ -1382,21 +1382,26 @@ public class Management extends MAIN {
 
                 this.sampleSize = (int) Math.pow(2, this.probCircuit.getInputs().size());  //(int) Math.pow(2, this.probCircuit.getInputs().size());
 
-                int N = this.sampleSize; // random_input_vectors.size();//testNumber;
+                float N = this.sampleSize; // random_input_vectors.size();//testNumber;
 
-                int sizeExasuticTest; //= (this.sampleSize * this.signals_to_inject_faults.size());;
+                float sizeExasuticTest; //= (this.sampleSize * this.signals_to_inject_faults.size());;
 
-                List thread_list = this.createVectorsAndParticionate(sampleSize, option, "TRUE_TABLE_SINGLE");
+                //List thread_list = this.createVectorsAndParticionate(sampleSize, option, "TRUE_TABLE_SINGLE");
+                this.signals_to_inject_faults = this.signalsToInjectFault("ALL_SIGNALS");
 
-
-                sizeExasuticTest = (this.sampleSize * this.signals_to_inject_faults.size());
+                sizeExasuticTest = (float)  (this.sampleSize) * (float)  (this.signals_to_inject_faults.size());
 
                 Instant endPreparingSimulationTimeElapsed = Instant.now();
 
-                System.out.println("\n\n-   Sample size " + this.circuit.getName() + "  (N = 2^(inputs)*Signals): " + "2^" + this.circuit.getInputs().size() + " * " + this.signals_to_inject_faults.size() + " = " + sizeExasuticTest);
+                String out = ("-   Sample size " + this.circuit.getName() + "  (N = 2^(inputs)*Signals): " + "2^" + this.circuit.getInputs().size() + " * " + this.signals_to_inject_faults.size() + " = " + sizeExasuticTest);
+
+                System.out.println(out);
+                //System.out.println("\n\n-   Sample size " + this.circuit.getName() + "  (N = 2^(inputs)*Signals): " + "2^" + this.circuit.getInputs().size() + " * " + this.signals_to_inject_faults.size() + " = " + sizeExasuticTest);
 
 
                 // System.out.println("For this Exhuastive STF simulation it is necessary "+ sizeExasuticTest);
+
+                return out;
         }
 
         /**
@@ -1482,7 +1487,7 @@ public class Management extends MAIN {
 
         }
 
-        public void SampleSizeExhaustiveCompleteMET(String option) throws IOException, Exception{ //Test All possibilities
+        public  String SampleSizeExhaustiveCompleteMET(String option) throws IOException, Exception{ //Test All possibilities
 
 
                 Instant start = Instant.now();
@@ -1501,21 +1506,23 @@ public class Management extends MAIN {
 
                 Instant startPreparingSimulationTimeElapsed = Instant.now();
 
-                int sizeExasuticTest;
-
+                //int sizeExasuticTest;
 
                 this.sampleSize = (int) Math.pow(2, this.probCircuit.getInputs().size());  //(int) Math.pow(2, this.probCircuit.getInputs().size());
 
                 int N = this.sampleSize; // random_input_vectors.size();//testNumber;
 
-                List thread_list =  this.createVectorsAndParticionate(this.sampleSize, option, "TRUE_TABLE_COMPLETE");
+                //List thread_list =  this.createVectorsAndParticionate(this.sampleSize, option, "TRUE_TABLE_COMPLETE");
 
-                N = sizeExasuticTest = this.sizeExaustiveCompleteSimulation;//(this.sampleSize * this.signals_to_inject_faults.size());
+                //N = sizeExasuticTest = this.sizeExaustiveCompleteSimulation;//(this.sampleSize * this.signals_to_inject_faults.size());
 
                 this.sampleSize = N;
 
-                System.out.println("\n\n-   Sample size " + this.circuit.getName() +"(N = 2^(inputs) * Comb(n,p)): " + "2^"+ this.circuit.getInputs().size() + " * " +  this.sumSet + " = " + this.sampleSize);
+                String out = ("-   Sample size " + this.circuit.getName() +"(N = 2^(inputs) * Comb(n,p)): " + "2^"+ this.circuit.getInputs().size() + " * " +  this.sumSet + " = " + this.sampleSize);
 
+                System.out.println(out);
+
+                return out;
         }
         /**
          * Exhaustic Complete MTF (SET) Simulation

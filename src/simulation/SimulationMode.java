@@ -6,6 +6,8 @@ public class SimulationMode {
 
     public String OUTPUT_INFO = "";
 
+    public String output_sample = "";
+
     public SimulationMode(SimulationCircuit simulationCircuit){
         this.simulationCircuit = simulationCircuit;
     }
@@ -110,8 +112,8 @@ public class SimulationMode {
         Management simulacaoMultithreading = new Management(simulationCircuit.getThreads(), simulationCircuit.getReliabilityConst(), simulationCircuit.getRelativePath(),
                 simulationCircuit.getRelativePath()+ simulationCircuit.getGenlib(), simulationCircuit.getRelativePath()+ simulationCircuit.getCircuit());
 
-            //simulacaoMultithreading.SampleSizeExausticSimulation(simulationCircuit.getSignalsToinjectFault());
-            simulacaoMultithreading.runMultithreadingExausticSimulation(simulationCircuit.getSignalsToinjectFault());
+           this.output_sample = simulacaoMultithreading.SampleSizeExausticSimulation(simulationCircuit.getSignalsToinjectFault());
+            //simulacaoMultithreading.runMultithreadingExausticSimulation(simulationCircuit.getSignalsToinjectFault());
         this.OUTPUT_INFO = simulacaoMultithreading.getFRM("Sample (N = "
                 + "2^Signals * Gates)");
     }
@@ -124,10 +126,14 @@ public class SimulationMode {
         Management simulacaoMultithreading = new Management(simulationCircuit.getThreads(), simulationCircuit.getReliabilityConst(), simulationCircuit.getRelativePath(),
                 simulationCircuit.getRelativePath() +   simulationCircuit.getGenlib(), simulationCircuit.getRelativePath() + simulationCircuit.getCircuit());
 
-        //simulacaoMultithreading.SampleSizeExhaustiveCompleteMET(simulationCircuit.getSignalsToinjectFault());
-            simulacaoMultithreading.faultToleranceExhaustiveCompleteMET(simulationCircuit.getSignalsToinjectFault());
+        this.output_sample = simulacaoMultithreading.SampleSizeExhaustiveCompleteMET(simulationCircuit.getSignalsToinjectFault());
+            //simulacaoMultithreading.faultToleranceExhaustiveCompleteMET(simulationCircuit.getSignalsToinjectFault());
             this.OUTPUT_INFO = simulacaoMultithreading.getFRM("Sample (N = "
                     + "2^Signals * Gates)");
+    }
+
+    public String getOutput_sample() {
+        return output_sample;
     }
 
     public void printSpecSimulation(){
