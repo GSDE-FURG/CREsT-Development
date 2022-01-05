@@ -1593,7 +1593,7 @@ public class Management extends MAIN {
 
                 this.sampleSize = sizeExasuticTest;
 
-                this.writeLogs(option + "_ExausticCompleteSimulation_" +this.circuit.getName()+"_Threads-"+ this.threads +  "_sampleSize-" + this.sampleSize, formattedDate,  formattedDate2, timeElapsed_Instant, itemx_list, "STF");
+                //this.writeLogs(option + "_ExausticCompleteSimulation_" +this.circuit.getName()+"_Threads-"+ this.threads +  "_sampleSize-" + this.sampleSize, formattedDate,  formattedDate2, timeElapsed_Instant, itemx_list, "STF");
 
                 System.out.println("----------------------------------------------------------------------");
 
@@ -1625,9 +1625,9 @@ public class Management extends MAIN {
 
                 System.out.println(" ----------------------------------------------------------------------------------------------------------------------\n\n...");
 
-                //this.writeLogs(this.relativePath + option + "_MTF_MonteCarlo_Simple_Log_" +this.circuit.getName()+"_Threads-"+ this.threads +  "_sampleSize-" + this.sampleSize, formattedDate,  formattedDate2, timeElapsed_Instant, this.itemx_list, "MTF");
 
-                // long timeElapsed_logGeneration = Duration.between(startTimelogGeneration, endTimelogGeneration).toSeconds();
+                this.writeLogs(option + "_ExausticCompleteSimulation_" +this.circuit.getName()+"_Threads-"+ this.threads +  "_sampleSize-" + this.sampleSize, formattedDate,  formattedDate2, timeElapsed_Instant, itemx_list, "MTF");
+
 
                 System.out.println("----------------------------------------------------------------------");
 
