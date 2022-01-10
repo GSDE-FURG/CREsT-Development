@@ -68,7 +68,8 @@ public class MAIN {  //Class to run debug tests
         SimulationInLot simulationInLotDebug = new SimulationInLot();
         //simulationInLotDebug.setup("circuitos/fullv2/", "lib_full_no_cost.genlib", threads);
         //simulationInLotDebug.setup("circuitos/ISCAS89/min/", "lib_min_no_cost.genlib", threads);
-        simulationInLotDebug.setup("teste/ISCAS85/", "cadence.genlib", threads);
+        //simulationInLotDebug.setup("teste/ISCAS85/", "cadence.genlib", threads);
+        simulationInLotDebug.setup("circuitos/ISCAS89/fullv2/", "lib_full_no_cost.genlib", threads);
         simulationInLotDebug.processParser(signalsToinjectFault, constReliability, mtf_sizes);
         simulationInLotDebug.print();
 
@@ -79,14 +80,18 @@ public class MAIN {  //Class to run debug tests
 
             SimulationMode sim_mtf_debug = new SimulationMode(simulationInLotDebug.getCircuitListSpecs().get(i)); // first Circuit c.v
 
-               // sim_mtf_debug.monteCarloReliabilityAPI("ok/", "45nm_HP.pm", "Library.txt");
+           try {
+                sim_mtf_debug.monteCarloReliabilityAPI("ok/", "45nm_HP.pm", "Library.txt");
                 //sim_mtf_debug.faultToleranceExhaustiveCompleteMETAPI();
-                sim_mtf_debug.faultToleranceExhaustiveSETAPI();
-                samples.add(sim_mtf_debug.getOutput_sample());
-            //sim_mtf_debug.monteCarloReliabilityAPI("ok/", "45nm_HP.pm", "Library.txt");
+                ///sim_mtf_debug.faultToleranceExhaustiveSETAPI();
+                //samples.add(sim_mtf_debug.getOutput_sample());
+                //sim_mtf_debug.monteCarloReliabilityAPI("ok/", "45nm_HP.pm", "Library.txt");
 
+                //-Xms2G -Xmx7G  para ISCAS89
+           }catch (Exception e){
+                   System.out.println("- WARNING --- Some error happen in simulation test: " + e);
+           }
 
-            //-Xms2G -Xmx7G  para ISCAS89
        }
 
         System.out.println("\n\n");
