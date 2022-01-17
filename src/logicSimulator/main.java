@@ -136,7 +136,7 @@ public class main{
                          experimento.monteCarloSimulationMultipleTransientFaultsProportion(sample, mtf_sizes, "ALL_SIGNALS");
 
 
-                     //experimento.readResultsInLot("Resultados Proporção 0.0 0.09 0.01/min/", "ALL_SIGNALS");
+                     experimento.readResultsInLot("Resultados Proporção 0.0 0.09 0.01/min/", "ALL_SIGNALS");
                      //experimento.readResultsInLot("teste/mapped/EPFL2015/1-minimal_no_cost/Results/", "ALL_SIGNALS");
 
                      //experimento.readResultsInLotWithFilter("teste/mapped/LGSynth91/result_comb_minimal/", "ALL_SIGNALS");

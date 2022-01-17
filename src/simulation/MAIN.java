@@ -69,11 +69,12 @@ public class MAIN {  //Class to run debug tests
         //simulationInLotDebug.setup("circuitos/fullv2/", "lib_full_no_cost.genlib", threads);
         //simulationInLotDebug.setup("circuitos/ISCAS89/min/", "lib_min_no_cost.genlib", threads);
         //simulationInLotDebug.setup("teste/ISCAS85/", "cadence.genlib", threads);
-        simulationInLotDebug.setup("circuitos/ISCAS89/fullv2/", "lib_full_no_cost.genlib", threads);
+        simulationInLotDebug.setup("circuitos/ISCAS89/min/", "lib_min_no_cost.genlib", threads);
         simulationInLotDebug.processParser(signalsToinjectFault, constReliability, mtf_sizes);
         simulationInLotDebug.print();
 
         ArrayList <String> samples = new ArrayList<>();
+        ArrayList <String> gates = new ArrayList<>();
 
         for (int i = 0; i < simulationInLotDebug.getCircuitListSpecs().size(); i++) {
 
@@ -81,24 +82,30 @@ public class MAIN {  //Class to run debug tests
             SimulationMode sim_mtf_debug = new SimulationMode(simulationInLotDebug.getCircuitListSpecs().get(i)); // first Circuit c.v
 
            try {
-                sim_mtf_debug.monteCarloReliabilityAPI("ok/", "45nm_HP.pm", "Library.txt");
+                //sim_mtf_debug.monteCarloReliabilityAPI("ok/", "45nm_HP.pm", "Library.txt");
+              // sim_mtf_debug.GateCounter();
+
+                //gates.add(sim_mtf_debug.OUTPUT_INFO);
                 //sim_mtf_debug.faultToleranceExhaustiveCompleteMETAPI();
                 ///sim_mtf_debug.faultToleranceExhaustiveSETAPI();
                 //samples.add(sim_mtf_debug.getOutput_sample());
                 //sim_mtf_debug.monteCarloReliabilityAPI("ok/", "45nm_HP.pm", "Library.txt");
-
+               //sim_mtf_debug.monteCarloReliabilityAPI();
+                //sim_mtf_debug.runElectricalSimulation();
                 //-Xms2G -Xmx7G  para ISCAS89
            }catch (Exception e){
                    System.out.println("- WARNING --- Some error happen in simulation test: " + e);
            }
 
+           simulationInLotDebug.readResultsInLot("circuitos/ISCAS89/min/", "ALL_SIGNALS_MTF_MonteCarlo_Simple_Log");
+
        }
 
         System.out.println("\n\n");
 
-        for (int i = 0; i < samples.size(); i++) {
+        for (int i = 0; i < gates.size(); i++) {
 
-            System.out.println(samples.get(i) + "   -" + simulationInLotDebug.getCircuitListSpecs().get(i));
+            //System.out.println(gates.get(i));
         }
         //SimulationMode sim_mtf_debug = new SimulationMode(simulationInLotDebug.getCircuitListSpecs().get(4)); // first Circuit c.v
         //    sim_mtf_debug.PrintAVGSensitiveAreasCompiled("ok/", "45nm_HP.pm", "Library.txt");

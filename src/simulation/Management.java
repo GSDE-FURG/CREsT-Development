@@ -1849,6 +1849,16 @@ public class Management extends MAIN {
                 return false;
         }
 
+
+        public String PrintGatesTotal() throws Exception {
+
+                this.setupEnviroment("Gates Counter");
+                String out = this.circuit.getName() + "; " + this.circuit.getGates().size();
+                System.out.println(out);
+
+                return out;
+        }
+
         public String PrintGatesCounterDetailsSortedCompliled(){
                 System.out.println("           Circuit Name : " + this.circuit.getName());
                 //System.out.println("- Logic Gates : " + this.circuit.getGates());

@@ -43,11 +43,29 @@ public class SimulationMode {
 
                     //simulacaoMultithreading.runMultithreadingMonteCarlo(Math.round(simulationCircuit.getMtf_sizes().get(0)), "ALL_SIGNALS");
                     System.out.println("> : " + simulationCircuit.getMtf_sizes().get(0));
+                         simulacaoMultithreading.PrintGatesCounterDetailsSortedCompliled();
                         simulacaoMultithreading.monteCarloReliability(Math.round(simulationCircuit.getMtf_sizes().get(0)), simulationCircuit.getMtf_sizes(), simulationCircuit.getSignalsToinjectFault(), simulationCircuit.getRelativePath() + "lookup_table.csv");
                           //String output = simulacaoMultithreading.PrintGatesCounterDetailsSortedCompliled();
                     this.OUTPUT_INFO = simulacaoMultithreading.getMTBF(" MTFT Sample (Monte Carlo = N): ");
         System.out.println(this.OUTPUT_INFO);
     }
+
+    public void GateCounter() throws Exception{
+
+        this.printSpecSimulation();
+
+        Management simulacaoMultithreading = new Management(simulationCircuit.getThreads(), simulationCircuit.getReliabilityConst(), simulationCircuit.getRelativePath(),
+                simulationCircuit.getRelativePath() + simulationCircuit.getGenlib(), simulationCircuit.getRelativePath() + simulationCircuit.getCircuit());
+
+        //simulacaoMultithreading.runMultithreadingMonteCarlo(Math.round(simulationCircuit.getMtf_sizes().get(0)), "ALL_SIGNALS");
+        System.out.println("> Gate Counter ");
+
+        //simulacaoMultithreading.monteCarloReliability(Math.round(simulationCircuit.getMtf_sizes().get(0)), simulationCircuit.getMtf_sizes(), simulationCircuit.getSignalsToinjectFault(), simulationCircuit.getRelativePath() + "lookup_table.csv");
+        //String output = simulacaoMultithreading.PrintGatesCounterDetailsSortedCompliled();
+        this.OUTPUT_INFO =  simulacaoMultithreading.PrintGatesTotal();
+        System.out.println(this.OUTPUT_INFO);
+    }
+
 
     public void runElectricalSimulation(String pathElectricSimulator, String pathSpiceCircuit) throws Exception{
 
