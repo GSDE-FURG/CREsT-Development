@@ -42,8 +42,8 @@ public class SimulationMode {
                 simulationCircuit.getRelativePath() + simulationCircuit.getGenlib(), simulationCircuit.getRelativePath() + simulationCircuit.getCircuit());
 
                     //simulacaoMultithreading.runMultithreadingMonteCarlo(Math.round(simulationCircuit.getMtf_sizes().get(0)), "ALL_SIGNALS");
-                    System.out.println("> : " + simulationCircuit.getMtf_sizes().get(0));
-                         simulacaoMultithreading.PrintGatesCounterDetailsSortedCompliled();
+                    //System.out.println("> : " + simulationCircuit.getMtf_sizes().get(0));
+                         //simulacaoMultithreading.PrintGatesCounterDetailsSortedCompliled();
                         simulacaoMultithreading.monteCarloReliability(Math.round(simulationCircuit.getMtf_sizes().get(0)), simulationCircuit.getMtf_sizes(), simulationCircuit.getSignalsToinjectFault(), simulationCircuit.getRelativePath() + "lookup_table.csv");
                           //String output = simulacaoMultithreading.PrintGatesCounterDetailsSortedCompliled();
                     this.OUTPUT_INFO = simulacaoMultithreading.getMTBF(" MTFT Sample (Monte Carlo = N): ");

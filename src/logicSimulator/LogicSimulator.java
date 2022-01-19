@@ -207,6 +207,7 @@ import signalProbability.ProbCircuit;
                 this.propagateInputVectorsMTF(this.threadSimulationList.get(i).getSimulationIndex(), this.threadSimulationList.get(i).getinputVector(), this.threadSimulationList.get(i));
                 this.getPropagateFaultFreeResults( this.threadSimulationList.get(i).getinputVector(), this.threadSimulationList.get(i).getSimulationIndex(), this.threadSimulationList.get(i), i+1);
             }
+            System.out.println("End Thread...");
         }
 
         public  List <TestVectorInformation> getThreadSimulatinArray(){
@@ -2537,6 +2538,7 @@ import signalProbability.ProbCircuit;
                 this.getFaultInjectionResultsMTF(this.threadSimulationList.get(i).getinputVector(), this.threadSimulationList.get(i).getSimulationIndex(), this.threadSimulationList.get(i));
 
         }
+            System.out.println("End thd....");
 
             System.out.println("-" + threadID + " NUMBER OF BITFLIPS: " + this.bitflipcounter);
 
@@ -2550,18 +2552,18 @@ import signalProbability.ProbCircuit;
 
     public void startSimulationMultipleFaultInjectionCalculateSensitiveAreaGenerateSpiceNetLists() throws IOException, WriteException{
 
-       // System.out.println("- threadSimulationList: " + this.threadSimulationList.size());
+        // System.out.println("- threadSimulationList: " + this.threadSimulationList.size());
         for (int i = 0; i < this.threadSimulationList.size(); i++) {
 
             this.insertInputVectors("selected", this.threadSimulationList.get(i).getinputVector());
             this.propagateMultipleFaultInjectionsAndCalculateSensitiveAreas(this.threadSimulationList.get(i)); //SOLVE MTF PROBLEMS
             this.getFaultInjectionResultsMTF(this.threadSimulationList.get(i).getinputVector(), this.threadSimulationList.get(i).getSimulationIndex(), this.threadSimulationList.get(i));
 
-                String freeFaultOutput_i, faultOutput_i;
-                freeFaultOutput_i = this.threadSimulationList.get(i).getOrignalOutput();
-                faultOutput_i = this.threadSimulationList.get(i).getFaultOutput();
+                //String freeFaultOutput_i, faultOutput_i;
+                //freeFaultOutput_i = this.threadSimulationList.get(i).getOrignalOutput();
+                //faultOutput_i = this.threadSimulationList.get(i).getFaultOutput();
 
-                if(!freeFaultOutput_i.equals(faultOutput_i)){ // Set identified
+                //if(!freeFaultOutput_i.equals(faultOutput_i)){ // Set identified
                     ///String set = i + "  freeFaultOutput_i: " + freeFaultOutput_i + "   faultOutput_i: " + faultOutput_i;
 
                     /*
@@ -2571,14 +2573,18 @@ import signalProbability.ProbCircuit;
                     //this.propagated_faults++;
 
                     //this.parsedNetlistContent = this.createSpiceNetlistLargerCircuits(this.threadSimulationList.get(i));
-                    this.parsedNetlistContent.add(this.createSpiceNetlistLargerCircuits(this.threadSimulationList.get(i)));
-                }else{
-                    this.parsedNetlistContent.add("");
-                }
+
+                    /* UNCOMMEND*/
+                   // this.parsedNetlistContent.add(this.createSpiceNetlistLargerCircuits(this.threadSimulationList.get(i)));
+                    //this.parsedNetlistContent.add("");
+               // }else{
+                  // this.parsedNetlistContent.add("");
+              //  }
 
         }
+         //System.out.println("End Thd");
 
-        System.out.println("-" + threadID + " NUMBER OF BITFLIPS: " + this.bitflipcounter);
+        System.out.println("End thd : " + threadID + " NUMBER OF BITFLIPS: " + this.bitflipcounter);
 
         //this.settingFaultInjectionResults();
         this.settingFaultInjectionResultsMTF();
@@ -3813,7 +3819,7 @@ import signalProbability.ProbCircuit;
                     try {
                         startSimulationFaultFreeMTF();
                         //startSimulationMultipleFaultInjection();
-                        startSimulationMultipleFaultInjectionCalculateSensitiveAreaGenerateSpiceNetLists();
+                        startSimulationMultipleFaultInjectionCalculateSensitiveAreaGenerateSpiceNetLists(); //Original
                         //parseVerilogToGenerateSpiceNetList();
                         //startCalculationSensitiveAreas();
                     } catch (IOException | WriteException ex) {
