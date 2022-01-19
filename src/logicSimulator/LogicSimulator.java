@@ -11,6 +11,8 @@ import datastructures.Circuit;
 import datastructures.Signal;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -207,7 +209,11 @@ import signalProbability.ProbCircuit;
                 this.propagateInputVectorsMTF(this.threadSimulationList.get(i).getSimulationIndex(), this.threadSimulationList.get(i).getinputVector(), this.threadSimulationList.get(i));
                 this.getPropagateFaultFreeResults( this.threadSimulationList.get(i).getinputVector(), this.threadSimulationList.get(i).getSimulationIndex(), this.threadSimulationList.get(i), i+1);
             }
-            System.out.println("End Thread...");
+            LocalDateTime myDateObj = LocalDateTime.now();
+            DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+            String formattedDate = myDateObj.format(myFormatObj);
+
+            System.out.println("Golden --- Finished thd : " + threadID + "  at: " + formattedDate + " NUMBER OF BITFLIPS: " + this.bitflipcounter);
         }
 
         public  List <TestVectorInformation> getThreadSimulatinArray(){
@@ -2584,7 +2590,11 @@ import signalProbability.ProbCircuit;
         }
          //System.out.println("End Thd");
 
-        System.out.println("End thd : " + threadID + " NUMBER OF BITFLIPS: " + this.bitflipcounter);
+        LocalDateTime myDateObj = LocalDateTime.now();
+        DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+        String formattedDate = myDateObj.format(myFormatObj);
+
+        System.out.println("FI Finished thd : " + threadID + "  at: " + formattedDate + " NUMBER OF BITFLIPS: " + this.bitflipcounter);
 
         //this.settingFaultInjectionResults();
         this.settingFaultInjectionResultsMTF();
