@@ -3220,7 +3220,7 @@ import signalProbability.ProbCircuit;
 
         /* Calculate Sensitive Area of This Gate */
             ///SensitiveCell cell = this.sensitive_cells.get(gate.getGate().getType()  + "_" + concat_inputs);
-            String key = gate.getGate().getType()  + "_" + concat_inputs;
+            String key = gate.getGate().getType()  + "_" + concat_inputs; // Calculate the exact input vector
             SensitiveCell cell = this.sensitive_cells.get(key);
         //  System.out.println("-> " + gate.getGate().getType() + "  cell: " + cell + "  -- key " + key + " cellList: " + this.sensitive_cells.size());
         if((cell != null)){

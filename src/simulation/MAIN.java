@@ -121,10 +121,12 @@ public class MAIN {  //Class to run debug tests
 
         MAIN r = new MAIN(0 ,"", "", "");
 
-        r.runloop(s);
-       // r.runloop(simulationInLotDebug);
-       // r.runloop(sx);
-       // r.runloop(epfl);
+        //r.runloop(s);
+        r.runloop(epfl);
+        r.runloop(sx);
+        r.runloop(simulationInLotDebug);
+
+
 
             /*
         s953
