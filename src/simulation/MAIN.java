@@ -21,46 +21,21 @@ public class MAIN {  //Class to run debug tests
 
     public void runloop(SimulationInLot simulationInLotDebug) throws Exception {
 
-        for (int i = 0; i < simulationInLotDebug.getCircuitListSpecs().size(); i++) {
 
-
-            SimulationMode sim_mtf_debug = new SimulationMode(simulationInLotDebug.getCircuitListSpecs().get(i)); // first Circuit c.v
-            try {
-                    sim_mtf_debug.monteCarloReliabilityAPI("ok/", "45nm_HP.pm", "Library.txt");
-                // sim_mtf_debug.GateCounter();
-
-                //gates.add(sim_mtf_debug.OUTPUT_INFO);
-                //sim_mtf_debug.faultToleranceExhaustiveCompleteMETAPI();
-                ///sim_mtf_debug.faultToleranceExhaustiveSETAPI();
-                //samples.add(sim_mtf_debug.getOutput_sample());
-                //sim_mtf_debug.monteCarloReliabilityAPI("ok/", "45nm_HP.pm", "Library.txt");
-                //sim_mtf_debug.monteCarloReliabilityAPI();
-                //sim_mtf_debug.runElectricalSimulation();
-                //-Xms2G -Xmx7G  para ISCAS89
-           }catch (Exception e){
-               System.out.println("- WARNING --- Some error happen in simulation test: " + e);
-        }
-
-        }
-        System.out.println("---------------------- END ----------------------");
-    }
-
-    public static void main(String[] args) throws Exception{
-        System.out.println("- New methodology....");
-            String relativePath = "teste/cccc/circuitos_pequenos/";
-            String genlib = "cadence.genlib"; //"cadence.genlib";
-            String signalsToinjectFault = "ALL_SIGNALS";
-            String constReliability = "0.9999";
-
-
-        int sampleSize = 20000;
-        int threads = 8;
-        ArrayList<Float> mtf_sizes = new ArrayList<>();  //MTF's
-        mtf_sizes.add((float) 20000);
-        mtf_sizes.add((float) 1);
-        mtf_sizes.add((float) 0);
-        mtf_sizes.add((float) 0);
         /*
+        s953
+                s5378
+        s9234
+                s15850
+        s38417
+                s35932
+        s38584
+
+             */
+        //SimulationMode sim_mtf_debug = new SimulationMode(simulationInLotDebug.getCircuitListSpecs().get(4)); // first Circuit c.v
+        //    sim_mtf_debug.PrintAVGSensitiveAreasCompiled("ok/", "45nm_HP.pm", "Library.txt");
+
+             /*
         SimulationInLot simulationInLot = new SimulationInLot();
         simulationInLot.setup(relativePath, genlib, threads);
         simulationInLot.processParser(signalsToinjectFault, constReliability, sampleSize);  //STF's - String signalsToinjectFault, String reliabilityConst, int sampleSize
@@ -94,59 +69,77 @@ public class MAIN {  //Class to run debug tests
 
 
         */
-        SimulationInLot simulationInLotDebug = new SimulationInLot();
-        SimulationInLot s = new SimulationInLot();
-        SimulationInLot sx = new SimulationInLot();
-        SimulationInLot epfl = new SimulationInLot();
         //simulationInLotDebug.setup("circuitos/fullv2/", "lib_full_no_cost.genlib", threads);
         //simulationInLotDebug.setup("circuitos/ISCAS89/min/", "lib_min_no_cost.genlib", threads);
-        s.setup("teste/ISCAS85/", "lib_min_no_cost.genlib", threads);
+        /*
         simulationInLotDebug.setup("circuitos/ISCAS89/min/", "lib_min_no_cost.genlib", threads);
         sx.setup("circuitos/ISCAS89/fullv2/", "lib_full_no_cost.genlib", threads);
         epfl.setup("teste/mapped/EPFL2015/1-minimal_no_cost/", "1-minimal_no_cost.genlib", threads);
 
-
-        s.processParser(signalsToinjectFault, constReliability, mtf_sizes);
+         */
+        /*
         simulationInLotDebug.processParser(signalsToinjectFault, constReliability, mtf_sizes);
         sx.processParser(signalsToinjectFault, constReliability, mtf_sizes);
         epfl.processParser(signalsToinjectFault, constReliability, mtf_sizes);
-
-        s.print();
-        simulationInLotDebug.print();
-        sx.print();
-        epfl.print();
-
-        ArrayList <String> samples = new ArrayList<>();
-        ArrayList <String> gates = new ArrayList<>();
-
-        MAIN r = new MAIN(0 ,"", "", "");
-
-        //r.runloop(s);
-        r.runloop(epfl);
-        r.runloop(sx);
-        r.runloop(simulationInLotDebug);
+        */
 
 
+        for (int i = 0; i < simulationInLotDebug.getCircuitListSpecs().size(); i++) {
 
-            /*
-        s953
-                s5378
-        s9234
-                s15850
-        s38417
-                s35932
-        s38584
 
-             */
+            SimulationMode sim_mtf_debug = new SimulationMode(simulationInLotDebug.getCircuitListSpecs().get(i)); // first Circuit c.v
+            try {
+                    sim_mtf_debug.monteCarloReliabilityAPI("");
+                // sim_mtf_debug.GateCounter();
 
-        System.out.println("\n\n");
-
-        for (int i = 0; i < gates.size(); i++) {
-
-            //System.out.println(gates.get(i));
+                //gates.add(sim_mtf_debug.OUTPUT_INFO);
+                //sim_mtf_debug.faultToleranceExhaustiveCompleteMETAPI();
+                ///sim_mtf_debug.faultToleranceExhaustiveSETAPI();
+                //samples.add(sim_mtf_debug.getOutput_sample());
+                //sim_mtf_debug.monteCarloReliabilityAPI("ok/", "45nm_HP.pm", "Library.txt");
+                //sim_mtf_debug.monteCarloReliabilityAPI();
+                //sim_mtf_debug.runElectricalSimulation();
+                //-Xms2G -Xmx7G  para ISCAS89
+           }catch (Exception e){
+               System.out.println("- WARNING --- Some error happen in simulation test: " + e);
         }
-        //SimulationMode sim_mtf_debug = new SimulationMode(simulationInLotDebug.getCircuitListSpecs().get(4)); // first Circuit c.v
-        //    sim_mtf_debug.PrintAVGSensitiveAreasCompiled("ok/", "45nm_HP.pm", "Library.txt");
+
+        }
+        System.out.println("---------------------- END ----------------------");
+    }
+
+    public static void main(String[] args) throws Exception{
+
+            System.out.println("- New methodology....");
+            MAIN experiment = new MAIN(0 ,"", "", "");
+            String relativePath = "teste/demo/";
+            String genlib = "cadence.genlib";
+            String signalsToinjectFault = "ALL_SIGNALS";
+            String constReliability = "0.9999";
+
+
+
+
+        int threads = 8;
+
+        ArrayList<Float> mtf_sizes = new ArrayList<>();  //MTF's
+        mtf_sizes.add((float) 100);
+        mtf_sizes.add((float) 1);
+        mtf_sizes.add((float) 0);
+        mtf_sizes.add((float) 0);
+
+
+        SimulationInLot circuits_folder = new SimulationInLot();
+
+        circuits_folder.setup(relativePath, genlib, threads);
+        circuits_folder.processParser(signalsToinjectFault, constReliability, mtf_sizes);
+        circuits_folder.print();
+
+        SimulationMode sim_mtf_debug = new SimulationMode(circuits_folder.getCircuitListSpecs().get(0));
+        sim_mtf_debug.monteCarloReliabilityAPI("teste/demo/lookup_table.csv");
+
+        //sim_mtf_debug.monteCarloReliabilitySensitiveAreasVectorsAPI("teste/demo/lookup_table.csv");
+
 
     }
 }

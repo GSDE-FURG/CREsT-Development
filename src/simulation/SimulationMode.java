@@ -28,13 +28,32 @@ public class SimulationMode {
         System.out.println("> : " + simulationCircuit.getMtf_sizes().get(0));
         simulacaoMultithreading.monteCarloReliability(Math.round(simulationCircuit.getMtf_sizes().get(0)), simulationCircuit.getMtf_sizes(), simulationCircuit.getSignalsToinjectFault(), simulationCircuit.getRelativePath() + "lookup_table.csv");
                 simulacaoMultithreading.generateSensitiveNodesForSETSpiceFile(spiceScriptsFolder, PTMLibrary, SpiceNetListLibrary);
-                    simulacaoMultithreading.printSensitiveAreas();
+                    simulacaoMultithreading.printSensitiveAreasAnalysis();
                          //simulacaoMultithreading.PrintGatesCounterDetailsSortedCompliled(0, simulationCircuit.getRelativePath() + simulationCircuit.getCircuit());
                 this.OUTPUT_INFO = simulacaoMultithreading.getFRM(" MTFT Sample (Monte Carlo = N)");
 
     }
 
-    public void monteCarloReliabilityAPI(String spiceScriptsFolder, String PTMLibrary, String SpiceNetListLibrary) throws Exception{
+
+    public void monteCarloReliabilitySensitiveAreasVectorsAPI(String Sensitive_Library) throws Exception{
+
+        this.printSpecSimulation();
+
+        Management simulacaoMultithreading = new Management(simulationCircuit.getThreads(), simulationCircuit.getReliabilityConst(), simulationCircuit.getRelativePath(),
+                simulationCircuit.getRelativePath() + simulationCircuit.getGenlib(), simulationCircuit.getRelativePath() + simulationCircuit.getCircuit());
+
+        //simulacaoMultithreading.runMultithreadingMonteCarlo(Math.round(simulationCircuit.getMtf_sizes().get(0)), "ALL_SIGNALS");
+        //System.out.println("> : " + simulationCircuit.getMtf_sizes().get(0));
+        //simulacaoMultithreading.PrintGatesCounterDetailsSortedCompliled();
+        simulacaoMultithreading.monteCarloReliability(Math.round(simulationCircuit.getMtf_sizes().get(0)), simulationCircuit.getMtf_sizes(), simulationCircuit.getSignalsToinjectFault(),
+                Sensitive_Library);
+        simulacaoMultithreading.printSensitiveAreasAnalysis();
+        //String output = simulacaoMultithreading.PrintGatesCounterDetailsSortedCompliled();
+        this.OUTPUT_INFO = simulacaoMultithreading.getMTBF(" MTFT Sample (Monte Carlo = N): ");
+        System.out.println(this.OUTPUT_INFO);
+    }
+
+    public void monteCarloReliabilityAPI(String Sensitive_Library) throws Exception{
 
         this.printSpecSimulation();
 
@@ -44,7 +63,8 @@ public class SimulationMode {
                     //simulacaoMultithreading.runMultithreadingMonteCarlo(Math.round(simulationCircuit.getMtf_sizes().get(0)), "ALL_SIGNALS");
                     //System.out.println("> : " + simulationCircuit.getMtf_sizes().get(0));
                          //simulacaoMultithreading.PrintGatesCounterDetailsSortedCompliled();
-                        simulacaoMultithreading.monteCarloReliability(Math.round(simulationCircuit.getMtf_sizes().get(0)), simulationCircuit.getMtf_sizes(), simulationCircuit.getSignalsToinjectFault(), simulationCircuit.getRelativePath() + "lookup_table.csv");
+                        simulacaoMultithreading.monteCarloReliability(Math.round(simulationCircuit.getMtf_sizes().get(0)), simulationCircuit.getMtf_sizes(), simulationCircuit.getSignalsToinjectFault(),
+                                Sensitive_Library);
                           //String output = simulacaoMultithreading.PrintGatesCounterDetailsSortedCompliled();
                     this.OUTPUT_INFO = simulacaoMultithreading.getMTBF(" MTFT Sample (Monte Carlo = N): ");
         System.out.println(this.OUTPUT_INFO);
@@ -83,24 +103,33 @@ public class SimulationMode {
 
     }
 
-    public void faultToleranceMonteCarloMETAPI() throws Exception{
+    public void faultToleranceMonteCarloMETAPI(String External_Link) throws Exception{
 
 
-        System.out.println("\n\n ------");
+       // System.out.println("\n\n ------");
 
         /*
         Management simulacaoMultithreading = new Management(simulationCircuit.getThreads(), simulationCircuit.getReliabilityConst(), simulationCircuit.getRelativePath(),
                 simulationCircuit.getRelativePath() +  simulationCircuit.getGenlib(), simulationCircuit.getRelativePath() + simulationCircuit.getCircuit());
         */
 
-        Management simulacaoMultithreading = new Management(simulationCircuit.getThreads(), simulationCircuit.getReliabilityConst(), simulationCircuit.getRelativePath(),
-                simulationCircuit.getRelativePath() + simulationCircuit.getGenlib(), simulationCircuit.getRelativePath() + simulationCircuit.getCircuit());
+        if(External_Link.equals("CREsT")) {
+            Management simulacaoMultithreading = new Management(simulationCircuit.getThreads(), simulationCircuit.getReliabilityConst(), simulationCircuit.getRelativePath(),
+                    simulationCircuit.getGenlib(), simulationCircuit.getCircuit());
+            simulacaoMultithreading.runMultipleFaultInjectionMultithreadingMonteCarloSimulationProportion(Math.round(simulationCircuit.getMtf_sizes().get(0)),
+                    simulationCircuit.getMtf_sizes(), simulationCircuit.getSignalsToinjectFault());
+            this.OUTPUT_INFO = simulacaoMultithreading.getFRM(" MTFT Sample (Monte Carlo = N)");
+        }
+        else{
+            Management simulacaoMultithreading = new Management(simulationCircuit.getThreads(), simulationCircuit.getReliabilityConst(), simulationCircuit.getRelativePath(),
+                    simulationCircuit.getRelativePath() + simulationCircuit.getGenlib(), simulationCircuit.getRelativePath() + simulationCircuit.getCircuit());
+            simulacaoMultithreading.runMultipleFaultInjectionMultithreadingMonteCarloSimulationProportion(Math.round(simulationCircuit.getMtf_sizes().get(0)),
+                    simulationCircuit.getMtf_sizes(), simulationCircuit.getSignalsToinjectFault());
+            this.OUTPUT_INFO = simulacaoMultithreading.getFRM(" MTFT Sample (Monte Carlo = N)");
+        }
 
-                //this.printSpecSimulation();
-                simulacaoMultithreading.runMultipleFaultInjectionMultithreadingMonteCarloSimulationProportion(Math.round(simulationCircuit.getMtf_sizes().get(0)),
-                simulationCircuit.getMtf_sizes(), simulationCircuit.getSignalsToinjectFault());
 
-        this.OUTPUT_INFO = simulacaoMultithreading.getFRM(" MTFT Sample (Monte Carlo = N)");
+
 
     }
 

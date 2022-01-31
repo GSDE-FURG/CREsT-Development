@@ -150,9 +150,9 @@ public class Management extends MAIN {
                 //System.out.println("          ---------------------------------------\n");
                 /*----------------------*/
 
-                //if(this.circuit.getGates().size() > 3000){
-                System.out.println("- Gates: " + this.circuit.getGates().size());
-                //}
+                if(this.circuit.getGates().size() > 3000){
+                        System.out.println("- Gates: " + this.circuit.getGates().size());
+                }
         }
 
         /**
@@ -597,7 +597,7 @@ public class Management extends MAIN {
                 sum_proportion = sumProportionPercentage(mtf_list);
                 int sample_base = Math.round(mtf_list.get(0));
                 ArrayList<Integer> new_MTF = passProportionPercentage(mtf_list, sample_base);
-                System.out.println("- new MTF LIST " + new_MTF + "  size: " + new_MTF.size());
+                //System.out.println("- new MTF LIST " + new_MTF + "  size: " + new_MTF.size());
 
                 final ArrayList<Float> arrayList_mtf_original = new ArrayList<>(mtf_list); // Original ArrayList
 
@@ -651,19 +651,22 @@ public class Management extends MAIN {
                                 }
                                 count++;
                         }
-                        System.out.println(prop_index + " Count: " + count + " ItemxSimulation: " + ItemxSimulationList.size() + "  order: ");
+                        //System.out.println(prop_index + " Count: " + count + " ItemxSimulation: " + ItemxSimulationList.size() + "  order: ");
                 }
 
-                System.out.println("- End Count: " + count);
-                System.out.println("- Combined: " + combined_MTF);
-                System.out.println("- Itemx Size: " + ItemxSimulationList.size());
-                System.out.println("- ThreadList: " + thread_list.size());
+                System.out.println("\n\n");
+                System.out.println("- Total Sample: " + count);
+                System.out.println("- Single, Doubles, ..., ...: " + combined_MTF);
+                //System.out.println("- Itemx Size: " + ItemxSimulationList.size());
+                //System.out.println("- ThreadList: " + thread_list.size());
+                System.out.println("\n");
+
 
                 start = 0;
                 end = partition;
                 for (int i = 0; i < this.threads; i++) { //Loop of simulations
 
-                        System.out.println("Start: " + start + " End: " + end);
+                        //System.out.println("Start: " + start + " End: " + end);
                         if ((this.threads - 1) == (i)) {
                                 start = end;
                                 end = N;
@@ -1380,7 +1383,7 @@ public class Management extends MAIN {
 
                 int N = this.sampleSize; // random_input_vectors.size();//testNumber;
 
-                System.out.println("-  (input) Sample size = " + this.sampleSize);
+                //System.out.println("-  (input) Sample size = " + this.sampleSize);
 
                 List thread_list = this.createVectorsAndParticionate(sampleSize, option, "RANDOM");
 
@@ -1703,7 +1706,7 @@ public class Management extends MAIN {
 
                 System.out.println("-----------------------END SIMULATION---------------------------------");
 
-                String avgAs = PrintGatesCounterDetailsSortedCompliled();
+                String avgAs = calculateTotalSensitiveArea();
 
                         this.avgASFLOAT = Float.parseFloat(avgAs);
 
@@ -1740,12 +1743,13 @@ public class Management extends MAIN {
          * @throws IOException
          * @throws Exception
          */
-        public void runMultipleFaultInjectionMultithreadingMonteCarloSimulationProportion(int sample, ArrayList <Float> mtf_list, String option) throws IOException, Exception{
+        public void runMultipleFaultInjectionMultithreadingMonteCarloSimulationProportion(int sample, ArrayList <Float> mtf_list, String option) throws Exception{
 
-                System.out.println("- SUM PROPORTION: " + sumProportionPercentage(mtf_list) + " -------- OP: " + option);
+                System.out.println("----------- \n -  SUM PROPORTION: " + sumProportionPercentage(mtf_list) + "  Fault_Options: " + option);
 
                 if (sumProportionPercentage(mtf_list) == 1.0) {  // 100%
 
+                       // System.out.println("INSIDE....");
 
                         Instant start = Instant.now();
 
@@ -1753,9 +1757,13 @@ public class Management extends MAIN {
                         DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
                         String formattedDate = myDateObj.format(myFormatObj);
 
-                        int sampleSize = sample;//mtf_list.get(0);
+                        int sampleSize = sample;  //mtf_list.get(0);
+
+                       // System.out.println("1.1 INSIDE....");
 
                         this.setupEnviroment(" ----- Monte Carlo version  for Multiple Transient Fault Injection -------");
+
+                        //System.out.println("1 INSIDE....");
 
                         Instant loadTimeElapsed = Instant.now();
 
@@ -1771,14 +1779,18 @@ public class Management extends MAIN {
 
                         this.signals_to_inject_faults = this.signalsToInjectFault("ALL_SIGNALS"); // Consider all signals to fault inject
 
-                        System.out.println("Signal to inject fault: " + this.signals_to_inject_faults.size());
+                        //System.out.println("2 INSIDE....");
+
+                        System.out.println("- Signal to inject fault: " + this.signals_to_inject_faults.size());
 
                                 List thread_list =  this.createVectorsAndParticionate(this.sampleSize, option, "MTF-RANDOM");
 
-                        System.out.println("THREAD LIST: " + thread_list);
+                        //System.out.println("THREAD LIST: " + thread_list);
 
                         //ArrayList<Float> tt = new ArrayList<>(mtf_list);
                         //tt.remove(0); // 20k
+
+                        //System.out.println("3 INSIDE....");
 
                         Instant endPreparingSimulationTimeElapsed = Instant.now();
 
@@ -1805,6 +1817,8 @@ public class Management extends MAIN {
 
                         Instant endTimelogGeneration = Instant.now();
 
+                        //System.out.println("4 INSIDE....");
+
                         this.writeLogs(option + "_MTF_MonteCarlo_Simple_Log_" +this.circuit.getName()+"_Threads-"+ this.threads +  "_sampleSize-" + this.sampleSize, formattedDate,  formattedDate2, timeElapsed_Instant, itemx_list, "MTF");
 
                         long timeElapsed_logGeneration = Duration.between(startTimelogGeneration, endTimelogGeneration).toSeconds();
@@ -1824,7 +1838,9 @@ public class Management extends MAIN {
 
                         this.Performance_Time = "Simulation started at: " + formattedDate + " and finished at: " + formattedDate2;
                         this.sampleSize = N;
-                        System.out.println(" ----------------------------------------------------------------------------------------------------------------------\n\n...");
+
+                        //System.out.println("5 INSIDE....");
+                        //System.out.println(" ----------------------------------------------------------------------------------------------------------------------\n\n...");
                 }
                 else{
                         System.err.println("- Inputs inserted sum up ("+sumProportionPercentage(mtf_list)+") above 1 (100%), these were the inserted commands: " + mtf_list);
@@ -1849,7 +1865,6 @@ public class Management extends MAIN {
                 return false;
         }
 
-
         public String PrintGatesTotal() throws Exception {
 
                 this.setupEnviroment("Gates Counter");
@@ -1859,7 +1874,7 @@ public class Management extends MAIN {
                 return out;
         }
 
-        public String PrintGatesCounterDetailsSortedCompliled(){
+        public String calculateTotalSensitiveArea(){
                 System.out.println("           Circuit Name : " + this.circuit.getName());
                 //System.out.println("- Logic Gates : " + this.circuit.getGates());
                 //System.out.println("               - Logic Gates (size): " + this.circuit.getGates().size() );
@@ -1867,6 +1882,7 @@ public class Management extends MAIN {
 
                 ArrayList <Orchestrator.gate_counter> temp = new ArrayList<>();
 
+                /*
                 temp.add(new Orchestrator.gate_counter("ZERO", 0));
                 temp.add(new Orchestrator.gate_counter("ONE", 0));
                 temp.add(new Orchestrator.gate_counter("BUF", 0));
@@ -1892,18 +1908,47 @@ public class Management extends MAIN {
                 temp.add(new Orchestrator.gate_counter("AOI221", 0));
                 temp.add(new Orchestrator.gate_counter("AOI222", 0));
                 temp.add(new Orchestrator.gate_counter("XOR2", 0));
+                */
 
+                temp.add(new Orchestrator.gate_counter("ZEROX1", 0));
+                temp.add(new Orchestrator.gate_counter("ONEX1", 0));
+                temp.add(new Orchestrator.gate_counter("BUFX1", 0));
+                temp.add(new Orchestrator.gate_counter("INVX1", 0));
+
+                temp.add(new Orchestrator.gate_counter("NOR2X1", 0));
+                temp.add(new Orchestrator.gate_counter("NOR3X1", 0));
+                temp.add(new Orchestrator.gate_counter("NOR4X1", 0));
+                temp.add(new Orchestrator.gate_counter("NAND2X1", 0));
+
+                temp.add(new Orchestrator.gate_counter("NAND3X1", 0));
+                temp.add(new Orchestrator.gate_counter("NAND4X1", 0));
+                temp.add(new Orchestrator.gate_counter("OAI21X1", 0));
+                temp.add(new Orchestrator.gate_counter("OAI211X1", 0));
+
+                temp.add(new Orchestrator.gate_counter("OAI22X1", 0));
+                temp.add(new Orchestrator.gate_counter("OAI221X1", 0));
+                temp.add(new Orchestrator.gate_counter("OAI222X1", 0));
+                temp.add(new Orchestrator.gate_counter("AOI21X1", 0));
+
+                temp.add(new Orchestrator.gate_counter("AOI211X1", 0));
+                temp.add(new Orchestrator.gate_counter("AOI22X1", 0));
+                temp.add(new Orchestrator.gate_counter("AOI221X1", 0));
+                temp.add(new Orchestrator.gate_counter("AOI222X1", 0));
+                temp.add(new Orchestrator.gate_counter("XOR2X1", 0));
+
+
+                //printSensitiveAreasAnalysis();
 
 
                 for(Gate i: this.circuit.getGates()) { // Update counters
                         //System.out.println("-" + i.getType().toString());
-                        if(searchGateInList(i.getType().toString(), temp) == true)
+                        if(searchGateInList(i.getType().toString(), temp))
                         {
                                 //System.out.println("In: " );
                                 for (Orchestrator.gate_counter x: temp){
                                         if(x.get_gate_type().equals(i.getType().toString())){
                                                 x.update_count();
-                                                //System.out.println("------ ELEMENT: " + x.get_gate_type() + " c: " + x.get_gate_counter());
+                                                System.out.println("------ ELEMENT: " + x.get_gate_type() + " c: " + x.get_gate_counter());
                                         }
                                 }
                         }
@@ -1912,14 +1957,14 @@ public class Management extends MAIN {
                 /********/
                 //System.out.println("---> " +  this.sensitive_cells.size());
                 for (Orchestrator.gate_counter x: temp) {
-
+                        System.out.println("X : " + x.get_gate_type());
                         for (Map.Entry<String, SensitiveCell> e : this.sensitive_cells.entrySet()) {
 
-                                if (e.getKey().startsWith(x.get_gate_type()+"X1_")) { // OR other word to complite filter
+                                if ((e.getKey().startsWith(x.get_gate_type() + "_X1") || (e.getKey().startsWith(x.get_gate_type())))) { // OR other word to complite filter
                                         //add to my result list
                                         float f= Float.parseFloat (e.getValue().getSensitive_are());
                                         x.sumSensitiveArea(f);
-                                      //  System.out.println(e + "                    - INSIDE Key: " + e.getKey() + "    "  + x.get_gate_type() + "  AS: " + e.getValue().getSensitive_are() + "  sum: " + x.getSensitive_areasum());
+                                       //System.out.println("-" + e + "                    - INSIDE Key: " + e.getKey() + "    "  + x.get_gate_type() + "  AS: " + e.getValue().getSensitive_are() + "  sum: " + x.getSensitive_areasum());
                                 }
                         }
                        if(x.get_gate_counter() > 0) {
@@ -1931,20 +1976,22 @@ public class Management extends MAIN {
 
               /****linkar com as areas sensíveis****/
                 float sum = 0;
+
+                /* Calculate sensitive area based in gates counter*/
                 for (Orchestrator.gate_counter x: temp){
 
                         float b = x.get_gate_counter();
-
+                        System.out.println("B: "  + b + "    temp: " + x.get_gate_type());
                         //System.out.println("Temp: " + x.get_gate_counter());
                         if(b>0 && !(x.get_gate_type().equals("ZERO") || x.get_gate_type().equals("ONE"))) {
                                 float AS = x.getSensitive_areasum() / x.getGatesCounter();
                                 sum = (AS * b) + sum;
-                               // System.out.println("     avgSA: " + x.get_gate_type() + "  AS: " + AS + "   Gates: " + b + "   sum: " + sum);
+                                System.out.println("     avgSA: " + x.get_gate_type() + "  AS: " + AS + "   Gates: " + b + "   sum: " + sum);
                         }
                 }
 
-                //System.out.println("\n\n\nCells: " + this.sensitive_cells);
-                System.out.println("\n");
+                //System.out.println("\n\n\n- Cells: " + this.sensitive_cells);
+                //System.out.println("\n");
 
                 System.out.println("Total Sensitive Avg Sensitive Area Sum (" + this.circuit.getName() + "): " + sum );
 
@@ -1969,7 +2016,7 @@ public class Management extends MAIN {
 
                         Map <String, SensitiveCell> sensitive_cells = readCsvFileAndMapSensitiveCellsArea(file, ",");
 
-                        System.out.println("Sensitive Cells: " + sensitive_cells.size());
+                        System.out.println("- Sensitive Cells: " + sensitive_cells.size());
 
                         this.setSensitiveCells(sensitive_cells);
                         //this.sensitive_cells = sensitive_cells;
@@ -2042,7 +2089,9 @@ public class Management extends MAIN {
 
                         System.out.println("-----------------------END SIMULATION---------------------------------");
 
-                        String avgAs = PrintGatesCounterDetailsSortedCompliled();
+                        String avgAs = calculateTotalSensitiveArea();
+
+                        //printSensitiveAreasAnalysis();
 
                         this.avgASFLOAT = Float.parseFloat(avgAs);
 
@@ -2071,6 +2120,7 @@ public class Management extends MAIN {
 
         }
 
+
         public String getMTBF(String identification) {
 
                 String result;
@@ -2089,6 +2139,7 @@ public class Management extends MAIN {
         }
 
         public void classifySensitiveAreas(){
+                System.out.println("\n");
                 System.out.println("- Classification of top 10 Sensitive Areas per input vector: ");
                 Map < Float, String > map = new HashMap<>();
 
@@ -2104,7 +2155,7 @@ public class Management extends MAIN {
                                 //SensitiveAreaInputVector.add(x.get(j).getSum_sensitive_cells_area());
                         }
                 }
-                System.out.println("MAP : " + map);
+                System.out.println("Complete MAP : " + map);
                 System.out.println("MAP Size : " + map.size());
                 List<Float> employeeById = new ArrayList<>(map.keySet());
                 Collections.sort(employeeById);
@@ -2118,7 +2169,7 @@ public class Management extends MAIN {
                 System.out.println("        ---- ");
         }
 
-        public void printSensitiveAreas(){
+        public void printSensitiveAreasAnalysis(){
                 //System.out.println("CElls: " + this.sensitive_cells);
                 System.out.println("------------ Extracting Total vector Sensitive (Cross Sections) -------------------");
                 for (int i = 0; i < this.itemx_list.size(); i++) {

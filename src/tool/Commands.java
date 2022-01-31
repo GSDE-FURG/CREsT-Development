@@ -562,11 +562,12 @@ public class Commands {
             experimento.monteCarloSimulationMultipleTransientFaultsProportion(sampleSizeMonteCarlo, x, "ALL_SIGNALS");
         */
 
+        System.out.println("-CREST Linking Monte Carlo Fault Simulator API...");
             SimulationCircuit simulationCircuit = new SimulationCircuit(circuit, relativePath, genlib, "ALL_SIGNALS", threads, constReliability, x);
                 //simulationCircuit.print();
                 SimulationMode experimento = new SimulationMode(simulationCircuit);
                         experimento.printSpecSimulation();
-                            experimento.faultToleranceMonteCarloMETAPI();
+                            experimento.faultToleranceMonteCarloMETAPI("CREsT");
 
                         System.out.println("---> Simulation results:\n" + experimento.getFMR());
 
