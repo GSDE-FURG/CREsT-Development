@@ -21,6 +21,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.sql.SQLOutput;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -1882,7 +1883,7 @@ public class Management extends MAIN {
 
                 ArrayList <Orchestrator.gate_counter> temp = new ArrayList<>();
 
-                /*
+                /*  IN CASE OF LIBRARY DO NOT CONTAIN X1
                 temp.add(new Orchestrator.gate_counter("ZERO", 0));
                 temp.add(new Orchestrator.gate_counter("ONE", 0));
                 temp.add(new Orchestrator.gate_counter("BUF", 0));
@@ -2091,8 +2092,6 @@ public class Management extends MAIN {
 
                         String avgAs = calculateTotalSensitiveArea();
 
-                        //printSensitiveAreasAnalysis();
-
                         this.avgASFLOAT = Float.parseFloat(avgAs);
 
                                 float particle_flux = 0.000036F;
@@ -2140,7 +2139,7 @@ public class Management extends MAIN {
 
         public void classifySensitiveAreas(){
                 System.out.println("\n");
-                System.out.println("- Classification of top 10 Sensitive Areas per input vector: ");
+                System.out.println("- Classification of Sensitive Areas per input vector: ");
                 Map < Float, String > map = new HashMap<>();
 
                 //ArrayList <String> InputVec = new ArrayList<>();
@@ -2155,6 +2154,7 @@ public class Management extends MAIN {
                                 //SensitiveAreaInputVector.add(x.get(j).getSum_sensitive_cells_area());
                         }
                 }
+                System.out.println("- Redundance areas may happen, so in this order the vector is overwriten -");
                 System.out.println("Complete MAP : " + map);
                 System.out.println("MAP Size : " + map.size());
                 List<Float> employeeById = new ArrayList<>(map.keySet());
@@ -2163,7 +2163,7 @@ public class Management extends MAIN {
                 System.out.println("Sorted :  " + employeeById);
 
                 System.out.println("        ---- ");
-                for (int i = employeeById.size()-1; i > employeeById.size() - 10; i--){
+                for (int i = 0; i > employeeById.size(); i++){
                         System.out.println(" Sensitive Area: " + employeeById.get(i) + "  Vector: " + map.get(employeeById.get(i)));
                 }
                 System.out.println("        ---- ");
@@ -2171,11 +2171,11 @@ public class Management extends MAIN {
 
         public void printSensitiveAreasAnalysis(){
                 //System.out.println("CElls: " + this.sensitive_cells);
-                System.out.println("------------ Extracting Total vector Sensitive (Cross Sections) -------------------");
+                System.out.println("\n\n\n------------ Extracting Total vector Sensitive (Cross Sections) -------------------");
                 for (int i = 0; i < this.itemx_list.size(); i++) {
                         List <TestVectorInformation> x =  this.itemx_list.get(i).get_threadSimulationList();
                         for (int j = 0; j < x.size(); j++) {
-                                System.out.println(" index: " + x.get(j).getSimulationIndex() + " vec: " + x.get(j).getinputVector() + " sensitive area sum: " + x.get(j).getSum_sensitive_cells_area() );
+                                System.out.println(" Vector: " + x.get(j).getSimulationIndex() + " vec: " + x.get(j).getinputVector() + " sensitive area sum: " + x.get(j).getSum_sensitive_cells_area() );
                         }
                 }
                 this.classifySensitiveAreas();

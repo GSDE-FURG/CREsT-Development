@@ -60,11 +60,10 @@ public class SimulationMode {
         Management simulacaoMultithreading = new Management(simulationCircuit.getThreads(), simulationCircuit.getReliabilityConst(), simulationCircuit.getRelativePath(),
                 simulationCircuit.getRelativePath() + simulationCircuit.getGenlib(), simulationCircuit.getRelativePath() + simulationCircuit.getCircuit());
 
-                    //simulacaoMultithreading.runMultithreadingMonteCarlo(Math.round(simulationCircuit.getMtf_sizes().get(0)), "ALL_SIGNALS");
-                    //System.out.println("> : " + simulationCircuit.getMtf_sizes().get(0));
-                         //simulacaoMultithreading.PrintGatesCounterDetailsSortedCompliled();
                         simulacaoMultithreading.monteCarloReliability(Math.round(simulationCircuit.getMtf_sizes().get(0)), simulationCircuit.getMtf_sizes(), simulationCircuit.getSignalsToinjectFault(),
                                 Sensitive_Library);
+
+                        simulacaoMultithreading.printSensitiveAreasAnalysis();
                           //String output = simulacaoMultithreading.PrintGatesCounterDetailsSortedCompliled();
                     this.OUTPUT_INFO = simulacaoMultithreading.getMTBF(" MTFT Sample (Monte Carlo = N): ");
         System.out.println(this.OUTPUT_INFO);
