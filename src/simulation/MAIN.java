@@ -113,7 +113,7 @@ public class MAIN {  //Class to run debug tests
             System.out.println("- New methodology....");
             MAIN experiment = new MAIN(0 ,"", "", "");
             String relativePath = "teste/demo/";
-            String genlib = "cadence.genlib";//"lib_min_no_cost.genlib"; //"cadence.genlib";
+            String genlib = "cadence.genlib"; //"lib_min_no_cost.genlib"; //"cadence.genlib";
             String signalsToinjectFault = "ALL_SIGNALS";
             String constReliability = "0.9999";
 
@@ -137,13 +137,13 @@ public class MAIN {  //Class to run debug tests
 
         SimulationMode sim_mtf_debug = new SimulationMode(circuits_folder.getCircuitListSpecs().get(0));
 
-        sim_mtf_debug.faultToleranceMonteCarloMETAPI(""); // Simulação de Monte Carlo (N)
+        sim_mtf_debug.faultToleranceMonteCarloMETAPI(""); // Simulação de Monte Carlo (N)  - FMR
 
-        //sim_mtf_debug.faultToleranceExhaustiveSETAPI();    // Exaustiva Simples
+        //sim_mtf_debug.faultToleranceExhaustiveSETAPI();    // Exaustiva Simples - FMR
 
-        //sim_mtf_debug.faultToleranceExhaustiveCompleteMETAPI();  // Exaustiva Completa
+        //sim_mtf_debug.faultToleranceExhaustiveCompleteMETAPI();  // Exaustiva Completa - FMR
 
-        //sim_mtf_debug.monteCarloReliabilityAPI("teste/demo/lookup_table.csv");  // Monte Carlo (n)
+        //sim_mtf_debug.monteCarloReliabilityAPI("teste/demo/lookup_table.csv");  // Monte Carlo (n) - FMR e AS e MTBF
 
 
 
