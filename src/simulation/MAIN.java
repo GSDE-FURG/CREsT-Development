@@ -137,11 +137,13 @@ public class MAIN {  //Class to run debug tests
 
         SimulationMode sim_mtf_debug = new SimulationMode(circuits_folder.getCircuitListSpecs().get(0));
 
-        sim_mtf_debug.faultToleranceExhaustiveSETAPI();    // Exaustiva Simples
+        sim_mtf_debug.faultToleranceMonteCarloMETAPI(""); // Simulação de Monte Carlo (N)
 
-        sim_mtf_debug.faultToleranceExhaustiveCompleteMETAPI();  // Exaustiva Completa
+        //sim_mtf_debug.faultToleranceExhaustiveSETAPI();    // Exaustiva Simples
 
-        sim_mtf_debug.monteCarloReliabilityAPI("teste/demo/lookup_table.csv");  // Monte Carlo (n)
+        //sim_mtf_debug.faultToleranceExhaustiveCompleteMETAPI();  // Exaustiva Completa
+
+        //sim_mtf_debug.monteCarloReliabilityAPI("teste/demo/lookup_table.csv");  // Monte Carlo (n)
 
 
 
