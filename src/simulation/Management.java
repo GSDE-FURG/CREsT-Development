@@ -1853,6 +1853,7 @@ public class Management extends MAIN {
 
                 for(int i = 0; i < arraylist.size(); i++){
                         //temp = arraylist.get(i);
+                        //System.out.println(arraylist.get(i).get_gate_type() + " " + x);
                         if(arraylist.get(i).get_gate_type().equals(x)){
                                 //System.out.println("Achou -> " + x);
                                 //arraylist.get(i).update_count();
@@ -1880,6 +1881,108 @@ public class Management extends MAIN {
          * @return
          */
         public String calculateTotalSensitiveAreaRegular(){
+                System.out.println("           Circuit Name : " + this.circuit.getName() );
+                //System.out.println("- Logic Gates : " + this.circuit.getGates());
+                //System.out.println("               - Logic Gates (size): " + this.circuit.getGates().size() );
+                ///System.out.println("               - Levels (size): " + this.levelCircuit.getGateLevels().size());
+
+                ArrayList <Orchestrator.gate_counter> temp = new ArrayList<>();
+
+                /*  IN CASE OF LIBRARY DO NOT CONTAIN X1 */
+
+                temp.add(new Orchestrator.gate_counter("ZERO", 0));
+                temp.add(new Orchestrator.gate_counter("ONE", 0));
+                temp.add(new Orchestrator.gate_counter("BUF", 0));
+                temp.add(new Orchestrator.gate_counter("INV", 0));
+
+                temp.add(new Orchestrator.gate_counter("NOR2", 0));
+                temp.add(new Orchestrator.gate_counter("NOR3", 0));
+                temp.add(new Orchestrator.gate_counter("NOR4", 0));
+                temp.add(new Orchestrator.gate_counter("NAND2", 0));
+
+                temp.add(new Orchestrator.gate_counter("NAND3", 0));
+                temp.add(new Orchestrator.gate_counter("NAND4", 0));
+                temp.add(new Orchestrator.gate_counter("OAI21", 0));
+                temp.add(new Orchestrator.gate_counter("OAI211", 0));
+
+                temp.add(new Orchestrator.gate_counter("OAI22", 0));
+                temp.add(new Orchestrator.gate_counter("OAI221", 0));
+                temp.add(new Orchestrator.gate_counter("OAI222", 0));
+                temp.add(new Orchestrator.gate_counter("AOI21", 0));
+
+                temp.add(new Orchestrator.gate_counter("AOI211", 0));
+                temp.add(new Orchestrator.gate_counter("AOI22", 0));
+                temp.add(new Orchestrator.gate_counter("AOI221", 0));
+                temp.add(new Orchestrator.gate_counter("AOI222", 0));
+                temp.add(new Orchestrator.gate_counter("XOR2", 0));
+
+                //printSensitiveAreasAnalysis();
+
+                /* contador de portas */
+                for(Gate i: this.circuit.getGates()) { // Update counters
+                        //System.out.println("-" + i.getType().toString());
+                        if(searchGateInList(i.getType().toString(), temp))
+                        {
+                                //System.out.println("In: " );
+                                for (Orchestrator.gate_counter x: temp){
+                                        if(x.get_gate_type().equals(i.getType().toString())){
+                                                x.update_count();
+                                                System.out.println("------ Gate: " + x.get_gate_type() + " counter: " + x.get_gate_counter());
+                                        }
+                                }
+                        }
+                }
+                System.out.println("\n");
+
+                /********/
+                //computate sensitive area from .csv
+                for (Orchestrator.gate_counter x: temp) {
+                        //System.out.println("X : " + x.get_gate_type());
+                        for (Map.Entry<String, SensitiveCell> e : this.sensitive_cells.entrySet()) {
+                                //System.out.println("x: " + x.get_gate_type() + "  e: " + e) ;
+                                //if (e.getKey().startsWith(x.get_gate_type() + "X1")){ // OR other word to complite filter
+
+                                //System.out.println(e.getKey() + " " + (x.get_gate_type() + "_"));
+                                if (e.getKey().startsWith(x.get_gate_type() + "X1_")){ //x: NAND2X1  e: NAND2X1_10=logicSimulator.SensitiveCell@2f48b3d2
+
+                                        //add to my result list
+                                        float f= Float.parseFloat (e.getValue().getSensitive_are());
+                                        x.sumSensitiveArea(f);
+                                       // System.out.println("v -" + e + "                    - INSIDE Key: " + e.getKey() + "    "  + x.get_gate_type() + "  AS: " + e.getValue().getSensitive_are() + "  sum: " + x.getSensitive_areasum());
+                                }
+                        }
+                       if(x.get_gate_counter() > 0) {
+                                System.out.println(" Finded:    ASavg : " + x.get_gate_type() + "  " + (x.getSensitive_areasum() / x.getGatesCounter()) + "  c: " + x.get_gate_counter());
+                       }
+
+                        //System.out.println("\n --------");
+                }
+
+              /****linkar com as areas sensíveis****/
+                float sum = 0;
+
+                /* Calculate sensitive area based in gates counter*/
+                for (Orchestrator.gate_counter x: temp){
+
+                        float b = x.get_gate_counter();
+                        //System.out.println("B: "  + b + "    temp: " + x.get_gate_type());
+                        //System.out.println("Temp: " + x.get_gate_counter());
+                        if(b>0 && !(x.get_gate_type().equals("ZERO") || x.get_gate_type().equals("ONE"))) {
+                                float AS = x.getSensitive_areasum() / x.getGatesCounter();
+                                sum = (AS * b) + sum;
+                                System.out.println("- SAavg: " + x.get_gate_type() + "  AS: " + AS + "   Gates: " + b + "   sum: " + sum);
+                        }
+                }
+
+                //System.out.println("\n\n\n- Cells: " + this.sensitive_cells);
+                //System.out.println("\n");
+
+                System.out.println("- Total Sensitive Avg Sensitive Area Sum (" + this.circuit.getName() + "): " + sum );
+
+                return Float.toString(sum);
+        }
+
+        public String calculateTotalSensitiveAreaRegularbackup(){
                 System.out.println("           Circuit Name : " + this.circuit.getName() );
                 //System.out.println("- Logic Gates : " + this.circuit.getGates());
                 //System.out.println("               - Logic Gates (size): " + this.circuit.getGates().size() );
@@ -1966,21 +2069,21 @@ public class Management extends MAIN {
                         //System.out.println("X : " + x.get_gate_type());
                         for (Map.Entry<String, SensitiveCell> e : this.sensitive_cells.entrySet()) {
 
-                                if ((e.getKey().startsWith(x.get_gate_type() + "_X1") || (e.getKey().startsWith(x.get_gate_type())))) { // OR other word to complite filter
+                                if ((e.getKey().startsWith(x.get_gate_type()))){ // OR other word to complite filter
                                         //add to my result list
                                         float f= Float.parseFloat (e.getValue().getSensitive_are());
                                         x.sumSensitiveArea(f);
-                                       //System.out.println("-" + e + "                    - INSIDE Key: " + e.getKey() + "    "  + x.get_gate_type() + "  AS: " + e.getValue().getSensitive_are() + "  sum: " + x.getSensitive_areasum());
+                                        //System.out.println("-" + e + "                    - INSIDE Key: " + e.getKey() + "    "  + x.get_gate_type() + "  AS: " + e.getValue().getSensitive_are() + "  sum: " + x.getSensitive_areasum());
                                 }
                         }
-                      // if(x.get_gate_counter() > 0) {
-                               // System.out.println(" Finded:    ASavg : " + x.get_gate_type() + "  " + (x.getSensitive_areasum() / x.getGatesCounter()) + "  c: " + x.get_gate_counter());
-                      // }
+                        // if(x.get_gate_counter() > 0) {
+                        // System.out.println(" Finded:    ASavg : " + x.get_gate_type() + "  " + (x.getSensitive_areasum() / x.getGatesCounter()) + "  c: " + x.get_gate_counter());
+                        // }
 
                         //System.out.println("\n --------");
                 }
 
-              /****linkar com as areas sensíveis****/
+                /****linkar com as areas sensíveis****/
                 float sum = 0;
 
                 /* Calculate sensitive area based in gates counter*/
@@ -2018,31 +2121,31 @@ public class Management extends MAIN {
 
                 /*  IN CASE OF LIBRARY DO NOT CONTAIN X1 */
 
-                temp.add(new Orchestrator.gate_counter("ZERO", 0));
-                temp.add(new Orchestrator.gate_counter("ONE", 0));
-                temp.add(new Orchestrator.gate_counter("BUF", 0));
-                temp.add(new Orchestrator.gate_counter("INV", 0));
+                temp.add(new Orchestrator.gate_counter("ZEROX1", 0));
+                temp.add(new Orchestrator.gate_counter("ONEX1", 0));
+                temp.add(new Orchestrator.gate_counter("BUFX1", 0));
+                temp.add(new Orchestrator.gate_counter("INVX1", 0));
 
-                temp.add(new Orchestrator.gate_counter("NOR2", 0));
-                temp.add(new Orchestrator.gate_counter("NOR3", 0));
-                temp.add(new Orchestrator.gate_counter("NOR4", 0));
-                temp.add(new Orchestrator.gate_counter("NAND2", 0));
+                temp.add(new Orchestrator.gate_counter("NOR2X1", 0));
+                temp.add(new Orchestrator.gate_counter("NOR3X1", 0));
+                temp.add(new Orchestrator.gate_counter("NOR4X1", 0));
+                temp.add(new Orchestrator.gate_counter("NAND2X1", 0));
 
-                temp.add(new Orchestrator.gate_counter("NAND3", 0));
-                temp.add(new Orchestrator.gate_counter("NAND4", 0));
-                temp.add(new Orchestrator.gate_counter("OAI21", 0));
-                temp.add(new Orchestrator.gate_counter("OAI211", 0));
+                temp.add(new Orchestrator.gate_counter("NAND3X1", 0));
+                temp.add(new Orchestrator.gate_counter("NAND4X1", 0));
+                temp.add(new Orchestrator.gate_counter("OAI21X1", 0));
+                temp.add(new Orchestrator.gate_counter("OAI211X1", 0));
 
-                temp.add(new Orchestrator.gate_counter("OAI22", 0));
-                temp.add(new Orchestrator.gate_counter("OAI221", 0));
-                temp.add(new Orchestrator.gate_counter("OAI222", 0));
-                temp.add(new Orchestrator.gate_counter("AOI21", 0));
+                temp.add(new Orchestrator.gate_counter("OAI22X1", 0));
+                temp.add(new Orchestrator.gate_counter("OAI221X1", 0));
+                temp.add(new Orchestrator.gate_counter("OAI222X1", 0));
+                temp.add(new Orchestrator.gate_counter("AOI21X1", 0));
 
-                temp.add(new Orchestrator.gate_counter("AOI211", 0));
-                temp.add(new Orchestrator.gate_counter("AOI22", 0));
-                temp.add(new Orchestrator.gate_counter("AOI221", 0));
-                temp.add(new Orchestrator.gate_counter("AOI222", 0));
-                temp.add(new Orchestrator.gate_counter("XOR2", 0));
+                temp.add(new Orchestrator.gate_counter("AOI211X1", 0));
+                temp.add(new Orchestrator.gate_counter("AOI22X1", 0));
+                temp.add(new Orchestrator.gate_counter("AOI221X1", 0));
+                temp.add(new Orchestrator.gate_counter("AOI222X1", 0));
+                temp.add(new Orchestrator.gate_counter("XOR2X1", 0));
 
 
                 for(Gate i: this.circuit.getGates()) { // Update counters
@@ -2065,7 +2168,7 @@ public class Management extends MAIN {
                         //System.out.println("X : " + x.get_gate_type());
                         for (Map.Entry<String, SensitiveCell> e : this.sensitive_cells.entrySet()) {
                                 //System.out.println("E = " + e);
-                                if ((e.getKey().startsWith(x.get_gate_type() + "X1_"))) { // OR other word to complite filter
+                                if ((e.getKey().startsWith(x.get_gate_type() + "_"))) { // OR other word to complite filter
                                         //add to my result list
 
                                         float f = Float.parseFloat (e.getValue().getSensitive_are());
@@ -2110,8 +2213,9 @@ public class Management extends MAIN {
                 int base = 0;
 
                 for(int i = 0; i < 5; i ++) {              // Circuits gates
-                        if(this.circuit.getGates().get(i).getId().contains("X1")){
-                                System.out.println("Founded... " + this.circuit.getGates().get(i).getId());
+                        //System.out.println("xx Gate: " + this.circuit.getGates().get(i).getType());
+                        if(this.circuit.getGates().get(i).getType().toString().contains("X1")){
+                                //System.out.println("Founded... " + this.circuit.getGates().get(i).getId());
                                         base++;
                         }
                 }
