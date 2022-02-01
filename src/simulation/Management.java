@@ -2280,6 +2280,7 @@ public class Management extends MAIN {
                         for (int j = 0; j < x.size(); j++) {
                                 ///System.out.println(" index: " + x.get(j).getSimulationIndex() + " vec: " + x.get(j).getinputVector() + " sensitive area sum: " + x.get(j).getSum_sensitive_cells_area() );
                                 map.put( x.get(j).getSum_sensitive_cells_area() , x.get(j).concatInputVector() );
+
                                 //InputVec.add( x.get(j).concatInputVector());
                                 //SensitiveAreaInputVector.add(x.get(j).getSum_sensitive_cells_area());
                         }
@@ -2302,12 +2303,20 @@ public class Management extends MAIN {
         public void printSensitiveAreasAnalysis(){
                 //System.out.println("CElls: " + this.sensitive_cells);
                 System.out.println("\n\n\n------------ Extracting Total vector Sensitive (Cross Sections) -------------------");
+                float counter = 0;
+                float sum = 0;
                 for (int i = 0; i < this.itemx_list.size(); i++) {
                         List <TestVectorInformation> x =  this.itemx_list.get(i).get_threadSimulationList();
                         for (int j = 0; j < x.size(); j++) {
                                 System.out.println(" Vector: " + x.get(j).getSimulationIndex() + " vec: " + x.get(j).getinputVector() + " sensitive area sum: " + x.get(j).getSum_sensitive_cells_area() );
+                                sum += x.get(j).getSum_sensitive_cells_area();
+                                counter++;
                         }
                 }
+                System.out.println("\n");
+                System.out.println("- Sensitive Areas (ASvec) based on " + counter + " vectors: " + (sum/counter) + " and ASavg based in AS average from each cell: " + this.avgASFLOAT);
+                System.out.println("- Difference (%) : " + (this.avgASFLOAT/(sum/counter)));
+                //System.out.println("");
                 this.classifySensitiveAreas();
                 System.out.println("------------ Extracting Total vector Sensitive (Cross Sections) -------------------");
 
