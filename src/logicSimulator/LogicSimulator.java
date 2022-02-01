@@ -25,6 +25,7 @@ import jxl.write.WriteException;
 import levelDatastructures.DepthGate;
 import levelDatastructures.GateLevel;
 import levelDatastructures.LevelCircuit;
+import org.ejml.data.DMatrix1Row;
 import readers.MappedVerilogReader;
 import signalProbability.ProbCircuit;
 
@@ -3220,8 +3221,19 @@ import signalProbability.ProbCircuit;
 
         /* Calculate Sensitive Area of This Gate */
             ///SensitiveCell cell = this.sensitive_cells.get(gate.getGate().getType()  + "_" + concat_inputs);
-            String key = gate.getGate().getType()  + "_" + concat_inputs; // Calculate the exact input vector
+             String key = "";
+            if(gate.getGate().getType().toString().contains("X1")){ // "X1" version
+                 key = gate.getGate().getType()  + "_" + concat_inputs; // Calculate the exact input vector
+            }
+            else{
+                key = gate.getGate().getType()  + "X1_" + concat_inputs; // Calculate the exact input vector
+
+            }
+
             SensitiveCell cell = this.sensitive_cells.get(key);
+
+            //TODO: Add the X1 in contain keys
+
         //  System.out.println("-> " + gate.getGate().getType() + "  cell: " + cell + "  -- key " + key + " cellList: " + this.sensitive_cells.size());
         if((cell != null)){
 

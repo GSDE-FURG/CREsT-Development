@@ -2411,7 +2411,7 @@ public class Management extends MAIN {
                 }
                 System.out.println("        ---- ");
         }
-
+        // TODO: verify why sensitive areas are not being calculated in genlibs with NAND2X1 (X1)
         public void printSensitiveAreasAnalysis(){
                 //System.out.println("CElls: " + this.sensitive_cells);
                 System.out.println("\n\n\n------------ Extracting Total vector Sensitive (Cross Sections) -------------------");

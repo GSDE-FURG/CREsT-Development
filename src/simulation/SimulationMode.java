@@ -66,6 +66,7 @@ public class SimulationMode {
                                 Sensitive_Library);
 
                         /* Sensitive Areas Analysis based in all vectors (20k)*/
+
                         simulacaoMultithreading.printSensitiveAreasAnalysis();
 
                     this.OUTPUT_INFO = simulacaoMultithreading.getMTBF(" MTFT Sample (Monte Carlo = N): ");
