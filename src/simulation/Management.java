@@ -1927,7 +1927,7 @@ public class Management extends MAIN {
                                 for (Orchestrator.gate_counter x: temp){
                                         if(x.get_gate_type().equals(i.getType().toString())){
                                                 x.update_count();
-                                                System.out.println("------ Gate: " + x.get_gate_type() + " counter: " + x.get_gate_counter());
+                                                //System.out.println("------ Gate: " + x.get_gate_type() + " counter: " + x.get_gate_counter());
                                         }
                                 }
                         }
@@ -1982,6 +1982,10 @@ public class Management extends MAIN {
                 return Float.toString(sum);
         }
 
+        /**
+         * @deprecated
+         * @return
+         */
         public String calculateTotalSensitiveAreaRegularbackup(){
                 System.out.println("           Circuit Name : " + this.circuit.getName() );
                 //System.out.println("- Logic Gates : " + this.circuit.getGates());
@@ -2177,9 +2181,9 @@ public class Management extends MAIN {
                                         //System.out.println("-" + e + "                    - INSIDE Key: " + e.getKey() + "    "  + x.get_gate_type() + "  AS: " + e.getValue().getSensitive_are() + "  sum: " + x.getSensitive_areasum());
                                 }
                         }
-                        if(x.get_gate_counter() > 0) {
-                                 System.out.println(" Finded:    ASavg : " + x.get_gate_type() + "  " + (x.getSensitive_areasum() / x.getGatesCounter()) + "  c: " + x.get_gate_counter());
-                        }
+                        //if(x.get_gate_counter() > 0) {
+                        //         System.out.println(" Finded:    ASavg : " + x.get_gate_type() + "  " + (x.getSensitive_areasum() / x.getGatesCounter()) + "  c: " + x.get_gate_counter());
+                        //}
 
                         //System.out.println("\n --------");
                 }
@@ -2208,6 +2212,10 @@ public class Management extends MAIN {
                 return Float.toString(sum);
         }
 
+        /**
+         * Decision Method
+         * @return
+         */
         public String calculateTotalSensitiveArea(){
 
                 int base = 0;
@@ -2409,18 +2417,26 @@ public class Management extends MAIN {
                 System.out.println("\n\n\n------------ Extracting Total vector Sensitive (Cross Sections) -------------------");
                 float counter = 0;
                 float sum = 0;
-                for (int i = 0; i < this.itemx_list.size(); i++) {
-                        List <TestVectorInformation> x =  this.itemx_list.get(i).get_threadSimulationList();
-                        for (int j = 0; j < x.size(); j++) {
-                                System.out.println(" Vector: " + x.get(j).getSimulationIndex() + " vec: " + x.get(j).getinputVector() + " sensitive area sum: " + x.get(j).getSum_sensitive_cells_area() );
-                                sum += x.get(j).getSum_sensitive_cells_area();
-                                counter++;
+
+                System.out.println("sample: " + this.sampleSize);
+
+                if(this.sampleSize <= 100) {
+                        for (int i = 0; i < this.itemx_list.size(); i++) {
+                                List<TestVectorInformation> x = this.itemx_list.get(i).get_threadSimulationList();
+                                for (int j = 0; j < x.size(); j++) {
+
+                                                System.out.println(" Vector: " + x.get(j).getSimulationIndex() + " vec: " + x.get(j).getinputVector() + " sensitive area sum: " + x.get(j).getSum_sensitive_cells_area());
+
+                                        sum += x.get(j).getSum_sensitive_cells_area();
+                                        counter++;
+                                }
                         }
-                }
+
                 System.out.println("\n");
                 System.out.println("- Sensitive Areas (ASvec) based on " + counter + " vectors: " + (sum/counter) + " and ASavg based in AS average from each cell: " + this.avgASFLOAT);
                 System.out.println("- Difference (%) : " + (this.avgASFLOAT/(sum/counter)));
                 //System.out.println("");
+                }
                 this.classifySensitiveAreas();
                 System.out.println("------------ Extracting Total vector Sensitive (Cross Sections) -------------------");
 
@@ -2584,7 +2600,7 @@ public class Management extends MAIN {
 
                         }
                 } catch (IOException e) {
-                        System.out.println("Error al leer .csv");
+                        System.out.println("Error reading .csv");
                         e.printStackTrace();
                 }
                 return sensitive_cells;

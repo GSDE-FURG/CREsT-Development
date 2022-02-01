@@ -113,7 +113,7 @@ public class MAIN {  //Class to run debug tests
             System.out.println("- New methodology....");
             MAIN experiment = new MAIN(0 ,"", "", "");
             String relativePath = "teste/demo/";
-            String genlib = "cadence.genlib"; //"lib_min_no_cost.genlib"; //"cadence.genlib";
+            String genlib = "cadence.genlib";//"lib_min_no_cost.genlib"; //"cadence.genlib";
             String signalsToinjectFault = "ALL_SIGNALS";
             String constReliability = "0.9999";
 
