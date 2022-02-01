@@ -57,14 +57,17 @@ public class SimulationMode {
 
         this.printSpecSimulation();
 
+        /* Constructor */
         Management simulacaoMultithreading = new Management(simulationCircuit.getThreads(), simulationCircuit.getReliabilityConst(), simulationCircuit.getRelativePath(),
                 simulationCircuit.getRelativePath() + simulationCircuit.getGenlib(), simulationCircuit.getRelativePath() + simulationCircuit.getCircuit());
 
+                        /* Monte Carlo Simulation */
                         simulacaoMultithreading.monteCarloReliability(Math.round(simulationCircuit.getMtf_sizes().get(0)), simulationCircuit.getMtf_sizes(), simulationCircuit.getSignalsToinjectFault(),
                                 Sensitive_Library);
 
+                        /* Sensitive Areas Analysis based in all vectors (20k)*/
                         simulacaoMultithreading.printSensitiveAreasAnalysis();
-                          //String output = simulacaoMultithreading.PrintGatesCounterDetailsSortedCompliled();
+
                     this.OUTPUT_INFO = simulacaoMultithreading.getMTBF(" MTFT Sample (Monte Carlo = N): ");
         System.out.println(this.OUTPUT_INFO);
     }
