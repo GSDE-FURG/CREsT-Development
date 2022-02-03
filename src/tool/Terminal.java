@@ -421,7 +421,7 @@ class TerminalWrapper {
 
 public class
 Terminal {
-    private final JFrame frm = new JFrame("GSDE - Circuit Benchmarker App");
+    private final JFrame frm = new JFrame("CREsT - Circuit Reliability Estimation Tool");
     private final JTextArea txtArea = new JTextArea();
     //private final JEditorPane txtArea = new JEditorPane("text/html", "");
     private final JScrollPane scrollPane = new JScrollPane();
@@ -562,7 +562,7 @@ Terminal {
     }
 
     private void showPrompt() {
-        txtArea.setText(txtArea.getText() + "GSDE_CBA> ");        
+        txtArea.setText(txtArea.getText() + "CREsT> ");
     }
 
     private void showNewLine() {

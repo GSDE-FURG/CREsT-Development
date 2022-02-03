@@ -4689,7 +4689,18 @@ public class Commands {
             "AOI222",
             "XOR2"};
 
-    String[] benchs = {"b01_C",
+        String[] benchs = {"c432",
+                "c499",
+                "c880",
+                "c1355",
+                "c1908",
+                "c2670",
+                "c3540",
+                "c5315",
+                "c6288",
+                "c7552"};
+
+    /*String[] benchs = {"b01_C",
                        "b02_C",
             "b03_C",
             "b04_C",
@@ -4709,7 +4720,7 @@ public class Commands {
             "b19_C",
             "b20_C",
             "b21_C",
-            "b22_C"};
+            "b22_C"};*/
 
     /*String[] benchs = {"25_1",
             "25_2",
