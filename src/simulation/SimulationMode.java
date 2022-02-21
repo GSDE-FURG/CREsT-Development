@@ -1,5 +1,7 @@
 package simulation;
 
+import java.util.ArrayList;
+
 public class SimulationMode {
 
     private SimulationCircuit simulationCircuit;
@@ -7,6 +9,8 @@ public class SimulationMode {
     public String OUTPUT_INFO = "";
 
     public String output_sample = "";
+
+    public ArrayList <String> info = new ArrayList<>();
 
     public SimulationMode(SimulationCircuit simulationCircuit){
         this.simulationCircuit = simulationCircuit;
@@ -34,7 +38,6 @@ public class SimulationMode {
 
     }
 
-
     public void monteCarloReliabilitySensitiveAreasVectorsAPI(String Sensitive_Library) throws Exception{
 
         this.printSpecSimulation();
@@ -53,6 +56,7 @@ public class SimulationMode {
         System.out.println(this.OUTPUT_INFO);
     }
 
+
     public void monteCarloReliabilityAPI(String Sensitive_Library) throws Exception{
 
         this.printSpecSimulation();
@@ -61,16 +65,38 @@ public class SimulationMode {
         Management simulacaoMultithreading = new Management(simulationCircuit.getThreads(), simulationCircuit.getReliabilityConst(), simulationCircuit.getRelativePath(),
                 simulationCircuit.getRelativePath() + simulationCircuit.getGenlib(), simulationCircuit.getRelativePath() + simulationCircuit.getCircuit());
 
+        /* Monte Carlo Simulation */
+        //simulacaoMultithreading.monteCarloReliability(Math.round(simulationCircuit.getMtf_sizes().get(0)), simulationCircuit.getMtf_sizes(), simulationCircuit.getSignalsToinjectFault(), Sensitive_Library);
+
+        /* Sensitive Areas Analysis based in all vectors (20k)*/
+        info.add(simulacaoMultithreading.printGates(Math.round(simulationCircuit.getMtf_sizes().get(0)), simulationCircuit.getMtf_sizes(), simulationCircuit.getSignalsToinjectFault(), Sensitive_Library));
+
+        //simulacaoMultithreading.printSensitiveAreasAnalysis();
+
+        this.OUTPUT_INFO = simulacaoMultithreading.getMTBF(" MTFT Sample (Monte Carlo = N): ");
+        System.out.println(this.OUTPUT_INFO);
+    }
+    public String printGates(String Sensitive_Library) throws Exception{
+
+        this.printSpecSimulation();
+
+        /* Constructor */
+        Management simulacaoMultithreading = new Management(simulationCircuit.getThreads(), simulationCircuit.getReliabilityConst(), simulationCircuit.getRelativePath(),
+                simulationCircuit.getRelativePath() + simulationCircuit.getGenlib(), simulationCircuit.getRelativePath() + simulationCircuit.getCircuit());
+
                         /* Monte Carlo Simulation */
-                        simulacaoMultithreading.monteCarloReliability(Math.round(simulationCircuit.getMtf_sizes().get(0)), simulationCircuit.getMtf_sizes(), simulationCircuit.getSignalsToinjectFault(),
-                                Sensitive_Library);
+                        //simulacaoMultithreading.monteCarloReliability(Math.round(simulationCircuit.getMtf_sizes().get(0)), simulationCircuit.getMtf_sizes(), simulationCircuit.getSignalsToinjectFault(), Sensitive_Library);
 
                         /* Sensitive Areas Analysis based in all vectors (20k)*/
+                        return  ((simulacaoMultithreading.printGates(Math.round(simulationCircuit.getMtf_sizes().get(0)),
+                                simulationCircuit.getMtf_sizes(), simulationCircuit.getSignalsToinjectFault(), Sensitive_Library)));
 
-                        simulacaoMultithreading.printSensitiveAreasAnalysis();
+        //simulacaoMultithreading.printSensitiveAreasAnalysis();
 
-                    this.OUTPUT_INFO = simulacaoMultithreading.getMTBF(" MTFT Sample (Monte Carlo = N): ");
-        System.out.println(this.OUTPUT_INFO);
+         //           this.OUTPUT_INFO = simulacaoMultithreading.getMTBF(" MTFT Sample (Monte Carlo = N): ");
+       // System.out.println(this.OUTPUT_INFO);
+
+
     }
 
     public void GateCounter() throws Exception{
@@ -88,7 +114,6 @@ public class SimulationMode {
         this.OUTPUT_INFO =  simulacaoMultithreading.PrintGatesTotal();
         System.out.println(this.OUTPUT_INFO);
     }
-
 
     public void runElectricalSimulation(String pathElectricSimulator, String pathSpiceCircuit) throws Exception{
 

@@ -1,7 +1,9 @@
 package simulation;
 
+import com.sun.jdi.connect.Connector;
 import com.sun.tools.javac.Main;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class MAIN {  //Class to run debug tests
@@ -108,12 +110,24 @@ public class MAIN {  //Class to run debug tests
         System.out.println("---------------------- END ----------------------");
     }
 
+    public static void readResults( String path) throws IOException {
+        SimulationInLot circuits_folder = new SimulationInLot();
+
+
+
+        circuits_folder.setup(path, "", 4);
+        //circuits_folder.processParser(signalsToinjectFault, constReliability, mtf_sizes);
+        circuits_folder.print();
+        circuits_folder.readResultsInLot(path,"ALL_SIGNALS");
+
+    }
+
     public static void main(String[] args) throws Exception{
 
             System.out.println("- New methodology....");
             MAIN experiment = new MAIN(0 ,"", "", "");
-            String relativePath = "teste/demo/";
-            String genlib = "cadence.genlib"; //"lib_min_no_cost.genlib"; //"cadence.genlib";
+            String relativePath = "teste/mapped/EPFL2015/5-full_no_cost/"; //"teste/demo/";
+            String genlib = "5-full_no_cost.genlib"; // "cadence.genlib"; //"lib_min_no_cost.genlib"; //"cadence.genlib";
             String signalsToinjectFault = "ALL_SIGNALS";
             String constReliability = "0.9999";
 
@@ -123,31 +137,71 @@ public class MAIN {  //Class to run debug tests
         int threads = 8;
 
         ArrayList<Float> mtf_sizes = new ArrayList<>();  //MTF's
-        mtf_sizes.add((float) 100);
+        mtf_sizes.add((float) 20000);
         mtf_sizes.add((float) 1);
         mtf_sizes.add((float) 0);
         mtf_sizes.add((float) 0);
 
+        String cx = ";";
+        ArrayList <String> info = new ArrayList<>();
+        for (int i = 0; i < 0 ; i++) {
 
-        SimulationInLot circuits_folder = new SimulationInLot();
+            SimulationInLot circuits_folder = new SimulationInLot();
 
-        circuits_folder.setup(relativePath, genlib, threads);
-        circuits_folder.processParser(signalsToinjectFault, constReliability, mtf_sizes);
-        circuits_folder.print();
+            circuits_folder.setup(relativePath, genlib, threads);
+            circuits_folder.processParser(signalsToinjectFault, constReliability, mtf_sizes);
+            circuits_folder.print();
 
-        SimulationMode sim_mtf_debug = new SimulationMode(circuits_folder.getCircuitListSpecs().get(0));
+           // SimulationMode sim_mtf_debug = new SimulationMode(circuits_folder.getCircuitListSpecs().get(0));
 
-        sim_mtf_debug.faultToleranceMonteCarloMETAPI(""); // Simulação de Monte Carlo (N)  - FMR
+            //sim_mtf_debug.faultToleranceMonteCarloMETAPI(""); // Simulação de Monte Carlo (N)  - FMR
+            //sim_mtf_debug.faultToleranceExhaustiveSETAPI();    // Exaustiva Simples - FMR
+            //sim_mtf_debug.faultToleranceExhaustiveCompleteMETAPI();  // Exaustiva Completa - FMR
 
-        //sim_mtf_debug.faultToleranceExhaustiveSETAPI();    // Exaustiva Simples - FMR
+           // sim_mtf_debug.monteCarloReliabilityAPI("teste/mapped/EPFL2015/5-full_no_cost/lookup_table.csv");  // Monte Carlo (n) - FMR e AS e MTBF
+            //readResults("circuitos/ISCAS89/min");
+        }
 
-        //sim_mtf_debug.faultToleranceExhaustiveCompleteMETAPI();  // Exaustiva Completa - FMR
+        SimulationInLot c = new SimulationInLot();
 
-        //sim_mtf_debug.monteCarloReliabilityAPI("teste/demo/lookup_table.csv");  // Monte Carlo (n) - FMR e AS e MTBF
+            c.setup("circuitos/ISCAS89/min/", "lib_min_no_cost.genlib", threads);
+            //c.setup("circuitos/ISCAS89/fullv2/", "lib_full_no_cost.genlib", threads);
+            c.processParser(signalsToinjectFault, constReliability, mtf_sizes);
+            c.print();
+
+
+                for (int i = 0; i < c.getCircuitListSpecs().size(); i++) {
+                    SimulationMode sim_mtf_debug = new SimulationMode(c.getCircuitListSpecs().get(i));
+                    //circuitos\ISCAS89\min
+                    System.out.println("circ: "+ c.getCircuitListSpecs().get(i).getCircuit());
+                   info.add( sim_mtf_debug.printGates("circuitos/ISCAS89/min/lookup_table.csv"));  // Monte Carlo (n) - FMR e AS e MTBF
+                    //readResults("circuitos/ISCAS89/fullv2/");
+                }
+
+        for (int i = 0; i < info.size() ; i++) {
+            System.out.println(info.get(i));
+        }
+/*
 
 
 
+        try {
+            System.out.println("1t");
 
+            String x  = "c";
+            cx = x;
+            System.out.println("SSSSS");
+            if(x.equals("cccccc")){
+                System.out.println("SSSSS");
+            }else{
+                System.out.println("SSSSS");
+            }
+          ///  Runtime.getRuntime().exec("c:\\Windows\\System32\\shutdown -s -t 60");
+        } catch (IOException e) {
+            String  a = "ok";
+            e.printStackTrace();
+        }
+*/
 
     }
 }

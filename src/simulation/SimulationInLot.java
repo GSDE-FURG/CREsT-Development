@@ -151,7 +151,7 @@ public class SimulationInLot {
         String FMR = "";
         String  time = "";
 
-        FileContent.add("File; avgSA; NE; Time(s);");
+        FileContent.add("Circuit"+ ";" + "Ne" + ";" + "FMR" + ";" + "ASavg" + ";" + "MTBF" + ";" + "Time(s)");
         for (int i = 0; i < files.size(); i++) {
             List<String> fileContentList  = this.readFile(path + "/" +files.get(i));
             //System.out.println("Records: " + fileContentList);

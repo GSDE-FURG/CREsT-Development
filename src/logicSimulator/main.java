@@ -77,6 +77,7 @@ public class main{
             //Psthzs.add("teste/mapped/LGSynth91/Comb/COMB - Minimal/"); Psthzs_lib.add("lib_min_no_cost.genlib");
 
             Psthzs.add("teste/cccc/circuitos_pequenos/"); Psthzs_lib.add("cadence.genlib");//Psthzs_lib.add("cadence.genlib"); // Psthzs_lib.add("lib_full_no_cost.genlib");
+            Psthzs.add("teste/cccc/circuitos_pequenos/"); Psthzs_lib.add("cadence.genlib");//Psthzs_lib.add("cadence.genlib"); // Psthzs_lib.add("lib_full_no_cost.genlib");
             //Psthzs.add("teste/cccc/");  Psthzs_lib.add("lib_full_no_cost.genlib");
 
             /*

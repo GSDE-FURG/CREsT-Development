@@ -173,6 +173,13 @@ public class Management extends MAIN {
                 System.out.println("- Simple Log " + fileName + "  (.txt)");
                 System.out.println("- Complete Log " + fileName + "  (.csv)");
 
+                int min = 0;
+                int max = 1000;
+
+                //Generate random int value from 50 to 100
+                System.out.println("Random value in int from "+min+" to "+max+ ":");
+                int random_int = (int)Math.floor(Math.random()*(max-min+1)+min);
+                System.out.println(random_int);
 
                 switch (mode) {
 
@@ -182,9 +189,10 @@ public class Management extends MAIN {
                                         this.verilog_circuit, this.signals_to_inject_faults); //(int sampleSize, int threads, int unmasked_faults,  float FMR, Circuit circuit, MappedVerilogReader verilog_circuit ,ArrayList<Signal> signals_to_inject_faults){
                                 //(int sampleSize, int threads, int unmasked_faults,  float FMR, Circuit circuit, MappedVerilogReader verilog_circuit ,ArrayList<Signal> signals_to_inject_faults, ArrayList <Float> mtf_sizes){
                                 log_STF.WriteSimpleLog(fileName, date, dateend, propagateTimems);
-                                //this.writeSimpleLog(fileName, date, dateend, propagateTimems);
+
+
                                 log_STF.writeCsvFileCompleteTh(fileName, itemx_list);
-                                //this.writeCsvFileCompleteTh(fileName, itemx_list);
+
                                 break;
 
                         case "MTF":
@@ -193,8 +201,10 @@ public class Management extends MAIN {
                                         this.verilog_circuit, this.signals_to_inject_faults, this.mtf_list);
                                 log_MTF.setavgASFLOAT(this.avgASFLOAT);
                                 log_MTF.setMTBF(this.MTBF);
-                                log_MTF.writeSimpleLogMultipleTransientFaultProportion(fileName, date, dateend, propagateTimems, this.mtf_list);
-                                log_MTF.writeCsvFileCompleteThMTF(fileName, itemx_list);
+
+                                log_MTF.writeSimpleLogMultipleTransientFaultProportion(fileName+"_"+random_int, date, dateend, propagateTimems, this.mtf_list);
+                                //log_MTF.writeSimpleLogMultipleTransientFaultProportion(fileName, date, dateend, propagateTimems, this.mtf_list);
+                                //log_MTF.writeCsvFileCompleteThMTF(fileName, itemx_list);
                                 break;
 
 
@@ -1793,6 +1803,7 @@ public class Management extends MAIN {
 
                         //System.out.println("3 INSIDE....");
 
+
                         Instant endPreparingSimulationTimeElapsed = Instant.now();
 
                         Instant startThreadingTimeElapsed = Instant.now();
@@ -2368,6 +2379,38 @@ public class Management extends MAIN {
          * @throws IOException
          * @throws Exception
          */
+
+        public String printGates(int sample, ArrayList <Float> mtf_list, String option, String file) throws IOException, Exception{
+
+                //System.out.println("- SUM PROPORTION: " + sumProportionPercentage(mtf_list));
+                //List thread_list =  this.createVectorsAndParticionate(sampleSize, option, "MTF-Generate_Netlist");
+                //this.runElectricalSimulator(this.relativePath, this.relativePath + "netlist_files/" +"netlist_"+this.circuit.getName() + ".txt");
+                //this.sampleSize = N;
+
+                if (sumProportionPercentage(mtf_list) == 1.0 && (sample > 0)) {  // 100%
+
+                        Map <String, SensitiveCell> sensitive_cells = readCsvFileAndMapSensitiveCellsArea(file, ",");
+
+                        //System.out.println("- Sensitive Cells: " + sensitive_cells.size());
+
+                        this.setSensitiveCells(sensitive_cells);
+                        //this.sensitive_cells = sensitive_cells;
+                        Instant start = Instant.now();
+
+                        LocalDateTime myDateObj = LocalDateTime.now();
+                        DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+                        String formattedDate = myDateObj.format(myFormatObj);
+
+                        this.setupEnviroment(" ----- Monte Carlo version  for M ultiple Transient Fault Injection -------");
+                        return (this.circuit.getName()+";"+this.circuit.getGates().size());
+
+
+                }
+                else{
+                        System.err.println("- Inputs inserted sum up ("+sumProportionPercentage(mtf_list)+") above 1 (100%), these were the inserted commands: " + mtf_list);
+                }
+                return "";
+        }
         public void FaultTolerance(int sample, ArrayList <Float> mtf_list, String option, String file) throws IOException, Exception{
 
                 //System.out.println("- SUM PROPORTION: " + sumProportionPercentage(mtf_list));
@@ -2518,17 +2561,19 @@ public class Management extends MAIN {
                         }
                 }
                 System.out.println("- Redundance areas may happen, so in this order the vector is overwriten -");
-                System.out.println("Complete MAP : " + map);
+               // System.out.println("Complete MAP : " + map);
                 System.out.println("MAP Size : " + map.size());
                 List<Float> employeeById = new ArrayList<>(map.keySet());
                 Collections.sort(employeeById);
 
-                System.out.println("Sorted :  " + employeeById);
-
+                //System.out.println("Sorted :  " + employeeById);
+                /*
                 System.out.println("        ---- ");
                 for (int i = 0; i > employeeById.size(); i++){
                         System.out.println(" Sensitive Area: " + employeeById.get(i) + "  Vector: " + map.get(employeeById.get(i)));
                 }
+
+                 */
                 System.out.println("        ---- ");
         }
         // TODO: verify why sensitive areas are not being calculated in genlibs with NAND2X1 (X1)
@@ -2539,24 +2584,28 @@ public class Management extends MAIN {
                 float sum = 0;
 
                 System.out.println("sample: " + this.sampleSize);
+                int idx = 0;
 
-                if(this.sampleSize <= 100) {
                         for (int i = 0; i < this.itemx_list.size(); i++) {
                                 List<TestVectorInformation> x = this.itemx_list.get(i).get_threadSimulationList();
                                 for (int j = 0; j < x.size(); j++) {
 
+                                        if(idx <= 10) {
+
                                                 System.out.println(" Vector: " + x.get(j).getSimulationIndex() + " vec: " + x.get(j).getinputVector() + " sensitive area sum: " + x.get(j).getSum_sensitive_cells_area());
+                                        }
+                                                          idx++;
+                                                 sum += x.get(j).getSum_sensitive_cells_area();
+                                                counter++;
 
-                                        sum += x.get(j).getSum_sensitive_cells_area();
-                                        counter++;
                                 }
-                        }
 
+                        }
                 System.out.println("\n");
                 System.out.println("- Sensitive Areas (ASvec) based on " + counter + " vectors: " + (sum/counter) + " and ASavg based in AS average from each cell: " + this.avgASFLOAT);
                 System.out.println("- Difference (%) : " + (this.avgASFLOAT/(sum/counter)));
                 //System.out.println("");
-                }
+
                 this.classifySensitiveAreas();
                 System.out.println("------------ Extracting Total vector Sensitive (Cross Sections) -------------------");
 
