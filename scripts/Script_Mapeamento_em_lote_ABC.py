@@ -1,4 +1,5 @@
 import glob
+from operator import ge
 import os
 
 
@@ -33,21 +34,40 @@ def get_lib_name(lib_name):
     return lib_name.split(".")[0]
 
 
-def mapCircuit(nomeCircuit, genlib, bench_cmd, lib_cmd, output_path):
+def mapCircuit(nomeCircuit, genlib, bench_cmd, lib_cmd, output_path, pathx):
     nameCircuit = get_circuit_name(nomeCircuit)
-    nameGenlib = get_lib_name(genlib)
-    print("Circuito: " + nomeCircuit  + "   -> " + nameCircuit + " -> " + nameGenlib )
-    print("     Genlib: " + genlib)
+    nameGenlib = get_lib_name(genlib)#"cadence.genlib"  #get_lib_name(genlib)
+    print("-    Circuito: " + nomeCircuit  + "   -> " + nameCircuit + " -> " + nameGenlib +  " -  outPath " +  output_path)
+    print("     -        Genlib: " + genlib)
+    
+    c = nameCircuit.split("/")
+    circ = c[1]
+    #print(c)
+    #cx = c[1].split(".")
+    
+    
+    g = genlib.split("/")
+    #print(g)
+    gen = g[1].split(".")
+    x = gen[0]
+    #print(x) 
 
-    # os.system("./abc -c 'read_blif " + str(nomeCircuit)+ "'" + " -c 'read_genlib " + genlib + "'" + " '-c map'" + "
-    # '-c write_verilog " + nameCircuit + "_" + nameGenlib  + ".v'")
+    #os.system("./abc -c 'read_blif " + str(nomeCircuit)+ "'" + " -c 'read_genlib " + genlib + "'" + " '-c map'" + "'-c write_verilog " + nameCircuit + "_" + nameGenlib  + ".v'")
 
     first_step_cmd = "%s %s;" % (lib_cmd, str(genlib))
     second_step_cmd = "%s %s;" % (bench_cmd, str(nomeCircuit))
     third_step_cmd = "map;"
-    fourth_step_cmd = "write_verilog %s/%s_%s.v" % (output_path, nameCircuit, nameGenlib)
+    #fourth_step_cmd = "write_verilog %s/%s_%s.v" % ("", nameCircuit, nameGenlib)
+
+    fourth_step_cmd = "write_verilog " + g[0] + "/" + x + "/" + circ + "_" + x + ".v"
+    
+    #%s/%s_%s.v" % ("", nameCircuit, x)
+
+    #print("----> " + first_step_cmd, second_step_cmd, third_step_cmd, "   fourth: " + fourth_step_cmd)
 
     abc_full_cmd = "./abc -c \'%s %s %s %s\'" % (first_step_cmd, second_step_cmd, third_step_cmd, fourth_step_cmd)
+    
+    print(abc_full_cmd)
     os.system(abc_full_cmd)
 
 
@@ -62,12 +82,17 @@ libList = []
 bench_type = circuit_lib_type_switcher(bench)
 lib_type = circuit_lib_type_switcher(library)
 
-
-for file in glob.glob("*.%s" % bench):
+print("-----------")
+pathx = "LGSynth91/"
+for file in glob.glob(pathx+"*.%s" % bench):
     circuitList.append(file)
+    print(file)
 
-for genlib in glob.glob("*.%s" % library):
+for genlib in glob.glob(pathx+"*.%s" % library):
     libList.append(genlib)
+    print(genlib)
+
+#print("files: " + str(circuitLists)))
 
 for lib in libList:
     output_path = get_lib_name(lib)
@@ -75,5 +100,5 @@ for lib in libList:
         os.makedirs(output_path)
 
     for i in circuitList:
-        mapCircuit(i, lib, bench_type, lib_type, output_path)
+        mapCircuit(i, lib, bench_type, lib_type, output_path,pathx)
     print("-----------")
