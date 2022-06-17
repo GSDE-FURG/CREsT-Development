@@ -66,16 +66,37 @@ public class SimulationMode {
                 simulationCircuit.getRelativePath() + simulationCircuit.getGenlib(), simulationCircuit.getRelativePath() + simulationCircuit.getCircuit());
 
         /* Monte Carlo Simulation */
-        //simulacaoMultithreading.monteCarloReliability(Math.round(simulationCircuit.getMtf_sizes().get(0)), simulationCircuit.getMtf_sizes(), simulationCircuit.getSignalsToinjectFault(), Sensitive_Library);
-
+        simulacaoMultithreading.monteCarloReliability(Math.round(simulationCircuit.getMtf_sizes().get(0)), simulationCircuit.getMtf_sizes(), simulationCircuit.getSignalsToinjectFault(), Sensitive_Library);
+        simulacaoMultithreading.classifySensitiveAreas();
         /* Sensitive Areas Analysis based in all vectors (20k)*/
-        info.add(simulacaoMultithreading.printGates(Math.round(simulationCircuit.getMtf_sizes().get(0)), simulationCircuit.getMtf_sizes(), simulationCircuit.getSignalsToinjectFault(), Sensitive_Library));
+        //info.add(simulacaoMultithreading.printGates(Math.round(simulationCircuit.getMtf_sizes().get(0)), simulationCircuit.getMtf_sizes(), simulationCircuit.getSignalsToinjectFault(), Sensitive_Library));
 
         //simulacaoMultithreading.printSensitiveAreasAnalysis();
 
         this.OUTPUT_INFO = simulacaoMultithreading.getMTBF(" MTFT Sample (Monte Carlo = N): ");
         System.out.println(this.OUTPUT_INFO);
     }
+
+    public void vector_Analisys(String Sensitive_Library) throws Exception{
+
+        this.printSpecSimulation();
+
+        /* Constructor */
+        Management simulacaoMultithreading = new Management(simulationCircuit.getThreads(), simulationCircuit.getReliabilityConst(), simulationCircuit.getRelativePath(),
+                simulationCircuit.getRelativePath() + simulationCircuit.getGenlib(), simulationCircuit.getRelativePath() + simulationCircuit.getCircuit());
+
+        /* Monte Carlo Simulation */
+        //simulacaoMultithreading.calculateTotalSensitiveAreaRegular();
+        simulacaoMultithreading.vectorAnalysis(Math.round(simulationCircuit.getMtf_sizes().get(0)), simulationCircuit.getMtf_sizes(), simulationCircuit.getSignalsToinjectFault(), Sensitive_Library);
+        /* Sensitive Areas Analysis based in all vectors (20k)*/
+        //info.add(simulacaoMultithreading.printGates(Math.round(simulationCircuit.getMtf_sizes().get(0)), simulationCircuit.getMtf_sizes(), simulationCircuit.getSignalsToinjectFault(), Sensitive_Library));
+
+        //simulacaoMultithreading.printSensitiveAreasAnalysis();
+
+        this.OUTPUT_INFO = simulacaoMultithreading.getMTBF(" MTFT Sample (Monte Carlo = N): ");
+        System.out.println(this.OUTPUT_INFO);
+    }
+
     public String printGates(String Sensitive_Library) throws Exception{
 
         this.printSpecSimulation();
@@ -205,6 +226,20 @@ public class SimulationMode {
             simulacaoMultithreading.faultToleranceExhaustiveCompleteMET(simulationCircuit.getSignalsToinjectFault());
             this.OUTPUT_INFO = simulacaoMultithreading.getFRM("Sample (N = "
                     + "2^Signals * Gates)");
+    }
+
+    public int faultToleranceExhaustiveCompleteMETAPIESTIMATION() throws Exception{ //ou Signals =  "ALL_SIGNALS" for exhaustive consider all_signals
+        Management simulacaoMultithreading = new Management(simulationCircuit.getThreads(), simulationCircuit.getReliabilityConst(), simulationCircuit.getRelativePath(),
+                simulationCircuit.getRelativePath() +   simulationCircuit.getGenlib(), simulationCircuit.getRelativePath() + simulationCircuit.getCircuit());
+
+        // this.output_sample = simulacaoMultithreading.SampleSizeExhaustiveCompleteMET(simulationCircuit.getSignalsToinjectFault());
+
+        //simulacaoMultithreading.SampleSizeExhaustiveCompleteMET();
+        int sample = simulacaoMultithreading.samplefaultToleranceExhaustiveCompleteMET(simulationCircuit.getSignalsToinjectFault());
+
+        return sample;
+        //this.OUTPUT_INFO = simulacaoMultithreading.getFRM("Sample (N = " + "2^Signals * Gates)");
+
     }
 
     public String getOutput_sample() {

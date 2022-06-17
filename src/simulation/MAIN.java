@@ -13,12 +13,14 @@ public class MAIN {  //Class to run debug tests
     String relativePath;
     String genlib;
     String OUTPUT_INFO;
+    ArrayList<String> gates =  new ArrayList<>();
 
     public MAIN(int threads, String reliabilityConst, String relativePath, String genlib){
             this.threads = threads;
             this.reliabilityConst = reliabilityConst;
             this.relativePath = relativePath;
             this.genlib = genlib;
+
     }
 
     public void runloop(SimulationInLot simulationInLotDebug) throws Exception {
@@ -122,6 +124,66 @@ public class MAIN {  //Class to run debug tests
 
     }
 
+    public void setup_run( String path, String genlib, String signalsToinjectFault, String constReliability, ArrayList <Float> mtf_sizes, int threads) throws Exception {
+
+        SimulationInLot versao =  new SimulationInLot();
+
+        versao.setup(path, genlib, threads);
+        versao.processParser(signalsToinjectFault, constReliability, mtf_sizes);
+        versao.print();
+        ArrayList <String> info = new ArrayList<>();
+
+
+        for (int i = 0; i < versao.getCircuitListSpecs().size(); i++) {
+            //for (int i = 0; i < versao.getCircuitListSpecs().size(); i++) {
+            System.out.println("circ: "+ versao.getCircuitListSpecs().get(i).getCircuit());
+            readResults(path);
+
+            for (int j = 0; j < 1; j++) { //Run once -  Run 3 times
+
+                try {
+                    System.out.println(j + "  --> circ: "+ versao.getCircuitListSpecs().get(i).getCircuit());
+                    SimulationMode sim_mtf_debug = new SimulationMode(versao.getCircuitListSpecs().get(i));
+                  //  if(i) {
+                       /// sim_mtf_debug.monteCarloReliabilityAPI("circuitos/lookup_table.csv");
+                   // }
+
+                    ///
+                    //
+                   // int a = sim_mtf_debug.faultToleranceExhaustiveCompleteMETAPIESTIMATION();
+                    //sim_mtf_debug.vector_Analisys("circuitos/lookup_table.csv");
+                    // Number of gates
+
+                    if(j == 0) {
+                       // info.add(sim_mtf_debug.printGates("circuitos/lookup_table.csv"));  // Monte Carlo (n) - FMR e AS e MTBF
+                       // gates.add(genlib + ";" +sim_mtf_debug.printGates("circuitos/lookup_table.csv"));
+                    }
+
+                    ///if(a <= 20000 && j ==0){
+                    //    System.out.println("ERR : " + versao.getCircuitListSpecs().get(i) + "" + a);
+                     //   gates.add(versao.getCircuitListSpecs().get(i).getCircuit() + ";" +a);
+                    //}
+
+                }catch (Exception e){
+                    System.err.print(" \n\n xxxxx  Error in circuit: " + versao.getCircuitListSpecs().get(i).getCircuit());
+                }
+
+
+        }
+
+
+
+
+            //info.add( sim_mtf_debug.printGates("circuitos/ISCAS89/min/lookup_table.csv"));  // Monte Carlo (n) - FMR e AS e MTBF
+            //readResults("circuitos/ISCAS89/fullv2/");
+        }
+
+
+        for (int i = 0; i < info.size() ; i++) {
+            System.out.println(info.get(i));
+        }
+    }
+
     public static void main(String[] args) throws Exception{
 
             System.out.println("- New methodology....");
@@ -143,7 +205,7 @@ public class MAIN {  //Class to run debug tests
         mtf_sizes.add((float) 0);
 
         String cx = ";";
-        ArrayList <String> info = new ArrayList<>();
+
         for (int i = 0; i < 0 ; i++) {
 
             SimulationInLot circuits_folder = new SimulationInLot();
@@ -162,26 +224,85 @@ public class MAIN {  //Class to run debug tests
             //readResults("circuitos/ISCAS89/min");
         }
 
-        SimulationInLot c = new SimulationInLot();
+        SimulationInLot minimal = new SimulationInLot();
+        SimulationInLot basic = new SimulationInLot();
+        SimulationInLot complex = new SimulationInLot();
+        SimulationInLot full = new SimulationInLot();
+        SimulationInLot fullv2 = new SimulationInLot();
 
-            c.setup("circuitos/ISCAS89/min/", "lib_min_no_cost.genlib", threads);
-            //c.setup("circuitos/ISCAS89/fullv2/", "lib_full_no_cost.genlib", threads);
-            c.processParser(signalsToinjectFault, constReliability, mtf_sizes);
-            c.print();
 
 
-                for (int i = 0; i < c.getCircuitListSpecs().size(); i++) {
-                    SimulationMode sim_mtf_debug = new SimulationMode(c.getCircuitListSpecs().get(i));
-                    //circuitos\ISCAS89\min
-                    System.out.println("circ: "+ c.getCircuitListSpecs().get(i).getCircuit());
-                   info.add( sim_mtf_debug.printGates("circuitos/ISCAS89/min/lookup_table.csv"));  // Monte Carlo (n) - FMR e AS e MTBF
-                    //readResults("circuitos/ISCAS89/fullv2/");
-                }
+        //String minimal_path = "circuitos/ISCAS85/minimal/"; // ISCAS85
+        //String basic_path = "circuitos/ISCAS85/basic/"; // ISCAS85
 
-        for (int i = 0; i < info.size() ; i++) {
-            System.out.println(info.get(i));
-        }
+
+       // experiment.setup_run("circuitos/ISCAS85/minimal/", "minimal.genlib", signalsToinjectFault, constReliability, mtf_sizes, threads);
+
+        //experiment.setup_run("circuitos/ISCAS85/basic/", "basic.genlib", signalsToinjectFault, constReliability, mtf_sizes, threads);
+
+        //experiment.setup_run("circuitos/ISCAS85/complex/", "complex.genlib", signalsToinjectFault, constReliability, mtf_sizes, threads);
+
+        //experiment.setup_run(  "circuitos/ISCAS85/full/", "full.genlib", signalsToinjectFault, constReliability, mtf_sizes, threads);
+
+        //experiment.setup_run("circuitos/ISCAS85/fullv2/", "fullv2.genlib", signalsToinjectFault, constReliability, mtf_sizes, threads);
+        /*
+*/
+
+        //  experiment.setup_run("circuitos/LGSynth91/minimal/", "minimal.genlib", signalsToinjectFault, constReliability, mtf_sizes, threads);
 /*
+        experiment.setup_run("circuitos/LGSynth91/basic/", "basic.genlib", signalsToinjectFault, constReliability, mtf_sizes, threads);
+
+        experiment.setup_run("circuitos/LGSynth91/complex/", "complex.genlib", signalsToinjectFault, constReliability, mtf_sizes, threads);
+
+        experiment.setup_run(  "circuitos/LGSynth91/full/", "full.genlib", signalsToinjectFault, constReliability, mtf_sizes, threads);
+
+        experiment.setup_run("circuitos/LGSynth91/fullv2/", "fullv2.genlib", signalsToinjectFault, constReliability, mtf_sizes, threads);
+*/
+
+
+  //      experiment.setup_run("circuitos/ISCAS89/minimal/", "minimal.genlib", signalsToinjectFault, constReliability, mtf_sizes, threads);
+
+     //   experiment.setup_run("circuitos/ISCAS89/basic/", "basic.genlib", signalsToinjectFault, constReliability, mtf_sizes, threads);
+
+      //  experiment.setup_run("circuitos/ISCAS89/complex/", "complex.genlib", signalsToinjectFault, constReliability, mtf_sizes, threads);
+
+        //experiment.setup_run(  "circuitos/ISCAS89/full/", "full.genlib", signalsToinjectFault, constReliability, mtf_sizes, threads);
+
+       // experiment.setup_run("circuitos/ISCAS89/fullv2/", "fullv2.genlib", signalsToinjectFault, constReliability, mtf_sizes, threads);
+        /**/
+
+
+        //experiment.setup_run("circuitos/EPFL15/minimal/", "minimal.genlib", signalsToinjectFault, constReliability, mtf_sizes, threads);
+
+        //experiment.setup_run("circuitos/EPFL15/basic/", "basic.genlib", signalsToinjectFault, constReliability, mtf_sizes, threads);
+
+        //experiment.setup_run("circuitos/EPFL15/complex/", "complex.genlib", signalsToinjectFault, constReliability, mtf_sizes, threads);
+
+        experiment.setup_run(  "circuitos/EPFL15/full/", "full.genlib", signalsToinjectFault, constReliability, mtf_sizes, threads);
+
+
+
+
+        //experiment.setup_run("circuitos/EPFL15/fullv2/", "fullv2.genlib", signalsToinjectFault, constReliability, mtf_sizes, threads);
+        /*
+    */
+
+       // experiment.gates.add(";;;");
+
+       // System.out.println(experiment.gates);
+
+       // for (int i = 0; i < experiment.gates.size(); i++) {
+         //   System.out.println(experiment.gates.get(i));
+        //}
+
+        // minimal.setup(minimal_path, "lib_min_no_cost.genlib", threads);
+           // minimal.processParser(signalsToinjectFault, constReliability, mtf_sizes);
+           // minimal.print();
+
+
+
+/*
+
 
 
 

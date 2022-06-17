@@ -95,7 +95,7 @@ public class SimulationInLot {
      * @throws IOException e
      */
     public void readResultsInLot(String path, String filter) throws IOException{
-
+        System.out.println("INSIDE");
         String[] circuitFiles;
         File f = new File(path);
         ArrayList <String> files = new ArrayList<>();
