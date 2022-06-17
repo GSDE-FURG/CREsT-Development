@@ -480,13 +480,13 @@ public class Management extends MAIN {
 
                         if(inputs.contains(this.circuit.getSignals().get(randomSignalIndex)) && temp.getType().toString().equals("VOTADOR")){
                                 f = false;
-                                System.out.printf("OPS VOTADOR input ");
+                                System.out.printf("-OPS VOTADOR input ");
                                 i = this.circuit.getGates().size();
                                 //return sortRandomFaultInjection();
                         }
                         if(outputs.contains(this.circuit.getSignals().get(randomSignalIndex)) && temp.getType().toString().equals("VOTADOR")){
                                 f = false;
-                                System.out.printf("OPS VOTADOR output ");
+                                System.out.printf("-OPS VOTADOR output ");
                                 i = this.circuit.getGates().size();
                         }
                 }
