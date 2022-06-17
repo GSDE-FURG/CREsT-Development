@@ -148,6 +148,8 @@ public class MAIN {  //Class to run debug tests
                        /// sim_mtf_debug.monteCarloReliabilityAPI("circuitos/lookup_table.csv");
                    // }
 
+                    //saida
+
                     ///
                     //
                    // int a = sim_mtf_debug.faultToleranceExhaustiveCompleteMETAPIESTIMATION();

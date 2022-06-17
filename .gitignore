@@ -5,8 +5,8 @@
 *.log
 
 # Csv and txt
-*.txt
-*.csv
+.txt
+.csv
 .v
 .blif
 # BlueJ files
