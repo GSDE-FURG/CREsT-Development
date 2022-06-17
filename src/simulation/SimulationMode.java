@@ -182,6 +182,37 @@ public class SimulationMode {
 
     }
 
+
+    public void faultToleranceMonteCarloMETAPIExceptoinVoterFree(String External_Link) throws Exception{
+
+
+        // System.out.println("\n\n ------");
+
+        /*
+        Management simulacaoMultithreading = new Management(simulationCircuit.getThreads(), simulationCircuit.getReliabilityConst(), simulationCircuit.getRelativePath(),
+                simulationCircuit.getRelativePath() +  simulationCircuit.getGenlib(), simulationCircuit.getRelativePath() + simulationCircuit.getCircuit());
+        */
+
+        if(External_Link.equals("CREsT")) {
+            Management simulacaoMultithreading = new Management(simulationCircuit.getThreads(), simulationCircuit.getReliabilityConst(), simulationCircuit.getRelativePath(),
+                    simulationCircuit.getGenlib(), simulationCircuit.getCircuit());
+            simulacaoMultithreading.runMultipleFaultInjectionMultithreadingMonteCarloSimulationProportion(Math.round(simulationCircuit.getMtf_sizes().get(0)),
+                    simulationCircuit.getMtf_sizes(), simulationCircuit.getSignalsToinjectFault());
+            this.OUTPUT_INFO = simulacaoMultithreading.getFRM(" MTFT Sample (Monte Carlo = N)");
+        }
+        else{
+            Management simulacaoMultithreading = new Management(simulationCircuit.getThreads(), simulationCircuit.getReliabilityConst(), simulationCircuit.getRelativePath(),
+                    simulationCircuit.getRelativePath() + simulationCircuit.getGenlib(), simulationCircuit.getRelativePath() + simulationCircuit.getCircuit());
+            simulacaoMultithreading.runMultipleFaultInjectionMultithreadingMonteCarloSimulationProportion(Math.round(simulationCircuit.getMtf_sizes().get(0)),
+                    simulationCircuit.getMtf_sizes(), simulationCircuit.getSignalsToinjectFault());
+            this.OUTPUT_INFO = simulacaoMultithreading.getFRM(" MTFT Sample (Monte Carlo = N)");
+        }
+
+
+
+
+    }
+
     public void faultToleranceMonteCarloAPI() throws Exception{
             this.printSpecSimulation();
            //System.out.println(" >>>> PATH AND FILE: " + simulationCircuit.getRelativePath() + simulationCircuit.getCircuit());
