@@ -1940,7 +1940,7 @@ public class Management extends MAIN {
 
                         this.mtf_list = mtf_list;
 
-                        option = "INTERMEDIATE_AND_OUTPUTS";
+                        option = "INTERMEDIATE";
 
                         this.signals_to_inject_faults = this.signalsToInjectFault(option); // Consider all signals to fault inject
 
