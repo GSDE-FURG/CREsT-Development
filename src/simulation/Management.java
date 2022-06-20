@@ -1942,7 +1942,7 @@ public class Management extends MAIN {
 
                         option = "INTERMEDIATE_AND_OUTPUTS";
 
-                        this.signals_to_inject_faults = this.signalsToInjectFault("INTERMEDIATE_AND_OUTPUTS"); // Consider all signals to fault inject
+                        this.signals_to_inject_faults = this.signalsToInjectFault(option); // Consider all signals to fault inject
 
 
 
