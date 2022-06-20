@@ -46,7 +46,8 @@ import org.apache.commons.cli.*;
 //TODO: Keep a global StringBuilder to decrease memory footprint
 
 class TerminalWrapper {
-    public static void main(String[] args) throws ScriptException, AWTException, IOException, Exception {   
+    public static void main(String[] args) throws
+            ScriptException, AWTException, IOException, Exception {   
         if(args.length > 0) {
             
           /**

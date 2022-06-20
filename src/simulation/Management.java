@@ -484,7 +484,7 @@ public class Management extends MAIN {
                                 System.out.printf("-OPS VOTADOR input ");
                                 i = this.circuit.getGates().size();
                                 //return sortRandomFaultInjection();
-                        } //sa
+                        } // comentado...
 
  */
                         if(outputs.contains(this.circuit.getSignals().get(randomSignalIndex)) && temp.getType().toString().equals("VOTADOR")){
