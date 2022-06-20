@@ -22,10 +22,12 @@ public class main{
         private final ArrayList <String> circuitList = new ArrayList<>(); //CircuitList for simulation
         int threads;
         int sample;
+
         String reliabilityConst;
         String relativePath;
         String genlib;
         String OUTPUT_INFO;
+
 
     /**
      *

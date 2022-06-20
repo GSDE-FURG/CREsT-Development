@@ -205,7 +205,7 @@ public class Management extends MAIN {
 
                                 log_MTF.writeSimpleLogMultipleTransientFaultProportion(fileName+"_"+random_int, date, dateend, propagateTimems, this.mtf_list);
                                 //log_MTF.writeSimpleLogMultipleTransientFaultProportion(fileName, date, dateend, propagateTimems, this.mtf_list);
-                                //log_MTF.writeCsvFileCompleteThMTF(fileName, itemx_list);
+                                log_MTF.writeCsvFileCompleteThMTF(fileName, itemx_list);
                                 break;
 
 
@@ -268,6 +268,7 @@ public class Management extends MAIN {
 
                                 }
                                 System.out.println("  --- Intermediate and output Signals (total): " + r.size());
+                                System.out.println(r);
                                 return r;
 
 
@@ -1381,7 +1382,9 @@ public class Management extends MAIN {
                 ArrayList<String> random_input_vectors;
                 ArrayList<ArrayList<Integer>> ListInputVectors;
                 this.sampleSize = sampleSize; //(int) Math.pow(2, this.probCircuit.getInputs().size());  //(int) Math.pow(2, this.probCircuit.getInputs().size());
-                this.signals_to_inject_faults = this.signalsToInjectFault(signalsOption); // Consider all signals to fault inject
+
+                /* Comentario estava sobrescrevendo as opções para injeção de falhas*/
+                //this.signals_to_inject_faults = this.signalsToInjectFault(signalsOption); // Consider all signals to fault inject
 
 
                 switch (option) {
@@ -1937,11 +1940,15 @@ public class Management extends MAIN {
 
                         this.mtf_list = mtf_list;
 
-                        this.signals_to_inject_faults = this.signalsToInjectFault("ALL_SIGNALS"); // Consider all signals to fault inject
+                        option = "INTERMEDIATE_AND_OUTPUTS";
 
-                        //System.out.println("2 INSIDE....");
+                        this.signals_to_inject_faults = this.signalsToInjectFault("INTERMEDIATE_AND_OUTPUTS"); // Consider all signals to fault inject
 
-                        System.out.println("- Signal to inject fault: " + this.signals_to_inject_faults.size());
+
+
+                        System.out.println(" zzzzz \n\n Signals to inject fault: " + this.signals_to_inject_faults);
+
+                        //System.out.println("- Signal to inject fault: " + this.signals_to_inject_faults.size());
 
                                 List thread_list =  this.createVectorsAndParticionate(this.sampleSize, option, "MTF-RANDOM");
 
