@@ -54,6 +54,7 @@ public class Management extends MAIN {
         private float avgASFLOAT;
 
         private long sumSet = 0;
+        //abc test
 
         private ArrayList<Signal> signals_to_inject_faults = new ArrayList<>();
         private final ArrayList<String> inputListValues = new ArrayList<>();
@@ -477,13 +478,15 @@ public class Management extends MAIN {
                         ArrayList<Signal> inputs =  temp.getInputs();
                         ArrayList<Signal> outputs =  temp.getOutputs();
 
-
+/*
                         if(inputs.contains(this.circuit.getSignals().get(randomSignalIndex)) && temp.getType().toString().equals("VOTADOR")){
                                 f = false;
                                 System.out.printf("-OPS VOTADOR input ");
                                 i = this.circuit.getGates().size();
                                 //return sortRandomFaultInjection();
                         }
+
+ */
                         if(outputs.contains(this.circuit.getSignals().get(randomSignalIndex)) && temp.getType().toString().equals("VOTADOR")){
                                 f = false;
                                 System.out.printf("-OPS VOTADOR output ");
