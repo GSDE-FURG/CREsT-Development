@@ -43,7 +43,7 @@ public class Management extends MAIN {
         private ProbCircuit probCircuit;
         private LevelCircuit lCircuit;
         private int unmasked_faults;
-        private float FMR;
+        private float ER;
         private MappedVerilogReader verilog_circuit;
         private String Performance_Time;
         private int sizeExaustiveCompleteSimulation;
@@ -158,7 +158,7 @@ public class Management extends MAIN {
         }
 
         /**
-         * Write Simple and Complete logs, showing the simulation results: FMR, Failure Rate, Sensitive Nodes, ...., another informations
+         * Write Simple and Complete logs, showing the simulation results: ER, Failure Rate, Sensitive Nodes, ...., another informations
          *
          * @param fileName
          * @param date
@@ -186,9 +186,9 @@ public class Management extends MAIN {
 
                         case "STF":
                                 WriteLog log_STF = new WriteLog(this.sampleSize, this.threads,
-                                        this.unmasked_faults, this.FMR, this.circuit,
-                                        this.verilog_circuit, this.signals_to_inject_faults); //(int sampleSize, int threads, int unmasked_faults,  float FMR, Circuit circuit, MappedVerilogReader verilog_circuit ,ArrayList<Signal> signals_to_inject_faults){
-                                //(int sampleSize, int threads, int unmasked_faults,  float FMR, Circuit circuit, MappedVerilogReader verilog_circuit ,ArrayList<Signal> signals_to_inject_faults, ArrayList <Float> mtf_sizes){
+                                        this.unmasked_faults, this.ER, this.circuit,
+                                        this.verilog_circuit, this.signals_to_inject_faults); //(int sampleSize, int threads, int unmasked_faults,  float ER, Circuit circuit, MappedVerilogReader verilog_circuit ,ArrayList<Signal> signals_to_inject_faults){
+                                //(int sampleSize, int threads, int unmasked_faults,  float ER, Circuit circuit, MappedVerilogReader verilog_circuit ,ArrayList<Signal> signals_to_inject_faults, ArrayList <Float> mtf_sizes){
                                 log_STF.WriteSimpleLog(fileName, date, dateend, propagateTimems);
 
 
@@ -198,7 +198,7 @@ public class Management extends MAIN {
 
                         case "MTF":
                                 WriteLog log_MTF = new WriteLog(this.sampleSize, this.threads,
-                                        this.unmasked_faults, this.FMR, this.circuit,
+                                        this.unmasked_faults, this.ER, this.circuit,
                                         this.verilog_circuit, this.signals_to_inject_faults, this.mtf_list);
                                 log_MTF.setavgASFLOAT(this.avgASFLOAT);
                                 log_MTF.setMTBF(this.MTBF);
@@ -512,9 +512,9 @@ public class Management extends MAIN {
 
         }
 
-        public String getFRM(String identification) {
+        public String getER(String identification) {
 
-                //float FMR, int sample, int unmasked_faults, long propagatedTime
+                //float ER, int sample, int unmasked_faults, long propagatedTime
                 String result;
 
 
@@ -524,11 +524,11 @@ public class Management extends MAIN {
                 result = result + "         Signals: " + this.circuit.getSignals().size() + " - Gates: " + this.circuit.getGates().size() + " \n";
                 result = result + "         Simulation " + identification + " : " + this.sampleSize + "\n";
                 result = result + "         Detected Faults (Ne): " + this.unmasked_faults + "\n";
-                result = result + "         Fault Mask Rate (FMR): " + this.FMR + "\n";
+                result = result + "         Error Rate (ER): " + this.ER + "\n";
                 return result;
         }
 
-        public int parseResultsAndCalculateFMR() {
+        public int parseResultsAndCalculateER() {
 
                 int bitfipCcounter = 0;
 
@@ -541,9 +541,9 @@ public class Management extends MAIN {
                 float sample = this.sampleSize;
 
                 float div = unmasked/sample;
-                float sub = one - (div);
-               // this.FMR = (float) (1.0 - ((float) this.unmasked_faults / (float) this.sampleSize));
-                this.FMR = sub;//one - div;
+                float sub =  (div);
+                        // this.ER = (float) (1.0 - ((float) this.unmasked_faults / (float) this.sampleSize));
+                this.ER = sub;//one - div;
 
                 System.out.println("One: " + one + "  -  Div: " + div + "  Sub: " + sub + "\n" + "sample: " + this.sampleSize);
 
@@ -1473,9 +1473,11 @@ public class Management extends MAIN {
                 System.out.println("- Simulation started at: " + formattedDate + " and finished at: " + formattedDate2);
                 System.out.println("- Circuit: " + this.circuit.getName());
                 System.out.println("- Sample Size (N): " + this.sampleSize);
-                System.out.println("- Fault Mask Rate (FMR): " + " 1 - Ne/N = (1-(" + this.unmasked_faults + "/" + this.sampleSize + ")) = " + this.FMR);
+                System.out.println("- Error Rate (ER) " + "  Ne/N = (" + this.unmasked_faults + "/" + this.sampleSize + ") = " + this.ER);
                 System.out.println("- Sensitive Area (u.m2): " + this.avgASFLOAT );
-                System.out.println("- Reliability (MTBF) = (1 / (" + (1 - this.FMR )+  " x " + this.avgASFLOAT + " x 3,6 * 10-5) ) = " + this.MTBF);
+                System.out.println("- Logic Cross Section (u.m2): " + (this.avgASFLOAT*this.ER) );
+                System.out.println("- Failure Rate (h/ particles * u.m2): " + (this.avgASFLOAT*this.ER * 0.000036F) );
+                System.out.println("- Reliability (MTBF) = (1 / (" + (this.ER)+  " x " + this.avgASFLOAT + " x 3,6 * 10-5) ) = " + this.MTBF);
                 System.out.println("- Bitflip Counter: " + bitfipCcounter);
                 System.out.println("- Load Time : " + timeElapsed_loadTime + "(s) - Setup Time: " + timeElapsed_PrepareTime + "(s) - Threading Execution Time: " + timeElapsed_ThreadingTime
                         + "(s) - Log Generation: " + timeElapsed_logGeneration
@@ -1521,7 +1523,7 @@ public class Management extends MAIN {
 
                 Instant endThreadingTimeElapsed = Instant.now();
 
-                int bitfipCcounter = this.parseResultsAndCalculateFMR();  // FMR
+                int bitfipCcounter = this.parseResultsAndCalculateER();  // ER
 
                 Instant finish = Instant.now();
 
@@ -1644,7 +1646,7 @@ public class Management extends MAIN {
 
                 this.sampleSize = sizeExasuticTest;
 
-                int bitfipCcounter = this.parseResultsAndCalculateFMR();  // FMR
+                int bitfipCcounter = this.parseResultsAndCalculateER();  // ER
 
                 Instant finish = Instant.now();
 
@@ -1798,7 +1800,7 @@ public class Management extends MAIN {
 
                 Instant endThreadingTimeElapsed = Instant.now();
 
-                int bitfipCcounter = this.parseResultsAndCalculateFMR();  // FMR
+                int bitfipCcounter = this.parseResultsAndCalculateER();  // ER
 
                 Instant finish = Instant.now();
 
@@ -1844,16 +1846,16 @@ public class Management extends MAIN {
 
                 float particle_flux = 0.000036F;
                 float one = 1.0F;
-                this.MTBF = one /(particle_flux * (1 - this.FMR) * this.avgASFLOAT);
+                this.MTBF = one /(particle_flux * (this.ER) * this.avgASFLOAT);
 
-                System.out.println("TFD = 1 - FMR = " + (1-this.FMR));
+                System.out.println("TFD = 1 - ER = " + (1-this.ER));
 
-                System.out.println("MTBF = (1 / (" + (1 - this.FMR )+  " x " + this.avgASFLOAT + " x 3,6 * 10-5) ) = " + this.MTBF);
+                System.out.println("MTBF = (1 / (" + (this.ER)+  " x " + this.avgASFLOAT + " x 3,6 * 10-5) ) = " + this.MTBF);
 
                 System.out.println(" ----------------------------------------------------------------------------------------------------------------------\n\n...");
 
 
-                this.writeLogs(option + "_ExausticCompleteSimulation_" +this.circuit.getName()+"_Threads-"+ this.threads +  "_sampleSize-" + this.sampleSize, formattedDate,  formattedDate2, timeElapsed_Instant, itemx_list, "MTF");
+                this.writeLogs(this.relativePath + option + "_ExausticCompleteSimulation_" +this.circuit.getName()+"_Threads-"+ this.threads +  "_sampleSize-" + this.sampleSize, formattedDate,  formattedDate2, timeElapsed_Instant, itemx_list, "MTF");
 
 
                 System.out.println("----------------------------------------------------------------------");
@@ -1985,7 +1987,7 @@ public class Management extends MAIN {
 
                         Instant endThreadingTimeElapsed = Instant.now();
 
-                        int bitfipCcounter = this.parseResultsAndCalculateFMR();  // FMR
+                        int bitfipCcounter = this.parseResultsAndCalculateER();  // ER
 
                         Instant finish = Instant.now();
                         long timeElapsed_Instant = Duration.between(start, finish).toSeconds();
@@ -2013,7 +2015,7 @@ public class Management extends MAIN {
                         System.out.println("- Simulation started at: " + formattedDate + " and finished at: "+ formattedDate2);
                         System.out.println("- Circuit: " + this.circuit.getName());
                         System.out.println("- Sample Size (N): " + this.sampleSize );
-                        System.out.println("- Fault Mask Rate (FMR): " + " 1 - Ne/N = (1-(" + this.unmasked_faults + "/" + this.sampleSize + ")) = " + this.FMR);
+                        System.out.println("- Error Rate (ER) " + "  Ne/N = (" + this.unmasked_faults + "/" + this.sampleSize + ")) = " + this.ER);
                         System.out.println("- Bitflip Counter: " + bitfipCcounter );
                         System.out.println("- Load Time : " + timeElapsed_loadTime + "(s) - Setup Time: " + timeElapsed_PrepareTime  + "(s) - Threading Execution Time: " + timeElapsed_ThreadingTime
                                 + "(s) - Log Generation: " + timeElapsed_logGeneration
@@ -2090,7 +2092,7 @@ public class Management extends MAIN {
 
                         Instant endThreadingTimeElapsed = Instant.now();
 
-                        int bitfipCcounter = this.parseResultsAndCalculateFMR();  // FMR
+                        int bitfipCcounter = this.parseResultsAndCalculateER();  // ER
 
                         Instant finish = Instant.now();
                         long timeElapsed_Instant = Duration.between(start, finish).toSeconds();
@@ -2118,7 +2120,7 @@ public class Management extends MAIN {
                         System.out.println("- Simulation started at: " + formattedDate + " and finished at: "+ formattedDate2);
                         System.out.println("- Circuit: " + this.circuit.getName());
                         System.out.println("- Sample Size (N): " + this.sampleSize );
-                        System.out.println("- Fault Mask Rate (FMR): " + " 1 - Ne/N = (1-(" + this.unmasked_faults + "/" + this.sampleSize + ")) = " + this.FMR);
+                        System.out.println("- Error Rate (ER) " + "  Ne/N = (" + this.unmasked_faults + "/" + this.sampleSize + ")) = " + this.ER);
                         System.out.println("- Bitflip Counter: " + bitfipCcounter );
                         System.out.println("- Load Time : " + timeElapsed_loadTime + "(s) - Setup Time: " + timeElapsed_PrepareTime  + "(s) - Threading Execution Time: " + timeElapsed_ThreadingTime
                                 + "(s) - Log Generation: " + timeElapsed_logGeneration
@@ -2598,7 +2600,7 @@ public class Management extends MAIN {
 
                         Instant endThreadingTimeElapsed = Instant.now();
 
-                                int bitfipCcounter = this.parseResultsAndCalculateFMR();  // FMR
+                                int bitfipCcounter = this.parseResultsAndCalculateER();  // ER
 
                         Instant finish = Instant.now();
                         long timeElapsed_Instant = Duration.between(start, finish).toSeconds();
@@ -2627,11 +2629,11 @@ public class Management extends MAIN {
 
                                 float particle_flux = 0.000036F;
                                 float one = 1.0F;
-                                this.MTBF = one /(particle_flux * (1 - this.FMR) * this.avgASFLOAT);
+                                this.MTBF = one /(particle_flux * (this.ER) * this.avgASFLOAT);
 
-                        System.out.println("TFD = 1 - FMR = " + (1-this.FMR));
+                        System.out.println("TFD = 1 - ER = " + (1-this.ER));
 
-                        System.out.println("MTBF = (1 / (" + (1 - this.FMR )+  " x " + this.avgASFLOAT + " x 3,6 * 10-5) ) = " + this.MTBF);
+                        System.out.println("MTBF = (1 / (" + (this.ER)+  " x " + this.avgASFLOAT + " x 3,6 * 10-5) ) = " + this.MTBF);
 
                         System.out.println(" ----------------------------------------------------------------------------------------------------------------------\n\n...");
 
@@ -2720,7 +2722,7 @@ public class Management extends MAIN {
 
                         Instant endThreadingTimeElapsed = Instant.now();
 
-                        int bitfipCcounter = this.parseResultsAndCalculateFMR();  // FMR
+                        int bitfipCcounter = this.parseResultsAndCalculateER();  // ER
 
                         Instant finish = Instant.now();
                         long timeElapsed_Instant = Duration.between(start, finish).toSeconds();
@@ -2752,11 +2754,11 @@ public class Management extends MAIN {
                         /*
                         float particle_flux = 0.000036F;
                         float one = 1.0F;
-                        this.MTBF = one /(particle_flux * (1 - this.FMR) * this.avgASFLOAT);
+                        this.MTBF = one /(particle_flux * (this.ER) * this.avgASFLOAT);
 
-                        System.out.println("TFD = 1 - FMR = " + (1-this.FMR));
+                        System.out.println("TFD = 1 - ER = " + (1-this.ER));
 
-                        System.out.println("MTBF = (1 / (" + (1 - this.FMR )+  " x " + this.avgASFLOAT + " x 3,6 * 10-5) ) = " + this.MTBF);
+                        System.out.println("MTBF = (1 / (" + (this.ER)+  " x " + this.avgASFLOAT + " x 3,6 * 10-5) ) = " + this.MTBF);
 
                         System.out.println(" ----------------------------------------------------------------------------------------------------------------------\n\n...");
 
@@ -2876,7 +2878,7 @@ public class Management extends MAIN {
 
                         Instant endThreadingTimeElapsed = Instant.now();
 
-                        int bitfipCcounter = this.parseResultsAndCalculateFMR();  // FMR
+                        int bitfipCcounter = this.parseResultsAndCalculateER();  // ER
 
                         Instant finish = Instant.now();
                         long timeElapsed_Instant = Duration.between(start, finish).toSeconds();
@@ -2906,11 +2908,11 @@ public class Management extends MAIN {
 
                         float particle_flux = 0.000036F;
                         float one = 1.0F;
-                        this.MTBF = one /(particle_flux * (1 - this.FMR) * this.avgASFLOAT);
+                        this.MTBF = one /(particle_flux * (this.ER) * this.avgASFLOAT);
 
-                        System.out.println("TFD = 1 - FMR = " + (1-this.FMR));
+                        System.out.println("TFD = 1 - ER = " + (1-this.ER));
 
-                        System.out.println("MTBF = (1 / (" + (1 - this.FMR )+  " x " + this.avgASFLOAT + " x 3,6 * 10-5) ) = " + this.MTBF);
+                        System.out.println("MTBF = (1 / (" + (this.ER)+  " x " + this.avgASFLOAT + " x 3,6 * 10-5) ) = " + this.MTBF);
                         */
                         System.out.println(" ----------------------------------------------------------------------------------------------------------------------\n\n...");
 
@@ -2939,7 +2941,7 @@ public class Management extends MAIN {
                 result = result + "         Signals: " + this.circuit.getSignals().size() + " - Gates: " + this.circuit.getGates().size() + " \n";
                 result = result + "         Simulation " + identification + " : " + this.sampleSize + "\n";
                 result = result + "         Detected Faults (Ne): " + this.unmasked_faults + "\n";
-                result = result + "         Fault Mask Rate (FMR): " + this.FMR + "\n";
+                result = result + "         Error Rate (ER): " + this.ER + "\n";
                 result = result + "         Average Sensitive Areas (extracted from Cells Layouts): " + this.avgASFLOAT + "\n";
                 result = result + "         Reliability (MTBF): " + this.MTBF + "\n";
 

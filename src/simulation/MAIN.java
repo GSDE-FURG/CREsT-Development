@@ -149,6 +149,7 @@ public class MAIN {  //Class to run debug tests
 
                     //sim_mtf_debug.faultToleranceExhaustiveCompleteMETAPIESTIMATION();
                     sim_mtf_debug.faultToleranceExhaustiveCompleteMETAPI();
+                    sim_mtf_debug.monteCarloReliabilityAPI("teste/lookup_table.csv");
                    // }
 
                     //saida
@@ -204,7 +205,7 @@ public class MAIN {  //Class to run debug tests
         int threads = 8;
 
         ArrayList<Float> mtf_sizes = new ArrayList<>();  //MTF's
-        mtf_sizes.add((float) 8); // Sample
+        mtf_sizes.add((float) 20000); // Sample
         mtf_sizes.add((float) 1); // STF
         mtf_sizes.add((float) 0); // MTF
         mtf_sizes.add((float) 0); // MTF

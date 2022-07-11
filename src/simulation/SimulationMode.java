@@ -34,7 +34,7 @@ public class SimulationMode {
                 simulacaoMultithreading.generateSensitiveNodesForSETSpiceFile(spiceScriptsFolder, PTMLibrary, SpiceNetListLibrary);
                     simulacaoMultithreading.printSensitiveAreasAnalysis();
                          //simulacaoMultithreading.PrintGatesCounterDetailsSortedCompliled(0, simulationCircuit.getRelativePath() + simulationCircuit.getCircuit());
-                this.OUTPUT_INFO = simulacaoMultithreading.getFRM(" MTFT Sample (Monte Carlo = N)");
+                this.OUTPUT_INFO = simulacaoMultithreading.getER(" MTFT Sample (Monte Carlo = N)");
 
     }
 
@@ -148,7 +148,7 @@ public class SimulationMode {
 
                 simulacaoMultithreading.runElectricalSimulator(pathElectricSimulator, pathSpiceCircuit);
 
-                //this.OUTPUT_INFO = simulacaoMultithreading.getFRM(" MTFT Sample (Monte Carlo = N)");
+                //this.OUTPUT_INFO = simulacaoMultithreading.getER(" MTFT Sample (Monte Carlo = N)");
 
     }
 
@@ -167,14 +167,14 @@ public class SimulationMode {
                     simulationCircuit.getGenlib(), simulationCircuit.getCircuit());
             simulacaoMultithreading.runMultipleFaultInjectionMultithreadingMonteCarloSimulationProportion(Math.round(simulationCircuit.getMtf_sizes().get(0)),
                     simulationCircuit.getMtf_sizes(), simulationCircuit.getSignalsToinjectFault());
-            this.OUTPUT_INFO = simulacaoMultithreading.getFRM(" MTFT Sample (Monte Carlo = N)");
+            this.OUTPUT_INFO = simulacaoMultithreading.getER(" MTFT Sample (Monte Carlo = N)");
         }
         else{
             Management simulacaoMultithreading = new Management(simulationCircuit.getThreads(), simulationCircuit.getReliabilityConst(), simulationCircuit.getRelativePath(),
                     simulationCircuit.getRelativePath() + simulationCircuit.getGenlib(), simulationCircuit.getRelativePath() + simulationCircuit.getCircuit());
             simulacaoMultithreading.runMultipleFaultInjectionMultithreadingMonteCarloSimulationProportion(Math.round(simulationCircuit.getMtf_sizes().get(0)),
                     simulationCircuit.getMtf_sizes(), simulationCircuit.getSignalsToinjectFault());
-            this.OUTPUT_INFO = simulacaoMultithreading.getFRM(" MTFT Sample (Monte Carlo = N)");
+            this.OUTPUT_INFO = simulacaoMultithreading.getER(" MTFT Sample (Monte Carlo = N)");
         }
 
 
@@ -198,14 +198,14 @@ public class SimulationMode {
                     simulationCircuit.getGenlib(), simulationCircuit.getCircuit());
             simulacaoMultithreading.runMultipleFaultInjectionMultithreadingMonteCarloSimulationProportion(Math.round(simulationCircuit.getMtf_sizes().get(0)),
                     simulationCircuit.getMtf_sizes(), simulationCircuit.getSignalsToinjectFault());
-            this.OUTPUT_INFO = simulacaoMultithreading.getFRM(" MTFT Sample (Monte Carlo = N)");
+            this.OUTPUT_INFO = simulacaoMultithreading.getER(" MTFT Sample (Monte Carlo = N)");
         }
         else{
             Management simulacaoMultithreading = new Management(simulationCircuit.getThreads(), simulationCircuit.getReliabilityConst(), simulationCircuit.getRelativePath(),
                     simulationCircuit.getRelativePath() + simulationCircuit.getGenlib(), simulationCircuit.getRelativePath() + simulationCircuit.getCircuit());
             simulacaoMultithreading.runMultipleFaultInjectionMultithreadingMonteCarloSimulationProportion(Math.round(simulationCircuit.getMtf_sizes().get(0)),
                     simulationCircuit.getMtf_sizes(), simulationCircuit.getSignalsToinjectFault());
-            this.OUTPUT_INFO = simulacaoMultithreading.getFRM(" MTFT Sample (Monte Carlo = N)");
+            this.OUTPUT_INFO = simulacaoMultithreading.getER(" MTFT Sample (Monte Carlo = N)");
         }
 
 
@@ -221,7 +221,7 @@ public class SimulationMode {
 
                 simulacaoMultithreading.runMultithreadingMonteCarlo(simulationCircuit.getSample(), simulationCircuit.getSignalsToinjectFault()); //ou Signals =  "ALL_SIGNALS" ou "INTERMEDIATE" ou "INTERMEDIATE_AND_OUTPUTS" ou "INPUTS" ou "INPUTS_OUTPUTS"
 
-                this.OUTPUT_INFO = simulacaoMultithreading.getFRM(" Sample(Monte Carlo = N)");
+                this.OUTPUT_INFO = simulacaoMultithreading.getER(" Sample(Monte Carlo = N)");
     }
 
     /**
@@ -241,7 +241,7 @@ public class SimulationMode {
 
            //this.output_sample = simulacaoMultithreading.SampleSizeExausticSimulation(simulationCircuit.getSignalsToinjectFault());
             simulacaoMultithreading.runMultithreadingExausticSimulation(simulationCircuit.getSignalsToinjectFault());
-        this.OUTPUT_INFO = simulacaoMultithreading.getFRM("Sample (N = "
+        this.OUTPUT_INFO = simulacaoMultithreading.getER("Sample (N = "
                 + "2^Signals * Gates)");
     }
 
@@ -253,9 +253,9 @@ public class SimulationMode {
         Management simulacaoMultithreading = new Management(simulationCircuit.getThreads(), simulationCircuit.getReliabilityConst(), simulationCircuit.getRelativePath(),
                 simulationCircuit.getRelativePath() +   simulationCircuit.getGenlib(), simulationCircuit.getRelativePath() + simulationCircuit.getCircuit());
 
-        ///this.output_sample = simulacaoMultithreading.SampleSizeExhaustiveCompleteMET(simulationCircuit.getSignalsToinjectFault());
+       // this.output_sample = simulacaoMultithreading.SampleSizeExhaustiveCompleteMET(simulationCircuit.getSignalsToinjectFault());
             simulacaoMultithreading.faultToleranceExhaustiveCompleteMET(simulationCircuit.getSignalsToinjectFault());
-            this.OUTPUT_INFO = simulacaoMultithreading.getFRM("Sample (N = "
+            this.OUTPUT_INFO = simulacaoMultithreading.getER("Sample (N = "
                     + "2^Signals * Gates)");
     }
 
@@ -269,7 +269,7 @@ public class SimulationMode {
         int sample = simulacaoMultithreading.samplefaultToleranceExhaustiveCompleteMET(simulationCircuit.getSignalsToinjectFault());
 
         return sample;
-        //this.OUTPUT_INFO = simulacaoMultithreading.getFRM("Sample (N = " + "2^Signals * Gates)");
+        //this.OUTPUT_INFO = simulacaoMultithreading.getER("Sample (N = " + "2^Signals * Gates)");
 
     }
 

@@ -22,6 +22,8 @@ public class WriteLog {
     private float avgASFLOAT;
     private float MTBF;
 
+    private float ER;
+
     public WriteLog(int sampleSize, int threads, int unmasked_faults,  float circuitReliaibility, Circuit circuit, MappedVerilogReader verilog_circuit ,ArrayList<Signal> signals_to_inject_faults){
             this.sampleSize = sampleSize;
             this.threads = threads;
@@ -220,7 +222,7 @@ public class WriteLog {
             //content = content+  "For each  (" + period + ") faults happens a Multiple Transient Fault (" + order + ") with frequency: (" + frequency + ") - Sample = " + this.sampleSize + "\n";
 
             content = content + "Detected faults (Ne): " + this.unmasked_faults + "\n";
-            content = content + "Fault Masking Rate (FMR): "+ " 1 - Ne/N = (1-(" + this.unmasked_faults + "/" + this.sampleSize + ")) = " + this.circuitReliaibility + "\n";
+            content = content + "Error Rate (ER): "+ "Ne/N = (" + this.unmasked_faults + "/" + this.sampleSize + ")) = " + this.ER + "\n";
             content = content + "DTF: " + (1-this.circuitReliaibility) + "\n";
             content = content + "avgSA: " + this.avgASFLOAT + "\n";
             content = content + "MTBF: " + this.MTBF + "\n";
