@@ -148,8 +148,9 @@ public class MAIN {  //Class to run debug tests
                        //sim_mtf_debug.monteCarloReliabilityAPI("teste/lookup_table.csv");
 
                     //sim_mtf_debug.faultToleranceExhaustiveCompleteMETAPIESTIMATION();
-                    sim_mtf_debug.faultToleranceExhaustiveCompleteMETAPI();
-                    sim_mtf_debug.monteCarloReliabilityAPI("teste/lookup_table.csv");
+                    sim_mtf_debug.faultToleranceExhaustiveSETAPI();
+                    //sim_mtf_debug.faultToleranceExhaustiveCompleteMETAPI();
+                    //sim_mtf_debug.monteCarloReliabilityAPI("teste/lookup_table.csv");
                    // }
 
                     //saida

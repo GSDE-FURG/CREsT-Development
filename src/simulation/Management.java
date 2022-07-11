@@ -1630,6 +1630,8 @@ public class Management extends MAIN {
 
                 int sizeExasuticTest; //= (this.sampleSize * this.signals_to_inject_faults.size());;
 
+                this.signals_to_inject_faults = this.signalsToInjectFault(option);
+
                 List thread_list = this.createVectorsAndParticionate(sampleSize, option, "TRUE_TABLE_SINGLE");
 
                 System.out.println("-   Sample size (N = 2^ENTRADAS): " + "2^" + this.circuit.getInputs().size() + " = " + this.sampleSize + "   Sigs: " + this.signals_to_inject_faults.size());
@@ -1645,6 +1647,7 @@ public class Management extends MAIN {
                 Instant endThreadingTimeElapsed = Instant.now();
 
                 this.sampleSize = sizeExasuticTest;
+                System.out.println("Sample Size: " + this.sampleSize);
 
                 int bitfipCcounter = this.parseResultsAndCalculateER();  // ER
 
