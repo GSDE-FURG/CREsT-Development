@@ -145,7 +145,7 @@ public class MAIN {  //Class to run debug tests
                     System.out.println(j + "  --> circ: "+ versao.getCircuitListSpecs().get(i).getCircuit());
                     SimulationMode sim_mtf_debug = new SimulationMode(versao.getCircuitListSpecs().get(i));
                   //  if(i) {
-                       /// sim_mtf_debug.monteCarloReliabilityAPI("circuitos/lookup_table.csv");
+                       sim_mtf_debug.monteCarloReliabilityAPI("teste/lookup_table.csv");
                    // }
 
                     //saida
@@ -201,10 +201,10 @@ public class MAIN {  //Class to run debug tests
         int threads = 8;
 
         ArrayList<Float> mtf_sizes = new ArrayList<>();  //MTF's
-        mtf_sizes.add((float) 20000);
-        mtf_sizes.add((float) 1);
-        mtf_sizes.add((float) 0);
-        mtf_sizes.add((float) 0);
+        mtf_sizes.add((float) 8); // Sample
+        mtf_sizes.add((float) 1); // STF
+        mtf_sizes.add((float) 0); // MTF
+        mtf_sizes.add((float) 0); // MTF
 
         String cx = ";";
 
@@ -280,7 +280,7 @@ public class MAIN {  //Class to run debug tests
 
         //experiment.setup_run("circuitos/EPFL15/complex/", "complex.genlib", signalsToinjectFault, constReliability, mtf_sizes, threads);
 
-        experiment.setup_run(  "circuitos/EPFL15/full/", "full.genlib", signalsToinjectFault, constReliability, mtf_sizes, threads);
+        experiment.setup_run(  "teste/", "cadence.genlib", signalsToinjectFault, constReliability, mtf_sizes, threads);
 
 
 

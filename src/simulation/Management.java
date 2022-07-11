@@ -2950,7 +2950,7 @@ public class Management extends MAIN {
                 }
 
                 try {
-                        FileWriter myWriter = new FileWriter("vector_" + this.circuit.getName() +".txt");
+                        FileWriter myWriter = new FileWriter(this.relativePath+"vector_" + this.circuit.getName() +".txt");
 
                         for (int i = 0; i < f.size(); i++) {
                                 myWriter.write(f.get(i) + "\n");
