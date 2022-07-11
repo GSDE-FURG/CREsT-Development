@@ -32,6 +32,8 @@ public class WriteLog {
             this.circuit = circuit;
             this.verilog_circuit = verilog_circuit;
             this.signals_to_inject_faults = signals_to_inject_faults;
+
+            this.calculate_ER();
     }
     public WriteLog(int sampleSize, int threads, int unmasked_faults,  float circuitReliaibility, Circuit circuit, MappedVerilogReader verilog_circuit ,ArrayList<Signal> signals_to_inject_faults, ArrayList <Float> mtf_list){
         this.sampleSize = sampleSize;
@@ -44,8 +46,15 @@ public class WriteLog {
         this.mtf_list = mtf_list;
         this.avgASFLOAT = 0;
         this.MTBF = 0;
+
+        this.calculate_ER();
     }
 
+    public void calculate_ER(){
+        float u = this.unmasked_faults;
+        float s = this.sampleSize;
+        this.ER = u/s;
+    }
     //fileName, date, dateend, propagateTimems, itemx_list
     public void WriteSimpleLog(String filename, String date, String dateend, long propagateTimems) throws IOException {
 

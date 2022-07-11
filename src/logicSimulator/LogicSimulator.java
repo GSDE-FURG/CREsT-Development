@@ -2566,11 +2566,11 @@ import signalProbability.ProbCircuit;
             this.propagateMultipleFaultInjectionsAndCalculateSensitiveAreas(this.threadSimulationList.get(i)); //SOLVE MTF PROBLEMS
             this.getFaultInjectionResultsMTF(this.threadSimulationList.get(i).getinputVector(), this.threadSimulationList.get(i).getSimulationIndex(), this.threadSimulationList.get(i));
 
-                //String freeFaultOutput_i, faultOutput_i;
-                //freeFaultOutput_i = this.threadSimulationList.get(i).getOrignalOutput();
-                //faultOutput_i = this.threadSimulationList.get(i).getFaultOutput();
+                String freeFaultOutput_i, faultOutput_i;
+                freeFaultOutput_i = this.threadSimulationList.get(i).getOrignalOutput();
+                faultOutput_i = this.threadSimulationList.get(i).getFaultOutput();
 
-                //if(!freeFaultOutput_i.equals(faultOutput_i)){ // Set identified
+                if(!freeFaultOutput_i.equals(faultOutput_i)){ // Set identified
                     ///String set = i + "  freeFaultOutput_i: " + freeFaultOutput_i + "   faultOutput_i: " + faultOutput_i;
 
                     /*
@@ -2582,11 +2582,11 @@ import signalProbability.ProbCircuit;
                     //this.parsedNetlistContent = this.createSpiceNetlistLargerCircuits(this.threadSimulationList.get(i));
 
                     /* UNCOMMEND*/
-                   // this.parsedNetlistContent.add(this.createSpiceNetlistLargerCircuits(this.threadSimulationList.get(i)));
+                    this.parsedNetlistContent.add(this.createSpiceNetlistLargerCircuits(this.threadSimulationList.get(i)));
                     //this.parsedNetlistContent.add("");
-               // }else{
-                  // this.parsedNetlistContent.add("");
-              //  }
+               }else{
+                   this.parsedNetlistContent.add("");
+                }
 
         }
          //System.out.println("End Thd");
@@ -2601,7 +2601,32 @@ import signalProbability.ProbCircuit;
         this.settingFaultInjectionResultsMTF();
     }
 
-        private int getFaultSignalPosition(ArrayList <Signal> List, Signal inputSignal, int index, TestVectorInformation thread_item){
+    public void startSimulationMultipleFaultInjectionMonteCarlo() throws IOException, WriteException{
+
+        // System.out.println("- threadSimulationList: " + this.threadSimulationList.size());
+        for (int i = 0; i < this.threadSimulationList.size(); i++) {
+
+            this.insertInputVectors("selected", this.threadSimulationList.get(i).getinputVector());
+            this.propagateMultipleFaultInjectionsAndCalculateSensitiveAreas(this.threadSimulationList.get(i)); //SOLVE MTF PROBLEMS
+            this.getFaultInjectionResultsMTF(this.threadSimulationList.get(i).getinputVector(), this.threadSimulationList.get(i).getSimulationIndex(), this.threadSimulationList.get(i));
+
+
+
+        }
+        //System.out.println("End Thd");
+
+        LocalDateTime myDateObj = LocalDateTime.now();
+        DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+        String formattedDate = myDateObj.format(myFormatObj);
+
+        System.out.println("FI Finished thd : " + threadID + "  at: " + formattedDate + " NUMBER OF BITFLIPS: " + this.bitflipcounter);
+
+        //this.settingFaultInjectionResults();
+        this.settingFaultInjectionResultsMTF();
+    }
+
+
+    private int getFaultSignalPosition(ArrayList <Signal> List, Signal inputSignal, int index, TestVectorInformation thread_item){
 
             for(int i=0; i < List.size(); i++)
             {
@@ -3838,6 +3863,19 @@ import signalProbability.ProbCircuit;
 
                 case ("MTF-Generate_Netlist"):
                     System.out.println(" ~~~~~~ Run Proportion Monte Carlo, Generate Spice Netlist ~~~~~~");
+                    try {
+                        startSimulationFaultFreeMTF();
+                        startSimulationMultipleFaultInjection();
+                        //startSimulationMultipleFaultInjectionMonteCarlo(); //Original
+                        //parseVerilogToGenerateSpiceNetList();
+                        //startCalculationSensitiveAreas();
+                    } catch (IOException | WriteException ex) {
+                        Logger.getLogger(LogicSimulator.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                    break;
+
+                case ("MTF-Sensitive_Area-Generate_Netlist"):
+                    System.out.println(" ~~~~~~ MTF-Sensitive_Area-Generate_Netlist ~~~~~~");
                     try {
                         startSimulationFaultFreeMTF();
                         //startSimulationMultipleFaultInjection();

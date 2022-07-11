@@ -141,16 +141,18 @@ public class MAIN {  //Class to run debug tests
 
             for (int j = 0; j < 1; j++) { //Run once -  Run 3 times
 
-                try {
+             //   try {
                     System.out.println(j + "  --> circ: "+ versao.getCircuitListSpecs().get(i).getCircuit());
                     SimulationMode sim_mtf_debug = new SimulationMode(versao.getCircuitListSpecs().get(i));
                   //  if(i) {
-                       //sim_mtf_debug.monteCarloReliabilityAPI("teste/lookup_table.csv");
+                       sim_mtf_debug.monteCarloReliabilityAPI("teste/lookup_table.csv");
 
                     //sim_mtf_debug.faultToleranceExhaustiveCompleteMETAPIESTIMATION();
-                    sim_mtf_debug.faultToleranceExhaustiveSETAPI();
-                    //sim_mtf_debug.faultToleranceExhaustiveCompleteMETAPI();
-                    //sim_mtf_debug.monteCarloReliabilityAPI("teste/lookup_table.csv");
+                    //sim_mtf_debug.faultToleranceExhaustiveSETAPI();
+                   // sim_mtf_debug.faultToleranceExhaustiveCompleteMETAPI();
+                   // sim_mtf_debug.monteCarloReliabilityAPI("teste/lookup_table.csv");
+               // SimulationMode sim_mtf_debugz = new SimulationMode(versao.getCircuitListSpecs().get(i));
+                //    sim_mtf_debugz.monteCarloReliability_SpiceGeneration_ElectricalSimulationAPI("teste/", "45nm_HP.pm", "Library.txt");
                    // }
 
                     //saida
@@ -170,11 +172,11 @@ public class MAIN {  //Class to run debug tests
                     //    System.out.println("ERR : " + versao.getCircuitListSpecs().get(i) + "" + a);
                      //   gates.add(versao.getCircuitListSpecs().get(i).getCircuit() + ";" +a);
                     //}
-
+                /*
                 }catch (Exception e){
                     System.err.print(" \n\n xxxxx  Error in circuit: " + versao.getCircuitListSpecs().get(i).getCircuit());
                 }
-
+                */
 
         }
 
@@ -206,7 +208,7 @@ public class MAIN {  //Class to run debug tests
         int threads = 8;
 
         ArrayList<Float> mtf_sizes = new ArrayList<>();  //MTF's
-        mtf_sizes.add((float) 20000); // Sample
+        mtf_sizes.add((float) 200); // Sample
         mtf_sizes.add((float) 1); // STF
         mtf_sizes.add((float) 0); // MTF
         mtf_sizes.add((float) 0); // MTF

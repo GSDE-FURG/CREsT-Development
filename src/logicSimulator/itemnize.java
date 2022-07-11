@@ -10,7 +10,7 @@ public class itemnize {
     private int originalValue;
     private int newValue;
     private final Signal sig;
-    private ArrayList<Integer> inputVector =  new ArrayList<>();
+    private ArrayList<Integer> inputVector = new ArrayList<>();
     private boolean booleanFlag;
 
 
@@ -23,59 +23,119 @@ public class itemnize {
         this.inputVector = input;
         this.booleanFlag = false;
     }
-    public void setOriginalValue(int value){
+
+    public void setOriginalValue(int value) {
         this.originalValue = value;
+
     }
 
-    public void setNewValue(int value){
+    public void setNewValue(int value) {
         this.newValue = value;
         this.sig.setLogicValue(this.newValue);
 
-        if(this.newValue == 0){
+        if (this.newValue == 0) {
             this.sig.setLogicValueBoolean(Boolean.FALSE);
         }
-        if(this.newValue == 1){
+        if (this.newValue == 1) {
             this.sig.setLogicValueBoolean(Boolean.TRUE);
         }
 
     }
 
-    public void setBooleanFlag(){
+    public void setBooleanFlag() {
         this.booleanFlag = true;
     }
 
-    public boolean getBooleaFlag(){
+    public boolean getBooleaFlag() {
         return this.booleanFlag;
     }
 
-    public int getNewValue(){
+    public int getNewValue() {
         return this.newValue;
     }
-    public int getOriginalValue(){
+
+    public int getOriginalValue() {
         return this.originalValue;
     }
-    public String getIdentidade(){
+
+    public String getIdentidade() {
         return this.id;
     }
-    private Signal getSignalItemnize(){
+
+    private Signal getSignalItemnize() {
         return this.sig;
     }
-    private void getInfoItemnize(){
+
+    private void getInfoItemnize() {
         System.out.println(this.inputVector + " - ID: " + this.id + " Ori: " + this.originalValue + "  New: " + this.newValue + "  FaultSig: " + this.sig.getId());
     }
-    public void CompInfoItemnize(String comp){
+
+    public void CompInfoItemnize(String comp) {
         System.out.println(this.inputVector + " >> " + comp + " || Itemnize ID: " + this.id + " Origem: " + this.originalValue + "  New: " + this.newValue + "  FaultSig: " + this.sig.getId());
     }
-    public String getBitflip(){
-        if(this.originalValue == 0){
-            //return "(" + this.originalValue + ")to(1)";
-            return "(" + this.originalValue + "/1)";
-        }else{
-            //return "(" + this.originalValue + ")to(0)";
-            return "(" + this.originalValue + "/0)";
-        }
 
+    public String getBitflip() {
+        /*
+        if (this.originalValue == 0) {
+            //return "(" + this.originalValue + ")to(1)";
+            //return "(" + this.originalValue + "/1)";
+
+
+        } else {
+            //return "(" + this.originalValue + ")to(0)";
+            //return "(" + this.originalValue + "/0)";
+            /*
+            if (this.originalValue == 1) {
+                return "(1/0)";
+            } else {
+                if (this.getOriginalValue() == 0) {
+                    return ("N(0/1)");
+                } else {
+                    if (this.getOriginalValue() == 1) {
+                        return ("N(1/0)");
+                    }
+                }
+
+            }
+            return "(1/0)";
+        }*/
+        if (this.originalValue == -123) {
+            if(this.sig.getOriginalLogicValue() == 0) {
+                return "(0/1)";
+            }
+            else {
+                if(this.sig.getOriginalLogicValue() == 1) {
+                    return "(1/0)";
+                }else{
+                    if(this.originalValue == 0){
+                        return ("(0/1)");
+                    }else{
+                        if(this.originalValue == 1) {
+                            return ("(1/0)");
+                        }
+
+                    }
+                }
+            }
+        }else{
+            if(this.originalValue == 0){
+                return ("(0/1)");
+            }else{
+                if(this.originalValue == 1) {
+                    return ("(1/0)");
+                }
+
+            }
+        }
+        return (getBitflip());
     }
+
+
 
 
 }
+
+
+
+
+
