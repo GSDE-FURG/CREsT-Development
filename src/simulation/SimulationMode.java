@@ -253,7 +253,7 @@ public class SimulationMode {
         Management simulacaoMultithreading = new Management(simulationCircuit.getThreads(), simulationCircuit.getReliabilityConst(), simulationCircuit.getRelativePath(),
                 simulationCircuit.getRelativePath() +   simulationCircuit.getGenlib(), simulationCircuit.getRelativePath() + simulationCircuit.getCircuit());
 
-       // this.output_sample = simulacaoMultithreading.SampleSizeExhaustiveCompleteMET(simulationCircuit.getSignalsToinjectFault());
+        ///this.output_sample = simulacaoMultithreading.SampleSizeExhaustiveCompleteMET(simulationCircuit.getSignalsToinjectFault());
             simulacaoMultithreading.faultToleranceExhaustiveCompleteMET(simulationCircuit.getSignalsToinjectFault());
             this.OUTPUT_INFO = simulacaoMultithreading.getFRM("Sample (N = "
                     + "2^Signals * Gates)");

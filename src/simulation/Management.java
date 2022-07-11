@@ -536,8 +536,16 @@ public class Management extends MAIN {
                         this.unmasked_faults = this.unmasked_faults + itemx_list.get(i).getPropagatedFaults();
                         bitfipCcounter = bitfipCcounter + itemx_list.get(i).bitflipcounter;
                 }
+                float one = 1.0F;
+                float unmasked = this.unmasked_faults;
+                float sample = this.sampleSize;
 
-                this.FMR = (float) (1.0 - ((float) this.unmasked_faults / (float) this.sampleSize));
+                float div = unmasked/sample;
+                float sub = one - (div);
+               // this.FMR = (float) (1.0 - ((float) this.unmasked_faults / (float) this.sampleSize));
+                this.FMR = sub;//one - div;
+
+                System.out.println("One: " + one + "  -  Div: " + div + "  Sub: " + sub + "\n" + "sample: " + this.sampleSize);
 
                 return bitfipCcounter;
         }
@@ -1050,7 +1058,7 @@ public class Management extends MAIN {
                     //ArrayList <Signal> Signals_CTE_ONE_ZERO = identificate_ONE_ZERO_CTE();  //ONLY USE WHEN ITS NOT CADENCE.GENLIB
                     //System.out.println("LOGIC GATES consider WIRES (CTE) Can't inject fault: " + Signals_CTE_ONE_ZERO);
                */
-
+                System.out.println("SIGNALS LIST: " + this.signals_to_inject_faults);
 
                 int vec = (int) Math.pow(2, this.circuit.getInputs().size());
                 long result_computation = 0;
@@ -1403,11 +1411,14 @@ public class Management extends MAIN {
                                 break;
 
                         case "TRUE_TABLE_COMPLETE":
+                                //this.signals_to_inject_faults = this.signalsToInjectFault(option);
                                 System.out.println("STF - Exhaustive for STF");
                                 random_input_vectors = this.generateInputVector("TRUE_TABLE"); // Generate Random Input Vectors or InputTrueTable
+                                System.out.println(" total vectors: "  +random_input_vectors.size());
                                 ListInputVectors = this.splitInputPatternsInInt(random_input_vectors, this.probCircuit.getInputs().size());
+                                System.out.println(" ListInputVectors: "  +ListInputVectors.size());
                                 thread_list = particionateExausticVectorComplete(ListInputVectors);  // TESTE ALL GATES ///particionateVectorPerThread(ListInputVectors); // x - vectors per thread
-
+                                System.out.println(" thread_list: "  +thread_list.size());
                                 break;
 
                         case "TRUE_TABLE_COMPLETE_SIMULATION":
@@ -1463,7 +1474,7 @@ public class Management extends MAIN {
                 System.out.println("- Circuit: " + this.circuit.getName());
                 System.out.println("- Sample Size (N): " + this.sampleSize);
                 System.out.println("- Fault Mask Rate (FMR): " + " 1 - Ne/N = (1-(" + this.unmasked_faults + "/" + this.sampleSize + ")) = " + this.FMR);
-                System.out.println("- Sensitive Area (u.m²): " + this.avgASFLOAT );
+                System.out.println("- Sensitive Area (u.m2): " + this.avgASFLOAT );
                 System.out.println("- Reliability (MTBF) = (1 / (" + (1 - this.FMR )+  " x " + this.avgASFLOAT + " x 3,6 * 10-5) ) = " + this.MTBF);
                 System.out.println("- Bitflip Counter: " + bitfipCcounter);
                 System.out.println("- Load Time : " + timeElapsed_loadTime + "(s) - Setup Time: " + timeElapsed_PrepareTime + "(s) - Threading Execution Time: " + timeElapsed_ThreadingTime
@@ -1763,17 +1774,21 @@ public class Management extends MAIN {
                 Instant startPreparingSimulationTimeElapsed = Instant.now();
 
                 int sizeExasuticTest;
-
+                this.signals_to_inject_faults = this.signalsToInjectFault(option);
                 System.out.println("-   Sample size (N = 2^ENTRADAS): " + "2^"+ this.circuit.getInputs().size() + " = " + this.sampleSize);
                 this.sampleSize = (int) Math.pow(2, this.probCircuit.getInputs().size());  //(int) Math.pow(2, this.probCircuit.getInputs().size());
 
-                int N = this.sampleSize; // random_input_vectors.size();//testNumber;
+                System.out.println("\n\n\n-------------> this.sampleSize = " + this.sampleSize + "   Option: " + option  + "     this.signals_to_inject_faults: " + this.signals_to_inject_faults);
+                //int N = this.sampleSize; // random_input_vectors.size();//testNumber;
+
 
                 List thread_list =  this.createVectorsAndParticionate(this.sampleSize, option, "TRUE_TABLE_COMPLETE");
 
-                N = sizeExasuticTest = this.sizeExaustiveCompleteSimulation;//(this.sampleSize * this.signals_to_inject_faults.size());
+                int N = sizeExasuticTest = this.sizeExaustiveCompleteSimulation;//(this.sampleSize * this.signals_to_inject_faults.size());
 
                 this.sampleSize = N;
+
+                System.out.println("\n\n\n-------------> Size: " + this.sizeExaustiveCompleteSimulation);
 
                 Instant endPreparingSimulationTimeElapsed = Instant.now();
 
@@ -1893,6 +1908,8 @@ public class Management extends MAIN {
                 //N = sizeExasuticTest = this.sizeExaustiveCompleteSimulation;//(this.sampleSize * this.signals_to_inject_faults.size());
 
                 //this.sampleSize = N;
+
+                System.out.println(" Sample necessary for complete simulation: " + N);
 
                 return  N ;
 

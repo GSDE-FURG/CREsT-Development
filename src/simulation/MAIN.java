@@ -145,7 +145,10 @@ public class MAIN {  //Class to run debug tests
                     System.out.println(j + "  --> circ: "+ versao.getCircuitListSpecs().get(i).getCircuit());
                     SimulationMode sim_mtf_debug = new SimulationMode(versao.getCircuitListSpecs().get(i));
                   //  if(i) {
-                       sim_mtf_debug.monteCarloReliabilityAPI("teste/lookup_table.csv");
+                       //sim_mtf_debug.monteCarloReliabilityAPI("teste/lookup_table.csv");
+
+                    //sim_mtf_debug.faultToleranceExhaustiveCompleteMETAPIESTIMATION();
+                    sim_mtf_debug.faultToleranceExhaustiveCompleteMETAPI();
                    // }
 
                     //saida
