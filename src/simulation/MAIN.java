@@ -145,15 +145,19 @@ public class MAIN {  //Class to run debug tests
                     System.out.println(j + "  --> circ: "+ versao.getCircuitListSpecs().get(i).getCircuit());
                     SimulationMode sim_mtf_debug = new SimulationMode(versao.getCircuitListSpecs().get(i));
                   //  if(i) {
-                       sim_mtf_debug.monteCarloReliabilityAPI("teste/lookup_table.csv");
+                       //sim_mtf_debug.monteCarloReliabilityAPI("teste/lookup_table.csv");
 
                     //sim_mtf_debug.faultToleranceExhaustiveCompleteMETAPIESTIMATION();
+
                     //sim_mtf_debug.faultToleranceExhaustiveSETAPI();
-                   // sim_mtf_debug.faultToleranceExhaustiveCompleteMETAPI();
-                   // sim_mtf_debug.monteCarloReliabilityAPI("teste/lookup_table.csv");
-               // SimulationMode sim_mtf_debugz = new SimulationMode(versao.getCircuitListSpecs().get(i));
-                //    sim_mtf_debugz.monteCarloReliability_SpiceGeneration_ElectricalSimulationAPI("teste/", "45nm_HP.pm", "Library.txt");
-                   // }
+
+                        //sim_mtf_debug.faultToleranceExhaustiveCompleteMETAPI();
+                        // sim_mtf_debug.monteCarloReliabilityAPI("teste/lookup_table.csv");
+                             // SimulationMode sim_mtf_debugz = new SimulationMode(versao.getCircuitListSpecs().get(i));
+
+                            sim_mtf_debug.monteCarloReliability_SpiceGeneration_ElectricalSimulationAPI("teste/", "45nm_HP.pm", "Library.txt");
+
+                            // }
 
                     //saida
 
@@ -163,10 +167,10 @@ public class MAIN {  //Class to run debug tests
                     //sim_mtf_debug.vector_Analisys("circuitos/lookup_table.csv");
                     // Number of gates
 
-                    if(j == 0) {
+                  //  if(j == 0) {
                        // info.add(sim_mtf_debug.printGates("circuitos/lookup_table.csv"));  // Monte Carlo (n) - FMR e AS e MTBF
                        // gates.add(genlib + ";" +sim_mtf_debug.printGates("circuitos/lookup_table.csv"));
-                    }
+                   // }
 
                     ///if(a <= 20000 && j ==0){
                     //    System.out.println("ERR : " + versao.getCircuitListSpecs().get(i) + "" + a);
@@ -208,7 +212,7 @@ public class MAIN {  //Class to run debug tests
         int threads = 8;
 
         ArrayList<Float> mtf_sizes = new ArrayList<>();  //MTF's
-        mtf_sizes.add((float) 200); // Sample
+        mtf_sizes.add((float) 10); // Sample
         mtf_sizes.add((float) 1); // STF
         mtf_sizes.add((float) 0); // MTF
         mtf_sizes.add((float) 0); // MTF

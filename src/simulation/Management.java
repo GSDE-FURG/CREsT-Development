@@ -2681,7 +2681,9 @@ public class Management extends MAIN {
                         Instant start = Instant.now();
 
                         LocalDateTime myDateObj = LocalDateTime.now();
+
                         DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+
                         String formattedDate = myDateObj.format(myFormatObj);
 
                         this.setupEnviroment(" ----- Monte Carlo version  for Multiple Transient Fault Injection -------");

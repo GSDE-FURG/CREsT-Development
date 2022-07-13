@@ -74,7 +74,7 @@ public class itemnize {
         System.out.println(this.inputVector + " >> " + comp + " || Itemnize ID: " + this.id + " Origem: " + this.originalValue + "  New: " + this.newValue + "  FaultSig: " + this.sig.getId());
     }
 
-    public String getBitflip() {
+    public String getBitflipold() {
         /*
         if (this.originalValue == 0) {
             //return "(" + this.originalValue + ")to(1)";
@@ -131,7 +131,15 @@ public class itemnize {
     }
 
 
+    public String getBitflip() {
 
+        if (this.originalValue == 0) {
+            return "(" + this.originalValue + ")to(1)";
+            //return "(" + this.originalValue + "/1)";
+        } else {
+            return "(" + this.originalValue + ")to(0)";
+        }
+    }
 
 }
 
