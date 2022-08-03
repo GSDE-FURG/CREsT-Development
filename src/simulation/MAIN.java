@@ -149,14 +149,18 @@ public class MAIN {  //Class to run debug tests
 
                     //sim_mtf_debug.faultToleranceExhaustiveCompleteMETAPIESTIMATION();
 
-                    //sim_mtf_debug.faultToleranceExhaustiveSETAPI();
+                   // sim_mtf_debug.faultToleranceExhaustiveSETAPI();
 
                         //sim_mtf_debug.faultToleranceExhaustiveCompleteMETAPI();
                         // sim_mtf_debug.monteCarloReliabilityAPI("teste/lookup_table.csv");
                              // SimulationMode sim_mtf_debugz = new SimulationMode(versao.getCircuitListSpecs().get(i));
 
-                            sim_mtf_debug.monteCarloReliability_SpiceGeneration_ElectricalSimulationAPI("teste/", "45nm_HP.pm", "Library.txt");
+                        //USAR ESSE ->
+               // sim_mtf_debug.monteCarloReliability_SpiceGeneration_ElectricalSimulationAPI("teste/", "45nm_HP.pm", "Library.txt");
 
+                sim_mtf_debug.faultToleranceExhaustiveSET_SensitiveAreaAPI("teste/", "45nm_HP.pm", "Library.txt");
+
+                //sim_mtf_debug.monteCarloReliabilitySensitiveAreasVectorsAPI("teste/");
                             // }
 
                     //saida
