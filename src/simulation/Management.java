@@ -3081,12 +3081,17 @@ public class Management extends MAIN {
                 ArrayList <String> f = new ArrayList<>();
                 //ArrayList <String> InputVec = new ArrayList<>();
                 //ArrayList <Float> SensitiveAreaInputVector = new ArrayList<>();
-                f.add("Index; vector; AreaSUM");
+                f.add("Index; vector; AS_sum; FSig");
                 for (int i = 0; i < this.itemx_list.size(); i++) {
                         List <TestVectorInformation> x =  this.itemx_list.get(i).get_threadSimulationList();
                         for (int j = 0; j < x.size(); j++) {
                                // System.out.println("index: " + x.get(j).getSimulationIndex() + " vec: " + x.get(j).getinputVector() + " sensitive area sum: " + x.get(j).getSum_sensitive_cells_area() );
-                                f.add(x.get(j).getSimulationIndex() + ";" +  x.get(j).getinputVector() + ";" + x.get(j).getSum_sensitive_cells_area());
+                                f.add(x.get(j).getSimulationIndex() + ";"
+                                        +  x.get(j).getinputVector() + ";"
+                                        + x.get(j).getSum_sensitive_cells_area_str()
+                                        + ";" + x.get(j).getFaultSignal().toString());
+
+
                                 map.put( x.get(j).getSum_sensitive_cells_area() , x.get(j).concatInputVector() );
 
                                 //InputVec.add( x.get(j).concatInputVector());
@@ -3095,7 +3100,7 @@ public class Management extends MAIN {
                 }
 
                 try {
-                        FileWriter myWriter = new FileWriter(this.relativePath+"vector_" + this.circuit.getName() +".txt");
+                        FileWriter myWriter = new FileWriter(this.relativePath+"ASvector_" + this.circuit.getName() +".txt");
 
                         for (int i = 0; i < f.size(); i++) {
                                 myWriter.write(f.get(i) + "\n");
@@ -3141,7 +3146,7 @@ public class Management extends MAIN {
 
                                         if(idx <= 10) {
 
-                                                System.out.println(" Vector: " + x.get(j).getSimulationIndex() + " vec: " + x.get(j).getinputVector() + " sensitive area sum: " + x.get(j).getSum_sensitive_cells_area());
+                                                System.out.println( x.get(j).getSimulationIndex() + " Vector: " + " " + x.get(j).getinputVector() + " AS sum: " + x.get(j).getSum_sensitive_cells_area());
                                         }
                                                           idx++;
                                                  sum += x.get(j).getSum_sensitive_cells_area();

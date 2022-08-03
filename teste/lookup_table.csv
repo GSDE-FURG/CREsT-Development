@@ -1,4 +1,6 @@
 logic_gate,input_vector,sensitive_area
+BUFX1,0,0.088
+BUFX1,1,0.077
 BUFFX1,0,0.088
 BUFFX1,1,0.077
 INVX1,0,0.044

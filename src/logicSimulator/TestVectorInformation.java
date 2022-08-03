@@ -113,6 +113,14 @@ public class TestVectorInformation {
         return this.sum_sensitive_cells_area;
     }
 
+    public String getSum_sensitive_cells_area_str() {
+        float myFloat = this.sum_sensitive_cells_area;
+        String formattedString = String.format("%.03f", myFloat);
+        return  formattedString;
+    }
+
+
+
     public String getBitFlip(){
             
             String bitflip;

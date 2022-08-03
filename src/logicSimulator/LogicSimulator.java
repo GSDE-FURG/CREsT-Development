@@ -546,8 +546,20 @@ import signalProbability.ProbCircuit;
             String SensitiveNode = x.getId();//threadSimulationList.getFaultSignal().toString();
             String bitflipValue =  Integer.toString(x.getLogicValue());//Integer.toString(threadSimulationList.getFaultSignal().getLogicValue());
             //"\t\t*Iexp 0 " + SensitiveNode + " exp(" + bitflipValue + " 190u 1n 10p 1.00001n 320p) \n" +
+            String bit = "";
+            int critCharge = 200;
+            String critChargeStr = "";
+            if(bitflipValue == "0"){
+                bit = "0";
+                critChargeStr = Integer.toString(critCharge);
+            }
+            else{
+                bit = "1";
+                critChargeStr = "-" + Integer.toString(critCharge);
+            }
 
-            output = output +  "\t\tIexp 0 " + SensitiveNode + " exp(" + bitflipValue + " 190u 1n 10p 1.00001n 320p)\n" ;
+            output = output +  "\t\tIexp " + 0 + " " + SensitiveNode + " exp(" + bitflipValue + " " + critChargeStr + "u 1n 10p 1.00001n 320p)\n" ;
+           // output = output +  "\t\tIexp 0 " + SensitiveNode + " exp(" + bitflipValue + " 190u 1n 10p 1.00001n 320p)\n" ;
         }
         //"\t\t*Iexp 0 " + SensitiveNode + " exp(" + bitflipValue + " 190u 1n 10p 1.00001n 320p) \n" +
 
@@ -828,7 +840,7 @@ import signalProbability.ProbCircuit;
 
         //String plotVSensitiveNodes = "";
 
-        template = template + "\n\n\n ****** SET Injection in ramdom node Inv1\n" +
+        template = template + "\n\n\n ****** SET Injection in ramdom node \n" +
                 //"\t\t*Iexp 0 out exp(0 190u 1n 40p 1.00001n 320p) \n" +
                 this.setBitFlipInNetListFile(threadSimulationList) +
                 //"\t\t*Iexp 0 " + SensitiveNode + " exp(" + bitflipValue + " 190u 1n 10p 1.00001n 320p) \n" +
