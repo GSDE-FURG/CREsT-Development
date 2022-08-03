@@ -270,7 +270,7 @@ public class MAIN {  //Class to run debug tests
         experiment.setup_run(  "circuitos/LGSynth91/full/", "full.genlib", signalsToinjectFault, constReliability, mtf_sizes, threads);
 
         experiment.setup_run("circuitos/LGSynth91/fullv2/", "fullv2.genlib", signalsToinjectFault, constReliability, mtf_sizes, threads);
-*/
+*/        // sssss
 
 
   //      experiment.setup_run("circuitos/ISCAS89/minimal/", "minimal.genlib", signalsToinjectFault, constReliability, mtf_sizes, threads);
