@@ -305,6 +305,13 @@ public class Management extends MAIN {
                                 System.out.println("     --> Considering all signals (input, intermediate, output): " + r.size());
                                 return r;
 
+                        case "SENSITIVE_AREA":
+
+                                //for (int i = 0; i < signalList.size(); i++) {
+                                        r.add(signalList.get(0));
+                                //}
+                                System.out.println("     --> Considering all signals (input, intermediate, output): " + r.size());
+                                return r;
 
                         case "":
                                 System.out.println("Error !!! Please insert the correct Fault Signals String");
@@ -373,6 +380,7 @@ public class Management extends MAIN {
 
                 return null;
         }
+
 
         public ArrayList<ArrayList<Integer>> splitInputPatternsInInt(ArrayList<String> vector, int n_input) {
 
@@ -1060,6 +1068,7 @@ public class Management extends MAIN {
                     //System.out.println("LOGIC GATES consider WIRES (CTE) Can't inject fault: " + Signals_CTE_ONE_ZERO);
                */
 
+
                 for (int i = 0; i < this.threads; i++) { //Loop of simulations
 
                         ArrayList<TestVectorInformation> ItemxSimulationList = new ArrayList<>();
@@ -1094,7 +1103,9 @@ public class Management extends MAIN {
                                         TestVectorInformation temp = new TestVectorInformation(inputVector, this.signals_to_inject_faults.get(SigIndex), j + 1);
                                         ItemxSimulationList.add(temp);
 
-                                        //System.out.println("Vec: " + inputVector + " Fault Signal: " + this.signals_to_inject_faults.get(SigIndex));
+                                        System.out.println("Vec: " + inputVector + " Fault Signal: " + this.signals_to_inject_faults.get(SigIndex));
+
+                                        //aux = this.signals_to_inject_faults.size();
                                 }
 
                         }
@@ -3005,7 +3016,7 @@ public class Management extends MAIN {
 
                 int sizeExasuticTest; //= (this.sampleSize * this.signals_to_inject_faults.size());;
 
-                this.signals_to_inject_faults = this.signalsToInjectFault(option);
+                this.signals_to_inject_faults = this.signalsToInjectFault("SENSITIVE_AREA");
 
                 this.mtf_list = mtf_list;
 
