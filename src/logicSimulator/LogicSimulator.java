@@ -64,6 +64,8 @@ import signalProbability.ProbCircuit;
         //private final Map<String, String> concurrentMap_output_fault = new ConcurrentHashMap<>();;
         
         private final ArrayList <String> inputVectors = new ArrayList<>();
+
+        private final ArrayList <DepthGate> gates_passed = new ArrayList<>();
         private final ArrayList <String> faultInjectionOutputArray = new ArrayList<>();
         private final ArrayList <String> faultFreeOutputArray = new ArrayList<>();
         private final ArrayList <String> faultSignalArray = new ArrayList<>();
@@ -151,6 +153,9 @@ import signalProbability.ProbCircuit;
             return this.threadSimulationList;
         }
 
+        public ArrayList<DepthGate> getGatesPassed (){
+            return  this.gates_passed;
+        }
 
     public ArrayList <String> getParsedNetlistContent() {
             return this.parsedNetlistContent;
@@ -3403,8 +3408,10 @@ import signalProbability.ProbCircuit;
             // Bloco para decisão se é ou não sinal da lista de falhas
             //Signal faultSig = null ;//thread_item.getPositionFaultSignalInMTFList(inputsSignals.get(index));
 
+            //Test2 t2 = (Test2)t1.clone();
 
 
+            //this.gates_passed.add();
             if(inputsSignals.get(index).getLogicValue() == 0){
                 input.add(Boolean.FALSE);  //Store input to another arrayList
                 concat_inputs = concat_inputs + "0";
@@ -3453,11 +3460,14 @@ import signalProbability.ProbCircuit;
 
         //TODO: Add the X1 in contain keys
 
-        //  System.out.println("-> " + gate.getGate().getType() + "  cell: " + cell + "  -- key " + key + " cellList: " + this.sensitive_cells.size());
+        System.out.println(input + "->  " + gate.getGate().getType() + "  cell: " + cell.getCell_id() + "  -- key " + key + " cellList: " + this.sensitive_cells.size());
+
+
         if((cell != null)){
 
             //this.sum_sensitive_cells_area = this.sum_sensitive_cells_area + Float.parseFloat(cell.getSensitive_are());
             thread_item.sum_sensitive_cells_area(Float.parseFloat(cell.getSensitive_are()));
+            thread_item.sum_sensitive_cells_area_gate(Float.parseFloat(cell.getSensitive_are()), gate);
             //System.out.println("idx: " + thread_item.getSimulationIndex() + "  invec: " + thread_item.getinputVector() + " gateid: " + gate.getGate().getId() + " gate: " + gate.getGate().getOutputs() + " sigs: " + gate.getGate().getInputs() +  " CEll founded: " + cell.getCell_id() + " input: " +cell.getInput_vec()  +
             //" out: " + output
             //   " sensitive area: "+ cell.getSensitive_are() + " sum: " + thread_item.getSum_sensitive_cells_area());

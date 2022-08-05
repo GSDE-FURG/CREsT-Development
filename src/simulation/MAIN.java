@@ -213,7 +213,7 @@ public class MAIN {  //Class to run debug tests
 
 
 
-        int threads = 8;
+        int threads = 4;
 
         ArrayList<Float> mtf_sizes = new ArrayList<>();  //MTF's
         mtf_sizes.add((float) 20000); // Sample

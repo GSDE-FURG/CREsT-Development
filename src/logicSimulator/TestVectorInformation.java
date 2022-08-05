@@ -5,7 +5,10 @@
  */
 package logicSimulator;
 
+import datastructures.Gate;
 import datastructures.Signal;
+import levelDatastructures.DepthGate;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -35,6 +38,9 @@ public class TestVectorInformation {
 
 
     public ConcurrentHashMap <String, Signal>  MTF_Fault_LIST_thd = new ConcurrentHashMap<>();
+
+    public ArrayList <DepthGate>  help = new ArrayList<>();
+    public ArrayList <Float>  help_sum = new ArrayList<>();
     //private ArrayList <Signal> MTF_FaultSignal_List_Base;
     //private ArrayList <SignalExtendedProperties> MTF_FaultSignal_List_Extended;
 
@@ -106,7 +112,36 @@ public class TestVectorInformation {
     }
 
     public void sum_sensitive_cells_area(float cells_sensitive_area){
+
+
+
         this.sum_sensitive_cells_area = this.sum_sensitive_cells_area + cells_sensitive_area;
+    }
+
+    public void sum_sensitive_cells_area_gate(float cells_sensitive_area, DepthGate x){
+
+        //help_sum.add(cells_sensitive_area);
+        help.add(x);
+        help_sum.add(cells_sensitive_area);
+
+        //this.sum_sensitive_cells_area = this.sum_sensitive_cells_area + cells_sensitive_area;
+    }
+
+    public ArrayList<DepthGate> getSum_sensitive_cells_area_Gates(){
+        return help;
+    }
+    public ArrayList<String> getSum_sensitive_cells_area_Gates_detail(){
+        ArrayList s = new ArrayList();
+
+        for (int i = 0; i < help.size(); i++) {
+            s.add(help.get(i) + "  " + help.get(i).getGate().getInputs().toString() + "  " + help.get(i).getGate().getInputsValuesToString());
+        }
+
+        return s;
+    }
+
+    public ArrayList<Float> getSum_sensitive_cells_area_sum_vector(){
+        return help_sum;
     }
 
     public float getSum_sensitive_cells_area() {

@@ -3413,14 +3413,14 @@ public class Management extends MAIN {
                         List <TestVectorInformation> x =  this.itemx_list.get(i).get_threadSimulationList();
                         for (int j = 0; j < x.size(); j++) {
                                // System.out.println("index: " + x.get(j).getSimulationIndex() + " vec: " + x.get(j).getinputVector() + " sensitive area sum: " + x.get(j).getSum_sensitive_cells_area() );
-                                f.add(x.get(j).getSimulationIndex() + ";"
+                                        f.add(x.get(j).getSimulationIndex() + ";"
                                         +  x.get(j).getinputVector() + ";"
                                         + x.get(j).getSum_sensitive_cells_area_str()
                                         + ";" + x.get(j).getFaultSignal().toString());
 
 
                                 map.put( x.get(j).getSum_sensitive_cells_area() , x.get(j).concatInputVector() );
-
+                                System.out.println(x.get(j).getinputVector() + "  " + x.get(j).getSum_sensitive_cells_area_Gates_detail() + "   " + x.get(j).getSum_sensitive_cells_area_sum_vector() + "  " +  x.get(j).getSum_sensitive_cells_area_str());
                                 //InputVec.add( x.get(j).concatInputVector());
                                 //SensitiveAreaInputVector.add(x.get(j).getSum_sensitive_cells_area());
                         }
