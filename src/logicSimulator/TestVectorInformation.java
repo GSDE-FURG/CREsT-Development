@@ -441,6 +441,14 @@ public class TestVectorInformation {
      public ArrayList <Integer> getinputVector(){
         return this.inputVector;
     }
+    public String getinputVectorStr(){
+         String str = "";
+
+        for (int i = 0; i < this.inputVector.size() ; i++) {
+            str = str + this.inputVector.get(i);
+        }
+        return str;
+    }
      
      public int getSimulationIndex(){
         return this.index;

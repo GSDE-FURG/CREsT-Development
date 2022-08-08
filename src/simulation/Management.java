@@ -3436,7 +3436,7 @@ public class Management extends MAIN {
                 }
 
                 TableSensitiveArea tableSensitiveArea = new TableSensitiveArea(itemx_list);
-                tableSensitiveArea.createTable();
+                tableSensitiveArea.createTable(this.relativePath, this.circuit.getName() );
 
 
                 try {
