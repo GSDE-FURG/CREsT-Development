@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- *
+ * This class represent an single vector test
  * @author clayton
  */
 public class TestVectorInformation {
@@ -29,8 +29,6 @@ public class TestVectorInformation {
     private int index;
     private long threadID;
 
-
-
     private float sum_sensitive_cells_area;
 
     private boolean MTF;
@@ -38,15 +36,15 @@ public class TestVectorInformation {
     private final List <Signal> MTF_FaultSignal_List_thd = Collections.synchronizedList(new ArrayList<Signal>());
     private final List <itemnize> MTF_PERSONAL_LIST = Collections.synchronizedList(new ArrayList<itemnize>());
 
-
     public ConcurrentHashMap <String, Signal>  MTF_Fault_LIST_thd = new ConcurrentHashMap<>();
 
     public ArrayList <DepthGate>  help = new ArrayList<>();
-    public ArrayList <Float>  help_sum = new ArrayList<>();
+    public ArrayList <Float>  vectorSensitiveAreaSum = new ArrayList<>();
     //private ArrayList <Signal> MTF_FaultSignal_List_Base;
     //private ArrayList <SignalExtendedProperties> MTF_FaultSignal_List_Extended;
-    public ArrayList <GateSensitivivity> circuitGatesInPath;
+    public ArrayList <GateDetailedInformation> gatesLogicalPath;
 
+    public Float circuitSensitiveArea;
 
     public void printSpecs(){
         System.out.println("         -------- ");
@@ -115,21 +113,22 @@ public class TestVectorInformation {
             //x.setSignal(faultSignal);
             //this.MTF_FaultSignal_List_Extended.add(x);
 
-            this.circuitGatesInPath = new ArrayList<>();
+            this.gatesLogicalPath = new ArrayList<>();
+            this.circuitSensitiveArea = 0.0F;
             
     }
 
-    public void setCircuitGatesInPath (GateSensitivivity gatex) {
-        this.circuitGatesInPath.add(gatex);
+    public void setGatesLogicalPath(GateDetailedInformation gatex) {
+        this.gatesLogicalPath.add(gatex);
     }
 
-    public ArrayList<GateSensitivivity> getCircuitGatesInPath() {
-        return circuitGatesInPath;
+    public ArrayList<GateDetailedInformation> getGatesLogicalPath() {
+        return gatesLogicalPath;
     }
 
     public int searchGatecircuitGatesInPath(DepthGate gate){
-        for (int i = 0; i < circuitGatesInPath.size(); i++) {
-            if(gate.getGate().getId() == this.circuitGatesInPath.get(i).getGate().getGate().getId()){
+        for (int i = 0; i < gatesLogicalPath.size(); i++) {
+            if(gate.getGate().getId() == this.gatesLogicalPath.get(i).getGate().getGate().getId()){
                 return i;
             }
         }
@@ -141,15 +140,18 @@ public class TestVectorInformation {
     }
 
     public void sum_sensitive_cells_area_gate(float cells_sensitive_area, DepthGate x){
-
-        //help_sum.add(cells_sensitive_area);
+        //vectorSensitiveAreaSum.add(cells_sensitive_area);
         help.add(x);
-        help_sum.add(cells_sensitive_area);
-
-        //this.sum_sensitive_cells_area = this.sum_sensitive_cells_area + cells_sensitive_area;
+        vectorSensitiveAreaSum.add(cells_sensitive_area);
     }
 
+    public Float getCircuitSensitiveArea() {
+        return circuitSensitiveArea;
+    }
 
+    public void setCircuitSensitiveArea(Float circuitSensitiveArea) {
+        this.circuitSensitiveArea = circuitSensitiveArea;
+    }
 
     public ArrayList<DepthGate> getSum_sensitive_cells_area_Gates(){
         return help;
@@ -158,7 +160,11 @@ public class TestVectorInformation {
         ArrayList s = new ArrayList();
 
         for (int i = 0; i < help.size(); i++) {
-            s.add(help.get(i) + "  " + help.get(i).getGate().getInputs().toString() + "  " + this.circuitGatesInPath.get(searchGatecircuitGatesInPath(help.get(i))).getInputsStr());
+            int pos = searchGatecircuitGatesInPath(help.get(i));
+
+            s.add(help.get(i) + "  " + help.get(i).getGate().getInputs().toString()
+                    + " " + this.gatesLogicalPath.get(pos).getInputs()
+                    + " Out: " + this.gatesLogicalPath.get(pos).getOutputs());
         }
 
         //Não é esse help.get(i).getGate().getInputsValuesToString()
@@ -167,7 +173,7 @@ public class TestVectorInformation {
     }
 
     public ArrayList<Float> getSum_sensitive_cells_area_sum_vector(){
-        return help_sum;
+        return vectorSensitiveAreaSum;
     }
 
     public float getSum_sensitive_cells_area() {
@@ -179,9 +185,6 @@ public class TestVectorInformation {
         String formattedString = String.format("%.03f", myFloat);
         return  formattedString;
     }
-
-
-
 
     public String getBitFlip(){
             

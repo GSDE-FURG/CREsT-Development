@@ -6,10 +6,7 @@ import datastructures.Gate;
 import datastructures.Signal;
 import jxl.write.WriteException;
 import levelDatastructures.LevelCircuit;
-import logicSimulator.LogicSimulator;
-import logicSimulator.Orchestrator;
-import logicSimulator.SensitiveCell;
-import logicSimulator.TestVectorInformation;
+import logicSimulator.*;
 import readers.MappedVerilogReader;
 import signalProbability.ProbCircuit;
 import writers.WriteLog;
@@ -21,7 +18,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.sql.SQLOutput;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -85,7 +81,6 @@ public class Management extends MAIN {
 
         public void initProbCircuit() {
                 if (this.circuit != null) {
-
                         this.lCircuit = this.levelCircuit; //Terminal.getInstance().getLevelCircuit();
                         this.probCircuit = new ProbCircuit(this.circuit);
                         //System.out.println("InitProbCircuit " + this.probCircuit.getName());
@@ -3400,7 +3395,8 @@ public class Management extends MAIN {
 
                 return result;
         }
-
+        public static final String ANSI_YELLOW = "\u001B[33m";
+        public static final String ANSI_RESET = "\u001B[0m";
         public void classifySensitiveAreas(){
                 System.out.println("\n");
                 System.out.println("- Classification of Sensitive Areas per input vector: ");
@@ -3420,18 +3416,28 @@ public class Management extends MAIN {
 
 
                                 map.put( x.get(j).getSum_sensitive_cells_area() , x.get(j).concatInputVector() );
+
                                 System.out.println(x.get(j).getinputVector() + "  " + x.get(j).getSum_sensitive_cells_area_Gates_detail()
                                         + "   " + x.get(j).getSum_sensitive_cells_area_sum_vector() + "  "
-                                        +  x.get(j).getSum_sensitive_cells_area_str() +   "  New Class: "  + x.get(j).getCircuitGatesInPath().size());
+                                        +  x.get(j).getSum_sensitive_cells_area_str()
+                                        +   "  Nc: "  + x.get(j).getGatesLogicalPath().size());
 
-                                for (int k = 0; k < x.get(j).getCircuitGatesInPath().size(); k++) {
-                                        System.out.print(" " + x.get(j).getCircuitGatesInPath().get(k).getGate().getGate() + " Inp: " + x.get(j).getCircuitGatesInPath().get(k).getInputs());
+
+                                for (int k = 0; k < x.get(j).getGatesLogicalPath().size(); k++) {
+                                        System.out.print(ANSI_YELLOW+" " + x.get(j).getGatesLogicalPath().get(k).getGate().getGate()
+                                                + " In: " + x.get(j).getGatesLogicalPath().get(k).getInputs()
+                                                + " Out: " + x.get(j).getGatesLogicalPath().get(k).getOutputs()
+                                                + " SA: " + x.get(j).getGatesLogicalPath().get(k).getgateSensitiveArea() + ANSI_RESET);
                                 }
                                 System.out.println("\n");
                                 //InputVec.add( x.get(j).concatInputVector());
                                 //SensitiveAreaInputVector.add(x.get(j).getSum_sensitive_cells_area());
                         }
                 }
+
+                TableSensitiveArea tableSensitiveArea = new TableSensitiveArea(itemx_list);
+                tableSensitiveArea.createTable();
+
 
                 try {
                         FileWriter myWriter = new FileWriter(this.relativePath+"ASvector_" + this.circuit.getName() +".txt");
