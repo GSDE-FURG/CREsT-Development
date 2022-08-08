@@ -54,6 +54,9 @@ public class TableSensitiveArea {
                     contentv2 = contentv2 + x.get(j).getGatesLogicalPath().get(k).getGate() + "-" + x.get(j).getGatesLogicalPath().get(k).getgateSensitiveArea() + ";";
                     content = content + "; " + x.get(j).getGatesLogicalPath().get(k).getgateSensitiveArea() ;
 
+
+
+
                 }
                     content = content + ";" + x.get(j).getSum_sensitive_cells_area_str();
 
