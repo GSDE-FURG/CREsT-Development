@@ -80,6 +80,7 @@ import signalProbability.ProbCircuit;
         private String mode;
         public int bitflipcounter;
 
+
         public LogicSimulator(ArrayList <TestVectorInformation> threadSimulationList, Circuit circuit, CellLibrary cellLibrary, LevelCircuit levelCircuit, int start, int end, String genlib, String circuitFilePath) throws IOException, ScriptException, Exception{
        
           
@@ -142,6 +143,8 @@ import signalProbability.ProbCircuit;
                 //cellLib.setPTMCells(new BigDecimal("0.9999"));
                 this.cellLibrary.setPTMCells2(Float.valueOf("0.9999"));
                 this.cellLibrary.setPTMCells(new BigDecimal("0.9999"));
+
+
         
         }
 
@@ -3403,6 +3406,10 @@ import signalProbability.ProbCircuit;
         final ArrayList <Boolean> input = new ArrayList<>();
         //final ArrayList <Integer> signals = new ArrayList<>();
         String concat_inputs = "";
+
+        String concat = "";
+
+
         for (int index = 0; index < inputsSignals.size(); index++) {
 
             // Bloco para decisão se é ou não sinal da lista de falhas
@@ -3415,12 +3422,17 @@ import signalProbability.ProbCircuit;
             if(inputsSignals.get(index).getLogicValue() == 0){
                 input.add(Boolean.FALSE);  //Store input to another arrayList
                 concat_inputs = concat_inputs + "0";
+
+
             }
             if(inputsSignals.get(index).getLogicValue() == 1){
                 input.add(Boolean.TRUE); //Store input to another arrayList
                 concat_inputs = concat_inputs + "1";
             }
         }
+        concat = concat_inputs;
+
+
 
         /*ORIGNAL POS*/
         //Convert the input signal values to boolean
@@ -3460,10 +3472,24 @@ import signalProbability.ProbCircuit;
 
         //TODO: Add the X1 in contain keys
 
-        System.out.println(input + "->  " + gate.getGate().getType() + "  cell: " + cell.getCell_id() + "  -- key " + key + " cellList: " + this.sensitive_cells.size());
+       // System.out.println(input + "->  " + gate.getGate().getType() + "  cell: " + cell.getCell_id() + "  -- key " + key + " cellList: " + this.sensitive_cells.size());
+
+        //CircuitPath circuitPath = new CircuitPath();
+        //circuitPath.setCircuitInputCircuitVector(thread_item.getinputVector());
+
+        GateSensitivivity gateSensitivivity = new GateSensitivivity();
+
+            gateSensitivivity.setGate(gate);
+            gateSensitivivity.setInputs(input);
+            gateSensitivivity.print();
+            thread_item.setCircuitGatesInPath(gateSensitivivity);
+            //thread_item.circuitPath.setGateInCircuitPath(gateSensitivivity);
+
 
 
         if((cell != null)){
+
+                //thread_item.circuitPathv2.setGateInCircuitPath(gateSensitivivity);
 
             //this.sum_sensitive_cells_area = this.sum_sensitive_cells_area + Float.parseFloat(cell.getSensitive_are());
             thread_item.sum_sensitive_cells_area(Float.parseFloat(cell.getSensitive_are()));
@@ -3471,6 +3497,13 @@ import signalProbability.ProbCircuit;
             //System.out.println("idx: " + thread_item.getSimulationIndex() + "  invec: " + thread_item.getinputVector() + " gateid: " + gate.getGate().getId() + " gate: " + gate.getGate().getOutputs() + " sigs: " + gate.getGate().getInputs() +  " CEll founded: " + cell.getCell_id() + " input: " +cell.getInput_vec()  +
             //" out: " + output
             //   " sensitive area: "+ cell.getSensitive_are() + " sum: " + thread_item.getSum_sensitive_cells_area());
+            /*
+            gateSensitivivity.setSensitiveArea(Float.parseFloat(cell.getSensitive_are()));
+            circuitPath.setGateInCircuitPath(gateSensitivivity);
+            thread_item.circuitPath.add(gateSensitivivity);
+            */
+
+
         }
 
 

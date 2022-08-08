@@ -5,7 +5,6 @@
  */
 package logicSimulator;
 
-import datastructures.Gate;
 import datastructures.Signal;
 import levelDatastructures.DepthGate;
 
@@ -29,6 +28,9 @@ public class TestVectorInformation {
     private int faultSignalValue;
     private int index;
     private long threadID;
+
+
+
     private float sum_sensitive_cells_area;
 
     private boolean MTF;
@@ -43,6 +45,8 @@ public class TestVectorInformation {
     public ArrayList <Float>  help_sum = new ArrayList<>();
     //private ArrayList <Signal> MTF_FaultSignal_List_Base;
     //private ArrayList <SignalExtendedProperties> MTF_FaultSignal_List_Extended;
+    public ArrayList <GateSensitivivity> circuitGatesInPath;
+
 
     public void printSpecs(){
         System.out.println("         -------- ");
@@ -82,7 +86,7 @@ public class TestVectorInformation {
         return Concat;
     }
 
-    
+
     public TestVectorInformation(ArrayList <Integer> inputVector, Signal faultSignal, int input_pos) {
             this.faultSignals = faultSignal;
             this.inputVector = inputVector;
@@ -99,6 +103,8 @@ public class TestVectorInformation {
             this.MTF_FaultSignal_List_thd.add(faultSignal);
             this.MTF_FaultSignal_List.add(faultSignal);
 
+            //this.circuitPath = new ArrayList<>();
+
             this.MTF_Fault_LIST_thd.put(faultSignal.getId(), faultSignal);
             itemnize item = new itemnize(faultSignal, faultSignal.getId(), this.inputVector);
             item.setOriginalValue(faultSignal.getOriginalLogicValue());
@@ -108,13 +114,29 @@ public class TestVectorInformation {
             //SignalExtendedProperties x = new SignalExtendedProperties();
             //x.setSignal(faultSignal);
             //this.MTF_FaultSignal_List_Extended.add(x);
+
+            this.circuitGatesInPath = new ArrayList<>();
             
     }
 
+    public void setCircuitGatesInPath (GateSensitivivity gatex) {
+        this.circuitGatesInPath.add(gatex);
+    }
+
+    public ArrayList<GateSensitivivity> getCircuitGatesInPath() {
+        return circuitGatesInPath;
+    }
+
+    public int searchGatecircuitGatesInPath(DepthGate gate){
+        for (int i = 0; i < circuitGatesInPath.size(); i++) {
+            if(gate.getGate().getId() == this.circuitGatesInPath.get(i).getGate().getGate().getId()){
+                return i;
+            }
+        }
+        return -1;
+    }
+
     public void sum_sensitive_cells_area(float cells_sensitive_area){
-
-
-
         this.sum_sensitive_cells_area = this.sum_sensitive_cells_area + cells_sensitive_area;
     }
 
@@ -127,6 +149,8 @@ public class TestVectorInformation {
         //this.sum_sensitive_cells_area = this.sum_sensitive_cells_area + cells_sensitive_area;
     }
 
+
+
     public ArrayList<DepthGate> getSum_sensitive_cells_area_Gates(){
         return help;
     }
@@ -134,8 +158,10 @@ public class TestVectorInformation {
         ArrayList s = new ArrayList();
 
         for (int i = 0; i < help.size(); i++) {
-            s.add(help.get(i) + "  " + help.get(i).getGate().getInputs().toString() + "  " + help.get(i).getGate().getInputsValuesToString());
+            s.add(help.get(i) + "  " + help.get(i).getGate().getInputs().toString() + "  " + this.circuitGatesInPath.get(searchGatecircuitGatesInPath(help.get(i))).getInputsStr());
         }
+
+        //Não é esse help.get(i).getGate().getInputsValuesToString()
 
         return s;
     }
@@ -153,6 +179,7 @@ public class TestVectorInformation {
         String formattedString = String.format("%.03f", myFloat);
         return  formattedString;
     }
+
 
 
 

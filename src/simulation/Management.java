@@ -3420,7 +3420,14 @@ public class Management extends MAIN {
 
 
                                 map.put( x.get(j).getSum_sensitive_cells_area() , x.get(j).concatInputVector() );
-                                System.out.println(x.get(j).getinputVector() + "  " + x.get(j).getSum_sensitive_cells_area_Gates_detail() + "   " + x.get(j).getSum_sensitive_cells_area_sum_vector() + "  " +  x.get(j).getSum_sensitive_cells_area_str());
+                                System.out.println(x.get(j).getinputVector() + "  " + x.get(j).getSum_sensitive_cells_area_Gates_detail()
+                                        + "   " + x.get(j).getSum_sensitive_cells_area_sum_vector() + "  "
+                                        +  x.get(j).getSum_sensitive_cells_area_str() +   "  New Class: "  + x.get(j).getCircuitGatesInPath().size());
+
+                                for (int k = 0; k < x.get(j).getCircuitGatesInPath().size(); k++) {
+                                        System.out.print(" " + x.get(j).getCircuitGatesInPath().get(k).getGate().getGate() + " Inp: " + x.get(j).getCircuitGatesInPath().get(k).getInputs());
+                                }
+                                System.out.println("\n");
                                 //InputVec.add( x.get(j).concatInputVector());
                                 //SensitiveAreaInputVector.add(x.get(j).getSum_sensitive_cells_area());
                         }
