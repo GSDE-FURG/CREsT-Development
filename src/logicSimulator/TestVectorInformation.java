@@ -183,6 +183,7 @@ public class TestVectorInformation {
     public String getSum_sensitive_cells_area_str() {
         float myFloat = this.sum_sensitive_cells_area;
         String formattedString = String.format("%.03f", myFloat);
+        formattedString = formattedString.replace(",",".");
         return  formattedString;
     }
 

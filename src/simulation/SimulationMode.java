@@ -87,7 +87,7 @@ public class SimulationMode {
 
         /* Monte Carlo Simulation */
         simulacaoMultithreading.monteCarloReliability(Math.round(simulationCircuit.getMtf_sizes().get(0)), simulationCircuit.getMtf_sizes(), simulationCircuit.getSignalsToinjectFault(), Sensitive_Library);
-        simulacaoMultithreading.classifySensitiveAreas();
+        simulacaoMultithreading.classifyTotalSensitiveAreas();
         /* Sensitive Areas Analysis based in all vectors (20k)*/
         //info.add(simulacaoMultithreading.printGates(Math.round(simulationCircuit.getMtf_sizes().get(0)), simulationCircuit.getMtf_sizes(), simulationCircuit.getSignalsToinjectFault(), Sensitive_Library));
 

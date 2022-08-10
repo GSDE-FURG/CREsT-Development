@@ -14,12 +14,9 @@ public class TableSensitiveArea {
          this.thread_items_list = thread_items_list;
     }
 
-    public void createTable(String path, String circuitName) {
-        // Create head, String circuitName
+    public ArrayList <String> createTable(String path, String circuitName) {
 
-        ArrayList<String> header = new ArrayList<>();
-        ArrayList<String> line = new ArrayList<>();
-        ArrayList <String> f = new ArrayList<>();
+        ArrayList<String> f = new ArrayList<>();
 
         String contentHeader = "Vectors;";
         Boolean passed = false;
@@ -41,7 +38,7 @@ public class TableSensitiveArea {
                 for (int k = 0; k < x.get(j).getGatesLogicalPath().size(); k++) {
                     //Values for each gate
 
-                    if(!passed && i == 0 ){
+                    if (!passed && i == 0) {
                         contentHeader = contentHeader + x.get(j).getGatesLogicalPath().get(k).getGate() + ";";
                     }
 
@@ -52,17 +49,15 @@ public class TableSensitiveArea {
                     //    + " " + x.get(j).getGatesLogicalPath().get(k).getgateSensitiveArea());
 
                     contentv2 = contentv2 + x.get(j).getGatesLogicalPath().get(k).getGate() + "-" + x.get(j).getGatesLogicalPath().get(k).getgateSensitiveArea() + ";";
-                    content = content + "; " + x.get(j).getGatesLogicalPath().get(k).getgateSensitiveArea() ;
-
-
+                    content = content + "; " + x.get(j).getGatesLogicalPath().get(k).getgateSensitiveArea();
 
 
                 }
-                    content = content + ";" + x.get(j).getSum_sensitive_cells_area_str();
+                content = content + ";" + x.get(j).getSum_sensitive_cells_area_str();
 
-                if(i==0 && (!passed)){
-                   f.add(contentHeader + " AStotal" + ";");
-               }
+                if (i == 0 && (!passed)) {
+                    f.add(contentHeader + " AStotal" + ";");
+                }
                 passed = true;
 
                 f.add(content);
@@ -72,10 +67,12 @@ public class TableSensitiveArea {
 
         }
 
-        System.out.println(header);
-        System.out.println(line);
+        //System.out.println(header);
+        //System.out.println(line);
 
+        return f;
 
+        /*
         try {
             FileWriter myWriter = new FileWriter(path + "TableAS_ " + circuitName +".csv");
 
@@ -90,6 +87,9 @@ public class TableSensitiveArea {
             e.printStackTrace();
         }
 
+    }
+
+         */
     }
 
 }

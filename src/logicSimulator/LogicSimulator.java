@@ -3477,7 +3477,7 @@ import signalProbability.ProbCircuit;
             gateSensitivivity.setOutputs(output_converted);
 
 
-            gateSensitivivity.print();
+            //gateSensitivivity.print();
             //thread_item.circuitPath.setGateInCircuitPath(gateSensitivivity);
 
 

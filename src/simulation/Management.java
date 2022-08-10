@@ -1,5 +1,6 @@
 package simulation;
 
+import com.sun.jdi.ArrayReference;
 import datastructures.CellLibrary;
 import datastructures.Circuit;
 import datastructures.Gate;
@@ -9,6 +10,7 @@ import levelDatastructures.LevelCircuit;
 import logicSimulator.*;
 import readers.MappedVerilogReader;
 import signalProbability.ProbCircuit;
+import writers.WriteFile;
 import writers.WriteLog;
 
 import javax.script.ScriptException;
@@ -3397,10 +3399,10 @@ public class Management extends MAIN {
         }
         public static final String ANSI_YELLOW = "\u001B[33m";
         public static final String ANSI_RESET = "\u001B[0m";
-        public void classifySensitiveAreas(){
+        public void classifyTotalSensitiveAreas(){
                 System.out.println("\n");
                 System.out.println("- Classification of Sensitive Areas per input vector: ");
-                Map < Float, String > map = new HashMap<>();
+               // Map < Float, String > map = new HashMap<>();
                 ArrayList <String> f = new ArrayList<>();
                 //ArrayList <String> InputVec = new ArrayList<>();
                 //ArrayList <Float> SensitiveAreaInputVector = new ArrayList<>();
@@ -3415,30 +3417,35 @@ public class Management extends MAIN {
                                         + ";" + x.get(j).getFaultSignal().toString());
 
 
-                                map.put( x.get(j).getSum_sensitive_cells_area() , x.get(j).concatInputVector() );
+                                //map.put( x.get(j).getSum_sensitive_cells_area() , x.get(j).concatInputVector() );
 
+                                /*
                                 System.out.println(x.get(j).getinputVector() + "  " + x.get(j).getSum_sensitive_cells_area_Gates_detail()
                                         + "   " + x.get(j).getSum_sensitive_cells_area_sum_vector() + "  "
                                         +  x.get(j).getSum_sensitive_cells_area_str()
                                         +   "  Nc: "  + x.get(j).getGatesLogicalPath().size());
-
-
+                                        */
+                                /*
                                 for (int k = 0; k < x.get(j).getGatesLogicalPath().size(); k++) {
-                                        System.out.print(ANSI_YELLOW+" " + x.get(j).getGatesLogicalPath().get(k).getGate().getGate()
+                                        System.out.print(ANSI_YELLOW + x.get(j).getinputVector() +" " + x.get(j).getGatesLogicalPath().get(k).getGate().getGate()
                                                 + " In: " + x.get(j).getGatesLogicalPath().get(k).getInputs()
                                                 + " Out: " + x.get(j).getGatesLogicalPath().get(k).getOutputs()
                                                 + " SA: " + x.get(j).getGatesLogicalPath().get(k).getgateSensitiveArea() + ANSI_RESET);
                                 }
-                                System.out.println("\n");
+                                System.out.println("");
                                 //InputVec.add( x.get(j).concatInputVector());
                                 //SensitiveAreaInputVector.add(x.get(j).getSum_sensitive_cells_area());
+
+                                 */
+
                         }
                 }
 
-                TableSensitiveArea tableSensitiveArea = new TableSensitiveArea(itemx_list);
-                tableSensitiveArea.createTable(this.relativePath, this.circuit.getName() );
 
+                // All vectors AS total
+                WriteFile file = new WriteFile(this.relativePath+"TotalASVectors_" + this.circuit.getName(), f, ".txt");
 
+                /*
                 try {
                         FileWriter myWriter = new FileWriter(this.relativePath+"ASvector_" + this.circuit.getName() +".txt");
 
@@ -3451,14 +3458,14 @@ public class Management extends MAIN {
                 } catch (IOException e) {
                         System.out.println("An error occurred.");
                         e.printStackTrace();
-                }
+                }*/
 
 
-                System.out.println("- Redundance areas may happen, so in this order the vector is overwriten -");
-               // System.out.println("Complete MAP : " + map);
-                System.out.println("MAP Size : " + map.size());
-                List<Float> employeeById = new ArrayList<>(map.keySet());
-                Collections.sort(employeeById);
+                // System.out.println("- Redundance areas may happen, so in this order the vector is overwriten -");
+                // System.out.println("Complete MAP : " + map);
+                //System.out.println("MAP Size : " + map.size());
+                //List<Float> employeeById = new ArrayList<>(map.keySet());
+                //Collections.sort(employeeById);
 
                 //System.out.println("Sorted :  " + employeeById);
                 /*
@@ -3471,6 +3478,54 @@ public class Management extends MAIN {
                 System.out.println("        ---- ");
         }
         // TODO: verify why sensitive areas are not being calculated in genlibs with NAND2X1 (X1)
+
+
+        public void classifyGatesSensitiveAreas(){
+                System.out.println("\n");
+
+                System.out.println("- Classification of Sensitive Areas per Input vector x Gates: ");
+
+                for (int i = 0; i < this.itemx_list.size(); i++) {
+                        List <TestVectorInformation> x =  this.itemx_list.get(i).get_threadSimulationList();
+                        for (int j = 0; j < x.size(); j++) {
+                                // System.out.println("index: " + x.get(j).getSimulationIndex() + " vec: " + x.get(j).getinputVector() + " sensitive area sum: " + x.get(j).getSum_sensitive_cells_area() );
+
+
+
+                                //map.put( x.get(j).getSum_sensitive_cells_area() , x.get(j).concatInputVector() );
+
+                                /*
+                                System.out.println(x.get(j).getinputVector() + "  " + x.get(j).getSum_sensitive_cells_area_Gates_detail()
+                                        + "   " + x.get(j).getSum_sensitive_cells_area_sum_vector() + "  "
+                                        +  x.get(j).getSum_sensitive_cells_area_str()
+                                        +   "  Nc: "  + x.get(j).getGatesLogicalPath().size());
+                                        */
+
+                                for (int k = 0; k < x.get(j).getGatesLogicalPath().size(); k++) {
+                                        System.out.print(ANSI_YELLOW + x.get(j).getinputVector() +" " + x.get(j).getGatesLogicalPath().get(k).getGate().getGate()
+                                                + " In: " + x.get(j).getGatesLogicalPath().get(k).getInputs()
+                                                + " Out: " + x.get(j).getGatesLogicalPath().get(k).getOutputs()
+                                                + " SA: " + x.get(j).getGatesLogicalPath().get(k).getgateSensitiveArea() + ANSI_RESET);
+                                }
+                                System.out.println("");
+                                //InputVec.add( x.get(j).concatInputVector());
+                                //SensitiveAreaInputVector.add(x.get(j).getSum_sensitive_cells_area());
+
+
+
+                        }
+                }
+
+                TableSensitiveArea tableSensitiveArea = new TableSensitiveArea(itemx_list);
+                ArrayList <String> tableSensitiveAreaContent = tableSensitiveArea.createTable(this.relativePath, this.circuit.getName());
+
+                // All vectors AS for each gate
+                WriteFile filetableSensitiveAreaContent = new WriteFile(this.relativePath + "CompletedTableAS_ " + this.circuit.getName(), tableSensitiveAreaContent , ".csv");
+
+
+        }
+        // TODO: verify why sensitive areas are not being calculated in genlibs with NAND2X1 (X1)
+
         public void printSensitiveAreasAnalysis(){
                 //System.out.println("CElls: " + this.sensitive_cells);
                 System.out.println("\n\n\n------------ Extracting Total vector Sensitive (Cross Sections) -------------------");
@@ -3479,12 +3534,12 @@ public class Management extends MAIN {
 
                 System.out.println("sample: " + this.sampleSize);
                 int idx = 0;
-
+                System.out.println("Printing the first 10 vectors");
                         for (int i = 0; i < this.itemx_list.size(); i++) {
                                 List<TestVectorInformation> x = this.itemx_list.get(i).get_threadSimulationList();
                                 for (int j = 0; j < x.size(); j++) {
 
-                                        if(idx <= 10) {
+                                        if(idx <= 9) {
 
                                                 System.out.println( x.get(j).getSimulationIndex() + " Vector: " + " " + x.get(j).getinputVector() + " AS sum: " + x.get(j).getSum_sensitive_cells_area());
                                         }
@@ -3496,11 +3551,16 @@ public class Management extends MAIN {
 
                         }
                 System.out.println("\n");
-                System.out.println("- Sensitive Areas (ASvec) based on " + counter + " vectors: " + (sum/counter) + " and ASavg based in AS average from each cell: " + this.avgASFLOAT);
-                System.out.println("- Difference (%) : " + (this.avgASFLOAT/(sum/counter)));
-                //System.out.println("");
+                System.out.println("- Sensitive Area average (SAavg) based in AS average from each cell: " + this.avgASFLOAT);
+                System.out.println("- Sensitive Area average (SAreal) based in (" + counter + " vectors): " + (sum/counter));
+                //System.out.println("- Sensitive Areas (ASvec) based on " + counter + " vectors: " + (sum/counter) + " and ASavg based in AS average from each cell: " + this.avgASFLOAT);
+                System.out.println("- Difference : " + (((sum/counter)/this.avgASFLOAT) - 1) + "(%)");
 
-                this.classifySensitiveAreas();
+                this.classifyTotalSensitiveAreas();
+                this.classifyGatesSensitiveAreas();
+
+
+
                 System.out.println("------------ Extracting Total vector Sensitive (Cross Sections) -------------------");
 
         }
