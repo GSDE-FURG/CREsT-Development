@@ -174,6 +174,7 @@ public class GateDetailedInformation {
 
         float m = masked;
         float t = tested;
+
         if(masked != 0){
             coverage = 100 * (m / t);
         }
