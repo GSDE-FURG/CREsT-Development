@@ -3,6 +3,7 @@ package logicSimulator;
 import datastructures.Cell;
 import levelDatastructures.DepthGate;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -166,8 +167,18 @@ public class GateDetailedInformation {
 
             tested++;
         }
+        float coverage;
 
-        System.out.println("\n Masked: " + masked + " - Failed: " + faill +  " tested: " +tested + "| input: " + input + " Output: " + output);
+
+        float m = masked;
+        float t = tested;
+        if(masked != 0){
+            coverage = 100 * (m / t);
+        }
+        else{
+            coverage = 0;
+        }
+        System.out.println("\n Masked: " + masked + " - Failed: " + faill +  " tested: " +tested + "| input: " + input + " Output: " + output + " Coverage: " + coverage +"%");
        // System.out.println(")))) GateType: " + this.cells.getName() + "  Inputs: " + input + " -> output: " + output + " -- tested: " + tested + " Masked: " + masked);
     }
 }
