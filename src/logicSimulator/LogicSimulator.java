@@ -3449,7 +3449,7 @@ import signalProbability.ProbCircuit;
         /* ---------- Special case for logical gates as wires GATE: ZERO or ONE ------- */
 
         //Convert the input signal values to boolean
-        boolean output_converted = this.calculateTheOutputGatesInBoolean(comb, input, gate);
+        boolean output_converted = this.calculateTheOutputGatesInBoolean(comb, input, gate); // hero to convert
 
         /* Calculate Sensitive Area of This Gate */
         ///SensitiveCell cell = this.sensitive_cells.get(gate.getGate().getType()  + "_" + concat_inputs);
@@ -3473,6 +3473,7 @@ import signalProbability.ProbCircuit;
 
             GateDetailedInformation gateSensitivivity = new GateDetailedInformation();
             gateSensitivivity.setGate(gate);
+            gateSensitivivity.setCell(cells);
             gateSensitivivity.setInputs(input);
             gateSensitivivity.setOutputs(output_converted);
 
@@ -3480,8 +3481,7 @@ import signalProbability.ProbCircuit;
             //gateSensitivivity.print();
             //thread_item.circuitPath.setGateInCircuitPath(gateSensitivivity);
 
-
-
+        // TODO: 26/09/2022 v2 
         if((cell != null)){
 
                 //thread_item.circuitPathv2.setGateInCircuitPath(gateSensitivivity);
@@ -3491,15 +3491,15 @@ import signalProbability.ProbCircuit;
             thread_item.sum_sensitive_cells_area_gate(Float.parseFloat(cell.getSensitive_are()), gate);
             gateSensitivivity.setgateSensitiveArea(Float.parseFloat(cell.getSensitive_are()));
             thread_item.setGatesLogicalPath(gateSensitivivity);
-            //System.out.println("idx: " + thread_item.getSimulationIndex() + "  invec: " + thread_item.getinputVector() + " gateid: " + gate.getGate().getId() + " gate: " + gate.getGate().getOutputs() + " sigs: " + gate.getGate().getInputs() +  " CEll founded: " + cell.getCell_id() + " input: " +cell.getInput_vec()  +
-            //" out: " + output
-            //   " sensitive area: "+ cell.getSensitive_are() + " sum: " + thread_item.getSum_sensitive_cells_area());
+            System.out.println("idx: " + thread_item.getSimulationIndex() + "  invec: " + thread_item.getinputVector() + " gateid: " + gate.getGate().getId() + " gate: " + gate.getGate().getOutputs() + " sigs: " + gate.getGate().getInputs() +  " CEll founded: " + cell.getCell_id() + " input: " +cell.getInput_vec()  +
+            " out: " + output_converted +
+               " sensitive area: "+ cell.getSensitive_are() + " sum: " + thread_item.getSum_sensitive_cells_area());
             /*
             gateSensitivivity.setSensitiveArea(Float.parseFloat(cell.getSensitive_are()));
             circuitPath.setGateInCircuitPath(gateSensitivivity);
             thread_item.circuitPath.add(gateSensitivivity);
             */
-
+            gateSensitivivity.calculatGateSusceptibility(input);
 
         }
 
@@ -4276,8 +4276,9 @@ import signalProbability.ProbCircuit;
                         Logger.getLogger(LogicSimulator.class.getName()).log(Level.SEVERE, null, ex);
                     }
                     break;
-
-                case ("Single_SA"): // FOR SENSITIVE AREA ANALYSIS
+                
+                    /// TODO: 26/09/2022  
+                case ("Single_SA"): // FOR SENSITIVE AREA ANALYSIS //Here
                     System.out.println("~~~~~~ SENSITIVE AREA ANALYSIS Single Transient Event - SET ~~~~~~ thd: " + this.threadID);
                     try {
                         startSimulationFaultFree();
