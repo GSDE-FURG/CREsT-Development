@@ -146,7 +146,7 @@ public class GateDetailedInformation {
         int faill = 0;
         int tested = 0;
 
-
+        ArrayList <Integer> sensitiveList = new ArrayList<>();
 
         for (int i = 0; i < input.size() ; i++) {
             int flag = 0;
@@ -159,8 +159,10 @@ public class GateDetailedInformation {
             if(output == outputFault){
                 masked++;
                 flag = 5555;
+
             }else{
                 faill++;
+                sensitiveList.add(i);
             }
 
             //System.out.println("\n)))) GateType: " + this.cells.getName() + "  Inputs: " + inputBit + " Fliped: " + inputFliped + " -> output: " + output +  " ->New_out: " + outputFault +  "  Equal masked: " + flag + " -- tested: " + tested + " Masked: " + masked);
@@ -178,7 +180,7 @@ public class GateDetailedInformation {
         else{
             coverage = 0;
         }
-        System.out.println("\n Masked: " + masked + " - Failed: " + faill +  " tested: " +tested + "| input: " + input + " Output: " + output + " Coverage: " + coverage +"%");
+        System.out.println("\n Masked: " + masked + " - Failed: " + faill +  " tested: " +tested + "| input: " + input + " Output: " + output + " Coverage: " + coverage +"%" + " SensitiveList: " + sensitiveList);
        // System.out.println(")))) GateType: " + this.cells.getName() + "  Inputs: " + input + " -> output: " + output + " -- tested: " + tested + " Masked: " + masked);
     }
 }
