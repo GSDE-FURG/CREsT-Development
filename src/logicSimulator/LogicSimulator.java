@@ -3757,7 +3757,7 @@ import signalProbability.ProbCircuit;
                                 inputsSignals.get(index).setOriginalLogicValue(thread_item.getFaultSignal().getOriginalLogicValue());
                                 inputsSignals.get(index).setLogicValue(thread_item.getFaultSignal().getLogicValue());
                                 inputsSignals.get(index).setLogicValueBoolean(thread_item.getFaultSignal().getLogicValueBoolean());
-                                
+
                                 faultSig.setOriginalLogicValue(thread_item.getFaultSignal().getOriginalLogicValue());
                                 faultSig.setLogicValue(thread_item.getFaultSignal().getLogicValue());
                                 faultSig.setLogicValueBoolean(thread_item.getFaultSignal().getLogicValueBoolean());
