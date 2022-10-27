@@ -2,10 +2,9 @@ package simulation;
 
 import java.io.*;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
-public class SimulationInLot {
+public class Simulation {
 
     private ArrayList <SimulationCircuit> circuitListSpecs;
     private ArrayList <String> circuitsListName;
@@ -17,7 +16,7 @@ public class SimulationInLot {
     /**
      * Constructor
      */
-    public SimulationInLot(){
+    public Simulation(){
 
     }
 

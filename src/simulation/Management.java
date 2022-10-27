@@ -3487,7 +3487,8 @@ public class Management extends MAIN {
 
                 for (int i = 0; i < this.itemx_list.size(); i++) {
                         List <TestVectorInformation> x =  this.itemx_list.get(i).get_threadSimulationList();
-                        for (int j = 0; j < x.size(); j++) {
+                        for (int j = 0; j < 4; j++) {
+                                //for (int j = 0; j < x.size(); j++) {
                                 // System.out.println("index: " + x.get(j).getSimulationIndex() + " vec: " + x.get(j).getinputVector() + " sensitive area sum: " + x.get(j).getSum_sensitive_cells_area() );
 
 

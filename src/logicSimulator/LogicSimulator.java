@@ -3746,7 +3746,6 @@ import signalProbability.ProbCircuit;
                 final ArrayList <Integer> signals = new ArrayList<>();
                 
                 for (int index = 0; index < inputsSignals.size(); index++) {
-                        
                         if(inputsSignals.get(index).getId().equals(faultSig.getId())){ //bit-flip 
                            // System.out.println("Falha In");
                             //System.out.println("entrou");
@@ -3839,6 +3838,7 @@ import signalProbability.ProbCircuit;
                     //boolean saida = 
                     return Boolean.TRUE;
                 }
+                //Compute Gates output
                 for (Map.Entry<ArrayList<Boolean>, Boolean> entry : comb.entrySet()){
                          if(entry.getKey().equals(input)){
                              //System.out.println("Input Finded: " + entry.getKey() + " output " + entry.getValue());
@@ -4279,7 +4279,7 @@ import signalProbability.ProbCircuit;
                 
                     /// TODO: 26/09/2022  
                 case ("Single_SA"): // FOR SENSITIVE AREA ANALYSIS //Here
-                    System.out.println("~~~~~~ SENSITIVE AREA ANALYSIS Single Transient Event - SET ~~~~~~ thd: " + this.threadID);
+                    System.out.println("SIMULATION ID (100): ~~~~~~ SENSITIVE AREA ANALYSIS for Single Transient Event - SET ~~~~~~ thd: " + this.threadID);
                     try {
                         startSimulationFaultFree();
                         //startSimulationFaultInjection();
@@ -4294,7 +4294,7 @@ import signalProbability.ProbCircuit;
                     break;
 
                 case ("Single"):
-                    System.out.println("~~~~~~ Single Transient Event - SET ~~~~~~ thd: " + this.threadID);
+                    System.out.println("SIMULATION ID (000): ~~~~~~ Single Transient Event - SET ~~~~~~ thd: " + this.threadID);
                     try {
                         startSimulationFaultFree();
                         startSimulationFaultInjection();

@@ -2,7 +2,7 @@ package simulation;
 
 import java.util.ArrayList;
 
-public class SimulationMode {
+public class SimualtionType {
 
     private SimulationCircuit simulationCircuit;
 
@@ -12,7 +12,7 @@ public class SimulationMode {
 
     public ArrayList <String> info = new ArrayList<>();
 
-    public SimulationMode(SimulationCircuit simulationCircuit){
+    public SimualtionType(SimulationCircuit simulationCircuit){
         this.simulationCircuit = simulationCircuit;
     }
 
@@ -273,7 +273,6 @@ public class SimulationMode {
         /*
         Management simulacaoMultithreading = new Management(simulationCircuit.getThreads(), simulationCircuit.getReliabilityConst(), simulationCircuit.getRelativePath(),
                 simulationCircuit.getRelativePath() + simulationCircuit.getGenlib(), simulationCircuit.getRelativePath() + simulationCircuit.getCircuit());
-
          */
         System.out.println("Exaustive");
         Management simulacaoMultithreading = new Management(simulationCircuit.getThreads(), simulationCircuit.getReliabilityConst(), simulationCircuit.getRelativePath(),

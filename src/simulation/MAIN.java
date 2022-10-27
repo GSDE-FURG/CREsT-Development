@@ -1,8 +1,5 @@
 package simulation;
 
-import com.sun.jdi.connect.Connector;
-import com.sun.tools.javac.Main;
-
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -23,7 +20,7 @@ public class MAIN {  //Class to run debug tests
 
     }
 
-    public void runloop(SimulationInLot simulationInLotDebug) throws Exception {
+    public void runloop(Simulation simulationDebug) throws Exception {
 
 
         /*
@@ -88,10 +85,10 @@ public class MAIN {  //Class to run debug tests
         */
 
 
-        for (int i = 0; i < simulationInLotDebug.getCircuitListSpecs().size(); i++) {
+        for (int i = 0; i < simulationDebug.getCircuitListSpecs().size(); i++) {
 
 
-            SimulationMode sim_mtf_debug = new SimulationMode(simulationInLotDebug.getCircuitListSpecs().get(i)); // first Circuit c.v
+            SimualtionType sim_mtf_debug = new SimualtionType(simulationDebug.getCircuitListSpecs().get(i)); // first Circuit c.v
             try {
                     sim_mtf_debug.monteCarloReliabilityAPI("");
                 // sim_mtf_debug.GateCounter();
@@ -113,7 +110,7 @@ public class MAIN {  //Class to run debug tests
     }
 
     public static void readResults( String path) throws IOException {
-        SimulationInLot circuits_folder = new SimulationInLot();
+        Simulation circuits_folder = new Simulation();
 
 
 
@@ -126,7 +123,7 @@ public class MAIN {  //Class to run debug tests
 
     public void setup_run( String path, String genlib, String signalsToinjectFault, String constReliability, ArrayList <Float> mtf_sizes, int threads) throws Exception {
 
-        SimulationInLot versao =  new SimulationInLot();
+        Simulation versao =  new Simulation();
 
         versao.setup(path, genlib, threads);
         versao.processParser(signalsToinjectFault, constReliability, mtf_sizes);
@@ -143,14 +140,14 @@ public class MAIN {  //Class to run debug tests
 
              //   try {
                     System.out.println(j + "  --> circ: "+ versao.getCircuitListSpecs().get(i).getCircuit());
-                    SimulationMode sim_mtf_debug = new SimulationMode(versao.getCircuitListSpecs().get(i));
+                    SimualtionType sim_mtf_debug = new SimualtionType(versao.getCircuitListSpecs().get(i));
                   //  if(i) {
                        //sim_mtf_debug.monteCarloReliabilityAPI("teste/lookup_table.csv");
 
                     //sim_mtf_debug.faultToleranceExhaustiveCompleteMETAPIESTIMATION();
 
                 // TODO: 26/09/2022  v1
-                   //sim_mtf_debug.faultToleranceExhaustiveSETAPI();
+                   sim_mtf_debug.faultToleranceExhaustiveSETAPI();
 
                         //sim_mtf_debug.faultToleranceExhaustiveCompleteMETAPI();
                         // sim_mtf_debug.monteCarloReliabilityAPI("teste/lookup_table.csv");
@@ -159,8 +156,8 @@ public class MAIN {  //Class to run debug tests
                         //USAR ESSE ->
                 //sim_mtf_debug.monteCarloReliability_SpiceGeneration_ElectricalSimulationAPI("teste/", "45nm_HP.pm", "Library.txt");
 
-                // TODO: 26/09/2022  v2
-              sim_mtf_debug.faultToleranceExhaustiveSET_SensitiveAreaAPI("teste/", "45nm_HP.pm", "Library.txt");
+                // TODO: 27/10/2022  v2 AQUI
+                 // sim_mtf_debug.faultToleranceExhaustiveSET_SensitiveAreaAPI("teste/", "45nm_HP.pm", "Library.txt");
 
                 //sim_mtf_debug.monteCarloReliabilitySensitiveAreasVectorsAPI("teste/");
                             // }
@@ -227,7 +224,7 @@ public class MAIN {  //Class to run debug tests
 
         for (int i = 0; i < 0 ; i++) {
 
-            SimulationInLot circuits_folder = new SimulationInLot();
+            Simulation circuits_folder = new Simulation();
 
             circuits_folder.setup(relativePath, genlib, threads);
             circuits_folder.processParser(signalsToinjectFault, constReliability, mtf_sizes);
@@ -243,11 +240,11 @@ public class MAIN {  //Class to run debug tests
             //readResults("circuitos/ISCAS89/min");
         }
 
-        SimulationInLot minimal = new SimulationInLot();
-        SimulationInLot basic = new SimulationInLot();
-        SimulationInLot complex = new SimulationInLot();
-        SimulationInLot full = new SimulationInLot();
-        SimulationInLot fullv2 = new SimulationInLot();
+        Simulation minimal = new Simulation();
+        Simulation basic = new Simulation();
+        Simulation complex = new Simulation();
+        Simulation full = new Simulation();
+        Simulation fullv2 = new Simulation();
 
 
 

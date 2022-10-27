@@ -58,7 +58,7 @@ import signalProbability.ProbSignal;
 
 
 import simulation.SimulationCircuit;
-import simulation.SimulationMode;
+import simulation.SimualtionType;
 import simulation.checkFiles;
 import writers.GenlibWriter;
 import writers.VerilogWriter;
@@ -268,7 +268,7 @@ public class Commands {
 
         SimulationCircuit simulationCircuit = new SimulationCircuit(circuit, relativePath, genlib , "ALL_SIGNALS", threads, constReliability,  Integer.parseInt(mc_sample));
         //simulationCircuit.print();
-        SimulationMode experimento = new SimulationMode(simulationCircuit);
+        SimualtionType experimento = new SimualtionType(simulationCircuit);
         experimento.printSpecSimulation();
         experimento.faultToleranceMonteCarloAPI();
 
@@ -565,7 +565,7 @@ public class Commands {
         System.out.println("-CREST Linking Monte Carlo Fault Simulator API...");
             SimulationCircuit simulationCircuit = new SimulationCircuit(circuit, relativePath, genlib, "ALL_SIGNALS", threads, constReliability, x);
                 //simulationCircuit.print();
-                SimulationMode experimento = new SimulationMode(simulationCircuit);
+                SimualtionType experimento = new SimualtionType(simulationCircuit);
                         experimento.printSpecSimulation();
                             experimento.faultToleranceMonteCarloMETAPI("CREsT");
 
@@ -646,7 +646,7 @@ public class Commands {
 
                           SimulationCircuit simulationCircuit = new SimulationCircuit(circuit, relativePath, path + genlib, "ALL_SIGNALS", threads, constReliability, 1);
                           //simulationCircuit.print();
-                          SimulationMode experimento = new SimulationMode(simulationCircuit);
+                          SimualtionType experimento = new SimualtionType(simulationCircuit);
                           experimento.printSpecSimulation();
                           experimento.faultToleranceExhaustiveSETAPI();
 
@@ -712,7 +712,7 @@ public class Commands {
 
             SimulationCircuit simulationCircuit = new SimulationCircuit(circuit, relativePath, relativePath +  genlib, "ALL_SIGNALS", threads, constReliability, 1);
             //simulationCircuit.print();
-            SimulationMode experimento = new SimulationMode(simulationCircuit);
+            SimualtionType experimento = new SimualtionType(simulationCircuit);
             experimento.printSpecSimulation();
             experimento.faultToleranceExhaustiveCompleteMETAPI();
 
