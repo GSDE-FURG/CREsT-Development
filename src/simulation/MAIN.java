@@ -147,7 +147,7 @@ public class MAIN {  //Class to run debug tests
                     //sim_mtf_debug.faultToleranceExhaustiveCompleteMETAPIESTIMATION();
 
                 // TODO: 26/09/2022  v1
-                   sim_mtf_debug.faultToleranceExhaustiveSETAPI();
+                 sim_mtf_debug.faultToleranceExhaustiveSETAPI();
 
                         //sim_mtf_debug.faultToleranceExhaustiveCompleteMETAPI();
                         // sim_mtf_debug.monteCarloReliabilityAPI("teste/lookup_table.csv");
@@ -157,7 +157,7 @@ public class MAIN {  //Class to run debug tests
                 //sim_mtf_debug.monteCarloReliability_SpiceGeneration_ElectricalSimulationAPI("teste/", "45nm_HP.pm", "Library.txt");
 
                 // TODO: 27/10/2022  v2 AQUI
-                // sim_mtf_debug.faultToleranceExhaustiveSET_SensitiveAreaAPI("teste/", "45nm_HP.pm", "Library.txt");
+                 //sim_mtf_debug.faultToleranceExhaustiveSET_SensitiveAreaAPI("teste/", "45nm_HP.pm", "Library.txt");
 
                 //sim_mtf_debug.monteCarloReliabilitySensitiveAreasVectorsAPI("teste/");
                             // }

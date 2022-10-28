@@ -153,13 +153,24 @@ public class Management extends MAIN {
                         System.out.println("- Gates: " + this.circuit.getGates().size());
                 }
 
-                if()
+                String SA_file= "./teste/lookup_table.csv";
 
-                Map <String, SensitiveCell> sensitive_cells = readCsvFileAndMapSensitiveCellsArea(file, ",");
+                File f = new File(SA_file);
+                System.out.println("Reading Sensitive Area File " + f + " exist: " + f.exists());
+                        if(f.exists()) {
+                                System.out.println("Founded: " + SA_file);
 
-                System.out.println("- Sensitive Cells: " + sensitive_cells.size());
+                                Map <String, SensitiveCell> sensitive_cells = readCsvFileAndMapSensitiveCellsArea(SA_file, ",");
 
-                this.setSensitiveCells(sensitive_cells);
+                                System.out.println("- Sensitive Cells: " + sensitive_cells.size());
+
+                                this.setSensitiveCells(sensitive_cells);
+
+                }else{
+                                System.err.println("    Sensitive Area File not founded: " + SA_file);
+                        }
+
+
 
         }
 
@@ -1036,6 +1047,11 @@ public class Management extends MAIN {
                         }
 
                         LogicSimulator threadItem = new LogicSimulator(ItemxSimulationList, this.circuit, this.cellLibrary, this.levelCircuit, start, end, this.genlib, this.circuitNameStr); // Thread contex info
+
+                        threadItem.setSensitiveCellsMap(this.sensitive_cells);
+
+
+
                         threadItem.setMode("Single");
                         itemx_list.add(threadItem);
 
@@ -1725,6 +1741,8 @@ public class Management extends MAIN {
                 String formattedDate = myDateObj.format(myFormatObj);
 
                 this.setupEnviroment("\n ----- Exaustive Simulation Version For SET (SF's) ------");
+
+                System.out.println(this.sensitive_cells);
 
                 System.out.println("    - Simulation start in : " + formattedDate);
                 System.out.println("    - Threads in execution: " + this.threads);
@@ -3000,8 +3018,10 @@ public class Management extends MAIN {
 
                         System.out.println("- Sensitive Cells: " + sensitive_cells.size());
 
-                        this.setSensitiveCells(sensitive_cells);
-                        //this.sensitive_cells = sensitive_cells;
+                        ///this.setSensitiveCells(sensitive_cells);
+
+
+                //this.sensitive_cells = sensitive_cells;
                         Instant start = Instant.now();
 
                         LocalDateTime myDateObj = LocalDateTime.now();

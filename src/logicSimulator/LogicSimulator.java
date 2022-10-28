@@ -3909,12 +3909,15 @@ import signalProbability.ProbCircuit;
          gateSensitivivity.setOutputs(output_converted);
 
 
-         if(gate.getGate().toString().equals("U0")){
-             System.out.println(" sensitiveList: " + this.sensitive_cells.size() + " Key: " + key + " - gate: " + gateSensitivivity.getGate() + " = " + gateSensitivivity.getgateSensitiveArea() + "  GATE: " + gate.getGate() + " Inputs: " + input + " Output: " + output_converted);
-         }
+         //if(gate.getGate().toString().equals("U0")){
+             ///System.out.println("--sensitiveList: " + this.sensitive_cells.size() + " Key: " + key + " - gate: " + cell + " = " + gateSensitivivity.getgateSensitiveArea() + "  GATE: " + gate.getGate() + " Inputs: " + input + " Output: " + output_converted);
+         //}
 
          if((cell != null)){
              System.out.println("Cell: " + cell);
+
+             System.out.println("--sensitiveList: " + this.sensitive_cells.size() + " Key: " + key + " - gate: " + cell.getCell_id() + " = " + cell.sensitive_are + "  GATE: " + gate.getGate() + " Inputs: " + input + " Output: " + output_converted);
+
              //thread_item.circuitPathv2.setGateInCircuitPath(gateSensitivivity);
 
              //this.sum_sensitive_cells_area = this.sum_sensitive_cells_area + Float.parseFloat(cell.getSensitive_are());
