@@ -152,6 +152,15 @@ public class Management extends MAIN {
                 if(this.circuit.getGates().size() > 3000){
                         System.out.println("- Gates: " + this.circuit.getGates().size());
                 }
+
+                if()
+
+                Map <String, SensitiveCell> sensitive_cells = readCsvFileAndMapSensitiveCellsArea(file, ",");
+
+                System.out.println("- Sensitive Cells: " + sensitive_cells.size());
+
+                this.setSensitiveCells(sensitive_cells);
+
         }
 
         /**
