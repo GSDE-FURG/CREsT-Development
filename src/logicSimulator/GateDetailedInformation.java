@@ -135,12 +135,17 @@ public class GateDetailedInformation {
         }
         return inputNew;
     }
-    public void calculatGateSusceptibility(ArrayList <Boolean> input){
+    public void calculatGateSusceptibility(ArrayList <Boolean> input){ //Trazer o original também
 
         final Map<ArrayList<Boolean>, Boolean> combx = this.cells.getComb(); // Calculate the gate output
         final Map<ArrayList<Boolean>, Boolean> comb = this.cells.getComb();
         //final ArrayList <Boolean> input = new ArrayList<>();
-        boolean output = this.calculateTheOutputGatesInBoolean(comb, input, this.gate);
+
+        boolean output = this.calculateTheOutputGatesInBoolean(comb, input, this.gate); // Output
+
+        // How get original inputs
+
+
 
         int masked = 0;
         int faill = 0;
@@ -156,7 +161,7 @@ public class GateDetailedInformation {
             ArrayList <Boolean> inputFliped = this.flipInput(inputBit, i);
             boolean outputFault = this.calculateTheOutputGatesInBoolean(comb, inputFliped, this.gate);
 
-            if(output == outputFault){
+            if(output == outputFault){ // The outputed was caculate
                 masked++;
                 flag = 5555;
 
@@ -181,7 +186,7 @@ public class GateDetailedInformation {
         else{
             coverage = 0;
         }
-        System.out.println("\n Masked: " + masked + " - Failed: " + faill +  " tested: " +tested + "| input: " + input + " Output: " + output + " Coverage: " + coverage +"%" + " SensitiveList: " + sensitiveList);
+        System.out.println("\n Gate " + gate.getGate().getId() + " susceptibility tests: " + tested  +" -> masked: " + masked + " - propagated: " + faill +   " | input: " + input + " Output: " + output + " Coverage: " + coverage +"%" + " SensitiveList: " + sensitiveList);
        // System.out.println(")))) GateType: " + this.cells.getName() + "  Inputs: " + input + " -> output: " + output + " -- tested: " + tested + " Masked: " + masked);
     }
 }
