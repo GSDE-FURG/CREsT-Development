@@ -207,4 +207,32 @@ public class GateDetailedInformation {
         System.out.println("\n Gate " + gate.getGate().getId() + " susceptibility tests: " + tested  +" -> masked: " + masked + " - propagated: " + faill +   " | input: " + input + " Output: " + output + " Coverage: " + coverage +"%" + " SensitiveList: " + sensitiveList);
        // System.out.println(")))) GateType: " + this.cells.getName() + "  Inputs: " + input + " -> output: " + output + " -- tested: " + tested + " Masked: " + masked);
     }
+
+    public Boolean calculatGateSusceptibilityLogicalMasking(ArrayList <Boolean> input, ArrayList <Boolean> inputOriginal){ //Trazer o original também
+
+        final Map<ArrayList<Boolean>, Boolean> comb = this.cells.getComb(); // Calculate the gate output
+        final Map<ArrayList<Boolean>, Boolean> comb_Original = this.cells.getComb();
+        //final ArrayList <Boolean> input = new ArrayList<>();
+
+        boolean output = this.calculateTheOutputGatesInBoolean(comb, input, this.gate); // Output
+
+        boolean output_original = this.calculateTheOutputGatesInBoolean(comb_Original, inputOriginal, this.gate); // Output
+
+        // How get original inputs
+
+        int masked = 0;
+        int faill = 0;
+        //int tested = 0;
+
+        //ArrayList <Integer> sensitiveList = new ArrayList<>();
+
+       if(output != output_original){
+           //faill++;
+           return false;
+       }else{
+           //masked++;
+           return true;
+           // masked
+       }
+    }
 }

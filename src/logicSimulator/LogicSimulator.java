@@ -157,6 +157,9 @@ import signalProbability.ProbCircuit;
             return  this.gates_passed;
         }
 
+
+    public static final String ANSI_YELLOW = "\u001B[33m";
+    public static final String ANSI_RESET = "\u001B[0m";
     public ArrayList <String> getParsedNetlistContent() {
             return this.parsedNetlistContent;
     }
@@ -3798,9 +3801,6 @@ import signalProbability.ProbCircuit;
                                      thread_item.setSignalOriginalValue(thread_item.getFaultSignal().getOriginalLogicValue());
                                         thread_item.setFaultSignalValue(thread_item.getFaultSignal().getLogicValue());
 
-
-                                //actual_value = 0;
-
                             }
 
                         this.calculateLogicalMasking(faultSig);
@@ -3860,7 +3860,7 @@ import signalProbability.ProbCircuit;
                              if(x == false){
                                  r = "0";
                              }
-                           
+
                          }
                 }
                 if(!output.equals("stuck")){
@@ -3916,12 +3916,7 @@ import signalProbability.ProbCircuit;
              key = gate.getGate().getType()  + "X1_" + concat_inputs; // Calculate the exact input vector
          }
 
-
          SensitiveCell cell = this.sensitive_cells.get(key);
-
-
-
-
          //if(gate.getGate().toString().equals("U0")){
              ///System.out.println("--sensitiveList: " + this.sensitive_cells.size() + " Key: " + key + " - gate: " + cell + " = " + gateSensitivivity.getgateSensitiveArea() + "  GATE: " + gate.getGate() + " Inputs: " + input + " Output: " + output_converted);
          //}
@@ -3929,45 +3924,77 @@ import signalProbability.ProbCircuit;
          if((cell != null)){
              // System.out.println("Cell: " + cell);
 
-             //TODO: Add the X1 in contain keys
-             GateDetailedInformation gateSensitivivity = new GateDetailedInformation();
-             gateSensitivivity.setGate(gate);
-             gateSensitivivity.setCell(cells);
-             gateSensitivivity.setInputs(input);
-             gateSensitivivity.setInputsOriginal(input_original);
-             gateSensitivivity.setOutputs(output_converted);
-
-             System.out.println("--sensitiveList: " + this.sensitive_cells.size() + " Key: " + key + " - gate: " + cell.getCell_id() + " = " + cell.sensitive_are + "  GATE: " + gate.getGate() + " Inputs: " + input + " Output: " + output_converted);
-
-             //thread_item.circuitPathv2.setGateInCircuitPath(gateSensitivivity);
-
-             //this.sum_sensitive_cells_area = this.sum_sensitive_cells_area + Float.parseFloat(cell.getSensitive_are());
-             thread_item.sum_sensitive_cells_area(Float.parseFloat(cell.getSensitive_are()));
-             thread_item.sum_sensitive_cells_area_gate(Float.parseFloat(cell.getSensitive_are()), gate);
-             gateSensitivivity.setgateSensitiveArea(Float.parseFloat(cell.getSensitive_are()));
-             thread_item.setGatesLogicalPath(gateSensitivivity);
-
-             if(faultSig.getId().equals(gate.getGate().toString())){
-                 System.out.println("-----> " + faultSig);
-             }
-             System.out.println("idx: " + thread_item.getSimulationIndex() + "  invec: " + thread_item.getinputVector() + " gateid: " + gate.getGate().getId() + " gate: " + gate.getGate().getOutputs() + " sigs: " + gate.getGate().getInputs() +  " CEll founded: " + cell.getCell_id()
-                     + " input: " +cell.getInput_vec()  + " | " + " faultSigIn: " + gate.getGate().getInputs() + " faultSigOut: " + gate.getGate().getOutputs() + " faultSig: " + faultSig.getId() + " inOrigial: "+ faultSig.getOriginalLogicValue() + " inLogical: " + faultSig.getLogicValue() + "|" +
-                     " out: " + output_converted +
-                     " sensitive area: "+ cell.getSensitive_are() + " sum: " + thread_item.getSum_sensitive_cells_area()) ;
 
 
-           Boolean flag = this.compareGateToFaultSignal(gate, faultSig);
-
-           if(flag){
                //Do something about masking
-           }
+              Boolean masked =  gateSensitivivity.calculatGateSusceptibilityLogicalMasking(input, input_original);
+
+              if(!masked){ // Propagated fault
+                  System.out.println(ANSI_YELLOW + " NOT MASKED Vec: " + thread_item.getinputVector() + " gateid: " + gate.getGate().getId() + " gate: " + gate.getGate().getOutputs() + " sigs: " + gate.getGate().getInputs() +  " CEll founded: " + cell.getCell_id()
+                          + " input: " +cell.getInput_vec()  + " | " + " faultSigIn: " + gate.getGate().getInputs() + " faultSigOut: " + gate.getGate().getOutputs() + " faultSig: " + faultSig.getId() + " inOrigial: "+ faultSig.getOriginalLogicValue() + " inLogical: " + faultSig.getLogicValue() + "|" +
+                          " out: " + output_converted +
+                          " sensitive area: "+ cell.getSensitive_are() + " sum: " + thread_item.getSum_sensitive_cells_area() + " ~ " + ANSI_RESET) ;
+
+                  //TO DO something to masking
+                  //TODO: Add the X1 in contain keys
+                  GateDetailedInformation gateSensitivivity = new GateDetailedInformation();
+                  gateSensitivivity.setGate(gate);
+                  gateSensitivivity.setCell(cells);
+                  gateSensitivivity.setInputs(input);
+                  gateSensitivivity.setInputsOriginal(input_original);
+                  gateSensitivivity.setOutputs(output_converted);
+
+                  //System.out.println("--sensitiveList: " + this.sensitive_cells.size() + " Key: " + key + " - gate: " + cell.getCell_id() + " = " + cell.sensitive_are + "  GATE: " + gate.getGate() + " Inputs: " + input + " Output: " + output_converted);
+
+                  //thread_item.circuitPathv2.setGateInCircuitPath(gateSensitivivity);
+
+                  //this.sum_sensitive_cells_area = this.sum_sensitive_cells_area + Float.parseFloat(cell.getSensitive_are());
+                  thread_item.sum_sensitive_cells_area(Float.parseFloat(cell.getSensitive_are()));
+                  thread_item.sum_sensitive_cells_area_gate(Float.parseFloat(cell.getSensitive_are()), gate);
+                  gateSensitivivity.setgateSensitiveArea(Float.parseFloat(cell.getSensitive_are()));
+                  thread_item.setGatesLogicalPath(gateSensitivivity);
+
+                  gateSensitivivity.calculatGateSusceptibility(input);
+
+
+              }else{ //Masked fault
+
+                  //TO DO something to masking
+                  //TODO: Add the X1 in contain keys
+                  GateDetailedInformation gateSensitivivity = new GateDetailedInformation();
+                  gateSensitivivity.setGate(gate);
+                  gateSensitivivity.setCell(cells);
+                  gateSensitivivity.setInputs(input);
+                  gateSensitivivity.setInputsOriginal(input_original);
+                  gateSensitivivity.setOutputs(output_converted);
+
+                  //System.out.println("--sensitiveList: " + this.sensitive_cells.size() + " Key: " + key + " - gate: " + cell.getCell_id() + " = " + cell.sensitive_are + "  GATE: " + gate.getGate() + " Inputs: " + input + " Output: " + output_converted);
+
+                  //thread_item.circuitPathv2.setGateInCircuitPath(gateSensitivivity);
+
+                  //this.sum_sensitive_cells_area = this.sum_sensitive_cells_area + Float.parseFloat(cell.getSensitive_are());
+                  thread_item.sum_sensitive_cells_area(Float.parseFloat(cell.getSensitive_are()));
+                  thread_item.sum_sensitive_cells_area_gate(Float.parseFloat(cell.getSensitive_are()), gate);
+                  gateSensitivivity.setgateSensitiveArea(Float.parseFloat(cell.getSensitive_are()));
+                  thread_item.setGatesLogicalPath(gateSensitivivity);
+
+                  gateSensitivivity.calculatGateSusceptibility(input);
+                /*
+                  System.out.println("masked: " +  ANSI_YELLOW + " Vec: " + thread_item.getinputVector() + "  faultSig: " + faultSig+ " gateid: " + gate.getGate().getId() + " gate: " + gate.getGate().getOutputs() + " sigs: " + gate.getGate().getInputs() +  " CEll founded: " + cell.getCell_id()
+                          + " input: " +cell.getInput_vec()  + " | " + " faultSigIn: " + gate.getGate().getInputs() + " faultSigOut: " + gate.getGate().getOutputs() + " faultSig: " + faultSig.getId() + " inOrigial: "+ faultSig.getOriginalLogicValue() + " inLogical: " + faultSig.getLogicValue() + "|" +
+                          " out: " + output_converted +
+                          " sensitive area: "+ cell.getSensitive_are() + " sum: " + thread_item.getSum_sensitive_cells_area() + " ~ " + ANSI_RESET );
+                          */
+
+              }
+           //}
 
              /*
             gateSensitivivity.setSensitiveArea(Float.parseFloat(cell.getSensitive_are()));
             circuitPath.setGateInCircuitPath(gateSensitivivity);
             thread_item.circuitPath.add(gateSensitivivity);
             */
-             gateSensitivivity.calculatGateSusceptibility(input);
+
 
          }
 
