@@ -3530,12 +3530,12 @@ public class Management extends MAIN {
                                         +  x.get(j).getSum_sensitive_cells_area_str()
                                         +   "  Nc: "  + x.get(j).getGatesLogicalPath().size());
                                         */
-
+                                System.out.print(i + "," + j + " >  Fsig(" + x.get(j).getFaultSignal() +") " );
                                 for (int k = 0; k < x.get(j).getGatesLogicalPath().size(); k++) {
-                                        System.out.print(ANSI_YELLOW + x.get(j).getinputVector() + " Fsig(" + x.get(j).getFaultSignal() +") " +  x.get(j).getGatesLogicalPath().get(k).getInputsOriginal() + "   -" + x.get(j).getGatesLogicalPath().get(k).getGate().getGate()
-                                                + " In: " + x.get(j).getGatesLogicalPath().get(k).getInputs()
+                                        System.out.print(ANSI_YELLOW + x.get(j).getinputVector() + " " +  x.get(j).getGatesLogicalPath().get(k).getInputsOriginal() + " -" + x.get(j).getGatesLogicalPath().get(k).getGate().getGate()
+                                                + " In: " + x.get(j).getGatesLogicalPath().get(k).getGate().getGate().getInputs()+ ": " + x.get(j).getGatesLogicalPath().get(k).getInputs() + "|" +  x.get(j).getGatesLogicalPath().get(k).getInputsOriginal()
                                                 + " Out: " + x.get(j).getGatesLogicalPath().get(k).getOutputs()
-                                                + " SA: " + x.get(j).getGatesLogicalPath().get(k).getgateSensitiveArea() + ANSI_RESET);
+                                                + " SA: " + x.get(j).getGatesLogicalPath().get(k).getgateSensitiveArea()  + " ~ " + ANSI_RESET);
                                 }
                                 System.out.println("");
                                 //InputVec.add( x.get(j).concatInputVector());

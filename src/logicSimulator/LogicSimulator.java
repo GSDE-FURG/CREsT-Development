@@ -3742,13 +3742,25 @@ import signalProbability.ProbCircuit;
     private  boolean calculateOutputFacultInjectionGateValue(Cell cells, DepthGate gate, ArrayList <Signal> inputsSignals, Signal faultSig,  TestVectorInformation thread_item){
                 //System.out.println("inn... + " + thread_item.getItem().toString());      
                 final Map<ArrayList<Boolean>, Boolean> comb = cells.getComb();
-                final ArrayList <Boolean> input = new ArrayList<>();   final ArrayList <Boolean> input_original = new ArrayList<>();
+                 ArrayList <Boolean> input = new ArrayList<>();    ArrayList <Boolean> input_original = new ArrayList<>();
                 final ArrayList <Integer> signals = new ArrayList<>();
 
                 String concat_inputs = "";
                 String concat = "";
 
+                int in = -1;
+
                 for (int index = 0; index < inputsSignals.size(); index++) {
+
+                    /* TODO HERE ....... */
+                    int temp = inputsSignals.get(index).getOriginalLogicValue();
+
+
+                    switch (temp) {
+                        case (0) -> input_original.add(Boolean.FALSE);
+                        case (1) -> input_original.add(Boolean.TRUE);
+                    }
+
                         if(inputsSignals.get(index).getId().equals(faultSig.getId())){ //bit-flip 
                            // System.out.println("Falha In");
                             //System.out.println("entrou");
@@ -3768,28 +3780,7 @@ import signalProbability.ProbCircuit;
                                         thread_item.setSignalOriginalValue(thread_item.getFaultSignal().getOriginalLogicValue());
                                         thread_item.setFaultSignalValue(thread_item.getFaultSignal().getLogicValue());
 
-                               
-                                /*
-                                thread_item.setSignalOriginalValue(0);
-                                thread_item.setFaultSignalValue(1);
-                              
-                                inputsSignals.get(index).setLogicValue(1);
-                                inputsSignals.get(index).setLogicValueBoolean(Boolean.TRUE);
-                                */
-                                
-                                /* thread item */
-                                /*
-                                 thread_item.getFaultSignal().setOriginalLogicValue(0);
-                                 thread_item.getFaultSignal().setLogicValue(1);
-                                 thread_item.getFaultSignal().setLogicValueBoolean(Boolean.TRUE);
-                                */
-                                 
-                                 /*Fault Sig*/
-                                /* 
-                                faultSig.setOriginalLogicValue(0);
-                                 faultSig.setLogicValue(1);
-                                 faultSig.setLogicValueBoolean(Boolean.TRUE);
-                                 */
+
                             }
                             else{
                                  thread_item.getFaultSignal().setOriginalLogicValue(1);
@@ -3808,10 +3799,9 @@ import signalProbability.ProbCircuit;
                                         thread_item.setFaultSignalValue(thread_item.getFaultSignal().getLogicValue());
 
 
-
+                                //actual_value = 0;
 
                             }
-                          // System.out.println(" -> fault injected (" + faultSig + ")" +  " - O(v):"+inputsSignals.get(index).getOriginalLogicValue() + "  N(v):"+inputsSignals.get(index).getLogicValue());                   
 
                         this.calculateLogicalMasking(faultSig);
                         }
@@ -3831,13 +3821,7 @@ import signalProbability.ProbCircuit;
                             concat_inputs = concat_inputs + "1";
                         }
 
-                    /* New */
-                    if(inputsSignals.get(index).getOriginalLogicValue() == 0){
-                        input_original.add(Boolean.TRUE);
-                    }
-                    if(inputsSignals.get(index).getOriginalLogicValue() == 1){
-                        input_original.add(Boolean.TRUE);
-                    }
+
 
                 }
                 concat = concat_inputs;
@@ -3894,7 +3878,7 @@ import signalProbability.ProbCircuit;
      }    
 
      public void calculateLogicalMasking(Signal faultSig){
-         System.out.println("FaultSignal:  " + faultSig);
+         //System.out.println("FaultSignal:  " + faultSig);
      }
 
      public Boolean compareGateToFaultSignal(DepthGate gate, Signal faultSig){
