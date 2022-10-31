@@ -3516,7 +3516,7 @@ public class Management extends MAIN {
 
                 for (int i = 0; i < this.itemx_list.size(); i++) {
                         List <TestVectorInformation> x =  this.itemx_list.get(i).get_threadSimulationList();
-                        for (int j = 0; j < 4; j++) {
+                        for (int j = 0; j < x.size(); j++) {
                                 //for (int j = 0; j < x.size(); j++) {
                                 // System.out.println("index: " + x.get(j).getSimulationIndex() + " vec: " + x.get(j).getinputVector() + " sensitive area sum: " + x.get(j).getSum_sensitive_cells_area() );
 
@@ -3532,7 +3532,7 @@ public class Management extends MAIN {
                                         */
 
                                 for (int k = 0; k < x.get(j).getGatesLogicalPath().size(); k++) {
-                                        System.out.print(ANSI_YELLOW + x.get(j).getinputVector() +" " + x.get(j).getGatesLogicalPath().get(k).getGate().getGate()
+                                        System.out.print(ANSI_YELLOW + x.get(j).getinputVector() + " Fsig(" + x.get(j).getFaultSignal() +") " +  x.get(j).getGatesLogicalPath().get(k).getInputsOriginal() + "   -" + x.get(j).getGatesLogicalPath().get(k).getGate().getGate()
                                                 + " In: " + x.get(j).getGatesLogicalPath().get(k).getInputs()
                                                 + " Out: " + x.get(j).getGatesLogicalPath().get(k).getOutputs()
                                                 + " SA: " + x.get(j).getGatesLogicalPath().get(k).getgateSensitiveArea() + ANSI_RESET);

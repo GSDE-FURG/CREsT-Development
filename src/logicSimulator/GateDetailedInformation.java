@@ -10,6 +10,7 @@ import java.util.Map;
 public class GateDetailedInformation {
 
     private ArrayList <String> inputs;
+    private ArrayList <String> inputs_original;
     private ArrayList <String> outputs;
 
     private DepthGate gate;
@@ -63,12 +64,29 @@ public class GateDetailedInformation {
         this.inputs = concat;
     }
 
+    public void setInputsOriginal(ArrayList <Boolean> vector_value){
+        ArrayList<String> concat = new ArrayList<>();
+        for (int i = 0; i < vector_value.size() ; i++){
+            if(vector_value.get(i) == Boolean.TRUE){
+                concat.add("1");
+            }
+            if(vector_value.get(i) == Boolean.FALSE){
+                concat.add("0");
+            }
+        }
+        this.inputs_original = concat;
+    }
+
     public DepthGate getGate() {
         return this.gate;
     }
 
     public ArrayList<String> getInputs() {
         return inputs;
+    }
+
+    public ArrayList<String> getInputsOriginal() {
+        return inputs_original;
     }
 
 

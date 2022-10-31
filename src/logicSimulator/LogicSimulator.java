@@ -3742,7 +3742,7 @@ import signalProbability.ProbCircuit;
     private  boolean calculateOutputFacultInjectionGateValue(Cell cells, DepthGate gate, ArrayList <Signal> inputsSignals, Signal faultSig,  TestVectorInformation thread_item){
                 //System.out.println("inn... + " + thread_item.getItem().toString());      
                 final Map<ArrayList<Boolean>, Boolean> comb = cells.getComb();
-                final ArrayList <Boolean> input = new ArrayList<>();
+                final ArrayList <Boolean> input = new ArrayList<>();   final ArrayList <Boolean> input_original = new ArrayList<>();
                 final ArrayList <Integer> signals = new ArrayList<>();
 
                 String concat_inputs = "";
@@ -3767,7 +3767,7 @@ import signalProbability.ProbCircuit;
                                 
                                         thread_item.setSignalOriginalValue(thread_item.getFaultSignal().getOriginalLogicValue());
                                         thread_item.setFaultSignalValue(thread_item.getFaultSignal().getLogicValue());
-                                
+
                                
                                 /*
                                 thread_item.setSignalOriginalValue(0);
@@ -3806,15 +3806,20 @@ import signalProbability.ProbCircuit;
                                     
                                      thread_item.setSignalOriginalValue(thread_item.getFaultSignal().getOriginalLogicValue());
                                         thread_item.setFaultSignalValue(thread_item.getFaultSignal().getLogicValue());
-                                 
+
+
+
+
                             }
                           // System.out.println(" -> fault injected (" + faultSig + ")" +  " - O(v):"+inputsSignals.get(index).getOriginalLogicValue() + "  N(v):"+inputsSignals.get(index).getLogicValue());                   
 
                         this.calculateLogicalMasking(faultSig);
                         }
-                        
                         signals.add(inputsSignals.get(index).getLogicValue());
-                        
+
+
+
+                        /* OLD ONE CORRECT*/
                         if(inputsSignals.get(index).getLogicValue() == 0){
                             input.add(Boolean.FALSE);
 
@@ -3825,6 +3830,15 @@ import signalProbability.ProbCircuit;
 
                             concat_inputs = concat_inputs + "1";
                         }
+
+                    /* New */
+                    if(inputsSignals.get(index).getOriginalLogicValue() == 0){
+                        input_original.add(Boolean.TRUE);
+                    }
+                    if(inputsSignals.get(index).getOriginalLogicValue() == 1){
+                        input_original.add(Boolean.TRUE);
+                    }
+
                 }
                 concat = concat_inputs;
                 //System.out.println("                                Input Signal: " + inputsSignals + " v: "+input);
@@ -3874,7 +3888,7 @@ import signalProbability.ProbCircuit;
                 }
 
 
-                this.calculateGateAS(comb, input, gate, concat_inputs, thread_item, cells, faultSig);
+                this.calculateGateAS(comb, input, input_original, gate, concat_inputs, thread_item, cells, faultSig);
          
          return (boolean) output;
      }    
@@ -3903,7 +3917,7 @@ import signalProbability.ProbCircuit;
         return false;
      }
 
-     public void calculateGateAS(final Map<ArrayList<Boolean>, Boolean> comb, final ArrayList<Boolean> input, DepthGate gate, String concat_inputs, TestVectorInformation thread_item, Cell cells, Signal faultSig){
+     public void calculateGateAS(final Map<ArrayList<Boolean>, Boolean> comb, final ArrayList<Boolean> input,  final ArrayList<Boolean> input_original, DepthGate gate, String concat_inputs, TestVectorInformation thread_item, Cell cells, Signal faultSig){
 
          //Convert the input signal values to boolean
          boolean output_converted = this.calculateTheOutputGatesInBoolean(comb, input, gate); // hero to convert
@@ -3921,12 +3935,7 @@ import signalProbability.ProbCircuit;
 
          SensitiveCell cell = this.sensitive_cells.get(key);
 
-         //TODO: Add the X1 in contain keys
-         GateDetailedInformation gateSensitivivity = new GateDetailedInformation();
-         gateSensitivivity.setGate(gate);
-         gateSensitivivity.setCell(cells);
-         gateSensitivivity.setInputs(input);
-         gateSensitivivity.setOutputs(output_converted);
+
 
 
          //if(gate.getGate().toString().equals("U0")){
@@ -3935,6 +3944,14 @@ import signalProbability.ProbCircuit;
 
          if((cell != null)){
              // System.out.println("Cell: " + cell);
+
+             //TODO: Add the X1 in contain keys
+             GateDetailedInformation gateSensitivivity = new GateDetailedInformation();
+             gateSensitivivity.setGate(gate);
+             gateSensitivivity.setCell(cells);
+             gateSensitivivity.setInputs(input);
+             gateSensitivivity.setInputsOriginal(input_original);
+             gateSensitivivity.setOutputs(output_converted);
 
              System.out.println("--sensitiveList: " + this.sensitive_cells.size() + " Key: " + key + " - gate: " + cell.getCell_id() + " = " + cell.sensitive_are + "  GATE: " + gate.getGate() + " Inputs: " + input + " Output: " + output_converted);
 
