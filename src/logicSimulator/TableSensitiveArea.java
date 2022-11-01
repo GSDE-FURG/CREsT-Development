@@ -18,7 +18,7 @@ public class TableSensitiveArea {
 
         ArrayList<String> f = new ArrayList<>();
 
-        String contentHeader = "Vectors;";
+        String contentHeader = "Vectors;FaultSignal;";
         Boolean passed = false;
 
         for (int i = 0; i < this.thread_items_list.size(); i++) {
@@ -31,9 +31,8 @@ public class TableSensitiveArea {
                 //System.out.print(x.get(j).getinputVector().toString()); // Head
 
 
-                String content = x.get(j).getinputVector().toString();
+                String content = x.get(j).getinputVector().toString() + ";" + x.get(j).getFaultSignal().toString() ;
                 String contentv2 = "";
-
 
                 for (int k = 0; k < x.get(j).getGatesLogicalPath().size(); k++) {
                     //Values for each gate
