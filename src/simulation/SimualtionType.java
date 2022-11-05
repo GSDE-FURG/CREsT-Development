@@ -263,7 +263,7 @@ public class SimualtionType {
             simulacaoMultithreading.runMultithreadingExausticSimulation(simulationCircuit.getSignalsToinjectFault());
 
 
-        simulacaoMultithreading.printSensitiveAreasAnalysis();
+        //simulacaoMultithreading.printSensitiveAreasAnalysis();
         this.OUTPUT_INFO = simulacaoMultithreading.getER("Sample (N = "
                 + "2^Signals * Gates)");
     }

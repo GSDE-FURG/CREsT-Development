@@ -42,6 +42,8 @@ public class Management extends MAIN {
         private LevelCircuit lCircuit;
         private int unmasked_faults;
         private float ER;
+
+        private float ASReal;
         private MappedVerilogReader verilog_circuit;
         private String Performance_Time;
         private int sizeExaustiveCompleteSimulation;
@@ -49,6 +51,7 @@ public class Management extends MAIN {
         private ArrayList<Float> mtf_list = new ArrayList<>();
         private Map<String, SensitiveCell> sensitive_cells;
         private float MTBF;
+        private float MTBFReal;
         private float avgASFLOAT;
 
         private long sumSet = 0;
@@ -1601,6 +1604,10 @@ public class Management extends MAIN {
                 System.out.println("- Logic Cross Section (u.m2): " + (this.avgASFLOAT*this.ER) );
                 System.out.println("- Failure Rate (h/ particles * u.m2): " + (this.avgASFLOAT*this.ER * 0.000036F) );
                 System.out.println("- Reliability (MTBF) = (1 / (" + (this.ER)+  " x " + this.avgASFLOAT + " x 3,6 * 10-5) ) = " + this.MTBF);
+
+                if(this.ASReal>0){
+                        System.out.println("- Reliability (MTBF REAL) = (1 / (" + (this.ER)+  " x " + this.ASReal + " x 3,6 * 10-5) ) = " + this.MTBFReal);}
+
                 System.out.println("- Bitflip Counter: " + bitfipCcounter);
                 System.out.println("- Load Time : " + timeElapsed_loadTime + "(s) - Setup Time: " + timeElapsed_PrepareTime + "(s) - Threading Execution Time: " + timeElapsed_ThreadingTime
                         + "(s) - Log Generation: " + timeElapsed_logGeneration
@@ -1723,6 +1730,27 @@ public class Management extends MAIN {
                 return out;
         }
 
+        public void defineAvgSensitiveArea(){
+
+                //String avgAs = calculateTotalSensitiveArea();
+                this.avgASFLOAT = Float.parseFloat(calculateTotalSensitiveArea());
+        }
+
+
+
+        public void defineMTBFBasedInAvgSensitiveAreaAvg(){
+                float particle_flux = 0.000036F;
+                float one = 1.0F;
+                this.MTBF = one /(particle_flux * (this.ER) * this.avgASFLOAT);
+        }
+
+
+
+        public void defineMTBF(){
+                float particle_flux = 0.000036F;
+                float one = 1.0F;
+                this.MTBFReal = one /(particle_flux * (this.ER) * this.ASReal);
+        }
         /**
          * Exhaustic Single STF (SET) Simulation
          *
@@ -1797,10 +1825,21 @@ public class Management extends MAIN {
 
                 long timeElapsed_logGeneration = Duration.between(startTimelogGeneration, endTimelogGeneration).toSeconds();
 
+                this.defineAvgSensitiveArea();
+
+                this.printSensitiveAreasAnalysis();
+
+                this.defineMTBFBasedInAvgSensitiveAreaAvg();
+
+                this.defineMTBF();
+
+                //System.out.println("AVGS: " + this.avgASFLOAT);
 
                 this.writeLogs(this.relativePath + option + "_ExausticSTFSimulation_" + this.circuit.getName() + "_Threads-" + this.threads + "_sampleSize-" + this.sampleSize, formattedDate, formattedDate2, timeElapsed_Instant, itemx_list, "STF");
 
                 System.out.println("----------------------------------------------------------------------");
+
+
 
                 this.printResults("Exhaustive", formattedDate, formattedDate2, bitfipCcounter, timeElapsed_loadTime, timeElapsed_PrepareTime, timeElapsed_ThreadingTime, timeElapsed_logGeneration, timeElapsed_Instant);
                 //String specific, String formattedDate, String formattedDate2,
@@ -1810,6 +1849,7 @@ public class Management extends MAIN {
                 System.out.println("-----------------------END SIMULATION---------------------------------");
 
                 this.Performance_Time = "Simulation started at: " + formattedDate + " and finished at: " + formattedDate2;
+
 
 
         }
@@ -2467,9 +2507,9 @@ public class Management extends MAIN {
                                        // System.out.println("v -" + e + "                    - INSIDE Key: " + e.getKey() + "    "  + x.get_gate_type() + "  AS: " + e.getValue().getSensitive_are() + "  sum: " + x.getSensitive_areasum());
                                 }
                         }
-                       if(x.get_gate_counter() > 0) {
-                                System.out.println(" Finded:    ASavg : " + x.get_gate_type() + "  " + (x.getSensitive_areasum() / x.getGatesCounter()) + "  c: " + x.get_gate_counter());
-                       }
+                       //if(x.get_gate_counter() > 0) {
+                               // System.out.println(" Finded:    ASavg : " + x.get_gate_type() + "  " + (x.getSensitive_areasum() / x.getGatesCounter()) + "  c: " + x.get_gate_counter());
+                       //}
 
                         //System.out.println("\n --------");
                 }
@@ -2736,10 +2776,10 @@ public class Management extends MAIN {
 
                 int base = 0;
 
-                for(int i = 0; i < 5; i ++) {              // Circuits gates
+                for(int i = 0; i < this.circuit.getGates().size(); i ++) {              // Circuits gates
                         System.out.println("xx Gate: " + this.circuit.getGates().get(i).getType());
                         if(this.circuit.getGates().get(i).getType().toString().contains("X1")){
-                                //System.out.println("Founded... " + this.circuit.getGates().get(i).getId());
+                               // System.out.println("Founded... " + this.circuit.getGates().get(i).getId());
                                         base++;
                         }
                 }
@@ -3516,7 +3556,9 @@ public class Management extends MAIN {
 
                 for (int i = 0; i < this.itemx_list.size(); i++) {
                         List <TestVectorInformation> x =  this.itemx_list.get(i).get_threadSimulationList();
-                        for (int j = 0; j < x.size(); j++) {
+
+
+                        for (int j = 0; j < 13; j++) {
                                 //for (int j = 0; j < x.size(); j++) {
                                 // System.out.println("index: " + x.get(j).getSimulationIndex() + " vec: " + x.get(j).getinputVector() + " sensitive area sum: " + x.get(j).getSum_sensitive_cells_area() );
 
@@ -3530,12 +3572,15 @@ public class Management extends MAIN {
                                         +  x.get(j).getSum_sensitive_cells_area_str()
                                         +   "  Nc: "  + x.get(j).getGatesLogicalPath().size());
                                         */
+                                float temp_sum = 0.0F;
                                 System.out.print(i + "," + j + " >  Fsig(" + x.get(j).getFaultSignal() +") " );
                                 for (int k = 0; k < x.get(j).getGatesLogicalPath().size(); k++) {
+                                        temp_sum = temp_sum + x.get(j).getGatesLogicalPath().get(k).getgateSensitiveArea();
                                         System.out.print(ANSI_YELLOW + x.get(j).getinputVector() + " " +  x.get(j).getGatesLogicalPath().get(k).getInputsOriginal() + " -" + x.get(j).getGatesLogicalPath().get(k).getGate().getGate()
                                                 + " In: " + x.get(j).getGatesLogicalPath().get(k).getGate().getGate().getInputs()+ ": " + x.get(j).getGatesLogicalPath().get(k).getInputs() + "|" +  x.get(j).getGatesLogicalPath().get(k).getInputsOriginal()
                                                 + " Out: " + x.get(j).getGatesLogicalPath().get(k).getOutputs()
-                                                + " SA: " + x.get(j).getGatesLogicalPath().get(k).getgateSensitiveArea()  + " ~ " + ANSI_RESET);
+                                                + " SA: " + x.get(j).getGatesLogicalPath().get(k).getgateSensitiveArea()  + " ~ SAtotal: " +  temp_sum  + "  " + ANSI_RESET);
+
                                 }
                                 System.out.println("");
                                 //InputVec.add( x.get(j).concatInputVector());
@@ -3580,6 +3625,8 @@ public class Management extends MAIN {
                                 }
 
                         }
+
+                        this.ASReal = sum/counter;
                 System.out.println("\n");
                 System.out.println("- Sensitive Area average (SAavg) based in AS average from each cell: " + this.avgASFLOAT);
                 System.out.println("- Sensitive Area average (SAreal) based in (" + counter + " vectors): " + (sum/counter));
