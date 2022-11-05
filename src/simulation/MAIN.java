@@ -147,7 +147,8 @@ public class MAIN {  //Class to run debug tests
                     //sim_mtf_debug.faultToleranceExhaustiveCompleteMETAPIESTIMATION();
 
                 // TODO: 26/09/2022  v1
-                 sim_mtf_debug.faultToleranceExhaustiveSETAPI();
+                sim_mtf_debug.faultToleranceExhaustiveSETAPI();
+                // sim_mtf_debug.faultToleranceExhaustiveSETAPIFAULT();
 
                         //sim_mtf_debug.faultToleranceExhaustiveCompleteMETAPI();
                         // sim_mtf_debug.monteCarloReliabilityAPI("teste/lookup_table.csv");

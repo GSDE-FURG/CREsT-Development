@@ -267,6 +267,25 @@ public class SimualtionType {
         this.OUTPUT_INFO = simulacaoMultithreading.getER("Sample (N = "
                 + "2^Signals * Gates)");
     }
+    public void faultToleranceExhaustiveSETAPIFAULT() throws Exception { //ou Signals =  "ALL_SIGNALS" for exaustive consider all_signals
+
+        /*
+        Management simulacaoMultithreading = new Management(simulationCircuit.getThreads(), simulationCircuit.getReliabilityConst(), simulationCircuit.getRelativePath(),
+                simulationCircuit.getRelativePath() + simulationCircuit.getGenlib(), simulationCircuit.getRelativePath() + simulationCircuit.getCircuit());
+
+         */
+        System.out.println("Exaustive");
+        Management simulacaoMultithreading = new Management(simulationCircuit.getThreads(), simulationCircuit.getReliabilityConst(), simulationCircuit.getRelativePath(),
+                simulationCircuit.getRelativePath()+ simulationCircuit.getGenlib(), simulationCircuit.getRelativePath()+ simulationCircuit.getCircuit());
+
+        //this.output_sample = simulacaoMultithreading.SampleSizeExausticSimulation(simulationCircuit.getSignalsToinjectFault());
+        simulacaoMultithreading.runMultithreadingExausticSimulationFAULT(simulationCircuit.getSignalsToinjectFault());
+
+
+        //simulacaoMultithreading.printSensitiveAreasAnalysis();
+        this.OUTPUT_INFO = simulacaoMultithreading.getER("Sample (N = "
+                + "2^Signals * Gates)");
+    }
 
     public void faultToleranceExhaustiveSET_SensitiveAreaAPI(String spiceScriptsFolder, String PTMLibrary, String SpiceNetListLibrary) throws Exception { //ou Signals =  "ALL_SIGNALS" for exaustive consider all_signals
 
