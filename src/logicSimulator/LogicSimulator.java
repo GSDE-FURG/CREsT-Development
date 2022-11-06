@@ -4164,7 +4164,7 @@ import signalProbability.ProbCircuit;
      public void calculateGateAS(final Map<ArrayList<Boolean>, Boolean> comb, final ArrayList<Boolean> input,  final ArrayList<Boolean> input_original, DepthGate gate, String concat_inputs, String concat_inputs_original, TestVectorInformation thread_item, Cell cells, Signal faultSig){
 
          //Convert the input signal values to boolean
-         boolean output_converted = this.calculateTheOutputGatesInBoolean(comb, input, gate); // hero to convert
+         boolean output_converted = this.calculateTheOutputGatesInBoolean(comb, input_original, gate); // hero to convert
 
          /* Calculate Sensitive Area of This Gate */
          ///SensitiveCell cell = this.sensitive_cells.get(gate.getGate().getType()  + "_" + concat_inputs);
@@ -4179,7 +4179,7 @@ import signalProbability.ProbCircuit;
              key_original = gate.getGate().getType()  + "X1_" + concat_inputs_original; // Calculate the exact input vector
          }
 
-         SensitiveCell cell = this.sensitive_cells.get(key);
+         SensitiveCell cell = this.sensitive_cells.get(key_original);
 
          //if(gate.getGate().toString().equals("U0")){
              ///System.out.println("--sensitiveList: " + this.sensitive_cells.size() + " Key: " + key + " - gate: " + cell + " = " + gateSensitivivity.getgateSensitiveArea() + "  GATE: " + gate.getGate() + " Inputs: " + input + " Output: " + output_converted);
@@ -4195,8 +4195,8 @@ import signalProbability.ProbCircuit;
              GateDetailedInformation gateSensitivivity = new GateDetailedInformation();
              gateSensitivivity.setGate(gate);
              gateSensitivivity.setCell(cells);
-             gateSensitivivity.setInputs(input);
-             gateSensitivivity.setInputsOriginal(input_original);
+             gateSensitivivity.setInputs(input_original);
+             gateSensitivivity.setInputsOriginal(input);
              gateSensitivivity.setOutputs(output_converted);
 
              /// Boolean masked =  gateSensitivivity.calculatGateSusceptibilityLogicalMasking(input, input_original);
