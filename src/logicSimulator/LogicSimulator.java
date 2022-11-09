@@ -1446,8 +1446,81 @@ import signalProbability.ProbCircuit;
 
 
     }
+    private  void propagateSAVectors(int testNumber, ArrayList <Integer> vector, Signal faultSig, int index, TestVectorInformation thread_item) throws IOException, WriteException{
 
-        private  void propagateFaultInjections(int testNumber, ArrayList <Integer> vector, Signal faultSig, int index, TestVectorInformation thread_item) throws IOException, WriteException{
+        this.threadID = (long) Thread.currentThread().getId();
+
+        //System.out.println("-> Propagating testNumber(" + testNumber + ")" + " - at Thread_ID - " + this.threadID );
+        //System.out.println("  Vector: " + vector);
+        ArrayList <GateLevel> gatesLevels = this.levelCircuit.getGateLevels();
+
+        for (int j = 0; j < gatesLevels.size(); j++) {
+
+            ArrayList <Object> gatesInThisLevel = gatesLevels.get(j).getGates();
+
+            for (int k = 0; k < gatesInThisLevel.size(); k++) {
+                String AwnsString = gatesInThisLevel.get(k).getClass().toString();
+                //System.out.println("Aws: "+ AwnsString);
+                if(AwnsString.equals("class levelDatastructures.DepthGate")){
+                    Object object = gatesInThisLevel.get(k);
+                    final DepthGate gate = (DepthGate) object;
+                    //gate.getGate().getType()
+                    //System.out.println("              - Gate: "+ gatesInThisLevel.get(k)  + "  type: "+ gate.getGate().getType());
+                    boolean gateResult = this.calculateOutputSAGateValue(gate.getGate().getType(), gate, gate.getGate().getInputs(), faultSig, thread_item);  //Method calc the output from the gate cal bitflip
+
+                    for (int s = 0; s < gate.getGate().getOutputs().size(); s++) {
+
+                        Signal sig = gate.getGate().getOutputs().get(s);
+
+                        if(gateResult == true){  //Gate Output
+                            gate.getGate().getOutputs().get(s).setOriginalLogicValue(1);
+                            gate.getGate().getOutputs().get(s).setLogicValue(1);
+                            gate.getGate().getOutputs().get(s).setLogicValueBoolean(Boolean.TRUE);
+
+
+
+                            if(sig.getId().equals(faultSig.getId())){
+                                // System.out.println("@ "+faultSig+" Sig EQUAL "+sig);
+                                faultSig.setOriginalLogicValue(1);
+                                faultSig.setLogicValue(0); // bitfip
+                                faultSig.setLogicValueBoolean(Boolean.FALSE);
+
+                                thread_item.setSignalOriginalValue(1);
+                                thread_item.setFaultSignalValue(0);
+
+
+                            }
+
+                        }
+                        else{
+                            gate.getGate().getOutputs().get(s).setOriginalLogicValue(0);
+                            gate.getGate().getOutputs().get(s).setLogicValue(0);
+                            gate.getGate().getOutputs().get(s).setLogicValueBoolean(Boolean.FALSE);
+
+
+
+                            if(sig.getId().equals(faultSig.getId())){
+                                // System.out.println("@ "+faultSig+" Sig EQUAL "+sig);
+                                faultSig.setOriginalLogicValue(0);
+                                faultSig.setLogicValue(1); // bitfip
+                                faultSig.setLogicValueBoolean(Boolean.TRUE);
+
+                                thread_item.setSignalOriginalValue(0);
+                                thread_item.setFaultSignalValue(1);
+                            }
+
+
+                        }
+                    }
+
+                }
+            }
+        }
+
+    }
+
+
+    private  void propagateFaultInjections(int testNumber, ArrayList <Integer> vector, Signal faultSig, int index, TestVectorInformation thread_item) throws IOException, WriteException{
            
              this.threadID = (long) Thread.currentThread().getId();
            
@@ -2818,7 +2891,7 @@ import signalProbability.ProbCircuit;
 
 
                 this.insertInputVectors("selected", this.threadSimulationList.get(i).getinputVector());
-                this.propagateFaultInjections(this.threadSimulationList.get(i).getSimulationIndex(), this.threadSimulationList.get(i).getinputVector(), this.threadSimulationList.get(i).getFaultSignal(), i,  this.threadSimulationList.get(i));
+                this.propagateSAVectors(this.threadSimulationList.get(i).getSimulationIndex(), this.threadSimulationList.get(i).getinputVector(), this.threadSimulationList.get(i).getFaultSignal(), i,  this.threadSimulationList.get(i));
                 this.getFaultInjectionResults(this.threadSimulationList.get(i).getinputVector(), this.threadSimulationList.get(i).getSimulationIndex(), this.threadSimulationList.get(i));
 
                 /*
@@ -3994,6 +4067,148 @@ import signalProbability.ProbCircuit;
          return (boolean) output;
      }
 
+    private  boolean calculateOutputSAGateValue(Cell cells, DepthGate gate, ArrayList <Signal> inputsSignals, Signal faultSig,  TestVectorInformation thread_item){
+        //System.out.println("inn... + " + thread_item.getItem().toString());
+        final Map<ArrayList<Boolean>, Boolean> comb = cells.getComb();
+        ArrayList <Boolean> input = new ArrayList<>();    ArrayList <Boolean> input_original = new ArrayList<>();
+        final ArrayList <Integer> signals = new ArrayList<>();
+
+        String concat_inputs = "";
+        String concat = "";
+        String concat_inputs_original = "";
+
+        int in = -1;
+
+        for (int index = 0; index < inputsSignals.size(); index++) {
+
+            /* TODO HERE ....... */
+            int temp = inputsSignals.get(index).getOriginalLogicValue();
+
+
+            switch (temp) {
+                case (0):
+                    input_original.add(Boolean.FALSE);
+                    concat_inputs_original = concat_inputs_original + "0";
+                    break;
+                case (1):
+                    input_original.add(Boolean.TRUE);
+                    concat_inputs_original = concat_inputs_original + "1";
+                    break;
+            }
+
+            if(inputsSignals.get(index).getId().equals(faultSig.getId())){ //bit-flip
+                // System.out.println("Falha In");
+                //System.out.println("entrou");
+                if(inputsSignals.get(index).getOriginalLogicValue() == 0){ //Efetua o bitflip
+                    thread_item.getFaultSignal().setOriginalLogicValue(0);
+                    thread_item.getFaultSignal().setLogicValue(0);
+                    thread_item.getFaultSignal().setLogicValueBoolean(Boolean.FALSE);
+
+                    inputsSignals.get(index).setOriginalLogicValue(thread_item.getFaultSignal().getOriginalLogicValue());
+                    inputsSignals.get(index).setLogicValue(thread_item.getFaultSignal().getLogicValue());
+                    inputsSignals.get(index).setLogicValueBoolean(thread_item.getFaultSignal().getLogicValueBoolean());
+
+                    faultSig.setOriginalLogicValue(thread_item.getFaultSignal().getOriginalLogicValue());
+                    faultSig.setLogicValue(thread_item.getFaultSignal().getLogicValue());
+                    faultSig.setLogicValueBoolean(thread_item.getFaultSignal().getLogicValueBoolean());
+
+                    thread_item.setSignalOriginalValue(thread_item.getFaultSignal().getOriginalLogicValue());
+                    thread_item.setFaultSignalValue(thread_item.getFaultSignal().getLogicValue());
+
+
+                }
+                else{
+                    thread_item.getFaultSignal().setOriginalLogicValue(1);
+                    thread_item.getFaultSignal().setLogicValue(1);
+                    thread_item.getFaultSignal().setLogicValueBoolean(Boolean.TRUE);
+
+                    inputsSignals.get(index).setOriginalLogicValue(thread_item.getFaultSignal().getOriginalLogicValue());
+                    inputsSignals.get(index).setLogicValue(thread_item.getFaultSignal().getLogicValue());
+                    inputsSignals.get(index).setLogicValueBoolean(thread_item.getFaultSignal().getLogicValueBoolean());
+
+                    faultSig.setOriginalLogicValue(thread_item.getFaultSignal().getOriginalLogicValue());
+                    faultSig.setLogicValue(thread_item.getFaultSignal().getLogicValue());
+                    faultSig.setLogicValueBoolean(thread_item.getFaultSignal().getLogicValueBoolean());
+
+                    thread_item.setSignalOriginalValue(thread_item.getFaultSignal().getOriginalLogicValue());
+                    thread_item.setFaultSignalValue(thread_item.getFaultSignal().getLogicValue());
+
+                }
+
+                this.calculateLogicalMasking(faultSig);
+            }
+            signals.add(inputsSignals.get(index).getLogicValue());
+
+
+
+            /* OLD ONE CORRECT*/
+            if(inputsSignals.get(index).getLogicValue() == 0){
+                input.add(Boolean.FALSE);
+
+                concat_inputs = concat_inputs + "0";
+            }
+            if(inputsSignals.get(index).getLogicValue() == 1){
+                input.add(Boolean.TRUE);
+
+                concat_inputs = concat_inputs + "1";
+            }
+
+
+
+        }
+        concat = concat_inputs;
+        //System.out.println("                                Input Signal: " + inputsSignals + " v: "+input);
+        Object output = "stuck";
+
+        String r = "";
+
+        String gate_temp = gate.getGate().getType().toString();
+        //System.out.println("Gate: " + gate_temp);
+
+        if(gate_temp.equals("ZERO")){
+            //System.out.println("  OPS ------------------------------ ZERO    " + gate_temp );
+            r = "0";
+            //boolean saida =
+            return Boolean.FALSE;
+        }
+        if(gate_temp.equals("ONE")){
+            //System.out.println("  OPS ------------------------------ OONE    " + gate_temp );
+            r = "1";
+            //boolean saida =
+            return Boolean.TRUE;
+        }
+        //Compute Gates output
+        for (Map.Entry<ArrayList<Boolean>, Boolean> entry : comb.entrySet()){
+            if(entry.getKey().equals(input)){
+                //System.out.println("Input Finded: " + entry.getKey() + " output " + entry.getValue());
+                //Gate k = null;
+                boolean x = entry.getValue();
+                output = entry.getValue();
+                r = "";//output.toString();
+                if(x == true){
+                    r = "1";
+
+                }
+                if(x == false){
+                    r = "0";
+                }
+
+            }
+        }
+        if(!output.equals("stuck")){
+            //System.out.println("               Gate: " + gate.getGate() + "(" +cells.getName() + ") inputSignals: " + gate.getGate().getInputs() + " -> values: "  + signals + " ~ " + input  + " -> Output " + gate.getGate().getOutputs() + " is: " + r + " ["+ output +"] ------ \n");
+        }else{
+            System.out.println("ERROR stuck !!!!! o: "+output + "  GATE: " + gate.getGate() + "  type: " + gate.getGate().getType());
+
+
+        }
+
+
+        this.calculateGateAS(comb, input, input_original, gate, concat_inputs, concat_inputs_original, thread_item, cells, faultSig);
+
+        return (boolean) output;
+    }
+
     private  boolean calculateOutputFacultInjectionGateValueFAULT(Cell cells, DepthGate gate, ArrayList <Signal> inputsSignals, Signal faultSig,  TestVectorInformation thread_item){
         //System.out.println("inn... + " + thread_item.getItem().toString());
         final Map<ArrayList<Boolean>, Boolean> comb = cells.getComb();
@@ -4164,7 +4379,7 @@ import signalProbability.ProbCircuit;
      public void calculateGateAS(final Map<ArrayList<Boolean>, Boolean> comb, final ArrayList<Boolean> input,  final ArrayList<Boolean> input_original, DepthGate gate, String concat_inputs, String concat_inputs_original, TestVectorInformation thread_item, Cell cells, Signal faultSig){
 
          //Convert the input signal values to boolean
-         boolean output_converted = this.calculateTheOutputGatesInBoolean(comb, input, gate); // hero to convert
+         boolean output_converted = this.calculateTheOutputGatesInBoolean(comb, input_original, gate); // hero to convert
 
          /* Calculate Sensitive Area of This Gate */
          ///SensitiveCell cell = this.sensitive_cells.get(gate.getGate().getType()  + "_" + concat_inputs);
@@ -4179,7 +4394,7 @@ import signalProbability.ProbCircuit;
              key_original = gate.getGate().getType()  + "X1_" + concat_inputs_original; // Calculate the exact input vector
          }
 
-         SensitiveCell cell = this.sensitive_cells.get(key);
+         SensitiveCell cell = this.sensitive_cells.get(key_original);
 
          //if(gate.getGate().toString().equals("U0")){
              ///System.out.println("--sensitiveList: " + this.sensitive_cells.size() + " Key: " + key + " - gate: " + cell + " = " + gateSensitivivity.getgateSensitiveArea() + "  GATE: " + gate.getGate() + " Inputs: " + input + " Output: " + output_converted);
@@ -4195,8 +4410,8 @@ import signalProbability.ProbCircuit;
              GateDetailedInformation gateSensitivivity = new GateDetailedInformation();
              gateSensitivivity.setGate(gate);
              gateSensitivivity.setCell(cells);
-             gateSensitivivity.setInputs(input);
-             gateSensitivivity.setInputsOriginal(input_original);
+             gateSensitivivity.setInputs(input_original);
+             gateSensitivivity.setInputsOriginal(input);
              gateSensitivivity.setOutputs(output_converted);
 
              /// Boolean masked =  gateSensitivivity.calculatGateSusceptibilityLogicalMasking(input, input_original);
