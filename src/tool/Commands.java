@@ -818,20 +818,20 @@ public class Commands {
 
         try {
             
-            Long timeNow = timenow();
-            System.out.println("Verificando init Circuit...");
-            System.out.println("");
+            //Long timeNow = timenow();
+            //System.out.println("Verificando init Circuit...");
+            //System.out.println("");
 
             Terminal.getInstance().initCircuit(path);
-            timestamp(timeNow, "Init circuit");
+            //timestamp(timeNow, "Init circuit");
 
-            timeNow = timenow();
+            //timeNow = timenow();
             Terminal.getInstance().initLevelCircuit();
-            timestamp(timeNow, "Init Levelcircuit");
+            //timestamp(timeNow, "Init Levelcircuit");
 
-            timeNow = timenow();
+            //timeNow = timenow();
             Terminal.getInstance().initProbCircuit();
-            timestamp(timeNow, "Init Probcircuit");
+            //timestamp(timeNow, "Init Probcircuit");
         } catch (ScriptException ex) {
             System.out.println(ex);
         }
@@ -1090,7 +1090,7 @@ public class Commands {
             cellLib.setPTMCells2(Float.valueOf(reliability));
             cellLib.setPTMCells(new BigDecimal(reliability));
             cellLib.teste();
-            pCircuit.setPTMReliabilityMatrix();        
+            pCircuit.setPTMReliabilityMatrix();
 
             switch(type) {
 
@@ -1108,6 +1108,7 @@ public class Commands {
 
                 case "default":
                     BigDecimal val = PTMOps2.getCircuitReliabilityByPTM(pCircuit);
+                    System.out.println("veio até aqui! e gerou " + val);
                     result = "MTBF using PTM of " + pCircuit.getName() + " CIRCUIT is " + CommonOps.getMTBFBigInt(val) + ")";                
                     break;
 

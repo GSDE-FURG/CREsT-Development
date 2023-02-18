@@ -49,23 +49,8 @@ class TerminalWrapper {
     public static void main(String[] args) throws
             ScriptException, AWTException, IOException, Exception {   
         if(args.length > 0) {
-            
           /**
-            * 
-            * 
-            * 
-            * 
-            * 
-            * 
-            * 
             * Terminal usado no trabalho de sistemas evolutivos
-            * 
-            * 
-            * 
-            * 
-            * 
-            * 
-            * 
             */
              /* Clayton */
             //System.out.println("____>  " + args.toString());
@@ -289,7 +274,8 @@ class TerminalWrapper {
             Robot r = new Robot();
 
 
-            //term.executeCommand("read_genlib /abc/cadence.genlib");
+            term.executeCommand("read_genlib minimal.genlib");
+            term.executeCommand("read_verilog c17.v");
             
            
             //term.executeCommand("read_genlib lib_full_no_cost.genlib");
@@ -322,25 +308,9 @@ class TerminalWrapper {
             
         }        
     }
-
     /**
-     * 
-     * 
-     * 
-     * 
-     * 
-     * 
-     * 
      * MÉTODOS USADOS NO TRABALHO DE SISTEMAS EVOLUTIVOS 2020
-     * 
-     * 
-     * 
-     * 
-     * 
-     * 
-     * 
      */
-    
     private static String getSPRReliabilityVector(ProbCircuit pCircuit, BigInteger vector) {        
         InputVector inputV = new InputVector(vector);
         String result = "" + vector + ";" + SPROpsChuloMedio.getSPRReliability(pCircuit, inputV, 30);

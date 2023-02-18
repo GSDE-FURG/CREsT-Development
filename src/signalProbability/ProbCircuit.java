@@ -5,7 +5,6 @@
  */
 package signalProbability;
 
-//import com.sun.javafx.scene.control.skin.CustomColorDialog;
 import datastructures.Cell;
 import datastructures.CellLibrary;
 import datastructures.Circuit;
@@ -59,11 +58,11 @@ public class ProbCircuit extends Circuit {
         this.makeProbSignalsAndProbGates();
         //System.out.println("Foi o makeProbSignalsAndProbGates");
         this.setGatesDepth();
-        //System.out.println("Foi setGatesDepth");
+
+        // Matheus 2023-02-17 - O SPR UTILIZA OS OBJS ProbGateLevels - verificar se vale a pena manter isso
         this.makeProbGateLevels();
-        //System.out.println("Foi o makeProbGateLevels");
-        //this.makeProbInterLevels();
-       //System.out.println("Foi o makeProbInterLevels");
+
+        this.makeProbInterLevels();
         
     }
 
@@ -304,7 +303,7 @@ public class ProbCircuit extends Circuit {
         this.probGateLevels = probGateLevels;
     }
 
-    public void makeProbGateLevels_OLD() {
+    public void makeProbGateLevels() {
         int lastLevel = 0;
         int inCounter = 0;
         int outCounter = 0;
@@ -312,7 +311,7 @@ public class ProbCircuit extends Circuit {
         ArrayList<Object> foo = new ArrayList<>();
 
         for (int i = 0; i < this.getProbOutputs().size(); i++) {
-            System.out.println(this.getProbOutputs().get(i).getPOrigin().getDepth());
+            //System.out.println(this.getProbOutputs().get(i).getPOrigin().getDepth());
             foo.add(this.getProbOutputs().get(i).getPOrigin());
         }
 
@@ -364,11 +363,18 @@ public class ProbCircuit extends Circuit {
         makeLeftGateLevels(gateLevel);
     }
 
-    public void makeProbGateLevels() {
+    /**
+     * 2023-02-18 -- Tinha feito esse método pensando em rodar benchmarks maiores
+     * O SPR utiliza o ProbGateLevel
+     * Talvez seja interessante fazer o ProbGateLevel e ProbInterLevel apenas para a PTMM
+     */
+    public void makeProbGateLevels_TESTE() {
         int greaterDepth = 0;
-        long timeNow = timenow();
+        //long timeNow = timenow();
 
-        //System.out.println("Outputs: " + this.getProbOutputs().size());
+        /**
+         * Verificar a maior profundidade lógica
+         */
         for (int i = 0; i < this.getProbOutputs().size(); i++) {
             ProbGate pGate = this.getProbOutputs().get(i).getPOrigin();
             if(pGate != null) {
@@ -377,8 +383,6 @@ public class ProbCircuit extends Circuit {
                     greaterDepth = flag;
                 }
             }
-
-            //foo.add(this.getProbOutputs().get(i).getPOrigin());
         }
 
         ArrayList<ProbGateLevel> pGatesLevels = new ArrayList<>(greaterDepth);
@@ -564,11 +568,13 @@ public class ProbCircuit extends Circuit {
         for (int i = 0; i < this.probGateLevels.size(); i++) {
             if(i == 0) {
                 ProbInterLevel pInterLevel = new ProbInterLevel(1);
+
                 for (int j = 0; j < getProbInputs().size(); j++) {
                     pInterLevel.addIn(getProbInputs().get(j));
                 }
                 
                 ArrayList<Object> pGates = this.probGateLevels.get(i).getGates();
+                System.out.println("probGateLevels: " + this.probGateLevels.get(i).getGates());
                 for (int j = 0; j < pGates.size(); j++) {
                     if(pGates.get(j) instanceof ProbGate) {
                         ProbGate pGate = (ProbGate)pGates.get(j);
@@ -582,7 +588,8 @@ public class ProbCircuit extends Circuit {
                 }
                 
                 this.probInterLevels.add(pInterLevel);
-            
+                System.out.println("INS: " + pInterLevel.getInSignals());
+                System.out.println("OUTS: " + pInterLevel.getOutSignals());
             } else {
                 
                 ProbInterLevel pInterLevel = new ProbInterLevel(i+1);
@@ -613,8 +620,9 @@ public class ProbCircuit extends Circuit {
                     }  
                 }
                 this.probInterLevels.add(pInterLevel);
+                System.out.println("INS: " + pInterLevel.getInSignals());
+                System.out.println("OUTS: " + pInterLevel.getOutSignals());
             }
-            
         }
     }
 
