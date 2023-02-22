@@ -274,8 +274,8 @@ class TerminalWrapper {
             Robot r = new Robot();
 
 
-            term.executeCommand("read_genlib minimal.genlib");
-            term.executeCommand("read_verilog c17.v");
+            //term.executeCommand("read_genlib minimal.genlib");
+            //term.executeCommand("read_verilog c17.v");
             
            
             //term.executeCommand("read_genlib lib_full_no_cost.genlib");
@@ -294,10 +294,11 @@ class TerminalWrapper {
            // mc_fault_injection abc/c17v3_fritz.v abc/cadence.genlib
            // term.executeCommand("help");
             //term.executeCommand("spr");
-            //term.executeCommand("clear");
+            term.executeCommand("clear");
             
-           // r.keyPress(KeyEvent.VK_ENTER);
-           // r.keyRelease(KeyEvent.VK_ENTER);
+            r.keyPress(KeyEvent.VK_ENTER);
+            r.keyRelease(KeyEvent.VK_ENTER);
+            term.executeCommand("clear");
             
             //System.out.println(term.getCircuit());
             // ##########
