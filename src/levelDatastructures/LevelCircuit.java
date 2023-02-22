@@ -42,17 +42,17 @@ public class LevelCircuit extends Circuit {
             depthGates.add(new DepthGate(circuit.getGates().get(i)));
         }        
 
-        gatesDEPTH = timenow();
+        //gatesDEPTH = timenow();
         setGatesDepth();
-        timestamp(gatesDEPTH, "Gates Depth DFS");
+        //timestamp(gatesDEPTH, "Gates Depth DFS");
 
-        gateLEVELS = timenow();
+        //gateLEVELS = timenow();
         setGateLevels();
-        timestamp(gateLEVELS, "Gate Levels setting");
+        //timestamp(gateLEVELS, "Gate Levels setting");
 
-        interLEVELS = timenow();
+        //interLEVELS = timenow();
         setInterLevels();
-        timestamp(interLEVELS, "Inter Levels setting");
+        //timestamp(interLEVELS, "Inter Levels setting");
         
     }
     

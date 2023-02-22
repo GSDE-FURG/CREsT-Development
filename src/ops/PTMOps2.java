@@ -116,9 +116,6 @@ public class PTMOps2 {
         ProbInterLevel firstPInterLevel = pCircuit.getProbInterLevels().get(0);
         ProbGateLevel firstGateLevel = pCircuit.getProbGateLevels().get(0);
 
-        System.out.println(firstPInterLevel);
-        System.out.println(firstGateLevel);
-
         if(!firstPInterLevel.getInSignals().equals(firstPInterLevel.getOutSignals())) {
             
             result = getInterconnection(firstPInterLevel);
@@ -166,12 +163,7 @@ public class PTMOps2 {
             dict.put(inSignal.getId(), flag++);
         }
 
-        System.out.println(dict);
         for (int i = 0; i < outSignals.size(); i++) {
-            System.out.println("pInterLevel: " + pInterLevel.getLevel());
-            System.out.println("i" + i);
-            System.out.println("outSignal --> " + outSignals.get(i).getId());
-            System.out.println("=========");
 
             mapping[i] = dict.get(outSignals.get(i).getId());
 

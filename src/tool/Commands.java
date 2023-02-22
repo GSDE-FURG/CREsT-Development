@@ -1089,7 +1089,6 @@ public class Commands {
             // Tá dando erro aqui!!!
             cellLib.setPTMCells2(Float.valueOf(reliability));
             cellLib.setPTMCells(new BigDecimal(reliability));
-            cellLib.teste();
             pCircuit.setPTMReliabilityMatrix();
 
             switch(type) {
@@ -1108,7 +1107,6 @@ public class Commands {
 
                 case "default":
                     BigDecimal val = PTMOps2.getCircuitReliabilityByPTM(pCircuit);
-                    System.out.println("veio até aqui! e gerou " + val);
                     result = "MTBF using PTM of " + pCircuit.getName() + " CIRCUIT is " + CommonOps.getMTBFBigInt(val) + ")";                
                     break;
 
@@ -1903,46 +1901,17 @@ public class Commands {
     }
     
     public void Foo4() throws IOException, Exception {
-
-        System.out.println("Mamae");
-        
-        String[] circuits = {"c3540_lib_full_no_cost_no_xor.v",
-                             "c3540_lib_full_no_cost.v"};
-        
-        System.out.println("Mamae");
-
-        timenow = timenow();
-        Terminal.getInstance().executeCommand("read_genlib abc/Matheus/1-minimal_no_cost.genlib");
-        timestamp(timenow, "genlib reading...");
-
-        timenow = timenow();
-        Terminal.getInstance().executeCommand("read_custom_matrix 45nm.txt");
-        timestamp(timenow, "custom matrix reading...");
-
-
-        timenow = timenow();
-        //Terminal.getInstance().executeCommand("read_verilog abc/Matheus/memory_control_minimal_no_cost.v");
-        Terminal.getInstance().executeCommand("read_verilog abc/Matheus/arbiter_round_robin_minimal_no_cost.v");
-        //Terminal.getInstance().executeCommand("read_verilog abc/Matheus/sixteen-minimal.v");
-        timestamp(timenow, "circuit reading...");
-
-
-        CellLibrary cellLib = Terminal.getInstance().getCellLibrary();
         ProbCircuit pCircuit = Terminal.getInstance().getProbCircuit();
-        timenow = timenow();
-        Terminal.getInstance().executeCommand("spr");
-        timestamp(timenow, "Spr");
+        System.out.println(pCircuit);
 
-        /*
-        for (String c : circuits) {
-            ProbCircuit pCircuit = new CircuitFactory(Terminal.getInstance().getCellLibrary(), "files/mappeds/" + c).getProbCircuit();
-            SPRController controller = new SPRController(pCircuit, cellLib);
-            //System.out.println(CommonOps.getMTBFBigInt(controller.getReliability(new BigDecimal("0.99999802495"))));        
-            System.out.println(CommonOps.getMTBFBigInt(controller.getReliability(new BigDecimal("0.999991145814062"))));        
-        }*/
-        
-                      
-        
+        int[] teste = CommonOps.getITM(pCircuit);
+
+        for (int i : teste) {
+            System.out.println(i);
+        }
+
+        System.out.println("tamanho do vetor: " + teste.length);
+
         
     }
     

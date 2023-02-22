@@ -469,8 +469,7 @@ public class ProbCircuit extends Circuit {
             currentLevel.setOut(outCounter);
             
             this.probGateLevels.add(0, currentLevel);
-            //System.out.println("teste");
-            System.out.println("Current Level: " + currentLevel.getLevel());
+
             if(currentLevel.getLevel() != 1) {
                 makeLeftGateLevels(currentLevel);
 
@@ -574,7 +573,6 @@ public class ProbCircuit extends Circuit {
                 }
                 
                 ArrayList<Object> pGates = this.probGateLevels.get(i).getGates();
-                System.out.println("probGateLevels: " + this.probGateLevels.get(i).getGates());
                 for (int j = 0; j < pGates.size(); j++) {
                     if(pGates.get(j) instanceof ProbGate) {
                         ProbGate pGate = (ProbGate)pGates.get(j);
@@ -588,8 +586,6 @@ public class ProbCircuit extends Circuit {
                 }
                 
                 this.probInterLevels.add(pInterLevel);
-                System.out.println("INS: " + pInterLevel.getInSignals());
-                System.out.println("OUTS: " + pInterLevel.getOutSignals());
             } else {
                 
                 ProbInterLevel pInterLevel = new ProbInterLevel(i+1);
@@ -620,8 +616,6 @@ public class ProbCircuit extends Circuit {
                     }  
                 }
                 this.probInterLevels.add(pInterLevel);
-                System.out.println("INS: " + pInterLevel.getInSignals());
-                System.out.println("OUTS: " + pInterLevel.getOutSignals());
             }
         }
     }

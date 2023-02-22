@@ -601,7 +601,6 @@ public class CellLibrary {
     }
     
     public void teste(){
-        System.out.println("MAMAE");
         
         for (int i = 0; i < cells.size(); i++) {
             System.out.println(cells.get(i).getName());

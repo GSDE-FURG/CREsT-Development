@@ -311,12 +311,22 @@ public class CommonOps {
     }
     
     public static int[] getITM(ProbCircuit pCircuit) {
-        
+        /**
+         * Gera uma tabela o input de uma tabela verdade de 2^input do circuito
+         */
         ArrayList<ArrayList<Boolean>> inCombination = getCombVectors(0, PTMOps.PowInt(2, (pCircuit.getProbInputs().size())) - 1, pCircuit.getProbInputs().size());
+
+        /**
+         * Propaga as combinações da tabela verdade no circuito
+         */
         pCircuit.propagate(inCombination);
-        
-        //int[] itm = new int[PTMOps.PowInt(2, pCircuit.getProbInputs().size())];
+
+        /**
+         * A ITM é representada por um vetor de inteiros
+         * A primeira posição do vetor é o total de colunas da matriz ITM
+         */
         int[] itm = new int[pCircuit.getProbInputs().get(0).getSignalValues().size() + 1];
+
         ArrayList<ProbSignal> outSignals = pCircuit.getProbOutputs();
         
         itm[0] = PTMOps.PowInt(2, outSignals.size());
