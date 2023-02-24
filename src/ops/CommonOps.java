@@ -8,7 +8,9 @@ package ops;
 import java.io.File;
 import java.lang.Math.*;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.math.RoundingMode;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -16,6 +18,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import signalProbability.ProbCircuit;
 import signalProbability.ProbSignal;
 
@@ -26,9 +30,35 @@ import static ops.LogarithmOps.lnBig;
  * @author matheus
  */
 public class CommonOps {
+
+    public static String getBinaryTruthTable(String hexTruth, int cellInputSize) {
+        BigInteger bInt = new BigInteger(hexTruth, 16);
+        return String.format("%" + (int)Math.pow(2, cellInputSize) + "s", bInt.toString(2)).replace(' ', '0');
+    }
+
+    public static long timenow() {
+        return System.currentTimeMillis();
+    }
+
+    public static long timestampDiff(Long timenow) {
+        return System.currentTimeMillis() - timenow;
+    }
+
+    public static void timestamp(Long timenow, String message) {
+        final long startTime = System.currentTimeMillis();
+        String timeConsup = "## TIME CONSUPTION ## ==> " + Long.toString(timestampDiff(timenow)) + " ms";
+        System.out.println(message);
+        System.out.println(timeConsup);
+    }
     
-    public static String getTrueCurrentPath(Object obj) {
-        return obj.getClass().getProtectionDomain().getCodeSource().getLocation().getPath();
+    public static String getTrueCurrentPath(Object obj) {        
+        try {
+            //return obj.getClass().getProtectionDomain().getCodeSource().getLocation().getPath();
+            return new File(obj.getClass().getProtectionDomain().getCodeSource().getLocation().toURI()).getPath();
+        } catch (URISyntaxException ex) {
+            Logger.getLogger(CommonOps.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        }
     }
     
     public static String getFileName(String path) {
@@ -83,7 +113,7 @@ public class CommonOps {
                         
                         BigDecimal val = a.multiply(matrixB[rowB][colB]);
 
-                        matrixC[i*rowsB+rowB][j*colsB+colB] = val.setScale(13, RoundingMode.HALF_UP);
+                        matrixC[i*rowsB+rowB][j*colsB+colB] = val.setScale(15, RoundingMode.HALF_UP);
                         //matrixC[i*rowsB+rowB][j*colsB+colB] = val;
                     }
                 }
@@ -119,7 +149,7 @@ public class CommonOps {
         for (int i = 0; i < aRows; i++) { // aRow
             for (int j = 0; j < bColumns; j++) { // bColumn
                 for (int k = 0; k < aColumns; k++) { // aColumn
-                    C[i][j] = C[i][j].add(A[i][k].multiply(B[k][j])).setScale(13, RoundingMode.HALF_UP);
+                    C[i][j] = C[i][j].add(A[i][k].multiply(B[k][j]).setScale(15, RoundingMode.HALF_UP)).setScale(15, RoundingMode.HALF_UP);
                     //C[i][j] = C[i][j].add(A[i][k].multiply(B[k][j]));
                 }
             }
@@ -281,12 +311,22 @@ public class CommonOps {
     }
     
     public static int[] getITM(ProbCircuit pCircuit) {
-        
+        /**
+         * Gera uma tabela o input de uma tabela verdade de 2^input do circuito
+         */
         ArrayList<ArrayList<Boolean>> inCombination = getCombVectors(0, PTMOps.PowInt(2, (pCircuit.getProbInputs().size())) - 1, pCircuit.getProbInputs().size());
+
+        /**
+         * Propaga as combinações da tabela verdade no circuito
+         */
         pCircuit.propagate(inCombination);
-        
-        //int[] itm = new int[PTMOps.PowInt(2, pCircuit.getProbInputs().size())];
+
+        /**
+         * A ITM é representada por um vetor de inteiros
+         * A primeira posição do vetor é o total de colunas da matriz ITM
+         */
         int[] itm = new int[pCircuit.getProbInputs().get(0).getSignalValues().size() + 1];
+
         ArrayList<ProbSignal> outSignals = pCircuit.getProbOutputs();
         
         itm[0] = PTMOps.PowInt(2, outSignals.size());
@@ -309,6 +349,35 @@ public class CommonOps {
         return itm;
     }
     
+    public static BigDecimal getSignalMatrixDifference(BigDecimal[][] matrix, int scale) {
+        BigDecimal counter = BigDecimal.ZERO;
+            
+        for (int j = 0; j < matrix.length; j++) {
+            for (int k = 0; k < matrix[j].length; k++) {
+                counter = counter.add(matrix[j][k]);
+            }
+        }   
+        return BigDecimal.ONE.subtract(counter).setScale(scale, RoundingMode.CEILING);
+    }
+    
+    public static BigDecimal[][] getSignalMatrixDistributedError(BigDecimal[][] matrix, BigDecimal error, int scale) {
+        
+        for (int j = 0; j < matrix.length; j++) {
+            for (int k = 0; k < matrix[j].length; k++) {
+                BigDecimal matrixValue = matrix[j][k];
+                BigDecimal percentageValue = matrixValue.multiply(error.abs()).setScale(scale, RoundingMode.HALF_UP);
+                
+                //System.out.println("MatrixValue " + matrixValue);
+                //System.out.println("PercentageValue: " + percentageValue);
+                //System.out.println("Error: " + error);
+                                
+                matrix[j][k] = matrix[j][k].divide(BigDecimal.ONE.subtract(error).setScale(scale, RoundingMode.HALF_UP), scale, RoundingMode.HALF_UP).setScale(scale, RoundingMode.HALF_UP);
+                //System.out.println(matrix[j][k]);
+            }
+        } 
+        //System.out.println("#####################");
+        return matrix;
+    }   
     /**
      * calculates the inherent reliability in BigDecimal of a circuit, that is, R^N, where
      * R = gates' reliability and N = total gates in circuit
@@ -376,6 +445,18 @@ public class CommonOps {
         BigDecimal mtbf = BigDecimal.ONE.divide((getFailureRate(reliability)), 12, RoundingMode.HALF_UP);
         
         return mtbf;
+    }
+    
+    /**
+     * Return the MTBF value based on reliability value passed
+     * @param reliability
+     * @return 
+     */
+    public static BigInteger getMTBFBigInt(BigDecimal reliability) {
+        
+        BigDecimal mtbf = BigDecimal.ONE.divide((getFailureRate(reliability)), 12, RoundingMode.HALF_UP);
+        
+        return mtbf.toBigInteger();
     }
     
     /**

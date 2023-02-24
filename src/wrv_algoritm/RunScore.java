@@ -8,6 +8,7 @@ package wrv_algoritm;
 import java.math.BigDecimal;
 import java.util.List;
 import signalProbability.ProbGate;
+import datastructures.InputVector;
 
 /**
  * a implementação da interface RunScore representa um método para calcular os escores dos vetores

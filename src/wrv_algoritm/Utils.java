@@ -13,7 +13,6 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -32,6 +31,7 @@ import signalProbability.ProbSignal;
 import tool.Commands;
 import tool.Terminal;
 import writers.VerilogWriter;
+import datastructures.InputVector;
 
 /**
  *
@@ -94,6 +94,7 @@ public abstract class Utils {
                         out.getDestiny().remove(null);
                     }
                 }
+                //FIXME deixar o local pra onde vão os arquivos mais dinâmico
                 String filename = "abc/" + circuit.getName() + "/" + subCircuit.getName() + ".v";
                 VerilogWriter writer = new VerilogWriter(filename, subCircuit);                
                 for (Signal o : outsCorretion) {

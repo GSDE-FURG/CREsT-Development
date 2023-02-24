@@ -6,6 +6,7 @@
 package wrv_algoritm;
 
 import java.math.BigDecimal;
+import datastructures.InputVector;
 
 /**
  * a classe ScoreVector representa um InputVector e o valor de escore associado a este vetor

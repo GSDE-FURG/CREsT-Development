@@ -182,5 +182,38 @@ public class Gate {
     @Override
     public String toString() {
         return this.id;
-    }        
+    }
+
+
+
+
+
+    /*Clayton*/
+    public String getInputsValuesToString() {
+        String o = "";
+        for (int i = 0; i < this.getInputs().size(); i++) {
+                o = o + this.getInputs().get(i).getLogicValue() + " ";
+        }
+        return o;
+    }
+
+
+
+    /*Clayton*/
+    public String getOutputsValuesToString() {
+        String o = "";
+        for (int i = 0; i < this.getOutputs().size(); i++) {
+            o = o + this.getOutputs().get(i).getLogicValue() + " ";
+        }
+        return o;
+    }
+
+    /*Clayton*/
+    public String getOutputsOriginalValuesToString() {
+        String o = "";
+        for (int i = 0; i < this.getOutputs().size(); i++) {
+            o = o + this.getOutputs().get(i).getOriginalLogicValue() + " ";
+        }
+        return o;
+    }
 }

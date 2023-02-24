@@ -1,0 +1,67 @@
+
+.subckt funcao A B C vdd vss out 
+MP1 vdd A out vdd   PMOS L=45n W=90n
+MP2 vdd B n1 vdd    PMOS L=45n W=90n
+MP3 n1  C out vdd   PMOS L=45n W=90n
+
+MN1 vss B n2 vss    NMOS L=45n W=90n
+MN2 vss C n2 vss    NMOS L=45n W=90n
+MN3 n2 A out vss   NMOS L=45n W=90n
+.ends
+
+
+.subckt NOR2X1 A B vdd vss out_nor
+MP1 vdd A n1 vdd PMOS L=45n W=90n
+MP2 n1  B out_nor vdd  PMOS L=45n W=90n
+
+MN1 out_nor A vss vss  NMOS L=45n W=90n
+MN2 out_nor B vss vss  NMOS L=45n W=90n
+.ends
+
+.subckt BUFFX1 A vdd vss out_BUFFX1 
+MP1 vdd A x vdd  PMOS L=45n W=90n
+MP2 vdd x out_BUFFX1 vdd  PMOS L=45n W=90n
+
+MN1 x A vss vss  NMOS L=45n W=90n
+MN2 out_BUFFX1 x vss vss  NMOS L=45n W=90n
+.ends
+
+.subckt NAND2X1 A B vdd vss out_nand 
+MP1 vdd A out_nand vdd  PMOS L=45n W=90n
+MP2 vdd B out_nand vdd  PMOS L=45n W=90n
+
+MN1 out_nand A n1  vss  NMOS L=45n W=90n
+MN2 n1       B vss vss  NMOS L=45n W=90n
+.ends
+
+
+.subckt NAND3X1 A B C vdd vss out_nand 
+MP1 vdd A out_nand vdd  PMOS L=45n W=90n
+MP2 vdd B out_nand vdd  PMOS L=45n W=90n
+MP3 vdd C out_nand vdd  PMOS L=45n W=90n
+
+MN1 out_nand A n1  vss  NMOS L=45n W=90n
+MN2 n1  B n2 vss  NMOS L=45n W=90n
+MN3 n2  C vss vss  NMOS L=45n W=90n
+.ends
+
+.subckt NAND3X1 A B C D vdd vss out_nand 
+MP1 vdd A out_nand vdd  PMOS L=45n W=90n
+MP2 vdd B out_nand vdd  PMOS L=45n W=90n
+MP3 vdd C out_nand vdd  PMOS L=45n W=90n
+MP4 vdd D out_nand vdd  PMOS L=45n W=90n
+
+MN1 out_nand A n1 vss  NMOS L=45n W=90n
+MN2 n1  B n2 vss   NMOS L=45n W=90n
+MN3 n2  C n3 vss   NMOS L=45n W=90n
+MN4 n3  D vss vss  NMOS L=45n W=90n
+.ends
+
+.subckt INVX1 A vdd vss out_INVX1
+MPx vdd A out_INVX1 vdd  PMOS L=45n W=90n
+MNy out_INVX1 A vss vss  NMOS L=45n W=90n
+.ends
+
+
+
+

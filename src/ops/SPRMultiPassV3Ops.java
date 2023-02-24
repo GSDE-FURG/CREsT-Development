@@ -5,7 +5,6 @@
  */
 package ops;
 
-import com.sun.xml.internal.bind.v2.TODO;
 import datastructures.CellLibrary;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -242,16 +241,22 @@ public class SPRMultiPassV3Ops {
         ArrayList<ProbSignal> fanouts = pCircuit.getFanouts();
         ArrayList<ProbSignal> newFanouts = new ArrayList<>();
         
-        for (int i = 0; i < (fanouts.size()); i++) {
-            newFanouts.add(fanouts.get(i));            
+        if(fanouts.isEmpty()) {
+            return SPROpsChuloMedio.getSPRReliability(pCircuit);
+        } else {
+            for (int i = 0; i < (fanouts.size()); i++) {
+                newFanouts.add(fanouts.get(i));            
+            }
+
+            ProbSignal pSignal = newFanouts.get(0);
+
+            value = getMultiPass(pCircuit, newFanouts, pSignal, 0);
+
+
+            return value;
         }
-                
-        ProbSignal pSignal = newFanouts.get(0);
-        
-        value = getMultiPass(pCircuit, newFanouts, pSignal, 0);
         
         
-        return value;
     }
     
     /**
@@ -423,4 +428,15 @@ public class SPRMultiPassV3Ops {
         
         return passes;
     }
+    
+    public static String getSPRMPPerState(ProbCircuit pCircuit) {
+        
+        pCircuit.getFanouts().get(0).setCurrentState(2);
+        System.out.println("--> " + pCircuit.getFanouts().get(0).getCurrentState());
+        
+        System.out.println(getSPRReliability(pCircuit, pCircuit.getFanouts()));
+        return "";
+    }
+    
+    //private ArrayList<ProbSignal> 
 }

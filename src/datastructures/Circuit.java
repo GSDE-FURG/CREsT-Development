@@ -6,13 +6,14 @@ package datastructures;
  * @author Matheus Ferreira Pontes
  */
 
-import java.util.ArrayList;
+import java.util.*;
 
 public class Circuit {
         
     private String name;
     private ArrayList<Signal> signals;
     private ArrayList<Gate> gates;
+    private Map<String, Signal> hashSignals;
     
     /**
      * Simple Circuit constructor.
@@ -21,6 +22,7 @@ public class Circuit {
     public Circuit() {
         signals = new ArrayList<>();
         gates = new ArrayList<>();
+        hashSignals = new HashMap<String, Signal>();
     }
     
     /**
@@ -170,6 +172,24 @@ public class Circuit {
         }
         return temp;
     }
-    
-    
+
+    /**
+     * Hashmap test performance
+     */
+    public void setHashSignals(ArrayList<Signal> signals) {
+        for (Signal signal : signals) {
+            this.hashSignals.put(signal.getId(), signal);
+        }
+    }
+
+    public Signal getHashSignalById(String key) {
+        return this.hashSignals.get(key);
+    }
+
+    public void addHashSignal(String key, Signal signal) {
+        this.hashSignals.put(key, signal);
+    }
+
+
+
 }

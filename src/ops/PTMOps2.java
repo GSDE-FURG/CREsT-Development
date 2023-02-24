@@ -69,8 +69,8 @@ public class PTMOps2 {
         
         BigDecimal value = new BigDecimal("0");
         BigDecimal[][] ptmMatrix;
-        
-        int[] itm = getCircuitITM(pCircuit);        
+
+        int[] itm = getCircuitITM(pCircuit);
 
         
         ProbInterLevel firstPInterLevel = pCircuit.getProbInterLevels().get(0);
@@ -115,7 +115,7 @@ public class PTMOps2 {
         
         ProbInterLevel firstPInterLevel = pCircuit.getProbInterLevels().get(0);
         ProbGateLevel firstGateLevel = pCircuit.getProbGateLevels().get(0);
-        
+
         if(!firstPInterLevel.getInSignals().equals(firstPInterLevel.getOutSignals())) {
             
             result = getInterconnection(firstPInterLevel);
@@ -146,10 +146,9 @@ public class PTMOps2 {
     }
     
     public static int[] getInterconnection(ProbInterLevel pInterLevel) {
-        
+
         ArrayList<ProbSignal> inSignals = pInterLevel.getInSignals();
         ArrayList<ProbSignal> outSignals = pInterLevel.getOutSignals();
-
         
         int[] interArray = new int[PTMOps.PowInt(2, inSignals.size()) + 1];
         
@@ -163,11 +162,11 @@ public class PTMOps2 {
         for (ProbSignal inSignal : inSignals) {
             dict.put(inSignal.getId(), flag++);
         }
-        
+
         for (int i = 0; i < outSignals.size(); i++) {
 
             mapping[i] = dict.get(outSignals.get(i).getId());
-            
+
             
         }
  
