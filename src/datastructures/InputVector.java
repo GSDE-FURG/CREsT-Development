@@ -1,6 +1,7 @@
 package datastructures;
 
 import java.math.BigInteger;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -17,6 +18,9 @@ public class InputVector {
     private static final char CHAR_ZERO = '0';
     private final BigInteger value;
     private int bits = 0;
+
+    private final BigDecimal[][] M_ZERO = new BigDecimal[][]{{BigDecimal.ONE, BigDecimal.ZERO},{BigDecimal.ZERO,BigDecimal.ZERO}};
+    private final BigDecimal[][] M_ONE = new BigDecimal[][]{{BigDecimal.ZERO, BigDecimal.ZERO},{BigDecimal.ZERO,BigDecimal.ONE}};
 
     public InputVector(BigInteger value) {
        this.value = value;
@@ -48,21 +52,27 @@ public class InputVector {
     public String getHexaString() {
         return value.toString(16);
     }
-    
+
+    /**
+     * Retorna um Arraylist de matrizes de BigDecimal, representando o InputVector
+     * @return
+     */
+    public ArrayList<BigDecimal[][]> getSignalMatricesRepresentation() {
+        ArrayList<BigDecimal[][]> matrices = new ArrayList<BigDecimal[][]>();
+
+        for(char c : this.getBinaryString().toCharArray()) {
+            if(c == '0') {
+                matrices.add(M_ZERO);
+            } else {
+                matrices.add(M_ONE);
+            }
+        }
+
+        return matrices;
+    }
     /*
     //retorna uma representação binária do valor com tamanho igual ao número de sinais de entrada
-    public String getBinaryString() {
-        Circuit circuit = Terminal.getInstance().getCircuit();
-        int numberInputs = circuit.getInputs().size(); 
-        String bin = value.toString(2);         
-        while (bin.length() < numberInputs) {
-            bin = '0' + bin;
-        }
-        return bin;
-    }
     */
-    
-    
     public String getBinaryString() {
         if (bits != 0) {
             String bin = value.toString(2);         

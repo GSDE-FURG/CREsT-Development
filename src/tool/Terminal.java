@@ -274,8 +274,12 @@ class TerminalWrapper {
             Robot r = new Robot();
 
 
-            //term.executeCommand("read_genlib minimal.genlib");
-            //term.executeCommand("read_verilog c17.v");
+            term.executeCommand("read_genlib minimal.genlib");
+            //term.executeCommand("read_verilog c17_hard_approx.v"); c17_approx_A.v
+            //term.executeCommand("read_verilog c17_a.v");
+            //term.executeCommand("read_verilog c17_approx_A.v");
+            term.executeCommand("read_verilog c17_approx_B.v");
+            term.executeCommand("read_custom_matrix 45nm.txt");
             
            
             //term.executeCommand("read_genlib lib_full_no_cost.genlib");

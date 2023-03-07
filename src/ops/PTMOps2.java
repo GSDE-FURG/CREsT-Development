@@ -9,12 +9,14 @@ package ops;
 import java.math.BigDecimal;
 
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import datastructures.InputVector;
 import signalProbability.ProbCircuit;
 import signalProbability.ProbGate;
 import signalProbability.ProbGateLevel;
@@ -53,63 +55,143 @@ public class PTMOps2 {
             
             
             Object gate = gateLevel.getGates().get(i);
-            if (gate instanceof ProbGate) {                
-                ProbGate pGate = (ProbGate)gateLevel.getGates().get(i);                
+            if (gate instanceof ProbGate) {
+
+
+                ProbGate pGate = (ProbGate)gateLevel.getGates().get(i);
                 gateLevelMatrix = CommonOps.getKronecker(gateLevelMatrix, pGate.getReliabilityMatrix());
             } else {                
                 gateLevelMatrix = CommonOps.getKronecker(gateLevelMatrix, getWireMatrix());                                                
             }
             
         }
-        
         return gateLevelMatrix;
     }
-    
-    public static BigDecimal getCircuitReliabilityByPTM(ProbCircuit pCircuit) {
-        
+    public static BigDecimal[][] getCircuitPTMMatrix(ProbCircuit pCircuit) {
+
         BigDecimal value = new BigDecimal("0");
         BigDecimal[][] ptmMatrix;
 
-        int[] itm = getCircuitITM(pCircuit);
 
-        
         ProbInterLevel firstPInterLevel = pCircuit.getProbInterLevels().get(0);
         ProbGateLevel firstGateLevel = pCircuit.getProbGateLevels().get(0);
-        
-        if(!firstPInterLevel.getInSignals().equals(firstPInterLevel.getOutSignals())) {  
 
+
+
+        if(!firstPInterLevel.getInSignals().equals(firstPInterLevel.getOutSignals())) {
             ptmMatrix = getInterLevelMultiplication(firstPInterLevel, getGateLevelMatrix(firstGateLevel));
 
         } else {
 
             ptmMatrix = getGateLevelMatrix(firstGateLevel);
         }
-        
+
         for (int i = 1; i < pCircuit.getProbGateLevels().size(); i++) {
-            
+
 
             ProbInterLevel pInterLevel = pCircuit.getProbInterLevels().get(i);
             ProbGateLevel pGateLevel = pCircuit.getProbGateLevels().get(i);
-            
-            if(!pInterLevel.getInSignals().equals(pInterLevel.getOutSignals())) {                
-                ptmMatrix = getInterLevelMultiplication(ptmMatrix, pInterLevel);                
+
+            if(!pInterLevel.getInSignals().equals(pInterLevel.getOutSignals())) {
+                ptmMatrix = getInterLevelMultiplication(ptmMatrix, pInterLevel);
             }
 
             ptmMatrix = CommonOps.getMultipliedMatrix(ptmMatrix, getGateLevelMatrix(pGateLevel));
-            
 
         }
+
+        return ptmMatrix;
+    }
+    public static BigDecimal getCircuitReliabilityByPTM(ProbCircuit pCircuit, String inputSignal) {
+
+        /**
+         * Nas versões do JAVA anteriores à 18, não é possível fazer switch-case com 'null'
+         * Então se resolve de outra maneira...
+         */
+        if(inputSignal == null) {
+            inputSignal = "";
+        }
         
+        BigDecimal value = new BigDecimal("0");
+        BigDecimal[][] ptmMatrix = getCircuitPTMMatrix(pCircuit);
+        BigDecimal[][] matrixSignal;
+
+        int[] itm = getCircuitITM(pCircuit);
+
+        switch (inputSignal) {
+            case "-1":
+                System.out.println("---------PTM NORMAL-------------");
+                CommonOps.matrixPrint(ptmMatrix);
+
+                matrixSignal = CommonOps.getDefaulInputSignalMatrix(pCircuit.getInputs().size());
+                ptmMatrix = CommonOps.getMultipliedMatrix(matrixSignal, ptmMatrix);
+
+                System.out.println("---------PTM SINAIS DE ENTRADA DEFINIDOS-------------");
+                CommonOps.matrixPrint(ptmMatrix);
+                System.out.println("-------ITM---------");
+                for(int i : itm) {
+                    System.out.println(i);
+                }
+                value = countingITMPositions(itm, ptmMatrix);
+
+                return value;
+
+            case "":
+                value = countingITMPositions(itm, ptmMatrix);
+                value = value.divide(new BigDecimal((itm.length - 1)));
+
+                return value;
+
+            default:
+                /**
+                 * 2023-02-27: Experimento provando que a matriz PTM é composta por todas as combinações de entradas e
+                 * saídas
+                 */
+                //InputVector input = new InputVector(new BigInteger(inputSignal), pCircuit.getProbInputs().size());
+
+                //ArrayList<BigDecimal[][]> signalMatrices = input.getSignalMatricesRepresentation();
+                //matrixSignal = new BigDecimal[][]{{BigDecimal.ONE}};
+                //for(BigDecimal[][] matrix : input.getSignalMatricesRepresentation()) {
+                //    System.out.println("-----------");
+                //    CommonOps.matrixPrint(matrix);
+                //    matrixSignal = CommonOps.getKronecker(matrixSignal, matrix);
+                //}
+                //System.out.println("-------PTM ORIGINAL---------");
+                //CommonOps.matrixPrint(ptmMatrix);
+
+                //System.out.println("-------Signal Multiplied-----------");
+                //ptmMatrix = CommonOps.getMultipliedMatrix(matrixSignal, ptmMatrix);
+                //CommonOps.matrixPrint(ptmMatrix);
+                /**
+                 * Caso seja passado um vetor de entrada, a confiabilidade será o valor da ITM na posição da PTM do circuito
+                 */
+                int position = Integer.parseInt(inputSignal);
+                return ptmMatrix[position][itm[position+1]];
+        }
+    }
+
+    public static BigDecimal countingITMPositions(int[] itm, BigDecimal[][] ptm){
+        BigDecimal value = new BigDecimal("0");
+
         for (int i = 1; i < itm.length; i++) {
-
-            value = value.add(ptmMatrix[i-1][itm[i]]);
+            value = value.add(ptm[i-1][itm[i]]);
         }
-        
-        value = value.divide(new BigDecimal((itm.length - 1)));
-        
+
         return value;
     }
-    
+
+    public static ArrayList<BigInteger> getMTBFInputVectors (int[] itm, BigDecimal[][] ptm){
+
+        ArrayList<BigInteger> result = new ArrayList<>();
+
+        for (int i = 1; i < itm.length; i++) {
+            System.out.println(ptm[i-1][itm[i]]);
+            result.add(CommonOps.getMTBFBigInt(ptm[i-1][itm[i]]));
+        }
+
+        return result;
+    }
+
     public static int[] getCircuitITM(ProbCircuit pCircuit) {
         int[] result;
         
@@ -223,6 +305,8 @@ public class PTMOps2 {
     public static BigDecimal[][] getInterLevelMultiplication(ProbInterLevel pInterLevel, BigDecimal[][] matrix) {
         
         int[] interLevelVector = getInterconnection(pInterLevel);
+
+
         
         BigDecimal[][] result = new BigDecimal[interLevelVector.length - 1][matrix[0].length];
         
@@ -271,7 +355,6 @@ public class PTMOps2 {
 
         for (int i = 1; i < size; i++) {
             Object gate = pGateLevel.getGates().get(i);
-
             if(gate instanceof ProbGate) {
                 result = getItmKronecker(result, ((ProbGate)gate).getType().getItm() );
             } else {

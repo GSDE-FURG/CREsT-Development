@@ -244,8 +244,17 @@ public class ProbCircuit extends Circuit {
         } else {
             this.pInputs = new ArrayList<>();
 
+            /**
+             * 2023-03-03 - OLD - Antes eu desconsiderava sinais de entrada que não iam para nenhuma gate ou saída
+             */
+            //for (ProbSignal pSignal : this.probSignals) {
+            //if (pSignal.getOrigin() == null && !pSignal.getDestiny().isEmpty()) {
+            //        this.pInputs.add(pSignal);
+            //    }
+            //}
+
             for (ProbSignal pSignal : this.probSignals) {
-                if (pSignal.getOrigin() == null && !pSignal.getDestiny().isEmpty()) {
+                if (pSignal.getOrigin() == null) {
                     this.pInputs.add(pSignal);
                 }
             }
@@ -533,7 +542,7 @@ public class ProbCircuit extends Circuit {
         
         int counter = 0;
         
-        for(ProbGate pGate : this.probGates) {            
+        for(ProbGate pGate : this.probGates) {
             if(pGate.getGateReliability() != null) {                
                 pGate.setReliabilityMatrix(pGate.getGateReliability());
             } else {                
@@ -548,7 +557,7 @@ public class ProbCircuit extends Circuit {
     */
     public void setPTMsReliabilityMatrix() {
         
-        for(ProbGate pGate : this.probGates) {            
+        for(ProbGate pGate : this.probGates) {
             if(pGate.getReliabilityMatrix() == null) {
                 pGate.setReliabilityMatrix(pGate.getType().getPTM());
             }

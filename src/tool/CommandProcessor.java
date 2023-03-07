@@ -27,9 +27,8 @@ class CommandProcessor {
     }
     
     class TimeoutTimer extends TimerTask {
-    public void run() {                
-        Terminal.getInstance().terminalOutput("Catita...");
-        System.out.println("Catita...");
+    public void run() {
+        System.out.println("TESTE....");
 
     }
 }
@@ -45,6 +44,7 @@ class CommandProcessor {
         String filename = "";
         String exportArg = "fafasffasfgghh";
         String exportPattern = "--export=";
+        String[] args = new String[3];
         
         boolean help = false;
         //boolean export = false;
@@ -65,10 +65,11 @@ class CommandProcessor {
         }
         
         if(splittedCommand.size() > 1) {
-            
             argument = splittedCommand.get(1);
+            args[0] = argument;
             if(splittedCommand.size() > 2) {
                 argument2 = splittedCommand.get(2);
+                args[1] = argument2;
             }       
         }
         
@@ -253,22 +254,24 @@ class CommandProcessor {
                 break;
                 
             case "ptm":
-                if(!argument.isEmpty()) {
-                    Terminal.getInstance().terminalOutput("Please use the arg \"--help\"");                    
-                } else if(help) {
+                if(help) {
                     Terminal.getInstance().terminalOutput(cmd.getHelpDesc(mainCommand));
                 } else {
-                    cmd.getReliabilityPTM("0.99999802495", "default");                    
+                    if(args[0] == null) {
+                        cmd.getReliabilityPTM(new String[]{"0.99999802495"}, "default");
+                    } else {
+                        cmd.getReliabilityPTM(args, "default");
+                    }
                 }
                 break;    
                 
-            case "ptm_big_decimal":
+            case "ptm_bigdecimal":
                 if(argument.isEmpty()) {
                     Terminal.getInstance().terminalOutput("Please use the arg \"--help\"");                    
                 } else if(help) {
                     Terminal.getInstance().terminalOutput(cmd.getHelpDesc(mainCommand));
                 } else {
-                    cmd.getReliabilityPTM(argument, "big_decimal");                    
+                    cmd.getReliabilityPTM(args, "big_decimal");
                 }
                 break;
             
@@ -278,7 +281,7 @@ class CommandProcessor {
                 } else if(help) {
                     Terminal.getInstance().terminalOutput(cmd.getHelpDesc(mainCommand));
                 } else {
-                    cmd.getReliabilityPTM(argument, "double");                    
+                    cmd.getReliabilityPTM(args, "double");
                 }
                 break;
             
@@ -288,7 +291,7 @@ class CommandProcessor {
                 } else if(help) {
                     Terminal.getInstance().terminalOutput(cmd.getHelpDesc(mainCommand));
                 } else {
-                    cmd.getReliabilityPTM(argument, "float");                    
+                    cmd.getReliabilityPTM(args, "float");
                 }
                 break;
             

@@ -106,6 +106,18 @@ public class CellLibrary {
                 }
 
                 auxCell.setItm(itm);
+            } else {
+                /**
+                 * Fiz esse ELSE para identificar quando a auxCell é uma constante
+                 * Ou uma função não mapeada
+                 */
+                if(auxCell.getFunctions().get(0).contains("CONST0")) {
+                    auxCell.setItm(new int[]{2, 0});
+                } else if (auxCell.getFunctions().get(0).contains("CONST1")) {
+                    auxCell.setItm(new int[]{2, 1});
+                } else {
+                    System.out.println("ITS A DIFFERENT CELL FUNCTION");
+                }
             }
         }
     }
@@ -119,12 +131,25 @@ public class CellLibrary {
             Cell auxCell = cells.get(i);
             
             if(auxCell.getInputs().isEmpty()) {
+                if(auxCell.getFunctions().get(0).contains("CONST0")) {
+                    ptm = new BigDecimal[][]{{BigDecimal.ONE, BigDecimal.ZERO}};
+                    itm2 = new BigDecimal[][]{{BigDecimal.ONE, BigDecimal.ZERO}};
+                } else if (auxCell.getFunctions().get(0).contains("CONST1")) {
+                    ptm = new BigDecimal[][]{{BigDecimal.ZERO, BigDecimal.ONE}};
+                    itm2 = new BigDecimal[][]{{BigDecimal.ZERO, BigDecimal.ONE}};
+                } else {
+                    System.out.println("ITS A NON MAPPED CELL");
+                    ptm = null;
+                    itm2 = null;
+                }
+                /*
                 ptm = new BigDecimal[1][2];
                 ptm[0][0] = reliability;
                 ptm[0][1] = BigDecimal.ONE.subtract(reliability);
                 itm2 = new BigDecimal[1][2];
                 itm2[0][0] = BigDecimal.ONE;
-                itm2[0][1] = BigDecimal.ZERO;                
+                itm2[0][1] = BigDecimal.ZERO;
+                */
             } else {
                 int[] itm = auxCell.getItm();
 

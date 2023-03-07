@@ -7,16 +7,11 @@ package tool;
 
 import datastructures.*;
 
-import java.io.BufferedReader;
+import java.io.*;
 
 import datastructures.InputVector;
 import levelDatastructures.LevelCircuit;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FilenameFilter;
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
@@ -50,6 +45,7 @@ import levelDatastructures.InterLevel;
 import logicSimulator.main;
 import manipulator.CircuitFactory;
 import manipulator.SPRController;
+import manipulator.PTMMController;
 
 import readers.ReadTxt;
 import signalProbability.ProbCircuit;
@@ -1076,7 +1072,7 @@ public class Commands {
         
     }
     
-    public void getReliabilityPTM(String reliability, String type) {
+    public void getReliabilityPTM_OLD(String reliability, String type) {
         
         if(verifyCircuitAndLib()) {
             final long startTime = System.currentTimeMillis();
@@ -1094,7 +1090,7 @@ public class Commands {
             switch(type) {
 
                 case "big_decimal":                
-                    result = "Reliability PTM (in BigDecimal) of " + pCircuit.getName() + " CIRCUIT is " + PTMOps2.getCircuitReliabilityByPTM(pCircuit);                
+                    result = "Reliability PTM (in BigDecimal) of " + pCircuit.getName() + " CIRCUIT is " + PTMOps2.getCircuitReliabilityByPTM(pCircuit, null);
                     break;
 
                 case "double":        
@@ -1106,11 +1102,65 @@ public class Commands {
                     break;
 
                 case "default":
-                    BigDecimal val = PTMOps2.getCircuitReliabilityByPTM(pCircuit);
+                    BigDecimal val = PTMOps2.getCircuitReliabilityByPTM(pCircuit, null);
                     result = "MTBF using PTM of " + pCircuit.getName() + " CIRCUIT is " + CommonOps.getMTBFBigInt(val) + ")";                
                     break;
 
             }               
+
+            Terminal.getInstance().terminalOutput(result);
+
+            final long endTime = System.currentTimeMillis();
+            String timeConsup = "## TIME CONSUPTION ## ==> " + Long.toString((endTime - startTime)) + " ms";
+            //Terminal.getInstance().terminalOutput(timeConsup);
+        }
+    }
+
+    public void getReliabilityPTM(String[] args, String type) {
+
+        String reliability = args[0];
+        String inputSignals = "";
+        if (args.length > 1) {
+            inputSignals = args[1];
+        }
+
+        if(verifyCircuitAndLib()) {
+            final long startTime = System.currentTimeMillis();
+
+            String result = "";
+            LevelCircuit lcirc = Terminal.getInstance().getLevelCircuit();
+            CellLibrary cellLib = Terminal.getInstance().getCellLibrary();
+            ProbCircuit pCircuit = Terminal.getInstance().getProbCircuit();
+
+            cellLib.setPTMCells2(Float.valueOf(reliability));
+            cellLib.setPTMCells(new BigDecimal(reliability));
+            pCircuit.setPTMReliabilityMatrix();
+
+            switch(type) {
+
+                case "big_decimal":
+                    if (inputSignals == "") {
+                        result = "Reliability PTM (in BigDecimal) of " + pCircuit.getName() + " CIRCUIT is " + PTMOps2.getCircuitReliabilityByPTM(pCircuit, null);
+                    } else {
+                        result = "Reliability PTM (in BigDecimal) of " + pCircuit.getName() + " CIRCUIT is " + PTMOps2.getCircuitReliabilityByPTM(pCircuit, inputSignals);
+                    }
+                    break;
+
+                case "double":
+                    result = "Reliability PTM (in double (EJML Library) of " + lcirc.getName() + " CIRCUIT is " + PTMOps.getPTM(reliability, lcirc, cellLib, false);
+                    break;
+
+                case "float":
+                    result = "Reliability PTM (in float) of " + pCircuit.getName() + " CIRCUIT is " + PTMOps2Float.getCircuitReliabilityByPTM(pCircuit);
+                    break;
+
+                case "default":
+                    BigDecimal val = PTMOps2.getCircuitReliabilityByPTM(pCircuit, null);
+                    result = "MTBF using PTM of " + pCircuit.getName() + " CIRCUIT is " + CommonOps.getMTBFBigInt(val) + ")";
+                    System.out.println("Raw reliability is " + val);
+                    break;
+
+            }
 
             Terminal.getInstance().terminalOutput(result);
 
@@ -1901,16 +1951,18 @@ public class Commands {
     }
     
     public void Foo4() throws IOException, Exception {
-        ProbCircuit pCircuit = Terminal.getInstance().getProbCircuit();
-        System.out.println(pCircuit);
 
-        int[] teste = CommonOps.getITM(pCircuit);
+        PTMMController controller = new PTMMController(Terminal.getInstance());
 
-        for (int i : teste) {
-            System.out.println(i);
-        }
+        controller.initController();
+        //System.out.println(controller.getReliability());
 
-        System.out.println("tamanho do vetor: " + teste.length);
+        System.out.println("############ MTBF ###############");
+        BigDecimal result = controller.getReliabilityCustomLib();
+        //BigDecimal result = controller.getReliability();
+        System.out.println("SUSCEPTIB: " + result);
+        System.out.println("MTBF: " + CommonOps.getMTBF(result));
+        System.out.println("MTBF BigInt: " + CommonOps.getMTBFBigInt(result));
 
         
     }
@@ -4914,7 +4966,7 @@ public class Commands {
             case "PTM_BIGDECIMAL":
                 long time = System.nanoTime();
                 long finalTime;
-                value[0] = PTMOps2.getCircuitReliabilityByPTM(pCircuit);
+                value[0] = PTMOps2.getCircuitReliabilityByPTM(pCircuit, null);
                 finalTime = System.nanoTime() - time;
                 BigDecimal big = new BigDecimal(finalTime).multiply(new BigDecimal("0.000001"));
                 System.out.println("Tempo Verdadeiro = " + big);

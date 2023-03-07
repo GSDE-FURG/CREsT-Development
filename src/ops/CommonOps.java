@@ -323,28 +323,37 @@ public class CommonOps {
 
         /**
          * A ITM é representada por um vetor de inteiros
-         * A primeira posição do vetor é o total de colunas da matriz ITM
          */
         int[] itm = new int[pCircuit.getProbInputs().get(0).getSignalValues().size() + 1];
 
         ArrayList<ProbSignal> outSignals = pCircuit.getProbOutputs();
-        
+
+        /**
+         * A primeira posição do vetor é o total de colunas da matriz ITM 2^outputs
+         */
         itm[0] = PTMOps.PowInt(2, outSignals.size());
-        
+
+
+        /**
+         * Esse algoritmo foi uma forma que encontrei para transformar os valores
+         * das saídas primárias em inteiros.
+         * O "counter" vai acumulando os valores baseados em cada saída primária verificado
+         * A "column" vai do bit mais signifcativo ao mesnos significativo
+         */
         for (int i = 1; i < itm.length; i++) {
-            int column = 0;
+            int counter = 0;
             
-            int counter = outSignals.size() - 1;
+            int column = outSignals.size() - 1;
             
             for (int j = 0; j < outSignals.size(); j++) {
                 boolean value = outSignals.get(j).getSignalValues().get(i-1);
                 if(value) {
-                    column = column + PTMOps.PowInt(2, counter);
+                    counter = counter + PTMOps.PowInt(2, column);
                 }
-                counter--;
+                column--;
             }
             
-            itm[i] = column;
+            itm[i] = counter;
         }
         return itm;
     }
@@ -501,6 +510,18 @@ public class CommonOps {
         Map<K, V> result = new LinkedHashMap<>();
         for (Entry<K, V> entry : list) {
             result.put(entry.getKey(), entry.getValue());
+        }
+
+        return result;
+    }
+
+    public static BigDecimal[][] getDefaulInputSignalMatrix(int nInputs) {
+        BigDecimal[][] defaultSignalMatrix = new BigDecimal[][]{{new BigDecimal("0.5"), BigDecimal.ZERO},
+                                                   {BigDecimal.ZERO, new BigDecimal("0.5")}};
+
+        BigDecimal[][] result = defaultSignalMatrix;
+        for(int i=1; i<nInputs; i++) {
+            result = getKronecker(result, defaultSignalMatrix);
         }
 
         return result;

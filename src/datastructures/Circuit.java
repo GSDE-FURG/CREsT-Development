@@ -147,8 +147,16 @@ public class Circuit {
      */
     public ArrayList<Signal> getInputs() {
         ArrayList<Signal> temp = new ArrayList<>();
+        /**
+         * 2023-03-03 - OLD - Antes eu desconsiderava sinais de entrada que não iam para nenhuma gate ou saída
+         */
+        //for (Signal input1 : signals) {
+        //    if (input1.getOrigin() == null && !input1.getDestiny().isEmpty()) {
+        //        temp.add(input1);
+        //    }
+        //}
         for (Signal input1 : signals) {
-            if (input1.getOrigin() == null && !input1.getDestiny().isEmpty()) {
+            if (input1.getOrigin() == null) {
                 temp.add(input1);
             }
         }
