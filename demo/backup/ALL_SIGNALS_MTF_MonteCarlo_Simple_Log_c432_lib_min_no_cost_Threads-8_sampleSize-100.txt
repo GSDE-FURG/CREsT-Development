@@ -1,0 +1,15 @@
+Multiple Transient Fault Simulation Started at Date/hour: 01-02-2022 12:03:04 and finished at: 01-02-2022 12:03:05
+
+Circuit: c432_lib_min_no_cost
+Number of Simulations (sample size = N): 100
+      - (1.0%) faults are MTF of order (1)
+      - (0.0%) faults are MTF of order (2)
+      - (0.0%) faults are MTF of order (3)
+Threads: 8
+Sample Size (Monte Carlo)= 100
+Detected faults (Ne): 25
+Fault Masking Rate (FMR):  1 - Ne/N = (1-(25/100)) = 0.75
+DTF: 0.25
+avgSA: 27.9205
+MTBF: 3979.553
+Performance time m(s): 0
