@@ -1952,6 +1952,16 @@ public class Commands {
     
     public void Foo4() throws IOException, Exception {
 
+        System.out.println("MAMAE: " + CommonOps.getMTBF(new BigDecimal("0.99999159584148500")));
+        System.out.println("MAMAE: " + CommonOps.getMTBF(new BigDecimal("0.99999159584148500")));
+        System.out.println("MAMAE: " + CommonOps.getMTBF(new BigDecimal("0.99999159585059300")));
+        System.out.println("MAMAE: " + CommonOps.getMTBF(new BigDecimal("0.99999159585059300")));
+
+
+
+
+
+
         PTMMController controller = new PTMMController(Terminal.getInstance());
 
         controller.initController();
@@ -1963,6 +1973,8 @@ public class Commands {
         System.out.println("SUSCEPTIB: " + result);
         System.out.println("MTBF: " + CommonOps.getMTBF(result));
         System.out.println("MTBF BigInt: " + CommonOps.getMTBFBigInt(result));
+
+        System.out.println(SPROpsV2.getSPRReliability(Terminal.getInstance().getProbCircuit()));
 
         
     }

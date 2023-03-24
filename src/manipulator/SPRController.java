@@ -10,6 +10,7 @@ import datastructures.CustomMatrixLibrary;
 import datastructures.InputVector;
 import java.math.BigDecimal;
 import ops.SPROpsChuloMedio;
+import ops.SPROpsV2;
 import signalProbability.ProbCircuit;
 import tool.Terminal;
 
