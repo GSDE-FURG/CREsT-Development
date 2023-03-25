@@ -253,7 +253,7 @@ class CommandProcessor {
                 cmd.PtmMatrixSize(filename);
                 break;
                 
-            case "ptm":
+            case "ptmm":
                 if(help) {
                     Terminal.getInstance().terminalOutput(cmd.getHelpDesc(mainCommand));
                 } else {
