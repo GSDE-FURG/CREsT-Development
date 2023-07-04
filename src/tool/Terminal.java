@@ -302,8 +302,8 @@ TerminalWrapper {
             //term.executeCommand("spr");
             term.executeCommand("clear");
             
-            r.keyPress(KeyEvent.VK_ENTER);
-            r.keyRelease(KeyEvent.VK_ENTER);
+            //r.keyPress(KeyEvent.VK_ENTER);
+            //r.keyRelease(KeyEvent.VK_ENTER);
             term.executeCommand("clear");
             
             //System.out.println(term.getCircuit());
@@ -398,6 +398,7 @@ TerminalWrapper {
 
 
 public class
+
 Terminal {
     private final JFrame frm = new JFrame("CREsT - Circuit Reliability Estimation Tool");
     private final JTextArea txtArea = new JTextArea();
@@ -440,8 +441,10 @@ Terminal {
                 Robot r = new Robot();
                 // Hack para iniciar o prompt
                 clear();
-                r.keyPress(KeyEvent.VK_ENTER);
-                r.keyRelease(KeyEvent.VK_ENTER);
+                clear();
+                //r.keyPress(KeyEvent.VK_ENTER);
+                //
+                // r.keyRelease(KeyEvent.VK_ENTER);
                 // ****************
                 //
                 txtArea.addMouseListener(new MouseAdapter() {

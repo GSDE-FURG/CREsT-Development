@@ -726,7 +726,7 @@ public class ProbCircuit extends Circuit {
                 comb = comb + inCombination.get(j).get(i);
             }
             
-            //System.out.println("Comb " + i + " ==> " + comb);
+            System.out.println("Comb " + i + " ==> " + comb);
         }
         
         

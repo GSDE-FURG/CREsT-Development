@@ -179,7 +179,7 @@ public class Commands {
     }
     
     public void ReadCustomMatrix(String filename) throws IOException, ScriptException {
-        String path = CommonOps.getWorkPath(this) + "abc" + File.separator + filename;        
+        String path = CommonOps.getWorkPath(this) + File.separator + filename;
         CustomMatrixLibrary cMatrixLib = new CustomMatrixReader(path).getcMatrixLib();        
         Terminal.getInstance().setCustomMatrixLib(cMatrixLib);
         
@@ -1842,143 +1842,77 @@ public class Commands {
     }
     
     public void Foo3(String argument) throws IOException, Exception {
-        
-        final long startTime = System.currentTimeMillis();
-        
-        Terminal.getInstance().executeCommand("read_genlib ../files/genlibs/lib_full_no_cost.genlib");
-        Terminal.getInstance().executeCommand("read_custom_matrix 45nm.txt");
-        Terminal.getInstance().executeCommand("read_verilog ../files/xors_v/xor2_pure.v");                
-        
-        CellLibrary cellLib = Terminal.getInstance().getCellLibrary();
-        CustomMatrixLibrary cMatrixLib = Terminal.getInstance().getCustomMatrixLib();
-        
-        String[] medias = {"0.9999960499000000000000000000",
-                           "0.9999980249500000000000000000",
-                           "0.9999975067750000000000000000",
-                           "0.9999968972500000000000000000",
-                           "0.9999968870125000000000000000",
-                           "0.9999958711375000000000000000",
-                           "0.9999966944687500000000000000",
-                           "0.9999953230375000000000000000",
-                           "0.9999949513375000000000000000",
-                           "0.9999951616000000000000000000",
-                           "0.9999928821812500000000000000",
-                           "0.9999931706031250000000000000",
-                           "0.9999911458140620000000000000",
-                           "0.9999958317625000000000000000",
-                           "0.9999951277375000000000000000",
-                           "0.9999946091687500000000000000",
-                           "0.9999942796000000000000000000",
-                           "0.9999912697750000000000000000",
-                           "0.9999932464984380000000000000",
-                           "0.9999941709250000000000000000",
-                           "0.999994955076719"};
-        
-        String[] xors = {"xor2_pure.v",
-                         "xor2_lib_min.v",
-                         "xor3_pure.v",
-                         "xor3_lib_min.v",
-                         "xor3_lib_complex_no_xor.v",
-                         "xor3_lib_full.v",
-                         "xor4_pure_V1.v",
-                         "xor4_pure_V2.v",                        
-                         "xor4_lib_min.v",
-                         "xor4_lib_complex_no_xor.v",
-                         "xor4_lib_full.v",
-                         "xor5_pure_V1.v",
-                         "xor5_pure_V2.v",
-                         "xor5_lib_min.v",
-                         "xor5_lib_complex_no_xor.v",
-                         "xor5_lib_full.v",                                                
-                         "xor6_pure_V1.v",
-                         "xor6_pure_V2.v",
-                         "xor6_lib_min.v",
-                         "xor6_lib_complex_no_xor.v",
-                         "xor6_lib_full.v"};
-        
-        for (String media : medias) {
-            System.out.println(CommonOps.getMTBFBigInt(new BigDecimal(media)));
+        int flag2c = 0;
+        int flag3c = 0;
+        int flag2e = 0;
+
+        char[] exato = "00000001000101110001011101111111000101110111111101111111111111110001011101111111011111111111111101111111111111111111111111111110000101110111111101111111111111110111111111111111111111111111111001111111111111111111111111111110111111111111111011111110111010000001011101111111011111111111111101111111111111111111111111111110011111111111111111111111111111101111111111111110111111101110100001111111111111111111111111111110111111111111111011111110111010001111111111111110111111101110100011111110111010001110100010000000".toCharArray();
+        char[] mod1  = "00010001111101110011011111111111011101111111111101110111111111110111011111111111111111111111111111111111111111111111111111111110011101111111111111111111111111111111111111111111111111111111111011111111111111101111111111111110111111111111100011111110111110000001001101111111111111111111111101010111111111111111111111111111011111111111111111111111111111111111111111111110111111111111111101110111111111111111111111111111111111111111111011111111111111101111111111101110111111111110111011111110100010001111111010001000".toCharArray();
+        char[] mod2  = "00000001000101010001011101111111000100110111111101111111111111110001001101111111011111111111111101111111111111111111111111111110000101110111011101110111111111110111011111111111111111101111111001110111111111111111111111111110111111111111111011111100111000000001011101111111011111111111111101111111111111101111111111111110011111111111111111111111111111101111111011111110111111101110100001011111111111111111111111111110111110101111101011111110111010001111111111111110111111101110100011111010111010001110100010000000".toCharArray();
+
+        for(int n=0; n<exato.length; n++) {
+            if(exato[n]==mod1[n]) {
+                if (exato[n] == mod2[n]) {
+                    flag3c = flag3c + 1;
+                } else {
+                    flag2c = flag2c + 1;
+                }
+            } else {
+                if(mod1[n]==mod2[n]) {
+                    flag2e = flag2e + 1;
+                } else {
+                    flag2c = flag2c + 1;
+                }
+            }
         }
-        
-        System.out.println("###### $$$$$$$ ######");
-                                                
-        
-        ProbCircuit pCircuit1 = new CircuitFactory(cellLib, "files/xors_v/" + xors[0]).getProbCircuit();
-        ProbCircuit pCircuit2 = new CircuitFactory(cellLib, "files/xors_v/" + xors[0]).getProbCircuit();
-        
-        System.out.println("CircuitHash1: " + pCircuit1.hashCode());
-        System.out.println("CircuitHash2: " + pCircuit2.hashCode());
-        
-        System.out.println("SignalHash1: " + pCircuit1.getProbSignals().get(0).hashCode());
-        System.out.println("SignalHash2: " + pCircuit2.getProbSignals().get(0).hashCode());
-        for (String xor : xors) {
-            ProbCircuit pCircuit = new CircuitFactory(Terminal.getInstance().getCellLibrary(), "files/xors_v/" + xor).getProbCircuit();
-            cellLib.setPTMCells(new BigDecimal("0.99999802495"));                 
-            pCircuit.syncCellPTMs();
-            pCircuit.setDefaultProbSourceSignalMatrix();
-            pCircuit.setProbSignalStates(false);
-            pCircuit.setCustomMatrix(cMatrixLib);  
-            //System.out.println(CommonOps.getMTBFBigInt(PTMOps2.getCircuitReliabilityByPTM(pCircuit)));
-            System.out.println(CommonOps.getMTBFBigInt(SPRMultiPassV3Ops.getSPRMultiPassReliaiblity(pCircuit)));
-            //pCircuit.initOrgProbGatesList();
-            //System.out.println(pCircuit.getProbSignals().size());
-            
-        }
-        
-        
-        /*
-        ProbCircuit pCircuit = new CircuitFactory(Terminal.getInstance().getCellLibrary(), "files/xors_v/" + xors[0]).getProbCircuit();
-        cellLib.setPTMCells(new BigDecimal("0.99999802495"));
-        pCircuit.syncCellPTMs();        
-        System.out.println(PTMOps2.getCircuitReliabilityByPTM(pCircuit));
-        
-        pCircuit.setCustomMatrix(cMatrixLib);
-        System.out.println(PTMOps2.getCircuitReliabilityByPTM(pCircuit));
-        
-        cellLib.setPTMCells(new BigDecimal("0.99999802495"));
-        pCircuit.syncCellPTMs();
-        System.out.println(PTMOps2.getCircuitReliabilityByPTM(pCircuit));
-        
-        System.out.println(Terminal.getInstance().getProbCircuit().hashCode());
-        System.out.println(pCircuit.hashCode()); */
-        
-               
-        
-        final long endTime = System.currentTimeMillis();
-        String timeConsup = "## TIME CONSUPTION ## ==> " + Long.toString((endTime - startTime)) + " ms";
-        
-        Terminal.getInstance().terminalOutput(timeConsup);
+
+        System.out.println("3C x 0E = " + flag3c);
+        System.out.println("2C x 1E = " + flag2c);
+        System.out.println("2E x 1C = " + flag2e);
     }
     
     public void Foo4() throws IOException, Exception {
 
-        System.out.println("MAMAE: " + CommonOps.getMTBF(new BigDecimal("0.99999159584148500")));
-        System.out.println("MAMAE: " + CommonOps.getMTBF(new BigDecimal("0.99999159584148500")));
-        System.out.println("MAMAE: " + CommonOps.getMTBF(new BigDecimal("0.99999159585059300")));
-        System.out.println("MAMAE: " + CommonOps.getMTBF(new BigDecimal("0.99999159585059300")));
+        Terminal.getInstance().executeCommand("read_genlib abc/mylib.genlib");
+        Terminal.getInstance().executeCommand("read_custom_matrix abc/45nm.txt");
 
+        CellLibrary cellLib = Terminal.getInstance().getCellLibrary();
+        CustomMatrixLibrary customLib = Terminal.getInstance().getCustomMatrixLib();
 
+        ProbCircuit pCircuit1 = new CircuitFactory(cellLib, "abc/9sym_exact.v").getProbCircuit();
 
+        System.out.println("GATES: " + pCircuit1.getProbGates().size());
+        System.out.println("Levels: " + pCircuit1.getProbGateLevels().size());
+        System.out.println("Fanouts: " + pCircuit1.getFanouts().size());
+        System.out.println("I/O: " + pCircuit1.getProbInputs().size() + "/" + pCircuit1.getProbOutputs().size());
 
+        InputVector input = new InputVector("11", pCircuit1.getInputs().size());
 
+        System.out.println("INPUT:" + input.getBinaryString());
+        SPRController spr = new SPRController(pCircuit1, cellLib);
 
-        PTMMController controller = new PTMMController(Terminal.getInstance());
+        System.out.println(spr.getReliability(input, 13));
 
-        controller.initController();
-        //System.out.println(controller.getReliability());
+        System.out.println(pCircuit1.getProbOutputs().get(0).getProbMatrix());
+        CommonOps.matrixPrint(pCircuit1.getProbOutputs().get(0).getProbMatrix());
 
-        System.out.println("############ MTBF ###############");
-        BigDecimal result = controller.getReliabilityCustomLib();
-        //BigDecimal result = controller.getReliability();
-        System.out.println("SUSCEPTIB: " + result);
-        System.out.println("MTBF: " + CommonOps.getMTBF(result));
-        System.out.println("MTBF BigInt: " + CommonOps.getMTBFBigInt(result));
+        ArrayList<ArrayList<Boolean>> temQueVerIsso = new ArrayList<>();
 
-        System.out.println(SPROpsV2.getSPRReliability(Terminal.getInstance().getProbCircuit()));
+        temQueVerIsso.add(new ArrayList<>(Arrays.asList(false)));
+        temQueVerIsso.add(new ArrayList<>(Arrays.asList(false)));
+        temQueVerIsso.add(new ArrayList<>(Arrays.asList(false)));
+        temQueVerIsso.add(new ArrayList<>(Arrays.asList(false)));
+        temQueVerIsso.add(new ArrayList<>(Arrays.asList(false)));
+        temQueVerIsso.add(new ArrayList<>(Arrays.asList(true)));
+        temQueVerIsso.add(new ArrayList<>(Arrays.asList(false)));
+        temQueVerIsso.add(new ArrayList<>(Arrays.asList(true)));
+        temQueVerIsso.add(new ArrayList<>(Arrays.asList(true)));
 
-        
+        pCircuit1.propagate(temQueVerIsso);
+        System.out.println(pCircuit1.getProbOutputs().get(0).getSignalValues());
+
     }
-    
+
     public void Foo5() throws IOException, Exception {
 
         //Terminal.getInstance().executeCommand("read_genlib abc/Matheus/1-minimal_no_cost.genlib");

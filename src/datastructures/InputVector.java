@@ -29,6 +29,11 @@ public class InputVector {
     public InputVector(String value) {
        this.value = new BigInteger(value);
     }
+
+    public InputVector(String value, int bits) {
+        this.value = new BigInteger(value);
+        this.bits = bits;
+    }
     
     public InputVector(BigInteger value, int bits) {
        this.value = value;
@@ -75,7 +80,7 @@ public class InputVector {
     */
     public String getBinaryString() {
         if (bits != 0) {
-            String bin = value.toString(2);         
+            String bin = value.toString(2);
             while (bin.length() < this.bits) {
                 bin = '0' + bin;
             }
