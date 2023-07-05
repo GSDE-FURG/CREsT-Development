@@ -4,10 +4,8 @@
  * and open the template in the editor.
  */
 package logicSimulator;
-import jxl.read.biff.SharedStringFormulaRecord;
 
 import java.io.*;
-import java.lang.reflect.Array;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;

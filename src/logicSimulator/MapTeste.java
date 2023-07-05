@@ -1,8 +1,8 @@
 package logicSimulator;
-import java.nio.channels.Pipe;
-import java.util.*;
 
-import static org.ejml.EjmlUnitTests.assertEquals;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class MapTeste {
 

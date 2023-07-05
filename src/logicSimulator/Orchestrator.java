@@ -5,13 +5,17 @@
  */
 package logicSimulator;
 
-import com.opencsv.CSVReader;
 import datastructures.CellLibrary;
 import datastructures.Circuit;
 import datastructures.Gate;
 import datastructures.Signal;
+import jxl.write.WriteException;
+import levelDatastructures.LevelCircuit;
+import readers.MappedVerilogReader;
+import signalProbability.ProbCircuit;
+import writers.WriteCsvTh;
 
-import java.awt.datatransfer.StringSelection;
+import javax.script.ScriptException;
 import java.io.*;
 import java.math.BigDecimal;
 import java.nio.file.Files;
@@ -24,14 +28,6 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
-import javax.script.ScriptException;
-import javax.sound.midi.Soundbank;
-
-import jxl.write.WriteException;
-import levelDatastructures.LevelCircuit;
-import readers.MappedVerilogReader;
-import signalProbability.ProbCircuit;
-import writers.WriteCsvTh;
 
 /**
  *  @author Clayton Farias

@@ -1,5 +1,10 @@
 package simulation;
 
+import writers.WriteFile;
+
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
 public class SimualtionType {
@@ -31,8 +36,12 @@ public class SimualtionType {
         //simulacaoMultithreading.runMultithreadingMonteCarlo(Math.round(simulationCircuit.getMtf_sizes().get(0)), "ALL_SIGNALS");
         System.out.println("> : " + simulationCircuit.getMtf_sizes().get(0));
         simulacaoMultithreading.monteCarloReliabilitySpiceGeneration(Math.round(simulationCircuit.getMtf_sizes().get(0)), simulationCircuit.getMtf_sizes(), simulationCircuit.getSignalsToinjectFault(), simulationCircuit.getRelativePath() + "lookup_table.csv");
-               //Comentado para simulação // simulacaoMultithreading.generateSensitiveNodesForSETSpiceFile(spiceScriptsFolder, PTMLibrary, SpiceNetListLibrary);
-                    simulacaoMultithreading.printSensitiveAreasAnalysis();
+        simulacaoMultithreading.printSensitiveAreasAnalysis();
+        simulacaoMultithreading.generateSensitiveNodesForSETSpiceFile(spiceScriptsFolder, PTMLibrary, SpiceNetListLibrary);
+
+
+        //Comentado para simulação // simulacaoMultithreading.generateSensitiveNodesForSETSpiceFile(spiceScriptsFolder, PTMLibrary, SpiceNetListLibrary);
+
                          //simulacaoMultithreading.PrintGatesCounterDetailsSortedCompliled(0, simulationCircuit.getRelativePath() + simulationCircuit.getCircuit());
                 this.OUTPUT_INFO = simulacaoMultithreading.getER(" MTFT Sample (Monte Carlo = N)");
 
@@ -262,11 +271,33 @@ public class SimualtionType {
            //this.output_sample = simulacaoMultithreading.SampleSizeExausticSimulation(simulationCircuit.getSignalsToinjectFault());
             simulacaoMultithreading.runMultithreadingExausticSimulation(simulationCircuit.getSignalsToinjectFault());
 
+        //simulacaoMultithreading.printSensitiveAreasAnalysis();
+        this.OUTPUT_INFO = simulacaoMultithreading.getER("Sample (N = "
+                + "2^Signals * Gates)");
+    }
+    public void logicalSimulator(ArrayList <String> vectors) throws Exception { //ou Signals =  "ALL_SIGNALS" for exaustive consider all_signals
+
+        /*
+        Management simulacaoMultithreading = new Management(simulationCircuit.getThreads(), simulationCircuit.getReliabilityConst(), simulationCircuit.getRelativePath(),
+                simulationCircuit.getRelativePath() + simulationCircuit.getGenlib(), simulationCircuit.getRelativePath() + simulationCircuit.getCircuit());
+
+         */
+        Management simulacaoMultithreading = new Management(simulationCircuit.getThreads(), simulationCircuit.getReliabilityConst(), simulationCircuit.getRelativePath(),
+                simulationCircuit.getRelativePath()+ simulationCircuit.getGenlib(), simulationCircuit.getRelativePath()+ simulationCircuit.getCircuit());
+
+
+        //this.output_sample = simulacaoMultithreading.SampleSizeExausticSimulation(simulationCircuit.getSignalsToinjectFault());
+        simulacaoMultithreading.LogicalSimulationFaultFree(simulationCircuit.getSignalsToinjectFault(), vectors);
 
         //simulacaoMultithreading.printSensitiveAreasAnalysis();
         this.OUTPUT_INFO = simulacaoMultithreading.getER("Sample (N = "
                 + "2^Signals * Gates)");
     }
+
+    /**
+     *
+     * @throws Exception
+     */
     public void faultToleranceExhaustiveSETAPIFAULT() throws Exception { //ou Signals =  "ALL_SIGNALS" for exaustive consider all_signals
 
         /*
@@ -279,14 +310,151 @@ public class SimualtionType {
                 simulationCircuit.getRelativePath()+ simulationCircuit.getGenlib(), simulationCircuit.getRelativePath()+ simulationCircuit.getCircuit());
 
         //this.output_sample = simulacaoMultithreading.SampleSizeExausticSimulation(simulationCircuit.getSignalsToinjectFault());
-        simulacaoMultithreading.runMultithreadingExausticSimulationFAULT(simulationCircuit.getSignalsToinjectFault());
-
+        simulacaoMultithreading.runMultithreadingExhausticSimulationAndNotMaskedSensitiveArea(simulationCircuit.getSignalsToinjectFault());
+            simulacaoMultithreading.printSensitiveAreasAnalysis();
 
         //simulacaoMultithreading.printSensitiveAreasAnalysis();
         this.OUTPUT_INFO = simulacaoMultithreading.getER("Sample (N = "
                 + "2^Signals * Gates)");
     }
 
+
+    /**
+     *
+     * @throws Exception
+     */
+    public void exhaustiveSensitiveAreaAnalysis_AVG_and_NotMasked() throws Exception { //ou Signals =  "ALL_SIGNALS" for exaustive consider all_signals
+
+        /*
+        Management simulacaoMultithreading = new Management(simulationCircuit.getThreads(), simulationCircuit.getReliabilityConst(), simulationCircuit.getRelativePath(),
+                simulationCircuit.getRelativePath() + simulationCircuit.getGenlib(), simulationCircuit.getRelativePath() + simulationCircuit.getCircuit());
+
+         */
+        System.out.println("Exaustive");
+        Management simulacaoMultithreading = new Management(simulationCircuit.getThreads(), simulationCircuit.getReliabilityConst(), simulationCircuit.getRelativePath(),
+                simulationCircuit.getRelativePath()+ simulationCircuit.getGenlib(), simulationCircuit.getRelativePath()+ simulationCircuit.getCircuit());
+
+        //this.output_sample = simulacaoMultithreading.SampleSizeExausticSimulation(simulationCircuit.getSignalsToinjectFault());
+        //simulacaoMultithreading.classifyGatesSensitiveAreas();
+
+
+        try {
+            /* Monte Carlo Simulation */
+            //simulacaoMultithreading.monteCarloReliability(Math.round(simulationCircuit.getMtf_sizes().get(0)), simulationCircuit.getMtf_sizes(), simulationCircuit.getSignalsToinjectFault(), Sensitive_Library);
+            simulacaoMultithreading.runMultithreadingSimulationAndNotMaskedSensitiveArea(simulationCircuit.getSignalsToinjectFault());
+
+            // simulacaoMultithreading.classifyTotalSensitiveAreas();
+
+
+            //simulacaoMultithreading.printSensitiveAreasAnalysis();
+            simulacaoMultithreading.printPropagationGates("Exhaustive");
+
+        }catch (Exception e){
+            System.out.println("Error !!!");
+
+        }
+
+
+
+
+        //simulacaoMultithreading.printSensitiveAreasAnalysis();
+        this.OUTPUT_INFO = simulacaoMultithreading.getER("Sample (N = "
+                + "2^Signals * Gates)");
+    }
+    public void monteCarloSensitiveAreaAnalysis_AVG_and_NotMasked() throws Exception { //ou Signals =  "ALL_SIGNALS" for exaustive consider all_signals
+
+        /*
+        Management simulacaoMultithreading = new Management(simulationCircuit.getThreads(), simulationCircuit.getReliabilityConst(), simulationCircuit.getRelativePath(),
+                simulationCircuit.getRelativePath() + simulationCircuit.getGenlib(), simulationCircuit.getRelativePath() + simulationCircuit.getCircuit());
+
+         */
+        String Sensitive_Library  = "teste/lookup_table.csv";
+        //System.out.println("Exaustive");
+        Management simulacaoMultithreading = new Management(simulationCircuit.getThreads(), simulationCircuit.getReliabilityConst(), simulationCircuit.getRelativePath(),
+                simulationCircuit.getRelativePath()+ simulationCircuit.getGenlib(), simulationCircuit.getRelativePath()+ simulationCircuit.getCircuit());
+
+        //this.output_sample = simulacaoMultithreading.SampleSizeExausticSimulation(simulationCircuit.getSignalsToinjectFault());
+        //simulacaoMultithreading.classifyGatesSensitiveAreas();
+
+        /* Monte Carlo Simulation */
+        LocalDateTime myDateObj = LocalDateTime.now();
+        DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+        String formattedDate = myDateObj.format(myFormatObj);
+
+        System.out.println("               \n------> Start simulation " + formattedDate);
+
+        simulacaoMultithreading.monteCarloSensitiveAreaAnalysis_AVG_and_NotMasked(Math.round(simulationCircuit.getMtf_sizes().get(0)), simulationCircuit.getMtf_sizes(), simulationCircuit.getSignalsToinjectFault(), Sensitive_Library);
+
+
+        LocalDateTime myDateObj1 = LocalDateTime.now();
+        String formattedDate1 = myDateObj1.format(myFormatObj);
+
+        System.out.println("               \n------> End Simulation " + formattedDate1);
+
+        //simulacaoMultithreading.classifyTotalSensitiveAreas();
+
+        System.out.println("               \n------> Start SA print " + formattedDate1);
+        simulacaoMultithreading.printPropagationGates("Monte_Carlo");
+
+        LocalDateTime myDateObj2 = LocalDateTime.now();
+        String formattedDate2 = myDateObj2.format(myFormatObj);
+        System.out.println("               \n------> END SA print " + formattedDate2);
+
+
+        long timeElapsed_sim = Duration.between(myDateObj, myDateObj1).toSeconds();
+        long timeElapsed_print = Duration.between(myDateObj1, myDateObj2).toSeconds();
+        long timeElapsed_total = Duration.between(myDateObj, myDateObj2).toSeconds();
+
+
+        System.out.println("-Simulation time elapsed: " + (timeElapsed_sim)+ " s");
+        System.out.println("-Print and files time elapsed: " + (timeElapsed_print)+ " s");
+        System.out.println("-Total time elapsed: " + (timeElapsed_total) + " s");
+
+        this.OUTPUT_INFO = simulacaoMultithreading.getER("Sample (N = "
+                + "2^Signals * Gates)");
+        System.out.println("------------");
+
+
+        ArrayList<String> content =new ArrayList<>();
+
+        content.add("Simulation Time (s): " +";"+ String.valueOf(timeElapsed_sim));
+        content.add("Generating Files (s): " +";"+ String.valueOf(timeElapsed_print));
+        content.add("Total time (s): " +";"+ String.valueOf(timeElapsed_total));
+        WriteFile file_AS = new WriteFile(this.simulationCircuit.relativePath+this.simulationCircuit.getCircuit() + "_Measure_time" , content , ".txt");
+    }
+
+    /**
+     *
+     * @throws Exception
+     */
+    public void faultToleranceExhaustiveSETAPIFAULTADAPTIVE() throws Exception { //ou Signals =  "ALL_SIGNALS" for exaustive consider all_signals
+
+        /*
+        Management simulacaoMultithreading = new Management(simulationCircuit.getThreads(), simulationCircuit.getReliabilityConst(), simulationCircuit.getRelativePath(),
+                simulationCircuit.getRelativePath() + simulationCircuit.getGenlib(), simulationCircuit.getRelativePath() + simulationCircuit.getCircuit());
+
+         */
+        System.out.println("Exaustive");
+        Management simulacaoMultithreading = new Management(simulationCircuit.getThreads(), simulationCircuit.getReliabilityConst(), simulationCircuit.getRelativePath(),
+                simulationCircuit.getRelativePath()+ simulationCircuit.getGenlib(), simulationCircuit.getRelativePath()+ simulationCircuit.getCircuit());
+
+        //this.output_sample = simulacaoMultithreading.SampleSizeExausticSimulation(simulationCircuit.getSignalsToinjectFault());
+        simulacaoMultithreading.runMultithreadingExhausticSimulationAdaptiveSensitiveArea(simulationCircuit.getSignalsToinjectFault());
+        simulacaoMultithreading.printSensitiveAreasAnalysis();
+
+        //simulacaoMultithreading.printSensitiveAreasAnalysis();
+        this.OUTPUT_INFO = simulacaoMultithreading.getER("Sample (N = "
+                + "2^Signals * Gates)");
+    }
+
+
+    /**
+     *
+     * @apiNote  STABLE - Use this method to extract the circuit Sensitive Area x Vectors (True Table)
+     * @param spiceScriptsFolder
+     * @param PTMLibrary
+     * @param SpiceNetListLibrary
+     * */
     public void faultToleranceExhaustiveSET_SensitiveAreaAPI(String spiceScriptsFolder, String PTMLibrary, String SpiceNetListLibrary) throws Exception { //ou Signals =  "ALL_SIGNALS" for exaustive consider all_signals
 
         /*

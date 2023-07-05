@@ -3,7 +3,6 @@ package logicSimulator;
 import datastructures.Cell;
 import levelDatastructures.DepthGate;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -13,15 +12,22 @@ public class GateDetailedInformation {
     private ArrayList <String> inputs_original;
     private ArrayList <String> outputs;
 
+    private ArrayList <String> outputs_original;
+
     private DepthGate gate;
 
     private Float gateSensitiveArea;
+
+    private Float gateSensitiveAreaOriginal;
 
     private Cell cells;
     GateDetailedInformation(){
         //this.gate = gate;
         this.inputs = new ArrayList<>();
         this.outputs = new ArrayList<>();
+        this.outputs_original = new ArrayList<>();
+        this.gateSensitiveArea = 0F;
+        this.gateSensitiveAreaOriginal = 0F;
     }
 
     public void setGate(DepthGate gate) {
@@ -39,16 +45,43 @@ public class GateDetailedInformation {
         }
     }
 
-    public ArrayList<String> getOutputs() {
-        return outputs;
+    public void setOutputsOriginal( Boolean outputsOriginal) {
+
+        if(outputsOriginal == true){
+            this.outputs_original.add("1");
+        }
+        if(outputsOriginal == false){
+            this.outputs_original.add("0");
+        }
+
+           // this.outputs = outputsOriginal;
+
     }
 
-    public void setgateSensitiveArea(Float gateSensitiveArea) {
-        this.gateSensitiveArea = gateSensitiveArea;
+    public ArrayList<String> getOutputs() {
+        return this.outputs;
+    }
+
+    public ArrayList<String> getOutputsOriginal() {
+        return this.outputs_original;
+    }
+
+    public void setgateSensitiveArea(Float gSA) {
+        this.gateSensitiveArea = gSA;
     }
 
     public Float getgateSensitiveArea() {
-        return gateSensitiveArea;
+        return this.gateSensitiveArea;
+    }
+
+
+    public void setgateSensitiveAreaOriginal(Float gSA) {
+        this.gateSensitiveAreaOriginal = gSA;
+    }
+
+
+    public Float getgateSensitiveAreaOriginal() {
+        return this.gateSensitiveAreaOriginal;
     }
 
     public void setInputs(ArrayList <Boolean> vector_value){
@@ -82,11 +115,11 @@ public class GateDetailedInformation {
     }
 
     public ArrayList<String> getInputs() {
-        return inputs;
+        return this.inputs;
     }
 
     public ArrayList<String> getInputsOriginal() {
-        return inputs_original;
+        return this.inputs_original;
     }
 
 
@@ -208,6 +241,13 @@ public class GateDetailedInformation {
        // System.out.println(")))) GateType: " + this.cells.getName() + "  Inputs: " + input + " -> output: " + output + " -- tested: " + tested + " Masked: " + masked);
     }
 
+    /**
+     * Compare if inputs gates original and propagated are equal
+     * @return YES they fault are masked, NO if not masked logically
+     * @param input
+     * @param inputOriginal
+     * @return
+     */
     public Boolean calculatGateSusceptibilityLogicalMasking(ArrayList <Boolean> input, ArrayList <Boolean> inputOriginal){ //Trazer o original também
 
         final Map<ArrayList<Boolean>, Boolean> comb = this.cells.getComb(); // Calculate the gate output
@@ -218,21 +258,6 @@ public class GateDetailedInformation {
 
         boolean output_original = this.calculateTheOutputGatesInBoolean(comb_Original, inputOriginal, this.gate); // Output
 
-        // How get original inputs
-
-        int masked = 0;
-        int faill = 0;
-        //int tested = 0;
-
-        //ArrayList <Integer> sensitiveList = new ArrayList<>();
-
-       if(output != output_original){
-           //faill++;
-           return false;
-       }else{
-           //masked++;
-           return true;
-           // masked
-       }
+        return output == output_original;
     }
 }

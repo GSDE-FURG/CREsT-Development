@@ -7,6 +7,7 @@ package logicSimulator;
 
 import datastructures.Signal;
 import levelDatastructures.DepthGate;
+import levelDatastructures.GateLevel;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -30,6 +31,7 @@ public class TestVectorInformation {
     private long threadID;
 
     private float sum_sensitive_cells_area;
+    private float sum_sensitive_cells_area_original;
 
     private boolean MTF;
     private final  ArrayList <Signal> MTF_FaultSignal_List;
@@ -39,10 +41,15 @@ public class TestVectorInformation {
     public ConcurrentHashMap <String, Signal>  MTF_Fault_LIST_thd = new ConcurrentHashMap<>();
 
     public ArrayList <DepthGate>  help = new ArrayList<>();
+
+    //public ArrayList <DepthGate>  gatesNewAprouch = new ArrayList<>();
+    ArrayList <ArrayList <GateLevel>> gatesLevelsThreadList = new ArrayList<>();
+
     public ArrayList <Float>  vectorSensitiveAreaSum = new ArrayList<>();
     //private ArrayList <Signal> MTF_FaultSignal_List_Base;
     //private ArrayList <SignalExtendedProperties> MTF_FaultSignal_List_Extended;
     public ArrayList <GateDetailedInformation> gatesLogicalPath;
+    public ArrayList <GateDetailedInformation> gatesSensitiveLogicalPath;
 
     public Float circuitSensitiveArea;
 
@@ -55,6 +62,15 @@ public class TestVectorInformation {
         System.out.println("        MTF_PERSONAL_LIST: " + this.MTF_PERSONAL_LIST.size());
         System.out.println("        -------- ");
 
+    }
+
+    public void setGatesLevelsThreadList(ArrayList<GateLevel> gatesLevelsThreadList) {
+        final ArrayList<GateLevel> temp = gatesLevelsThreadList;
+        this.gatesLevelsThreadList.add(temp);
+    }
+
+    public ArrayList <ArrayList <GateLevel>> getGatesLevelsThreadList() {
+        return this.gatesLevelsThreadList;
     }
 
     public Signal getFaultSignals() {
@@ -76,6 +92,7 @@ public class TestVectorInformation {
         }
         return Concat;
     }
+
     public String concatMTFFaultSignals(String separator){
         String Concat = "";
         for (Signal x: this.MTF_FaultSignal_List_thd){
@@ -114,6 +131,7 @@ public class TestVectorInformation {
             //this.MTF_FaultSignal_List_Extended.add(x);
 
             this.gatesLogicalPath = new ArrayList<>();
+        this.gatesSensitiveLogicalPath = new ArrayList<>();
             this.circuitSensitiveArea = 0.0F;
             
     }
@@ -121,9 +139,16 @@ public class TestVectorInformation {
     public void setGatesLogicalPath(GateDetailedInformation gatex) {
         this.gatesLogicalPath.add(gatex);
     }
+    public void setSensitiveGatesLogicalPath(GateDetailedInformation gatex) {
+        this.gatesSensitiveLogicalPath.add(gatex);
+    }
 
     public ArrayList<GateDetailedInformation> getGatesLogicalPath() {
-        return gatesLogicalPath;
+        return this.gatesLogicalPath;
+    }
+
+    public ArrayList<GateDetailedInformation> getSensitiveGatesLogicalPath() {
+        return this.gatesSensitiveLogicalPath;
     }
 
     public int searchGatecircuitGatesInPath(DepthGate gate){
@@ -145,8 +170,20 @@ public class TestVectorInformation {
         vectorSensitiveAreaSum.add(cells_sensitive_area);
     }
 
-    public Float getCircuitSensitiveArea() {
+    public void sum_sensitive_cells_area_original(float cells_sensitive_area){
+        this.sum_sensitive_cells_area_original = this.sum_sensitive_cells_area_original + cells_sensitive_area;
+    }
+
+    public Float getCircuitOriginalSensitiveArea() {
+
         return circuitSensitiveArea;
+    }
+    public String getCircuitOriginalSensitiveAreaStr() {
+        float myFloat = circuitSensitiveArea;
+
+        String formattedString = String.format("%.03f", myFloat);
+
+        return formattedString;
     }
 
     public void setCircuitSensitiveArea(Float circuitSensitiveArea) {
@@ -180,8 +217,19 @@ public class TestVectorInformation {
         return this.sum_sensitive_cells_area;
     }
 
+    public float getSum_sensitive_cells_area_original() {
+        return this.sum_sensitive_cells_area_original;
+    }
+
     public String getSum_sensitive_cells_area_str() {
         float myFloat = this.sum_sensitive_cells_area;
+        String formattedString = String.format("%.03f", myFloat);
+        formattedString = formattedString.replace(",",".");
+        return  formattedString;
+    }
+
+    public String getSum_sensitive_cells_area_original_str() {
+        float myFloat = this.sum_sensitive_cells_area_original;
         String formattedString = String.format("%.03f", myFloat);
         formattedString = formattedString.replace(",",".");
         return  formattedString;

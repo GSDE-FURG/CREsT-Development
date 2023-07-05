@@ -2,6 +2,7 @@ package simulation;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class Simulation {
@@ -75,15 +76,42 @@ public class Simulation {
             SimulationInLotParser parserFiles = new SimulationInLotParser(this.relativePath);
 
             parserFiles.getVerilogCircuitFilesPath();
+
             parserFiles.circuitListParser(this.genlib, signalsToinjectFault, threads, reliabilityConst, mtf_sizes); //String genlib, String signalsToinjectFault, int threads, String reliabilityConst, int sampleSize
 
             this.circuitsListName = parserFiles.getCircuitList();  /// List of circuits
 
             this.circuitListSpecs = parserFiles.getSimulationCircuitsList();
 
-            System.out.println("- MTF: CircuitList: " + this.circuitsListName );
-            System.out.println("- MTF: Circuits object parsed: " + this.circuitListSpecs );
+            //System.out.println("- MTF: CircuitList: " + this.circuitsListName );
+            //System.out.println("- MTF: Circuits object parsed: " + this.circuitListSpecs );
             parserFiles.printCircuitsSpecs();
+    }
+
+    public void processParserMatheus(File verilog, File genlib, String signalsToinjectFault, String reliabilityConst,  ArrayList <Float> mtf_sizes){
+        //SimulationInLotParser parserFiles = new SimulationInLotParser(this.relativePath);
+
+        //parserFiles.getVerilogCircuitFilesPath();
+
+        //parserFiles.circuitListParser(this.genlib, signalsToinjectFault, threads, reliabilityConst, mtf_sizes); //String genlib, String signalsToinjectFault, int threads, String reliabilityConst, int sampleSize
+
+        //this.circuitsListName = parserFiles.getCircuitList();  /// List of circuits
+
+        String full_path = verilog.getAbsolutePath();
+
+        String full_parent_path = full_path.replace("" + verilog.getName(), "");
+
+        this.circuitsListName = new ArrayList<String>(Arrays.asList(verilog.getName()));
+
+        SimulationCircuit circuit = new SimulationCircuit(verilog.getName(), full_parent_path, genlib.getName(), signalsToinjectFault, threads, reliabilityConst, mtf_sizes); //String circuit, String relativePath, String genlib, String signalsToinjectFault, int threads, String reliabilityConst, int sampleSize
+        //this.circuitListSpecs = parserFiles.getSimulationCircuitsList();
+        this.circuitListSpecs = new ArrayList<SimulationCircuit>();
+        this.circuitListSpecs.add(circuit);
+
+
+        //System.out.println("- MTF: CircuitList: " + this.circuitsListName );
+        //System.out.println("- MTF: Circuits object parsed: " + this.circuitListSpecs );
+        //parserFiles.printCircuitsSpecs();
     }
 
     //TODO: Make method for read results in lot
@@ -94,7 +122,7 @@ public class Simulation {
      * @throws IOException e
      */
     public void readResultsInLot(String path, String filter) throws IOException{
-        System.out.println("INSIDE");
+        System.out.println("\n\n\n-------------------------------------------");
         String[] circuitFiles;
         File f = new File(path);
         ArrayList <String> files = new ArrayList<>();
@@ -102,19 +130,19 @@ public class Simulation {
         circuitFiles = f.list();
 
         for (String pathname : circuitFiles) {
-            if(pathname.endsWith(".txt")){ // test tipe .v
-                //System.out.println(pathname);
+            if(pathname.startsWith(filter) && pathname.endsWith(".csv")){ // test tipe .v
+                System.out.println(pathname);
                 //circuitList.add(pathname);
                 //this.circuitList.add(pathname);
                 files.add(pathname);
             }
         }
-        System.out.println("results in List: " +  files);
-        System.out.println("Size List: " +  files.size());
+        //System.out.println("results in List: " +  files);
+        //System.out.println("Size List: " +  files.size());
 
         for (int i = 0; i < files.size(); i++) {
             if(files.get(i).contains(filter)){
-                System.out.println("->" + files.get(i));
+                //System.out.println("->" + files.get(i));
                 filtered_files.add(files.get(i));
             }
         }
@@ -129,7 +157,8 @@ public class Simulation {
 
 
         //this.readEachFile(filtered_files, path, filter);
-        this.readEachFileProportion(filtered_files, path, filter);
+        //this.readEachFileProportion(filtered_files, path, filter);
+        this.readEachFileProportionSensitiveArea(filtered_files, path, filter, "_SACOMPARATIVE");
         System.out.println("------------------------------------------");
 
     }
@@ -213,6 +242,68 @@ public class Simulation {
 
 
     }
+
+    /**
+     */
+    public void readEachFileProportionSensitiveArea(ArrayList<String> files, String path, String filter, String compiledOutputFile) throws IOException{
+
+        ArrayList <String> FileContent = new ArrayList<>();
+        String avgSA = "";
+        String Ne  = "";
+        String MTBF  = "";
+        String FMR = "";
+        String  time = "";
+
+        FileContent.add("Circuit"+";"+"SA_Total"+";"+"SA_notMasked");
+        //FileContent.add("Circuit"+ ";" + "Ne" + ";" + "FMR" + ";" + "ASavg" + ";" + "MTBF" + ";" + "Time(s)");
+
+        for (int i = 0; i < files.size(); i++) {
+            List<String> fileContentList  = this.readFile(path + "/" +files.get(i));
+            System.out.println("Records: " + fileContentList);
+
+
+          //  FileContent.add(files.get(i) + ";" + Ne + ";" + FMR + ";" + avgSA + ";" + MTBF + ";" + time);
+          //  System.out.println("File: " + files.get(i) + " Ne: " + Ne +  " FMR" + FMR + " avgSA: " + avgSA + " MTBF: " + MTBF + " Time: " + time);
+
+            for (int j = 2; j < fileContentList.size(); j++) {
+                //System.out.println(fileContentList.get(j));
+                String[] c = fileContentList.get(j).split(";");
+
+                FileContent.add(c[0] + ";" + c[1] + ";" + c[2]);
+            }
+
+
+        }
+
+
+
+        PrintWriter pw = new PrintWriter(new FileOutputStream(path + "/" + filter + "_.csv"));
+        for (String club : FileContent) {
+            pw.println(club);
+        }
+        pw.close();
+
+        PrintWriter pw1 = new PrintWriter(new FileOutputStream(path + "/" + filter + "_.txt"));
+        for (String club : FileContent) {
+            pw1.println(club);
+        }
+        pw1.close();
+
+
+        System.out.println("Arquivo criado: " + path + "/" + filter + compiledOutputFile + "_.csv" );
+                /*
+                System.out.println(path + "/" + " resultado_.txt");
+                File file = new File(path + "/" + " resultado_.txt");
+                if(file.createNewFile()){
+                System.out.println(" File Created");
+                }else System.out.println("File  already exists");
+                 */
+
+
+
+    }
+
+
     private List<String> readFile(String filename)
     {
         List<String> records = new ArrayList<String>();

@@ -1,8 +1,7 @@
 package simulation;
 
 import java.io.File;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
 
 public class SimulationInLotParser {
 
@@ -52,6 +51,7 @@ public class SimulationInLotParser {
 
                 circuitFiles = f.list();
 
+
                 for (String pathname : circuitFiles) {
                         if(pathname.endsWith(".v")){ // test type for verilogs .v
                                 this.circuitList.add(pathname);
@@ -93,6 +93,7 @@ public class SimulationInLotParser {
 
         public void circuitListParser(String genlib, String signalsToinjectFault, int threads, String reliabilityConst,  ArrayList <Float> mtf_sizes){
                 if ( mtf_sizes.size() >= 0 ) {
+                        System.out.println("OJ: :: :: :  : " + this.circuitList);
                         for (String file : this.circuitList) {
                                 SimulationCircuit circuit = new SimulationCircuit(file, this.circuitfilesPath, genlib, signalsToinjectFault, threads, reliabilityConst, mtf_sizes); //String circuit, String relativePath, String genlib, String signalsToinjectFault, int threads, String reliabilityConst, int sampleSize
                                 this.simulationCircuitsList.add(circuit);

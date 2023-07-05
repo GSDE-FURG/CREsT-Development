@@ -37,6 +37,14 @@ public class DepthGate {
         this.depth = depth;
     }
 
+    public void setVisited(){
+        this.visited = true;
+    }
+
+    public boolean isVisited() {
+        return visited;
+    }
+
     @Override
     public String toString() {
         return gate.toString();

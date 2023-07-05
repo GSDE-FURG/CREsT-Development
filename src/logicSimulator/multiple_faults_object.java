@@ -1,6 +1,5 @@
 package logicSimulator;
 
-import javax.swing.*;
 import java.util.ArrayList;
 
 public class multiple_faults_object {

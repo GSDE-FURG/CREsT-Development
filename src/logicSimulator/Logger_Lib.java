@@ -1,7 +1,5 @@
 package logicSimulator;
 
-import org.w3c.dom.Text;
-
 import java.awt.*;
 import java.util.logging.Logger;
 
