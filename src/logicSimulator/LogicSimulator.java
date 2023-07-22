@@ -195,6 +195,7 @@ import java.util.logging.Logger;
                 finalS = finalS + s.split("->")[1];
             }
             System.out.println(finalS);
+            System.out.println("Gates: " + probCircuit.getProbGates().size() );
             //System.out.println("mamae-aqui");
         }
 

@@ -289,15 +289,16 @@ public class ProbCircuit extends Circuit {
     
     public ProbGate getProbGateByName(String name) {
         
-        ProbGate pGate = null;
+        //ProbGate pGate = null;
         
         for(ProbGate fooGate : this.probGates) {
             if(fooGate.getId().equals(name)) {
-                pGate = fooGate;
+                //pGate = fooGate;
+                return fooGate;
             }
         }
         
-        return pGate;
+        return null;
     }
 
     public void setProbGates(ArrayList<ProbGate> probGates) {
@@ -543,9 +544,9 @@ public class ProbCircuit extends Circuit {
         int counter = 0;
         
         for(ProbGate pGate : this.probGates) {
-            if(pGate.getGateReliability() != null) {                
+            if(pGate.getGateReliability() != null) {
                 pGate.setReliabilityMatrix(pGate.getGateReliability());
-            } else {                
+            } else {
                 pGate.setReliabilityMatrix(pGate.getType().getPTM());
             }            
             pGate.setReliabilityMatrix2(pGate.getType().getPtm2());

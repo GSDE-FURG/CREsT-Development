@@ -5,10 +5,13 @@
  */
 package manipulator;
 
+import datastructures.Cell;
 import datastructures.CellLibrary;
 import datastructures.CustomMatrixLibrary;
 import datastructures.InputVector;
 import java.math.BigDecimal;
+
+import ops.CommonOps;
 import ops.SPROpsChuloMedio;
 import ops.SPROpsV2;
 import signalProbability.ProbCircuit;
@@ -59,9 +62,9 @@ public class SPRController {
         return confValue;
     }
     
-    public BigDecimal getReliability(String decimalVector, int scale) {
+    public BigDecimal getReliability(String decimalVector, String gateReliability, int scale) {
         if(!this.sprPrepared) {
-            prepareForSPR(new BigDecimal("0.99999802495"));
+            prepareForSPR(new BigDecimal(gateReliability));
         }         
         BigDecimal confValue = SPROpsChuloMedio.getSPRReliability(pCircuit, new InputVector(decimalVector), scale);
         return confValue;
@@ -79,6 +82,12 @@ public class SPRController {
     public BigDecimal getReliability(String reliValue) {
         prepareForSPR(new BigDecimal(reliValue));
         BigDecimal confValue = SPROpsChuloMedio.getSPRReliability(pCircuit);
+        return confValue;
+    }
+
+    public BigDecimal getReliability(String reliValue, int scale) {
+        prepareForSPR(new BigDecimal(reliValue));
+        BigDecimal confValue = SPROpsChuloMedio.getSPRReliability(pCircuit, scale);
         return confValue;
     }
     
@@ -168,5 +177,13 @@ public class SPRController {
         this.pCircuit.setDefaultProbSourceSignalMatrix();
         this.pCircuit.setPTMReliabilityMatrix();
         this.sprPrepared = true;
+
+        /**
+         * Torna a confiabilidade VOTADOR ideal
+         */
+        Cell cell = this.cellLib.getCellByName("VOTADOR");
+        if(cell != null) {
+            this.cellLib.setPTMCellByName(cell.getName(), BigDecimal.ONE);
+        }
     }
 }

@@ -18,6 +18,7 @@ import java.math.RoundingMode;
 import java.nio.file.DirectoryNotEmptyException;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
+import java.nio.file.Path;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
@@ -36,6 +37,7 @@ import static ops.CommonOps.getITM;
 import static ops.CommonOps.sortByValue;
 import static  ops.CommonOps.timenow;
 import static  ops.CommonOps.timestamp;
+
 
 
 import javax.script.ScriptException;
@@ -1845,11 +1847,18 @@ public class Commands {
         int flag2c = 0;
         int flag3c = 0;
         int flag2e = 0;
+        int flag3e = 0;
 
         char[] exato = "00000001000101110001011101111111000101110111111101111111111111110001011101111111011111111111111101111111111111111111111111111110000101110111111101111111111111110111111111111111111111111111111001111111111111111111111111111110111111111111111011111110111010000001011101111111011111111111111101111111111111111111111111111110011111111111111111111111111111101111111111111110111111101110100001111111111111111111111111111110111111111111111011111110111010001111111111111110111111101110100011111110111010001110100010000000".toCharArray();
-        char[] mod1  = "00010001111101110011011111111111011101111111111101110111111111110111011111111111111111111111111111111111111111111111111111111110011101111111111111111111111111111111111111111111111111111111111011111111111111101111111111111110111111111111100011111110111110000001001101111111111111111111111101010111111111111111111111111111011111111111111111111111111111111111111111111110111111111111111101110111111111111111111111111111111111111111111011111111111111101111111111101110111111111110111011111110100010001111111010001000".toCharArray();
-        char[] mod2  = "00000001000101010001011101111111000100110111111101111111111111110001001101111111011111111111111101111111111111111111111111111110000101110111011101110111111111110111011111111111111111101111111001110111111111111111111111111110111111111111111011111100111000000001011101111111011111111111111101111111111111101111111111111110011111111111111111111111111111101111111011111110111111101110100001011111111111111111111111111110111110101111101011111110111010001111111111111110111111101110100011111010111010001110100010000000".toCharArray();
+        char[] mod1  = "00000001000101110001111101111111000101110111111101111111111111110001011101111111011111111111111101111111111111111111111111111110000101110111111101111111111111110111111111111111111111111111111001111111111111111111111111111110111111111111111011111110111010000001011101111111011111111111111101111111111111111111111111111110011111111111111111111111111111101111111111111110111111101110100001111111111111111111111111111110111111111111111011111110111010001111111111111110111111101110100011111110111010001110100010000000".toCharArray();
+        char[] mod2  = "00000001000101110001011101111111000101110111111101111111111111110001011101111111011111111111111101111111111111111111111111111110000101110111111101111111111111110111111111111111111111111111111001111111111111111111111111111110111111111111111011111110111010000001011101111111011111111111111101111111111111111111111111111110011111111111111111111111111111101111111111111110111111101110100001111111111111111111111111111111111111111111111011111110111010001111111111111110111111101110100011111110111010001110100010000000".toCharArray();
+        char[] mod3  = "00000001000101110001011101111111000101110111111101111111111111110001011101111111011111111111111101111111111111111111111111111110001101110111111101111111111111110111111111111111111111111111111001111111111111111111111111111110111111111111111011111110111010000001011101111111011111111111111101111111111111111111111111111110011111111111111111111111111111101111111111111110111111101110100001111111111111111111111111111110111111111111111011111110111010001111111111111110111111101110100011111110111010001110100010000000".toCharArray();
 
+
+        /**
+         * Testei todos contra o módulo exato
+         */
+        /*
         for(int n=0; n<exato.length; n++) {
             if(exato[n]==mod1[n]) {
                 if (exato[n] == mod2[n]) {
@@ -1865,10 +1874,44 @@ public class Commands {
                 }
             }
         }
+        */
+
+        for(int n=0; n<exato.length; n++) {
+            if(exato[n]==mod1[n]) {
+                if (exato[n] == mod2[n]) {
+                    if(exato[n]== mod3[n]) {
+                        flag3c = flag3c + 1;
+                    } else {
+                        flag2c = flag2c + 1;
+                    }
+                } else {
+                    if(exato[n]== mod3[n]) {
+                        flag2c = flag2c + 1;
+                    } else {
+                        flag2e = flag2e + 1;
+                    }
+                }
+            } else {
+                if(exato[n]==mod2[n]) {
+                    if(exato[n]== mod3[n]) {
+                        flag2c = flag2c + 1;
+                    } else {
+                        flag2e = flag2e + 1;
+                    }
+                } else {
+                    if (exato[n]== mod3[n]) {
+                        flag2e = flag2e + 1;
+                    } else {
+                        flag3e = flag3e + 1;
+                    }
+                }
+            }
+        }
 
         System.out.println("3C x 0E = " + flag3c);
         System.out.println("2C x 1E = " + flag2c);
         System.out.println("2E x 1C = " + flag2e);
+        System.out.println("3E x 0C = " + flag3e);
     }
     
     public void Foo4() throws IOException, Exception {
@@ -1878,91 +1921,195 @@ public class Commands {
 
         CellLibrary cellLib = Terminal.getInstance().getCellLibrary();
         CustomMatrixLibrary customLib = Terminal.getInstance().getCustomMatrixLib();
+        //ProbCircuit pCircuit1 = new CircuitFactory(cellLib, "abc/c17-abc.v").getProbCircuit();
+        //ProbCircuit pCircuit1 = new CircuitFactory(cellLib, "abc/c17_tmr.v").getProbCircuit();
+        //ProbCircuit pCircuit1 = new CircuitFactory(cellLib, "abc/9sym_exact.v").getProbCircuit();
+        ProbCircuit pCircuit1 = new CircuitFactory(cellLib, "abc/9sym_exact_tmr.v").getProbCircuit();
+        //ProbCircuit pCircuit1 = new CircuitFactory(cellLib, "abc/9sym_1_1_0.v").getProbCircuit();
+        //ProbCircuit pCircuit1 = new CircuitFactory(cellLib, "abc/9sym_1_1_1.v").getProbCircuit();
+        //ProbCircuit pCircuit1 = new CircuitFactory(cellLib, "abc/9sym_1_1_2.v").getProbCircuit();
+        //ProbCircuit pCircuit1 = new CircuitFactory(cellLib, "abc/9sym_64_64_0.v").getProbCircuit();
+        //ProbCircuit pCircuit1 = new CircuitFactory(cellLib, "abc/9sym_64_64_1.v").getProbCircuit();
+        //ProbCircuit pCircuit1 = new CircuitFactory(cellLib, "abc/9sym_64_64_2.v").getProbCircuit();
+        //ProbCircuit pCircuit1 = new CircuitFactory(cellLib, "abc/9sym_256_512_0.v").getProbCircuit();
+        //ProbCircuit pCircuit1 = new CircuitFactory(cellLib, "abc/9sym_256_512_1.v").getProbCircuit();
+        //ProbCircuit pCircuit1 = new CircuitFactory(cellLib, "abc/9sym_256_512_2.v").getProbCircuit();
 
-        ProbCircuit pCircuit1 = new CircuitFactory(cellLib, "abc/9sym_exact.v").getProbCircuit();
+        //ProbCircuit pCircuit1 = new CircuitFactory(cellLib, "abc/atmr_9sym_1_1.v").getProbCircuit();
+        //ProbCircuit pCircuit1 = new CircuitFactory(cellLib, "abc/atmr_9sym_64_64.v").getProbCircuit();
+        //ProbCircuit pCircuit1 = new CircuitFactory(cellLib, "abc/atmr_9sym_256_512.v").getProbCircuit();
 
         System.out.println("GATES: " + pCircuit1.getProbGates().size());
         System.out.println("Levels: " + pCircuit1.getProbGateLevels().size());
         System.out.println("Fanouts: " + pCircuit1.getFanouts().size());
         System.out.println("I/O: " + pCircuit1.getProbInputs().size() + "/" + pCircuit1.getProbOutputs().size());
 
-        InputVector input = new InputVector("11", pCircuit1.getInputs().size());
+        //InputVector input = new InputVector("11", pCircuit1.getInputs().size());
 
-        System.out.println("INPUT:" + input.getBinaryString());
+        //System.out.println("INPUT:" + input.getBinaryString());
+
+        // SPR !!!
         SPRController spr = new SPRController(pCircuit1, cellLib);
+        BigDecimal result = spr.getReliability("0.99999802495", 15);
 
-        System.out.println(spr.getReliability(input, 13));
+        BigDecimal averageReli = BigDecimal.ZERO;
 
-        System.out.println(pCircuit1.getProbOutputs().get(0).getProbMatrix());
-        CommonOps.matrixPrint(pCircuit1.getProbOutputs().get(0).getProbMatrix());
+        for(int i = 0; i<512; i++) {
+            averageReli = averageReli.add(spr.getReliability(Integer.toString(i), "0.99999802495", 15));
+        }
+        averageReli = averageReli.divide(new BigDecimal("512"), RoundingMode.HALF_UP);
+        System.out.println(averageReli);
+        System.out.println(CommonOps.getMTBFBigInt(averageReli));
 
-        ArrayList<ArrayList<Boolean>> temQueVerIsso = new ArrayList<>();
 
-        temQueVerIsso.add(new ArrayList<>(Arrays.asList(false)));
-        temQueVerIsso.add(new ArrayList<>(Arrays.asList(false)));
-        temQueVerIsso.add(new ArrayList<>(Arrays.asList(false)));
-        temQueVerIsso.add(new ArrayList<>(Arrays.asList(false)));
-        temQueVerIsso.add(new ArrayList<>(Arrays.asList(false)));
-        temQueVerIsso.add(new ArrayList<>(Arrays.asList(true)));
-        temQueVerIsso.add(new ArrayList<>(Arrays.asList(false)));
-        temQueVerIsso.add(new ArrayList<>(Arrays.asList(true)));
-        temQueVerIsso.add(new ArrayList<>(Arrays.asList(true)));
 
-        pCircuit1.propagate(temQueVerIsso);
-        System.out.println(pCircuit1.getProbOutputs().get(0).getSignalValues());
+
+        //cellLib.setPTMCells(new BigDecimal("0.99999802495"));
+
+
+
+        //System.out.println("Matriz PTM Votador:");
+        //CommonOps.matrixPrint(pCircuit1.getProbGateByName("g0").getReliabilityMatrix());
+
+        // SPR-MP
+        /*
+
+        pCircuit1.setDefaultProbSourceSignalMatrix();
+        pCircuit1.setPTMReliabilityMatrix();
+        pCircuit1.setProbSignalStates(false);
+
+        ArrayList<ProbSignal> fanouts = new ArrayList<>();
+
+        System.out.println(pCircuit1.getFanouts());
+        fanouts.add(pCircuit1.getFanouts().get(0));
+        fanouts.add(pCircuit1.getFanouts().get(1));
+        fanouts.add(pCircuit1.getFanouts().get(2));
+        fanouts.add(pCircuit1.getFanouts().get(3));
+        fanouts.add(pCircuit1.getFanouts().get(4));
+        fanouts.add(pCircuit1.getFanouts().get(5));
+        fanouts.add(pCircuit1.getFanouts().get(6));
+        fanouts.add(pCircuit1.getFanouts().get(7));
+        fanouts.add(pCircuit1.getFanouts().get(8));
+
+        System.out.println("Fanouts considerados:");
+        System.out.println(fanouts);
+
+        BigDecimal result = SPRMultiPassV3Ops.getSPRMultiPassReliaiblity(pCircuit1, fanouts);
+        //BigDecimal result = SPRMultiPassV3Ops.getSPRMultiPassReliaiblity(pCircuit1);
+        BigDecimal tmr_result = Utils.getReliabilityTMR(result.toString());
+
+         */
+
+        System.out.println(result);
+        //System.out.println(tmr_result);
+        System.out.println("MTBFs");
+        System.out.println(CommonOps.getMTBFBigInt(result));
+        //System.out.println(CommonOps.getMTBFBigInt(new BigDecimal("0.999930957")));
+        //System.out.println("Input Realiability");
+       // System.out.println(spr.getReliability(input, 13));
+
+        //CommonOps.getLogicSignalFromSignalMatrix(pCircuit1.getProbOutputs().get(0).getProbMatrix());
+        CommonOps.matrixPrint(pCircuit1.getProbOutputs().get(0).getProbMatrix(), 4);
+
+
+
+
+
+
+
+        //System.out.println("Here");
+        //CommonOps.matrixPrint(matrixABC);
+        //System.out.println(pCircuit1.getFanouts());
 
     }
 
     public void Foo5() throws IOException, Exception {
 
-        //Terminal.getInstance().executeCommand("read_genlib abc/Matheus/1-minimal_no_cost.genlib");
-        //Terminal.getInstance().executeCommand("read_genlib abc/Matheus/asap7.genlib");
-        Terminal.getInstance().executeCommand("read_genlib abc/cadence.genlib");
-
+        Terminal.getInstance().executeCommand("read_genlib abc/mylib.genlib");
         CellLibrary cellLib = Terminal.getInstance().getCellLibrary();
-        BooleanExpressionEvaluator b_eval = new BooleanExpressionEvaluator();
+
+        String exactOutput = "00000001000101110001011101111111000101110111111101111111111111110001011101111111011111111111111101111111111111111111111111111110000101110111111101111111111111110111111111111111111111111111111001111111111111111111111111111110111111111111111011111110111010000001011101111111011111111111111101111111111111111111111111111110011111111111111111111111111111101111111111111110111111101110100001111111111111111111111111111110111111111111111011111110111010001111111111111110111111101110100011111110111010001110100010000000";
+        char[] out = exactOutput.toCharArray();
+
+        ArrayList<Path> circuits = ops.CommonOps.getAllVerilogCircuitsFromPath("approx-9sym");
+
+        for(Path path: circuits) {
+
+            // Inicializa circuito
+            ProbCircuit pCircuit = new CircuitFactory(cellLib, path.toString()).getProbCircuit();
+
+            // Pega gates
+            int gates = pCircuit.getGates().size();
+
+            // fanouts
+            int fanouts = pCircuit.getFanouts().size();
+
+            // levels
+            int levels = pCircuit.getProbGateLevels().size();
+
+            // itera SPR por vetor
+            SPRController spr = new SPRController(pCircuit, cellLib);
+
+            // vetores cobertos
+            int coveredVectors = 0;
+
+            // conf media
+            BigDecimal averageReli = BigDecimal.ZERO;
+
+            // conf itm exato
+            BigDecimal averageItmExact = BigDecimal.ZERO;
+
+            // conf exact + approx
+            BigDecimal averageExactAndApprox = BigDecimal.ZERO;
+
+            //reli covered vectors
+            BigDecimal averageCoveredVectors = BigDecimal.ZERO;
+
+            for(int i = 0; i<512; i++) {
+
+                BigDecimal vectorReliability = spr.getReliability(Integer.toString(i), "0.99999802495", 15);
+                averageReli = averageReli.add(vectorReliability);
+
+                BigDecimal[][] probMatrix = pCircuit.getProbOutputs().get(0).getProbMatrix();
+
+                boolean isSameLogicValue = CommonOps.sameLogicValue(probMatrix, out[i]);
+
+                BigDecimal value = CommonOps.getExactLogicSignalProbability(probMatrix, out[i], isSameLogicValue);
+                averageItmExact = averageItmExact.add(value);
+
+                if(isSameLogicValue) {
+                    coveredVectors = coveredVectors + 1;
+                    averageExactAndApprox = averageExactAndApprox.add(vectorReliability);
+                    averageCoveredVectors = averageCoveredVectors.add(vectorReliability);
+
+                } else {
+                    averageExactAndApprox = averageExactAndApprox.add(BigDecimal.ONE);
+                }
 
 
-        for(Cell cell : cellLib.getCells()) {
-            //System.out.println(cell);
-            String truth = cell.getTruthTable();
-            //System.out.println("Truth: " + cell.getTruthTable());
-            BigInteger bInt = new BigInteger(truth, 16);
 
-            String javascriptEngine = String.format("%" + (int)Math.pow(2, cell.getInputs().size()) + "s", bInt.toString(2)).replace(' ', '0');
-            String manualEval = b_eval.getTruthTable(cell);
 
-            if (javascriptEngine.equals(manualEval)) {
-                System.out.println(cell + " ==> OK! ==> " + cell.getInputs());
-            } else {
-                System.out.println(String.format("%s ==> %s ==> %s ==> %s", cell.toString(), truth, javascriptEngine, manualEval));
             }
+            averageReli = averageReli.divide(new BigDecimal("512"), RoundingMode.HALF_UP);
+            averageItmExact = averageItmExact.divide(new BigDecimal("512"), RoundingMode.HALF_UP);
+            averageExactAndApprox = averageExactAndApprox.divide(new BigDecimal("512"), RoundingMode.HALF_UP);
+            averageCoveredVectors = averageCoveredVectors.divide(new BigDecimal(Integer.toString(coveredVectors)), RoundingMode.HALF_UP);
 
-            /*
-            System.out.println(cell + " ==> " + cell.getFunctions().get(0) + " ==> " + truth + " ==> " +
-                    String.format("%" + (int)Math.pow(2, cell.getInputs().size()) + "s", bInt.toString(2)).replace(' ', '0') + " ---> " +
-                    b_eval.getTruthTable(cell));
-            System.out.println("mamae"); */
+            String outSTR = String.format("%s %d %d %d %d %s %s %s %s",
+                    pCircuit.getName(),
+                    gates,
+                    fanouts,
+                    levels,
+                    coveredVectors,
+                    CommonOps.getMTBFBigInt(averageReli).toString(),
+                    CommonOps.getMTBFBigInt(averageItmExact).toString(),
+                    CommonOps.getMTBFBigInt(averageExactAndApprox).toString(),
+                    CommonOps.getMTBFBigInt(averageCoveredVectors).toString());
+
+            System.out.println(outSTR);
+
+
         }
-
-
-
-
-
-        char teste = 't';
-        char teste2 = 't';
-        char teste3 = 't';
-        char teste4 = 'f';
-
-        //String expression = String.format("((%c+(!%c)*(!%c)))", teste, teste2, teste3);
-
-        String expression = String.format("!(%c*%c+%c*%c)", teste, teste2, teste3, teste4);
-        //Stack<Character> stack = new Stack<>();
-        //for (char c: expression.toCharArray()) {
-        //    stack.push(c);
-        //}
-        System.out.println("Expression: " + expression);
-        System.out.println("Teste " + expression + " ==> " + b_eval.parseBoolExpression(expression));
 
     }
     

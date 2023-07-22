@@ -182,6 +182,15 @@ public class CellLibrary {
             auxCell.setItm2(itm2);
             
         }
+
+        /**
+         * Torna a confiabilidade VOTADOR ideal
+         * Matheus 2023-07-06
+         */
+        Cell cell = this.getCellByName("VOTADOR");
+        if(cell != null) {
+            this.setPTMCellByName(cell.getName(), BigDecimal.ONE);
+        }
     }
 
     public void setPTMCellByName(String cellName, BigDecimal reliability) {

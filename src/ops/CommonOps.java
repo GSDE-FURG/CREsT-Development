@@ -6,11 +6,15 @@
 package ops;
 
 import java.io.File;
+import java.io.IOException;
 import java.lang.Math.*;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
 import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -163,6 +167,17 @@ public class CommonOps {
         for (int i = 0; i < matrix.length; i++) {
             for (int j = 0; j < matrix[0].length; j++) {
                 System.out.print(matrix[i][j] + " ");
+            }
+            System.out.println("");
+        }
+        System.out.println("");
+    }
+
+    public static void matrixPrint(BigDecimal[][] matrix, int decimals) {
+
+        for (int i = 0; i < matrix.length; i++) {
+            for (int j = 0; j < matrix[0].length; j++) {
+                System.out.print(matrix[i][j].setScale(decimals, RoundingMode.CEILING) + " ");
             }
             System.out.println("");
         }
@@ -526,6 +541,121 @@ public class CommonOps {
 
         return result;
     }
-            
+
+    public static String getLogicSignalFromSignalMatrix(BigDecimal[][] signalMatrix){
+        BigDecimal correct0   = signalMatrix[0][0];
+        BigDecimal incorrect0 = signalMatrix[1][0];
+        BigDecimal correct1   = signalMatrix[1][1];
+        BigDecimal incorrect1 = signalMatrix[0][1];
+
+        System.out.println("Correct 0 = " + correct0);
+        System.out.println("Correct 1 = " + correct1);
+        System.out.println("Incorrect 0 = " + incorrect0);
+        System.out.println("Incorrect 1 = " + incorrect1);
+
+        matrixPrint(signalMatrix);
+        System.out.println("Mamae");
+        return "";
+    }
+
+    public static ArrayList<Path> getAllVerilogCircuitsFromPath(String circuitsPath) throws IOException {
+
+        ArrayList<java.nio.file.Path> paths = new ArrayList<>();
+
+        Files.list(Paths.get(circuitsPath)).forEach(path -> paths.add(path));
+
+        return paths;
+    }
+
+    /**
+     * @param1 Signal matrix with probabilities (2x2 order!)
+     * @param2 Fault free logic signal*
+     * @return it will return a Bigdecimal with corresponded signal probability
+     */
+
+    /**
+     * Method should be used JUST for individual input vector analysis
+     * @param matrix
+     * @return
+     */
+    public static boolean isLogicZero(BigDecimal[][] matrix) {
+        if(matrix[1][1].compareTo(BigDecimal.ZERO) == 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Method should be used JUST for individual input vector analysis
+     * @param matrix
+     * @return
+     */
+    public static boolean sameLogicValue(BigDecimal[][] matrix, char value) {
+        boolean isLogicZero = isLogicZero(matrix);
+
+        if(value == '0') {
+            if (isLogicZero) {
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            if (isLogicZero) {
+                return false;
+            } else {
+                return true;
+            }
+        }
+    }
+
+    public static BigDecimal getExactLogicSignalProbability(BigDecimal[][] matrix, char value) {
+
+        boolean isSameValue = CommonOps.sameLogicValue(matrix, value);
+
+        //System.out.println(String.format("Char:%c -- isLogicZero: %s", value, isLogicZero));
+
+        //matrixPrint(matrix);
+        //System.out.println("Zero C " + matrix[0][0]);
+        //System.out.println("Zero I " + matrix[1][0]);
+        //System.out.println("ONE C " + matrix[1][1]);
+        //System.out.println("ONE I " + matrix[0][1]);
+        //System.out.println("----------------------");
+
+        if(value == '0') {
+            if (isSameValue) {
+                return matrix[0][0];
+            } else {
+                return matrix[1][0];
+            }
+        } else if (value == '1') {
+            if (isSameValue) {
+                return matrix[1][1];
+            } else {
+                return matrix[0][1];
+            }
+        } else {
+            return null;
+        }
+    }
+
+    public static BigDecimal getExactLogicSignalProbability(BigDecimal[][] matrix, char value, boolean isSameValue) {
+
+        if(value == '0') {
+            if (isSameValue) {
+                return matrix[0][0];
+            } else {
+                return matrix[1][0];
+            }
+        } else if (value == '1') {
+            if (isSameValue) {
+                return matrix[1][1];
+            } else {
+                return matrix[0][1];
+            }
+        } else {
+            return null;
+        }
+    }
     
 }
