@@ -27,6 +27,7 @@ public class CircuitFactory {
     
     public ProbCircuit getProbCircuit() throws Exception {
         Circuit circuit = new MappedVerilogReader(path, cellLib).getCircuit();
+        circuit.calculateTotalArea();
         return new ProbCircuit(circuit);
     }
     

@@ -2028,6 +2028,9 @@ public class Commands {
         Terminal.getInstance().executeCommand("read_genlib abc/mylib.genlib");
         CellLibrary cellLib = Terminal.getInstance().getCellLibrary();
 
+
+        ArrayList<BigDecimal> exact9sym = new ArrayList<>();
+
         String exactOutput = "00000001000101110001011101111111000101110111111101111111111111110001011101111111011111111111111101111111111111111111111111111110000101110111111101111111111111110111111111111111111111111111111001111111111111111111111111111110111111111111111011111110111010000001011101111111011111111111111101111111111111111111111111111110011111111111111111111111111111101111111111111110111111101110100001111111111111111111111111111110111111111111111011111110111010001111111111111110111111101110100011111110111010001110100010000000";
         char[] out = exactOutput.toCharArray();
 
@@ -2040,6 +2043,9 @@ public class Commands {
 
             // Pega gates
             int gates = pCircuit.getGates().size();
+
+            // Pega area
+            float area = pCircuit.getTotalArea();
 
             // fanouts
             int fanouts = pCircuit.getFanouts().size();
@@ -2065,10 +2071,18 @@ public class Commands {
             //reli covered vectors
             BigDecimal averageCoveredVectors = BigDecimal.ZERO;
 
+            //average reliability, in exact 9sym, just for covered vectors
+            BigDecimal coveredExact = BigDecimal.ZERO;
+
+            //System.out.println(pCircuit);
+
+            //System.out.println("-----------------------------------------------");
+
             for(int i = 0; i<512; i++) {
 
                 BigDecimal vectorReliability = spr.getReliability(Integer.toString(i), "0.99999802495", 15);
                 averageReli = averageReli.add(vectorReliability);
+
 
                 BigDecimal[][] probMatrix = pCircuit.getProbOutputs().get(0).getProbMatrix();
 
@@ -2077,13 +2091,25 @@ public class Commands {
                 BigDecimal value = CommonOps.getExactLogicSignalProbability(probMatrix, out[i], isSameLogicValue);
                 averageItmExact = averageItmExact.add(value);
 
+                if(path.toString().contains("AMMES")) {
+                    exact9sym.add(i, vectorReliability);
+                    //InputVector inputV = new InputVector(Integer.toString(i), pCircuit.getProbInputs().size());
+                }
+/*
+                if(path.toString().contains("track")) {
+                    System.out.println(String.format("%s %s", vectorReliability.toString(),
+                            CommonOps.getMTBFBigInt(vectorReliability).toString()));
+                } */
+
                 if(isSameLogicValue) {
                     coveredVectors = coveredVectors + 1;
                     averageExactAndApprox = averageExactAndApprox.add(vectorReliability);
                     averageCoveredVectors = averageCoveredVectors.add(vectorReliability);
+                    coveredExact = coveredExact.add(exact9sym.get(i));
 
                 } else {
                     averageExactAndApprox = averageExactAndApprox.add(BigDecimal.ONE);
+                    //System.out.println("Circuito: " + pCircuit + " -- vetor: " + i);
                 }
 
 
@@ -2094,19 +2120,29 @@ public class Commands {
             averageItmExact = averageItmExact.divide(new BigDecimal("512"), RoundingMode.HALF_UP);
             averageExactAndApprox = averageExactAndApprox.divide(new BigDecimal("512"), RoundingMode.HALF_UP);
             averageCoveredVectors = averageCoveredVectors.divide(new BigDecimal(Integer.toString(coveredVectors)), RoundingMode.HALF_UP);
+            coveredExact = coveredExact.divide(new BigDecimal(Integer.toString(coveredVectors)), RoundingMode.HALF_UP);
 
-            String outSTR = String.format("%s %d %d %d %d %s %s %s %s",
+            String outSTR = String.format("%s %d %d %d %d %d %s %s %s %s %s",
                     pCircuit.getName(),
                     gates,
+                    (int)area,
                     fanouts,
                     levels,
                     coveredVectors,
                     CommonOps.getMTBFBigInt(averageReli).toString(),
                     CommonOps.getMTBFBigInt(averageItmExact).toString(),
                     CommonOps.getMTBFBigInt(averageExactAndApprox).toString(),
-                    CommonOps.getMTBFBigInt(averageCoveredVectors).toString());
+                    CommonOps.getMTBFBigInt(averageCoveredVectors).toString(),
+                    CommonOps.getMTBFBigInt(coveredExact).toString());
 
             System.out.println(outSTR);
+            //System.out.println("-----------------------------------------------------------------------");
+
+            //System.out.println("Aqui!");
+            //exact9sym.remove(51);
+
+            //System.out.println(CommonOps.getMTBFBigInt(CommonOps.getAverageValue(exact9sym)));
+            //System.out.println(CommonOps.getAverageValue(exact9sym));
 
 
         }

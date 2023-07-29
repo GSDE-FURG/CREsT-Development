@@ -14,6 +14,8 @@ public class Circuit {
     private ArrayList<Signal> signals;
     private ArrayList<Gate> gates;
     private Map<String, Signal> hashSignals;
+
+    private float totalArea;
     
     /**
      * Simple Circuit constructor.
@@ -48,6 +50,14 @@ public class Circuit {
         this.name = name;
         this.signals = signals;
         this.gates = gates;
+    }
+
+    public Circuit(String name, ArrayList<Signal> signals,
+                   ArrayList<Gate> gates, float totalArea) {
+        this.name = name;
+        this.signals = signals;
+        this.gates = gates;
+        this.totalArea = totalArea;
     }
 
     /**
@@ -196,6 +206,24 @@ public class Circuit {
 
     public void addHashSignal(String key, Signal signal) {
         this.hashSignals.put(key, signal);
+    }
+
+    public float getTotalArea() {
+        return totalArea;
+    }
+
+    public void setTotalArea(float area) {
+        this.totalArea = area;
+    }
+
+    public void calculateTotalArea() {
+        float area = 0;
+
+        for(Gate gate : this.gates) {
+            area = area + gate.getType().getArea();
+        }
+
+        this.setTotalArea(area);
     }
 
 

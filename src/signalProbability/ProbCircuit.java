@@ -49,11 +49,11 @@ public class ProbCircuit extends Circuit {
 
     
     public ProbCircuit (Circuit circuit) {
-        this(circuit.getName(), circuit.getSignals(), circuit.getGates());
+        this(circuit.getName(), circuit.getSignals(), circuit.getGates(), circuit.getTotalArea());
     }
     
-    public ProbCircuit(String name, ArrayList<Signal> signals, ArrayList<Gate> gates) {
-        super(name, signals, gates);
+    public ProbCircuit(String name, ArrayList<Signal> signals, ArrayList<Gate> gates, float totalArea) {
+        super(name, signals, gates, totalArea);
 
         this.makeProbSignalsAndProbGates();
         //System.out.println("Foi o makeProbSignalsAndProbGates");

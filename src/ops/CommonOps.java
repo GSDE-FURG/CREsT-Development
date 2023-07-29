@@ -657,5 +657,14 @@ public class CommonOps {
             return null;
         }
     }
-    
+
+    public static BigDecimal getAverageValue(ArrayList<BigDecimal> list) {
+        /**
+         * This "reduce" method makes the acumulation of list values
+         */
+        BigDecimal sumup = list.stream().reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        return sumup.divide(new BigDecimal(Integer.toString(list.size())), RoundingMode.HALF_UP);
+    }
+
 }
