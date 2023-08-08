@@ -37,6 +37,7 @@ import javax.swing.JTextArea;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import levelDatastructures.LevelCircuit;
+import ops.CommonOps;
 import ops.SPROpsChuloMedio;
 import readers.MappedVerilogReader;
 import signalProbability.ProbCircuit;
@@ -50,11 +51,10 @@ TerminalWrapper {
     public static void main(String[] args) throws
             ScriptException, AWTException, IOException, Exception {   
         if(args.length > 0) {
-          /**
-            * Terminal usado no trabalho de sistemas evolutivos
-            */
-             /* Clayton */
-            //System.out.println("____>  " + args.toString());
+
+            Commands cmds = new Commands();
+            cmds.Foo5();
+
                 Options options = new Options();
 
                 Option indataset = new Option("id", "indataset", true, "input dataset path");
@@ -124,13 +124,9 @@ TerminalWrapper {
                 HelpFormatter formatter = new HelpFormatter();
                 CommandLine cmd;
 
-                Terminal terminal = Terminal.getInstance();
-
-            System.out.println("PROCESS...");
                 try {
                         cmd = parser.parse(options, args);
-                        System.out.println(parser);
-                        //System.out.println(mc.getValue());
+
                         if (cmd.hasOption("help")) {
                             formatter.printHelp("VetoresCriticos", options);
                             System.exit(1);
@@ -179,91 +175,6 @@ TerminalWrapper {
 
                         System.exit(1);
                     }
-
-                try {                                       // Procedure for Single and Multiple Fault Injection (Monte Carlo procedure)
-                    cmd = parser.parse(options, args);
-                    if (cmd.hasOption("exhaustive") || cmd.hasOption("complete")) {
-                        int args_size = args.length;
-
-                        String genlib = args[1];
-                        String circuit = args[2];
-                        String command = args[3];
-
-                        if (args_size == 4) { // Define Single Faults
-                            System.out.println("- Exhaustive Simulation Single Event Transient (SET) -exaustive: ");
-                            terminal.executeCommand("mc_fault_injection" + " " + genlib + " " + circuit + " " + command);
-                        } else {
-                            String command_op;
-                            command_op = args[4];
-                            System.out.println("- Exahustive Simulation Multiple Event Transient (SET) -exaustive -complete: " + Arrays.toString(args));
-                            terminal.executeCommand("mc_fault_injection" + " " + genlib + " " + circuit + " " + command + " " + command_op);
-                        }
-
-                    }
-
-                    if (cmd.hasOption("mc")) {
-                        int args_size = args.length;
-
-                        String option = "";
-                        String genlib = args[1];
-                        String circuit = args[2];
-                        String command = args[3];
-                        String sampleSTF = args[4];
-
-                        if (args_size == 5) { // Define Single Faults  [-mc_fault_injection teste/cadence.genlib teste/c.v -mc 20000]
-                            option = "Single";
-                        } else {
-                            option = "Multiple";  // Define Multiple Faults [-mc_fault_injection teste/cadence.genlib teste/c.v -mc 20000 1 1 1]
-                        }
-
-                        switch (option) {
-
-                            case ("Single"):
-                                System.out.println("Single Event Transient - MC");
-                                terminal.executeCommand("mc_fault_injection" + " " + genlib + " " + circuit + " " + command + " " + sampleSTF);
-                                break;
-
-                            case ("Multiple"):
-                                ArrayList<String> x = new ArrayList<>();
-                                String arguments_compiled = "";
-                                for (int i = 4; i < args.length; i++) {
-                                    x.add(args[i]);
-                                    if (i <= 4) {
-                                        arguments_compiled = args[i];
-                                    } else {
-
-                                        arguments_compiled = arguments_compiled + " " + args[i];
-                                    }
-                                }
-                                System.out.println("- Multiple Event Transient (SET) -mcmtf: " + arguments_compiled);
-                                terminal.executeCommand("mc_fault_injection" + " " + genlib + " " + circuit + " " + command + " " + arguments_compiled);
-                                break;
-                        }
-
-                    }
-
-                    if (cmd.hasOption("read_script")){
-
-                        System.out.println("SCRIPT READING ... " + cmd.getArgs().toString());
-
-                        String script_file = "";
-
-                        for (int i = 0; i < args.length; i++) {
-                            if(!args[i].contains("-Xmx")){
-                                script_file = args[i];
-                            }
-                        }
-
-                        terminal.executeCommand("read_script" + " " + script_file);
-
-
-                    }
-
-                }catch (Exception e){
-                    System.out.println("Error : " + e);
-                }
-
-
                 }
 
          else {

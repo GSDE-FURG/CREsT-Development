@@ -15,12 +15,7 @@ import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -562,7 +557,7 @@ public class CommonOps {
 
         ArrayList<java.nio.file.Path> paths = new ArrayList<>();
 
-        Files.list(Paths.get(circuitsPath)).forEach(path -> paths.add(path));
+        Files.list(Paths.get(circuitsPath)).sorted().forEach(path -> paths.add(path));
 
         return paths;
     }
@@ -665,6 +660,46 @@ public class CommonOps {
         BigDecimal sumup = list.stream().reduce(BigDecimal.ZERO, BigDecimal::add);
 
         return sumup.divide(new BigDecimal(Integer.toString(list.size())), RoundingMode.HALF_UP);
+    }
+
+
+    public static Map<Integer, BigDecimal> sortReliabilitiesMap(LinkedHashMap<Integer, BigDecimal> unordered) {
+        //Alternative way
+        Map<Integer, BigDecimal> orderedMap = new LinkedHashMap<>();
+
+        unordered.entrySet().stream()
+                .sorted(Map.Entry.<Integer, BigDecimal>comparingByValue())
+                .forEachOrdered(x -> orderedMap.put(x.getKey(), x.getValue()));
+
+        return orderedMap;
+    }
+    public static Map.Entry<Integer, BigDecimal> getValueLinkHashMapByIndex(Map map, int index) {
+        Map.Entry<Integer, BigDecimal> resultMap = null;
+        // get all entries from the LinkedHashMap
+        Set<Map.Entry<Integer, BigDecimal> > entrySet
+                = map.entrySet();
+
+        // create an iterator
+        Iterator<Map.Entry<Integer, BigDecimal> > iterator
+                = entrySet.iterator();
+
+        int i = 0;
+
+        while (iterator.hasNext()) {
+
+            if (index == i) {
+
+                //resultMap = new AbstractMap.SimpleEntry<>(iterator.next().getKey(), iterator.next().getValue());
+                resultMap = new AbstractMap.SimpleEntry<>(iterator.next());
+                //resultMap.put(iterator.next().getKey(), iterator.next().getValue());
+                break;
+            }
+
+            iterator.next();
+            i++;
+        }
+
+        return resultMap;
     }
 
 }

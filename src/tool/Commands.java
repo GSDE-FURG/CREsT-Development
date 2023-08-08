@@ -23,21 +23,13 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 
 import ops.*;
-
-import static ops.CommonOps.getKronecker;
-import static ops.CommonOps.getMultipliedMatrix;
-import static ops.CommonOps.matrixPrint;
-import static ops.CommonOps.getITM;
-import static ops.CommonOps.sortByValue;
-import static  ops.CommonOps.timenow;
-import static  ops.CommonOps.timestamp;
-
 
 
 import javax.script.ScriptException;
@@ -47,7 +39,6 @@ import levelDatastructures.InterLevel;
 import logicSimulator.main;
 import manipulator.CircuitFactory;
 import manipulator.SPRController;
-import manipulator.PTMMController;
 
 import readers.ReadTxt;
 import signalProbability.ProbCircuit;
@@ -58,14 +49,16 @@ import signalProbability.ProbSignal;
 import simulation.SimulationCircuit;
 import simulation.SimualtionType;
 import simulation.checkFiles;
+import twoLevelDatastructures.PLA;
+import twoLevelDatastructures.PLAManipulator;
 import writers.GenlibWriter;
 import writers.VerilogWriter;
 import writers.WriteFile;
 
-import static ops.CommonOps.getMTBF;
-
 import readers.CustomMatrixReader;
 import wrv_algoritm.*;
+
+import static ops.CommonOps.*;
 
 /**
  *
@@ -2025,19 +2018,17 @@ public class Commands {
 
     public void Foo5() throws IOException, Exception {
 
-        Terminal.getInstance().executeCommand("read_genlib abc/mylib.genlib");
-        CellLibrary cellLib = Terminal.getInstance().getCellLibrary();
-
+        CellLibrary cellLib = new CellLibrary("genlibs/mylib.genlib");
 
         ArrayList<BigDecimal> exact9sym = new ArrayList<>();
 
         String exactOutput = "00000001000101110001011101111111000101110111111101111111111111110001011101111111011111111111111101111111111111111111111111111110000101110111111101111111111111110111111111111111111111111111111001111111111111111111111111111110111111111111111011111110111010000001011101111111011111111111111101111111111111111111111111111110011111111111111111111111111111101111111111111110111111101110100001111111111111111111111111111110111111111111111011111110111010001111111111111110111111101110100011111110111010001110100010000000";
         char[] out = exactOutput.toCharArray();
 
-        ArrayList<Path> circuits = ops.CommonOps.getAllVerilogCircuitsFromPath("approx-9sym");
+        //ArrayList<Path> circuits = ops.CommonOps.getAllVerilogCircuitsFromPath("approx-9sym");
+        ArrayList<Path> circuits = ops.CommonOps.getAllVerilogCircuitsFromPath("verilogs");
 
         for(Path path: circuits) {
-
             // Inicializa circuito
             ProbCircuit pCircuit = new CircuitFactory(cellLib, path.toString()).getProbCircuit();
 
@@ -2093,13 +2084,14 @@ public class Commands {
 
                 if(path.toString().contains("AMMES")) {
                     exact9sym.add(i, vectorReliability);
-                    //InputVector inputV = new InputVector(Integer.toString(i), pCircuit.getProbInputs().size());
+                    //System.out.println(String.format("%s %s", vectorReliability.toString(),
+                    //        CommonOps.getMTBFBigInt(vectorReliability).toString()));
                 }
-/*
-                if(path.toString().contains("track")) {
-                    System.out.println(String.format("%s %s", vectorReliability.toString(),
-                            CommonOps.getMTBFBigInt(vectorReliability).toString()));
-                } */
+
+                if(path.toString().contains("track_crit_1_05")) {
+                    //System.out.println(String.format("%s %s", vectorReliability.toString(),
+                    //        CommonOps.getMTBFBigInt(vectorReliability).toString()));
+                }
 
                 if(isSameLogicValue) {
                     coveredVectors = coveredVectors + 1;
@@ -2136,6 +2128,79 @@ public class Commands {
                     CommonOps.getMTBFBigInt(coveredExact).toString());
 
             System.out.println(outSTR);
+        }
+            TimeUnit.MINUTES.sleep(30);
+
+            LinkedHashMap<Integer, BigDecimal> mapper = new LinkedHashMap<Integer, BigDecimal>();
+
+            int counter = 0;
+            for (BigDecimal big : exact9sym) {
+                mapper.put(counter, big);
+                counter++;
+            }
+
+            ArrayList<Integer> randomElements = new ArrayList<>();
+            Random rand = new Random(24587);
+            ArrayList<Integer> givenList = new ArrayList<>(mapper.keySet());
+
+            int numberOfElements = 90;
+
+            for (int i = 0; i < numberOfElements; i++) {
+                int randomIndex = rand.nextInt(givenList.size());
+                int randomElement = givenList.get(randomIndex);
+                randomElements.add(randomElement);
+                givenList.remove(randomIndex);
+            }
+
+            PLAManipulator plaManipulator = new PLAManipulator();
+
+            PLA pla = plaManipulator.readPLAFile("9sym_AMMES.pla");
+
+            int counter2 = 1;
+
+            for(int randEle : randomElements) {
+                Map.Entry<Integer, BigDecimal> randomValue = getValueLinkHashMapByIndex(mapper, randEle);
+                InputVector inputRandom = new InputVector(Integer.toString(randomValue.getKey()), pla.getQtInputs());
+                pla.addDontCareTerm(inputRandom.getBinaryString());
+
+                String outputPlaname = String.format("%02d-9sym_random_%02d", counter2, counter2);
+                plaManipulator.writePLA("pla/9sym_random_originals/" + outputPlaname + ".pla", pla);
+
+                ShellScriptOps.executeCommands("/media/sf_PastaUbuntuServer/ShellScripting/plaToESPRESSO.sh",
+                        String.format("ESPRESSO pla/9sym_random_originals/%s.pla pla/%s_ESPRESSO.pla", outputPlaname, outputPlaname));
+
+                ShellScriptOps.executeCommands("/media/sf_PastaUbuntuServer/ShellScripting/plaToESPRESSO.sh",
+                        String.format("ABC pla/%s_ESPRESSO.pla mylib.genlib verilogs/%s.v", outputPlaname, outputPlaname));
+
+                System.out.println("PLA: " + outputPlaname);
+                counter2++;
+            }
+
+            Map<Integer, BigDecimal> nMapper = sortReliabilitiesMap(mapper);
+
+            pla = plaManipulator.readPLAFile("9sym_AMMES.pla");
+
+            for (int i = 1; i < 91; i++) {
+                Map.Entry<Integer, BigDecimal> moreCritical = getValueLinkHashMapByIndex(nMapper, i);
+                InputVector inputCritical = new InputVector(Integer.toString(moreCritical.getKey()), pla.getQtInputs());
+                pla.addDontCareTerm(inputCritical.getBinaryString());
+
+                String outputPlaname = String.format("%02d-9sym_crit_%02d", i, i);
+                plaManipulator.writePLA("pla/9sym_crit_originals/" + outputPlaname + ".pla", pla);
+
+                ShellScriptOps.executeCommands("/media/sf_PastaUbuntuServer/ShellScripting/plaToESPRESSO.sh",
+                        String.format("ESPRESSO pla/9sym_crit_originals/%s.pla pla/%s_ESPRESSO.pla", outputPlaname, outputPlaname));
+
+                ShellScriptOps.executeCommands("/media/sf_PastaUbuntuServer/ShellScripting/plaToESPRESSO.sh",
+                        String.format("ABC pla/%s_ESPRESSO.pla mylib.genlib verilogs/%s.v", outputPlaname, outputPlaname));
+
+                System.out.println("PLA: " + outputPlaname);
+            }
+
+            //plaManipulator.writePLA("9sym_crit_test.pla", pla);
+
+            //ShellScriptOps.executeCommands("/media/sf_PastaUbuntuServer/ShellScripting/plaToESPRESSO.sh", "9sym_AMMES.pla 9sym_AMMES_ESPRESSO.pla");
+
             //System.out.println("-----------------------------------------------------------------------");
 
             //System.out.println("Aqui!");
@@ -2145,7 +2210,7 @@ public class Commands {
             //System.out.println(CommonOps.getAverageValue(exact9sym));
 
 
-        }
+
 
     }
     
