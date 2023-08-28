@@ -1,6 +1,7 @@
 package twoLevelDatastructures;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class PLA {
     private String name;
@@ -68,6 +69,19 @@ public class PLA {
         this.terms.add(term);
     }
 
+    public void removeTermByInput(String input) {
+        ArrayList<Term> toRemove = new ArrayList<>();
+        for (Term term : this.terms) {
+            if(term.getInputs().equals(input)) {
+                toRemove.add(term);
+            }
+        }
+
+        for (Term r : toRemove) {
+            this.terms.remove(r);
+        }
+    }
+
     public String getInputLabels() {
         return inputLabels;
     }
@@ -107,11 +121,78 @@ public class PLA {
                 Term fooTerm = this.getTerms().get(i);
                 if(fooTerm.checkTermContains(term.getInputs())) {
                     System.out.println(fooTerm + " --> " + term);
+                    breakCubeTerm(term, fooTerm);
                     ret = true;
                 }
             }
         }
         return ret;
+    }
+
+    public void breakCubeTerm(Term approxTerm, Term cube) {
+        char[] approx = approxTerm.getInputs().toCharArray();
+        char[] inCube = cube.getInputs().toCharArray();
+
+        ArrayList<char[]> result = new ArrayList<>();
+        ArrayList<Integer> dontcarePosition = new ArrayList<>();
+        int counter = 0;
+
+        for(char c : inCube) {
+            if(c == '-') {
+                result.add(inCube.clone());
+                dontcarePosition.add(counter);
+            }
+            counter++;
+        }
+
+        for (int p : dontcarePosition) {
+            char currentValue;
+            char oppositeValue;
+            if(approx[p] == '0') {
+                currentValue = '0';
+                oppositeValue = '1';
+            } else {
+                currentValue = '1';
+                oppositeValue = '0';
+            }
+        }
+
+        /**
+         * each dont care position will generate a new cube
+         */
+        for (int i = 0; i < dontcarePosition.size(); i++) {
+            char currentValue;
+            char oppositeValue;
+            if(approx[dontcarePosition.get(i)] == '0') {
+                oppositeValue = '1';
+            } else {
+                oppositeValue = '0';
+            }
+
+            /**
+             * each current position will be the oppositive value o approx term
+             */
+            result.get(i)[dontcarePosition.get(i)] = oppositeValue;
+
+            /**
+             * previous dont care values will be same approx values
+             */
+            for (int w = 0; w < i; w++) {
+                result.get(i)[dontcarePosition.get(w)] = approx[dontcarePosition.get(w)];
+            }
+        }
+
+        for(char[] array : result) {
+            System.out.println(Arrays.toString(array));
+            this.addTerm(new Term(array.toString(), cube.getOutputs()));
+        }
+        System.out.println(dontcarePosition);
+
+        this.removeTermByInput(cube.getInputs());
+        System.out.println("-------------------------------------------------");
+        for (Term term : this.terms) {
+            System.out.println(term);
+        }
     }
 
     public ArrayList<Term> getContainedTerm(String inputTerm) {

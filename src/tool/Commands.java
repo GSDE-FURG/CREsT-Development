@@ -2053,7 +2053,7 @@ public class Commands {
         //    System.out.println(pla + " --> " + pla.checkAllPLATerms());
         //}
 
-        pla = new PLAManipulator().readPLAFile("pla/pla_c2/9sym_crit_originals/90-9sym_crit_90.pla");
+        pla = new PLAManipulator().readPLAFile("90-9sym_crit_90.pla");
         System.out.println(pla + " --> " + pla.checkAllPLATerms());
 
         TimeUnit.MINUTES.sleep(30);
