@@ -119,6 +119,10 @@ public class InputVector {
     public void setBits(int bits) {
         this.bits = bits;
     }
+
+    public int getBits() {
+        return this.bits;
+    }
     
     @Override
     public String toString() {        

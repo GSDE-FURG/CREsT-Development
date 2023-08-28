@@ -99,7 +99,38 @@ public class PLA {
         return false;
     }
 
+    public boolean checkAllPLATerms() {
+        boolean ret = false;
+        for(Term term : this.getTerms()) {
+            int nextIndex = this.getTerms().indexOf(term) + 1;
+            for(int i = nextIndex; i < this.getTerms().size(); i++ ) {
+                Term fooTerm = this.getTerms().get(i);
+                if(fooTerm.checkTermContains(term.getInputs())) {
+                    System.out.println(fooTerm + " --> " + term);
+                    ret = true;
+                }
+            }
+        }
+        return ret;
+    }
+
+    public ArrayList<Term> getContainedTerm(String inputTerm) {
+        char[] inputCandidate = inputTerm.toCharArray();
+        ArrayList<Term> equalsTerms = new ArrayList<>();
+
+        for (Term term : this.terms) {
+            if (term.checkTermContains(inputTerm)) {
+                equalsTerms.add(term);
+            }
+        }
+        return equalsTerms;
+    }
+
     public void addDontCareTerm(String newTermInput) {
-        this.terms.add(0, new Term(newTermInput, "-"));
+        this.terms.add(0, new Term(newTermInput, "-".repeat(this.qtOutputs)));
+    }
+
+    public String toString() {
+        return this.name;
     }
 }
