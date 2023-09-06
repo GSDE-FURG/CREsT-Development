@@ -53,7 +53,8 @@ TerminalWrapper {
         if(args.length > 0) {
 
             Commands cmds = new Commands();
-            cmds.Foo5();
+            //cmds.Foo5();
+            cmds.Foo6();
 
                 Options options = new Options();
 

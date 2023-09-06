@@ -19,6 +19,9 @@ import java.util.*;
 import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import datastructures.CellLibrary;
+import manipulator.SPRController;
 import signalProbability.ProbCircuit;
 import signalProbability.ProbSignal;
 
@@ -604,6 +607,28 @@ public class CommonOps {
         }
     }
 
+    public static boolean sameLogicValue(ArrayList<ProbSignal> outPSignals, String outVector) {
+
+        String a = getOutputVector(outPSignals);
+        if(a.equals(outVector)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public static String getOutputVector(ArrayList<ProbSignal> outPSignals) {
+        String result = "";
+        for (ProbSignal pSignal : outPSignals) {
+            if(isLogicZero(pSignal.getProbMatrix())) {
+                result = result + '0';
+            } else {
+                result = result + '1';
+            }
+        }
+        return result;
+    }
+
     public static BigDecimal getExactLogicSignalProbability(BigDecimal[][] matrix, char value) {
 
         boolean isSameValue = CommonOps.sameLogicValue(matrix, value);
@@ -653,6 +678,64 @@ public class CommonOps {
         }
     }
 
+    public static BigDecimal getExactLogicSignalProbability(ArrayList<ProbSignal> outPSignals, String outValue, boolean isSameValue) {
+
+        char[] out = outValue.toCharArray();
+        BigDecimal result = BigDecimal.ONE;
+
+        if(isSameValue) {
+            for(int i = 0; i < out.length; i++) {
+                if(out[i] == '0') {
+                    result = result.multiply(outPSignals.get(i).getProbMatrix()[0][0]);
+                } else {
+                    result = result.multiply(outPSignals.get(i).getProbMatrix()[1][1]);
+                }
+            }
+        } else {
+
+            for(int i = 0; i < out.length; i++) {
+                boolean isSameLocalValue = CommonOps.sameLogicValue(outPSignals.get(i).getProbMatrix(), out[i]);
+                if(isSameLocalValue) {
+                    if(out[i] == '0') {
+                        result = result.multiply(outPSignals.get(i).getProbMatrix()[0][0]);
+                    } else {
+                        result = result.multiply(outPSignals.get(i).getProbMatrix()[1][1]);
+                    }
+                } else {
+                    if(out[i] == '0') {
+                        result = result.multiply(outPSignals.get(i).getProbMatrix()[1][0]);
+                    } else {
+                        result = result.multiply(outPSignals.get(i).getProbMatrix()[0][1]);
+                    }
+                }
+            }
+        }
+
+        return result;
+    }
+
+    public static ArrayList<String> getProbCircuitTruthTableBySPR(ProbCircuit pCircuit, CellLibrary cellLib) {
+        ArrayList<String> result = new ArrayList<>();
+
+        SPRController spr = new SPRController(pCircuit, cellLib);
+
+        int powInt = PTMOps.PowInt(2, pCircuit.getProbInputs().size());
+
+        for(int i = 0; i < powInt; i++) {
+            String truthLine = "";
+            spr.getReliability(Integer.toString(i), "0.99999802495", 15);
+            for(ProbSignal outPSignal : pCircuit.getProbOutputs()) {
+                if(isLogicZero(outPSignal.getProbMatrix())) {
+                    truthLine = truthLine + "0";
+                } else {
+                    truthLine = truthLine + "1";
+                }
+            }
+            result.add(truthLine);
+        }
+        return result;
+    }
+
     public static BigDecimal getAverageValue(ArrayList<BigDecimal> list) {
         /**
          * This "reduce" method makes the acumulation of list values
@@ -700,6 +783,34 @@ public class CommonOps {
         }
 
         return resultMap;
+    }
+
+    public static void changeFileInLot() throws IOException {
+
+        Files.list(Paths.get("5xp1/verilogsC2")).sorted().forEach(path -> {
+            if(!path.getFileName().toString().contains("00-5xp1")) {
+                String oldName = path.getFileName().toString();
+
+                File fteste = path.toFile();
+                String name2 = fteste.getName();
+                name2 = name2.replace("5xp1_1_", "");
+                String number = name2.split("_")[0];
+
+
+                int n = Integer.parseInt(number);
+                String newName = String.format("%02d-5xp1_1_%02d_0_ammes.v", n, n);
+                newName = fteste.getParent() + File.separator + newName;
+
+                Path newFile = Paths.get(newName);
+
+                try {
+                    Files.move(path, newFile);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+
+        });
     }
 
 }

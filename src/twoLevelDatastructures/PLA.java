@@ -2,6 +2,7 @@ package twoLevelDatastructures;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 
 public class PLA {
     private String name;
@@ -82,6 +83,10 @@ public class PLA {
         }
     }
 
+    public void removeTerm(Term term) {
+        this.terms.remove(term);
+    }
+
     public String getInputLabels() {
         return inputLabels;
     }
@@ -113,20 +118,97 @@ public class PLA {
         return false;
     }
 
-    public boolean checkAllPLATerms() {
-        boolean ret = false;
+    public boolean checkAllPLATerms(boolean doAdjusts) {
+
+        boolean mintermsUnique = false;
+        /**
+         * fazer o check até todos os mintermos forem únicos
+         */
+        HashMap<Term, ArrayList<Term>> repeatedTerms = getRepeatedTerms();
+        ArrayList<Term> removeList = new ArrayList<>();
+
+        //for (Term t : repeatedTerms.keySet()) {
+        //    System.out.println(t + " --> " + repeatedTerms.get(t));
+        //}
+        //System.out.println("---------------------------");
+
+        if(repeatedTerms.isEmpty()) {
+            //System.out.println("All PLA minterms are unique!");
+            mintermsUnique = true;
+        } else {
+            if (doAdjusts) {
+                for (Term firstTerm : repeatedTerms.keySet()) {
+                    for (Term cube : repeatedTerms.get(firstTerm)) {
+                        /**
+                         * Equal terms and Contained terms
+                         */
+                        if(firstTerm.getOutputs().equals(cube.getOutputs())) {
+                            if(firstTerm.getInputs().equals(cube.getInputs())) {
+                                if(!removeList.contains(cube)) {
+                                    removeList.add(cube);
+                                }
+                            } else {
+                                if(!removeList.contains(firstTerm)) {
+                                    removeList.add(firstTerm);
+                                }
+                            }
+                        } else {
+
+                            if(!firstTerm.getInputs().equals(cube.getInputs())) {
+                                if(!removeList.contains(cube)) {
+                                    this.breakCubeTerm(firstTerm, cube);
+                                    removeList.add(cube);
+                                }
+                            } else {
+                                if(firstTerm.getOutputs().contains("-")) {
+                                    if(!removeList.contains(cube)) {
+                                        removeList.add(cube);
+                                    }
+                                } else {
+                                    if(!removeList.contains(firstTerm)) {
+                                        removeList.add(firstTerm);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                /**
+                 * Efetivar as exclusões
+                 */
+                for(Term t : removeList) {
+                    this.removeTerm(t);
+                    //System.out.println(t);
+                }
+
+            } else {
+                for (Term t : repeatedTerms.keySet()) {
+                    System.out.println(t + " --> " + repeatedTerms.get(t));
+                }
+            }
+        }
+        return mintermsUnique;
+    }
+    public HashMap<Term, ArrayList<Term>> getRepeatedTerms() {
+        HashMap<Term, ArrayList<Term>> result = new HashMap<>();
+        this.sortTermsByDontCare();
+
         for(Term term : this.getTerms()) {
             int nextIndex = this.getTerms().indexOf(term) + 1;
             for(int i = nextIndex; i < this.getTerms().size(); i++ ) {
                 Term fooTerm = this.getTerms().get(i);
                 if(fooTerm.checkTermContains(term.getInputs())) {
-                    System.out.println(fooTerm + " --> " + term);
-                    breakCubeTerm(term, fooTerm);
-                    ret = true;
+                    if(result.get(term) != null) {
+                        result.get(term).add(fooTerm);
+                    } else {
+                        result.put(term, new ArrayList<Term>(Arrays.asList(fooTerm)));
+                    }
                 }
             }
         }
-        return ret;
+
+        return result;
     }
 
     public void breakCubeTerm(Term approxTerm, Term cube) {
@@ -183,16 +265,9 @@ public class PLA {
         }
 
         for(char[] array : result) {
-            System.out.println(Arrays.toString(array));
-            this.addTerm(new Term(array.toString(), cube.getOutputs()));
+            this.addTerm(new Term(new String(array), cube.getOutputs()));
         }
-        System.out.println(dontcarePosition);
-
-        this.removeTermByInput(cube.getInputs());
-        System.out.println("-------------------------------------------------");
-        for (Term term : this.terms) {
-            System.out.println(term);
-        }
+        //this.removeTermByInput(cube.getInputs());
     }
 
     public ArrayList<Term> getContainedTerm(String inputTerm) {
@@ -205,6 +280,32 @@ public class PLA {
             }
         }
         return equalsTerms;
+    }
+
+    public void sortTermsByDontCare() {
+
+        HashMap<Integer, ArrayList<Term>> map = new HashMap<>();
+        for(Term t : this.getTerms()) {
+            int dontCounter = 0;
+            char[] inputTerm = t.getInputs().toCharArray();
+            for (char c : inputTerm) {
+                if(c == '-') {
+                    dontCounter++;
+                }
+            }
+            if(map.get(dontCounter) != null) {
+                map.get(dontCounter).add(t);
+            } else {
+                map.put(dontCounter, new ArrayList<>(Arrays.asList(t)));
+            }
+        }
+
+        ArrayList<Term> newTerms = new ArrayList<>();
+        for (int k : map.keySet()) {
+            newTerms.addAll(map.get(k));
+        }
+
+        this.setTerms(newTerms);
     }
 
     public void addDontCareTerm(String newTermInput) {
