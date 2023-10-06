@@ -32,7 +32,10 @@ public class ShellScriptOps {
         }
     }
 
-    public static void executeCommands(String path, String commands) throws IOException, InterruptedException {
+    public static ArrayList<String> executeCommands(String path, String commands) throws IOException, InterruptedException {
+
+        ArrayList<String> result = new ArrayList<>();
+
         String scriptPath = path;
 
         Process process = Runtime.getRuntime().exec(scriptPath + " " + commands);
@@ -46,7 +49,7 @@ public class ShellScriptOps {
                 BufferedReader in = new BufferedReader(
                         new InputStreamReader(process.getInputStream()) );
                 while ((line = in.readLine()) != null) {
-                    System.out.println(line);
+                    result.add(line);
                 }
                 in.close();
             }
@@ -54,8 +57,10 @@ public class ShellScriptOps {
                 // ...
             }
         } else {
-            System.out.println("Script failed with exit value: " + exitValue);
+            result.add("Script failed with exit value: " + exitValue);
         }
+
+        return result;
     }
 
     public static void randomInputApprox() throws IOException, InterruptedException {

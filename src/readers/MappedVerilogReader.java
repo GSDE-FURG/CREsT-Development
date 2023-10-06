@@ -218,9 +218,12 @@ public class MappedVerilogReader {
             String[] gateIOs = gateIOsString.split("(\\Q),.\\E)");
             
             Gate fooGate = new Gate(gateId, cellLibrary.getCellByName(gateTypeName));
-            
-            ArrayList<Signal> inputs = new ArrayList<>(fooGate.getType().getInputs().size());
-            ArrayList<Signal> outputs = new ArrayList<>(fooGate.getType().getOutputs().size());
+
+            //ArrayList<Signal> inputs = new ArrayList<>(fooGate.getType().getInputs().size());
+            //ArrayList<Signal> outputs = new ArrayList<>(fooGate.getType().getOutputs().size());
+
+            Signal[] inputs = new Signal[fooGate.getType().getInputs().size()];
+            Signal[] outputs = new Signal[fooGate.getType().getOutputs().size()];
 
             //gateAndSignalsCreation = gateAndSignalsCreation + timestampDiff(timeFlag1);
 
@@ -232,15 +235,16 @@ public class MappedVerilogReader {
 
                 String[] signal = gateIOs[i].split("\\Q(\\E", 2);
 
-
                 // Se tem, quer dizer que o sinal é uma entrada!
                 if(fooGate.getType().getInputs().contains(signal[0])) {
-                    inputs.add(fooGate.getType().getInputs().indexOf(signal[0]), getSignalById2(signal[1]));
+                    //inputs.add(fooGate.getType().getInputs().indexOf(signal[0]), getSignalById2(signal[1]));
+                    inputs[fooGate.getType().getInputs().indexOf(signal[0])] = getSignalById2(signal[1]);
                     getSignalById2(signal[1]).addDestiny(fooGate);
                 }
                 else {
                     if (fooGate.getType().getOutputs().contains(signal[0])) {
-                        outputs.add(fooGate.getType().getOutputs().indexOf(signal[0]), getSignalById2(signal[1]));
+                        //outputs.add(fooGate.getType().getOutputs().indexOf(signal[0]), getSignalById2(signal[1]));
+                        outputs[fooGate.getType().getOutputs().indexOf(signal[0])] = getSignalById2(signal[1]);
                         getSignalById2(signal[1]).setOrigin(fooGate);
                     }
                     else {
@@ -250,12 +254,13 @@ public class MappedVerilogReader {
                 }
             }
 
-
-
             //signalsSettings = signalsSettings + timestampDiff(timeFlag2);
 
-            fooGate.setInputs(inputs);
-            fooGate.setOutputs(outputs);
+            //fooGate.setInputs(inputs);
+            //fooGate.setOutputs(outputs);
+
+            fooGate.setInputs(new ArrayList<Signal>(Arrays.asList(inputs)));
+            fooGate.setOutputs(new ArrayList<Signal>(Arrays.asList(outputs)));
 
             this.circ.addGate(fooGate);
         

@@ -103,6 +103,11 @@ public class PLAManipulator {
 
         }
 
+        /**
+         * close buffreader
+         */
+        br.close();
+
         pla.setQtInputs(this.qtInputs);
         pla.setQtOutputs(this.qtOutputs);
         pla.setInputLabels(this.inputsLabels);

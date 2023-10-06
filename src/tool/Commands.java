@@ -48,6 +48,7 @@ import simulation.SimualtionType;
 import simulation.checkFiles;
 import twoLevelDatastructures.PLA;
 import twoLevelDatastructures.PLAManipulator;
+import twoLevelDatastructures.PLAOps;
 import twoLevelDatastructures.Term;
 import writers.GenlibWriter;
 import writers.VerilogWriter;
@@ -2016,14 +2017,31 @@ public class Commands {
 
     public void Foo5() throws IOException, Exception {
 
-        CellLibrary cellLib = new CellLibrary("genlibs/mylib.genlib");
+        //CellLibrary cellLib = new CellLibrary("genlibs/mylib.genlib");
+        CellLibrary cellLib = new CellLibrary("genlibs/asap.genlib");
 
-        ProbCircuit exact5xp1Verilog = new CircuitFactory(cellLib, "5xp1_exact.v").getProbCircuit();
+        //ProbCircuit exact5xp1Verilog = new CircuitFactory(cellLib, "5xp1/C2/verilogs/00-5xp1_fromBlif").getProbCircuit();
+        //ProbCircuit exact5xp1Verilog = new CircuitFactory(cellLib, "5xp1/seeds/00-5xp1_fromBlif_optionM.v").getProbCircuit();
+        //ProbCircuit exact5xp1Verilog = new CircuitFactory(cellLib, "Circuito_conceito/verilogs/paulo_original_track_crit_04.v").getProbCircuit();
+        //ProbCircuit exact5xp1Verilog = new CircuitFactory(cellLib, "c17/manual_approx/04-vector/verilog/c17_manual_approx_04_vectors.v").getProbCircuit();
+        ProbCircuit exact5xp1Verilog = new CircuitFactory(cellLib, "c17/manual_approx/multi-dont-cares/c17_V3/verilog/c17_v3_10_vector.v").getProbCircuit();
 
         ArrayList<BigDecimal> exactReliability = new ArrayList<>();
 
         int counter = 0;
         int counter2 = 1;
+
+        System.out.println(exact5xp1Verilog + " --> FAnouts: " + exact5xp1Verilog.getFanouts().size());
+
+
+        SPRController spr = new SPRController(exact5xp1Verilog, cellLib);
+        for (int i = 0; i < PTMOps.PowInt(2, exact5xp1Verilog.getProbInputs().size()); i++) {
+            String input = new InputVector(Integer.toString(i), exact5xp1Verilog.getProbInputs().size()).getBinaryString();
+            BigDecimal vectorReliability = spr.getReliability(Integer.toString(i), "0.99999802495", 15);
+            String output = CommonOps.getOutputVector(exact5xp1Verilog.getProbOutputs());
+            System.out.println(String.format("%s %s", input, output));
+        }
+
 
         ArrayList<Integer> flexVectors = new ArrayList<>();
 
@@ -2033,8 +2051,15 @@ public class Commands {
         //ArrayList<Integer> moreCriticals2 = new ArrayList<>(mapp.keySet());
         Map.Entry<Integer, BigDecimal> moreCritical = ShellScriptOps.getAboluteCriticalVector(exact5xp1Verilog, cellLib);
 
-        PLA pla = new PLAManipulator().readPLAFile("5xp1_exact_ESPRESSO.pla");
-        InputVector vector = new InputVector(Integer.toString(moreCritical.getKey()), pla.getQtInputs());
+        Map<Integer, BigDecimal> finalMapp = mapp;
+        moreCriticals.forEach(crit -> {
+            InputVector inputV = new InputVector(Integer.toString(crit), exact5xp1Verilog.getProbInputs().size());
+            System.out.println(inputV + " --> " + finalMapp.get(crit));
+        });
+        TimeUnit.MINUTES.sleep(130);
+        //PLA pla = new PLAManipulator().readPLAFile("5xp1_exact_ESPRESSO.pla");
+        PLA pla;
+        InputVector vector = new InputVector(Integer.toString(moreCritical.getKey()), exact5xp1Verilog.getProbInputs().size());
         flexVectors.add(moreCritical.getKey());
 
         // CHECANDO SE O PLAS TEM TERMOS CONTIDOS
@@ -2044,18 +2069,24 @@ public class Commands {
         //    System.out.println(pla + " --> " + pla.checkAllPLATerms());
         //}
 
-        //pla = new PLAManipulator().readPLAFile("9sym/pla/pla_c/9sym_crit_originals/90-9sym_crit_90.pla");
+        boolean doBreakCubes = true;
+        boolean verifyPla = false;
 
-        /*
-        boolean checkPLA = true;
-        int c = 1;
+        if(verifyPla) {
+            pla = new PLAManipulator().readPLAFile("5xp1/seeds/00-5xp1_fromBlif_optionM.pla");
+            boolean checkPLA2 = true;
+            int cc = 1;
 
-        while(checkPLA) {
-            System.out.println("Rodada " + c);
-            checkPLA = pla.checkAllPLATerms(true);
-        } */
+            while(checkPLA2) {
+                System.out.println("Rodada " + cc);
+                checkPLA2 = pla.checkAllPLATerms(false);
+            }
 
-        //System.out.println("#########  CHECK FINISHED ###########");
+            System.out.println(pla.toString());
+            System.out.println("#########  CHECK FINISHED ###########");
+            TimeUnit.MINUTES.sleep(130);
+        }
+
 
         //for(Term t : pla.getTerms()) {
         //    System.out.println(t);
@@ -2070,7 +2101,7 @@ public class Commands {
          //   System.out.println(new InputVector(Integer.toString(i), pla.getQtInputs()) + " --> " + i + " --> " + mapp.get(i) );
         //}
 
-        //TimeUnit.MINUTES.sleep(130);
+
 
         /**
          * // JUST CRITICAL APPROX
@@ -2079,33 +2110,44 @@ public class Commands {
         moreCriticals = new ArrayList<>(mapp.keySet());
         counter = 1;
 
+        String directoryVersion = "C4";
+
         for (int i = 1; i < 65; i++) {
 
             int termIndex = counter;
-            pla = new PLAManipulator().readPLAFile("5xp1_exact.pla");
+            pla = new PLAManipulator().readPLAFile("5xp1/seeds/00-5xp1_fromBlif_optionM.pla");
             String pattern = String.format("%02d-5xp1_crit_%02d", counter, counter);
             for (int w = 0; w < termIndex; w++) {
                 vector = new InputVector(Integer.toString(moreCriticals.get(w)), pla.getQtInputs());
                 pla.addDontCareTerm(vector.getBinaryString());
             }
 
-            boolean checkPLA = true;
-            int c = 1;
+            if(doBreakCubes) {
+                boolean checkPLA = true;
+                int c = 1;
 
-            while(checkPLA) {
-                System.out.println("Rodada " + c);
-                checkPLA = pla.checkAllPLATerms(true);
+                while(checkPLA) {
+                    System.out.println("Rodada " + c);
+                    checkPLA = pla.checkAllPLATerms(true);
+                }
             }
 
-            ShellScriptOps.deployPLAandVerilog(pla, pattern, "5xp1/pla/pla_c2/5xp1_crit_originals", "5xp1/verilogsC2", "5xp1/pla/pla_c2");
+
+            ShellScriptOps.deployPLAandVerilog(pla, pattern,
+                    String.format("5xp1/%s/pla/5xp1_crit_originals", directoryVersion),
+                    String.format("5xp1/%s/verilogs", directoryVersion),
+                    String.format("5xp1/%s/pla", directoryVersion));
+
             counter = counter + 1;
+
+            //TimeUnit.MINUTES.sleep(30);
         }
 
 
         /**
          * // GERANDO CIRCUITOS TRACK-CRITICAL
          */
-        pla = new PLAManipulator().readPLAFile("5xp1_exact_ESPRESSO.pla");
+        pla = new PLAManipulator().readPLAFile("5xp1/seeds/00-5xp1_fromBlif_optionM.pla");
         for (int i = 1; i < 65; i++) {
 
 
@@ -2113,8 +2155,8 @@ public class Commands {
                 int previous = i - 1;
                 String pattern = String.format("%02d-5xp1_track_crit_%02d", previous, previous);
                 //pla = new PLAManipulator().readPLAFile(String.format("pla/9sym_track_crit_originals/%s.pla", pattern));
-                pla = new PLAManipulator().readPLAFile(String.format("5xp1/pla/pla_c2/%s_ESPRESSO.pla", pattern));
-                String previousName = String.format("5xp1/verilogsC2/%s.v", pattern);
+                pla = new PLAManipulator().readPLAFile(String.format("5xp1/%s/pla/%s_ESPRESSO.pla", directoryVersion, pattern));
+                String previousName = String.format("5xp1/%s/verilogs/%s.v", directoryVersion, pattern);
                 ProbCircuit previousCircuit = new CircuitFactory(cellLib, previousName).getProbCircuit();
 
                 moreCritical = ShellScriptOps.getAboluteCriticalVector(previousCircuit, cellLib);
@@ -2143,15 +2185,22 @@ public class Commands {
             String outputPlaname = String.format("%02d-5xp1_track_crit_%02d", i, i);
             pla.addDontCareTerm(vector.getBinaryString());
 
+            doBreakCubes = false;
 
-            boolean checkPLA = true;
-            int c = 1;
+            if(doBreakCubes) {
+                boolean checkPLA = true;
+                int c = 1;
 
-            while(checkPLA) {
-                System.out.println("Rodada " + c);
-                checkPLA = pla.checkAllPLATerms(true);
+                while(checkPLA) {
+                    System.out.println("Rodada " + c);
+                    checkPLA = pla.checkAllPLATerms(true);
+                }
             }
-            ShellScriptOps.deployPLAandVerilog(pla, outputPlaname, "5xp1/pla/pla_c2/5xp1_track_crit_originals", "5xp1/verilogsC2", "5xp1/pla/pla_c2");
+
+            ShellScriptOps.deployPLAandVerilog(pla, outputPlaname,
+                    String.format("5xp1/%s/pla/5xp1_track_crit_originals", directoryVersion),
+                    String.format("5xp1/%s/verilogs", directoryVersion),
+                    String.format("5xp1/%s/pla", directoryVersion));
         }
 
 
@@ -2161,7 +2210,7 @@ public class Commands {
         counter = 1;
 
         for (int t : flexVectors) {
-            pla = new PLAManipulator().readPLAFile("5xp1_exact.pla");
+            pla = new PLAManipulator().readPLAFile("5xp1/seeds/00-5xp1_fromBlif_optionM.pla");
             String pattern = String.format("%02d-5xp1_track_crit_seed_pla_%02d", counter, counter);
             int termIndex = flexVectors.indexOf(t) + 1;
             for (int w = 0; w < termIndex; w++) {
@@ -2169,39 +2218,38 @@ public class Commands {
                 pla.addDontCareTerm(vector.getBinaryString());
             }
 
-            boolean checkPLA = true;
-            int c = 1;
+            doBreakCubes = true;
+            if(doBreakCubes) {
+                boolean checkPLA = true;
+                int c = 1;
 
-            while (checkPLA) {
-                System.out.println("Rodada " + c);
-                checkPLA = pla.checkAllPLATerms(true);
+                while(checkPLA) {
+                    System.out.println("Rodada " + c);
+                    checkPLA = pla.checkAllPLATerms(true);
+                }
             }
-            ShellScriptOps.deployPLAandVerilog(pla, pattern, "5xp1/pla/pla_c2/5xp1_track_crit_seed_pla_originals", "5xp1/verilogsC2", "5xp1/pla/pla_c2");
+
+
+            ShellScriptOps.deployPLAandVerilog(pla, pattern,
+                    String.format("5xp1/%s/pla/5xp1_track_crit_seed_pla_originals", directoryVersion),
+                    String.format("5xp1/%s/verilogs", directoryVersion),
+                    String.format("5xp1/%s/pla", directoryVersion));
             counter = counter + 1;
         }
-
-
-
-
-
-        TimeUnit.MINUTES.sleep(130);
-
     }
     
     public void Foo6() throws IOException, Exception {
 
 
-        TimeUnit.MINUTES.sleep(130);
+        //TimeUnit.MINUTES.sleep(130);
 
         CellLibrary cellLib = new CellLibrary("genlibs/mylib.genlib");
         ArrayList<BigDecimal> exactReliability = new ArrayList<>();
 
-        char[] out = "0102011100".toCharArray();
-
-
+        ProbCircuit goldenCircuit = new CircuitFactory(cellLib, "5xp1/seeds/00-5xp1_fromBlif_optionM.v").getProbCircuit();
 
         //ArrayList<Path> circuits = ops.CommonOps.getAllVerilogCircuitsFromPath("approx-9sym");
-        ArrayList<Path> circuits = ops.CommonOps.getAllVerilogCircuitsFromPath("5xp1/verilogsC2");
+        ArrayList<Path> circuits = ops.CommonOps.getAllVerilogCircuitsFromPath("5xp1/C4/verilogs");
 
 
         /**
@@ -2226,7 +2274,14 @@ public class Commands {
         for(Path path : newList) {
             System.out.println(path);
         } */
-        ArrayList<String> truthTable = new ArrayList<>();
+        //ArrayList<String> truthTable = new ArrayList<>();
+        ArrayList<String> truthTable = getProbCircuitTruthTableBySPR(goldenCircuit, cellLib);
+        SPRController sprGold = new SPRController(goldenCircuit, cellLib);
+        for(int i = 0; i<truthTable.size(); i++) {
+            BigDecimal goldVectorReliability = sprGold.getReliability(Integer.toString(i), "0.99999802495", 15);
+            exactReliability.add(i, goldVectorReliability);
+        }
+
 
         for(Path path: circuits) {
             if(path.getFileName().toString().contains("TEMP")) {
@@ -2236,12 +2291,12 @@ public class Commands {
             } else {
                 ProbCircuit pCircuit = new CircuitFactory(cellLib, path.toString()).getProbCircuit();
 
-                if(path.getFileName().toString().contains("exact")) {
-                    truthTable = getProbCircuitTruthTableBySPR(pCircuit, cellLib);
+                //if(path.getFileName().toString().contains("00-5xp1_exact_blif")) {
+                 //   truthTable = getProbCircuitTruthTableBySPR(pCircuit, cellLib);
                     //for(String truth : truthTable) {
                     //    System.out.println(truth);
                     //}
-                }
+                //}
 
                 // Pega gates
                 int gates = pCircuit.getGates().size();
@@ -2294,13 +2349,6 @@ public class Commands {
 
                     averageItmExact = averageItmExact.add(value);
 
-                    if(path.toString().contains("exact")) {
-                        exactReliability.add(i, vectorReliability);
-                        //System.out.println(String.format("%s %s", vectorReliability.toString(),
-                        //        CommonOps.getMTBFBigInt(vectorReliability).toString()));
-                    }
-
-
                     if(isSameLogicValue) {
                         coveredVectors = coveredVectors + 1;
                         averageExactAndApprox = averageExactAndApprox.add(vectorReliability);
@@ -2308,19 +2356,43 @@ public class Commands {
                         coveredExact = coveredExact.add(exactReliability.get(i));
 
                     } else {
+                        //System.out.println("Mamae --> " + path.toString() + " --> " + new InputVector(Integer.toString(i), pCircuit.getProbInputs().size()) + " ==> " + CommonOps.getOutputVector(pCircuit.getProbOutputs()) + " --> " + truthTable.get(i));
                         averageExactAndApprox = averageExactAndApprox.add(BigDecimal.ONE);
                         //System.out.println("Circuito: " + pCircuit + " -- vetor: " + i);
                     }
 
-
-
-
                 }
+
                 averageReli = averageReli.divide(new BigDecimal(Integer.toString(truthTable.size())), RoundingMode.HALF_UP);
                 averageItmExact = averageItmExact.divide(new BigDecimal(Integer.toString(truthTable.size())), RoundingMode.HALF_UP);
                 averageExactAndApprox = averageExactAndApprox.divide(new BigDecimal(Integer.toString(truthTable.size())), RoundingMode.HALF_UP);
-                averageCoveredVectors = averageCoveredVectors.divide(new BigDecimal(Integer.toString(coveredVectors)), RoundingMode.HALF_UP);
-                coveredExact = coveredExact.divide(new BigDecimal(Integer.toString(coveredVectors)), RoundingMode.HALF_UP);
+
+                String saidaAverageExactAndApprox;
+                String saidaAverageCoveredVectors;
+                String saidaCoveredExact;
+
+                if(averageExactAndApprox.compareTo(BigDecimal.ONE) == 0) {
+                    saidaAverageExactAndApprox = "null";
+                } else {
+                    saidaAverageExactAndApprox = CommonOps.getMTBFBigInt(averageExactAndApprox).toString();
+                }
+
+                if(averageCoveredVectors.compareTo(BigDecimal.ZERO) != 0) {
+                    if(coveredVectors > 0) {
+                        averageCoveredVectors = averageCoveredVectors.divide(new BigDecimal(Integer.toString(coveredVectors)), RoundingMode.HALF_UP);
+                        coveredExact = coveredExact.divide(new BigDecimal(Integer.toString(coveredVectors)), RoundingMode.HALF_UP);
+                        saidaAverageCoveredVectors = CommonOps.getMTBFBigInt(averageCoveredVectors).toString();
+                        saidaCoveredExact = CommonOps.getMTBFBigInt(coveredExact).toString();
+                    } else {
+                        saidaAverageCoveredVectors = "null";
+                        saidaCoveredExact = "0";
+                    }
+                } else {
+                    saidaAverageCoveredVectors = "null";
+                    saidaCoveredExact = "null";
+                }
+
+
 
                 String outSTR = String.format("%s %d %d %d %d %d %s %s %s %s %s",
                         pCircuit.getName(),
@@ -2331,9 +2403,9 @@ public class Commands {
                         coveredVectors,
                         CommonOps.getMTBFBigInt(averageReli).toString(),
                         CommonOps.getMTBFBigInt(averageItmExact).toString(),
-                        CommonOps.getMTBFBigInt(averageExactAndApprox).toString(),
-                        CommonOps.getMTBFBigInt(averageCoveredVectors).toString(),
-                        CommonOps.getMTBFBigInt(coveredExact).toString());
+                        saidaAverageExactAndApprox,
+                        saidaAverageCoveredVectors,
+                        saidaCoveredExact);
 
                 System.out.println(outSTR);
             }
@@ -2359,215 +2431,33 @@ public class Commands {
     }
     
     public void Foo7() throws IOException, Exception {
-                
-        /*
-        
-        \begin{table}
-            \begin{center}
-                \caption{Memória necessária para o ISCAS85}\label{memoriaISCAS}
-                \bigskip
-                \begin{tabular}{p{2.5cm}p{2.5cm}p{2.5cm}p{3.5cm}p{2.5cm}p{2.5cm}p{2.5cm}}
-                    \hline
 
-                    \textbf{Circuito} & \textbf{Portas} & \textbf{Níveis} & \textbf{Maior Matriz} & \textbf{Memória(GB)} 
-                    & \textbf{Memória(GB)} & \textbf{Memória(GB)}
-                    \Tstrut\Bstrut\\
-                    \hline
-                    \Tstrut\Tstrut\Tstrut\Tstrut
-                    {\small C7552} &  1151 & 15 & $2^{734} x 2^{531}$ & $2.3\mathrm{e}{+372}$ & $2.3\mathrm{e}{+372}$\Bstrut\\
-                    \hline
-                \end{tabular}
-            \end{center}
-        \end{table}
-        
-        */
-        
-        String[] circuits = new String[]{
-            "c17v3_fritz.v",
-        };
-        
-        String[] reliabilities = new String[]{
-            "0.99",            
-            //"0.95",
-            //"0.9",
-            //"0.85",
-            //"0.8",            
-            //"0.75",
-            //"0.7",
-            //"0.65",
-            
-            
-        };
-        
-        String tableTitle = "Tabela de Resultados Teste";
-        String lable = "TabelaTeste";
-        
-        WriteFile wFile = new WriteFile("resultsNandsC17.txt");
-        
-        
-        
-        
-        
-        
-        try {
-            for (int j = 0; j < circuits.length; j++) {
-                Terminal.getInstance().executeCommand("read_verilog "+circuits[j]);
-                LevelCircuit lCircuit = Terminal.getInstance().getLevelCircuit();
-                ProbCircuit pCircuit = new ProbCircuit(Terminal.getInstance().getCircuit());
-                
-                System.out.println(pCircuit.getName());
-                
-                for (int i = 0; i < reliabilities.length; i++) {
-                    Terminal.getInstance().getCellLibrary().setPTMCells2(Float.valueOf(reliabilities[i]));
-                    
-                    pCircuit.clearProbSignalsMatrix();
-                    pCircuit.setPTMReliabilityMatrix();
-                    pCircuit.setDefaultProbSourceSignalMatrix();
-                    pCircuit.setProbSignalStates(false);
-                    
-                    ArrayList<ProbSignal> fooProbSignals = new ArrayList<>();
-                    
-                    for (int k = 0; k < pCircuit.getProbSignals().size(); k++) {
-                        ProbSignal fooSignal = pCircuit.getProbSignals().get(k);
-                        if(fooSignal.getPOrigin() == null) {
-                            fooProbSignals.add(fooSignal);
-                        }
-                    }
-                    
-                    for (int k = 0; k < pCircuit.getProbSignals().size(); k++) {
-                        ProbSignal fooSignal = pCircuit.getProbSignals().get(k);
-                        if(fooSignal.getPOrigin() != null && !fooSignal.getDestiny().isEmpty()) {
-                            fooProbSignals.add(fooSignal);
-                        }
-                    }
-                    
-                    
-                    for (int k = 0; k < pCircuit.getProbSignals().size(); k++) {                   
-                        ProbSignal fooSignal = pCircuit.getProbSignals().get(k);
-                        if(fooSignal.getDestiny().isEmpty()) {
-                            fooProbSignals.add(fooSignal);
-                        }
-                    }
-                    
-                    pCircuit.setProbSignals(fooProbSignals);
-                    
-                    System.out.println(pCircuit.getProbSignals());
-                    
-                    Float result = SPROpsFloat.getSPRReliability(pCircuit);
-                    
-                    System.out.println(result + "<== SPR WITH FLOAT" + " ## TIME CONSUPTION ## ==> ");
-                    
-                    WriteFile.WriteContent("\\begin{table}\n" + "   \\begin{center}\n" + "\\caption{"+ tableTitle + "}\n" + 
-                "\\label{ " + lable + "}\n");
-                    
-                    WriteFile.WriteContent("\\begin{tabular}{");
-                    
-                    WriteFile.WriteContent("|p{1cm}");
-                    
-                    for (int k = 0; k < pCircuit.getProbSignals().size(); k++) {
-                        if(k>4) {
-                            WriteFile.WriteContent("|p{2.7cm}");
-                        } else {
-                            WriteFile.WriteContent("|p{1cm}");
-                        }
-                    }
-                    
-                    WriteFile.WriteContent("|}\n" + "\\hline\n");
-                    
-                    WriteFile.WriteContent(" \\centering \\textbf{PASS} & ");
-                    
-                    for (int k = 0; k < pCircuit.getProbSignals().size(); k++) {
-                        ProbSignal fooSignal = pCircuit.getProbSignals().get(k);
-                        
-                        WriteFile.WriteContent("\\centering  \\textbf{" + fooSignal.getId() + "} ");
-                        
-                        if(k < pCircuit.getProbSignals().size() - 1) {
-                            WriteFile.WriteContent(" & ");
-                        }
-                        
-                        //System.out.println(fooSignal.getId() + ": ");
-                        //matrixPrint(fooSignal.getProbMatrixFloat());
-                        //System.out.println("#####");
-                        
-                    }
-                    
-                    WriteFile.WriteContent("\\tabularnewline\n\\hline\n");
-                    
-                    WriteFile.WriteContent("\\centering\\\n" +
-"\\newline \n**** &");
-                    
-                    for (int k = 0; k < pCircuit.getProbSignals().size(); k++) {
-                        ProbSignal fooSignal = pCircuit.getProbSignals().get(k);
-                        
-                        
-                        WriteFile.WriteContent("\\tiny{\n" +
-                                                "\\[\n" +
-                                                "\\setlength\\arraycolsep{2pt}\n" +
-                                                "\\begin{bmatrix}\n" +
-                                                "    \\scalebox{.9}{" + fooSignal.getProbMatrixFloat()[0][0] + "} &  \\scalebox{.9}{ " + fooSignal.getProbMatrixFloat()[0][1] + "}\\\\\n" +
-                                                "    \\scalebox{.9}{" + fooSignal.getProbMatrixFloat()[1][0] + "} &  \\scalebox{.9}{ " + fooSignal.getProbMatrixFloat()[1][1] + "}\\\\\n" +                                                
-                                                "\\end{bmatrix}\n" +
-                                                "\\]\n" +
-                                                "}");
-                        
-                        if(k < pCircuit.getProbSignals().size() - 1) {
-                            WriteFile.WriteContent(" & ");
-                        }
-                        
-                        System.out.println(fooSignal.getId() + ": ");
-                        matrixPrint(fooSignal.getProbMatrixFloat());
-                        System.out.println("#####");
-                        
-                    }
-                    
-                    WriteFile.WriteContent("\\\\\n\\hline\n");
-                    
-                    WriteFile.WriteContent("\\fbox{\\parbox{\\textwidth}{\\textbf{\\quad \\qquad RELIABILITY BY SPR = " + result + "}}}\n");
-                    
-                    WriteFile.WriteContent("\\end{tabular}\n");
-        
-                    wFile.WriteContent("    \\end{center}\n" +"\\end{table}");
-                    
-                    System.out.println(pCircuit.getProbSignals());
+        //PLA pla = new PLAManipulator().readPLAFile("c17/exact/pla/c17_mapa_karnaugh_ESPRESSO.pla");
+        PLA pla = new PLAManipulator().readPLAFile("5xp1/seeds/00-5xp1_fromBlif.pla");
+        //PLA pla = new PLAManipulator().readPLAFile("5xp1/C4/pla/64-5xp1_crit_64_ESPRESSO.pla");
 
-                    
-                    pCircuit.clearProbSignalsMatrix();
-                    pCircuit.setPTMReliabilityMatrix();
-                    pCircuit.setDefaultProbSourceSignalMatrix();
-                    pCircuit.setProbSignalStates(true);
+        ArrayList<PLA> oneOutPLAs = PLAOps.getOneOutputPLAs(pla);
 
-                    System.out.println("MultiPassV1 (" + reliabilities[i] + "): " + ops.SPRMultiPassOps.getSPRMultiPassReliaiblity(pCircuit, Terminal.getInstance().getCellLibrary(), reliabilities[i]));
-                    
-                    pCircuit.clearProbSignalsMatrix();
-                    pCircuit.setPTMReliabilityMatrix();
-                    pCircuit.setDefaultProbSourceSignalMatrix();
-                    pCircuit.setProbSignalStates(true);
-                    
-                    
-                }
+        PLA espressoPLA = PLAOps.getMinimizedPLA(oneOutPLAs.get(2));
 
-                
-                
+        /**
+         * Test PLA ESPRESSO object
+         */
+        //System.out.println("Mirna!");
+        //System.out.println("input " + espressoPLA.getQtInputs());
+        //System.out.println("output " + espressoPLA.getQtOutputs());
+        //System.out.println("inLabels " + espressoPLA.getInputLabels());
+        //System.out.println("outLabels " + espressoPLA.getOutputLabels());
+        //for (Term t : espressoPLA.getTerms()) {
+        //    System.out.println(t);
+        //}
+        System.out.println("**********************");
 
-                System.out.println("COUNTER MultiPassV1: " + ops.SPRMultiPassOps.COUNTER);                      
-                System.out.println("");
-                
-                ops.SPRMultiPassOps.COUNTER = 0;
-                ops.SPRMultiPassOps.VALUECOUNTER = 0;
+        espressoPLA.checkAllPLATerms(false);
 
-                                                
-            }
-        }
-        catch (ScriptException ex) {
-            Logger.getLogger(Commands.class.getName()).log(Level.SEVERE, null, ex);
-        }
-                                
-        
-        
-        
-        
-        
-        wFile.CloseFile();
+        PLA newPLA = PLAOps.joinPLAs(oneOutPLAs, "teste");
+
+        PLAOps.writePLA("TEMP/teste_join.pla", newPLA);
     }
     
     public void Foo8() throws IOException, Exception {                

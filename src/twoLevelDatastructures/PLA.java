@@ -120,21 +120,21 @@ public class PLA {
 
     public boolean checkAllPLATerms(boolean doAdjusts) {
 
-        boolean mintermsUnique = false;
+        boolean mintermsNotUnique = true;
         /**
          * fazer o check até todos os mintermos forem únicos
          */
         HashMap<Term, ArrayList<Term>> repeatedTerms = getRepeatedTerms();
         ArrayList<Term> removeList = new ArrayList<>();
 
-        //for (Term t : repeatedTerms.keySet()) {
-        //    System.out.println(t + " --> " + repeatedTerms.get(t));
-        //}
-        //System.out.println("---------------------------");
+        for (Term t : repeatedTerms.keySet()) {
+            System.out.println(t + " --> " + repeatedTerms.get(t));
+        }
+        System.out.println("---------------------------");
 
         if(repeatedTerms.isEmpty()) {
-            //System.out.println("All PLA minterms are unique!");
-            mintermsUnique = true;
+            System.out.println("All PLA minterms are unique!");
+            mintermsNotUnique = false;
         } else {
             if (doAdjusts) {
                 for (Term firstTerm : repeatedTerms.keySet()) {
@@ -188,7 +188,7 @@ public class PLA {
                 }
             }
         }
-        return mintermsUnique;
+        return mintermsNotUnique;
     }
     public HashMap<Term, ArrayList<Term>> getRepeatedTerms() {
         HashMap<Term, ArrayList<Term>> result = new HashMap<>();
@@ -309,6 +309,7 @@ public class PLA {
     }
 
     public void addDontCareTerm(String newTermInput) {
+        //this.terms.add(0, new Term(newTermInput, "~".repeat(this.qtOutputs)));
         this.terms.add(0, new Term(newTermInput, "-".repeat(this.qtOutputs)));
     }
 

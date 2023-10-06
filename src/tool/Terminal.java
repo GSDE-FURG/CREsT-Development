@@ -54,7 +54,8 @@ TerminalWrapper {
 
             Commands cmds = new Commands();
             //cmds.Foo5();
-            cmds.Foo6();
+            //cmds.Foo6();
+            cmds.Foo7();
 
                 Options options = new Options();
 
@@ -198,7 +199,7 @@ TerminalWrapper {
            
             //term.executeCommand("read_genlib lib_full_no_cost.genlib");
             //term.executeCommand("read_custom_matrix 45nm.txt");
-            /*Commite antes da reunião */
+            /*Commit antes da reunião */
             //term.executeCommand("read_genlib cadence_schiv.genlib");
             //term.executeCommand("read_genlib abc/22-1.genli");
             //term.executeCommand("read_verilog c17_cadence.v");

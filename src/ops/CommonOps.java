@@ -785,6 +785,10 @@ public class CommonOps {
         return resultMap;
     }
 
+    /**
+     * 2023-09-05 Matheus - desenvolvi para renomear os arquivos do Manske/Ammes
+     * @throws IOException
+     */
     public static void changeFileInLot() throws IOException {
 
         Files.list(Paths.get("5xp1/verilogsC2")).sorted().forEach(path -> {
