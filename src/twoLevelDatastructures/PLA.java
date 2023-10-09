@@ -127,16 +127,15 @@ public class PLA {
         HashMap<Term, ArrayList<Term>> repeatedTerms = getRepeatedTerms();
         ArrayList<Term> removeList = new ArrayList<>();
 
-        for (Term t : repeatedTerms.keySet()) {
-            System.out.println(t + " --> " + repeatedTerms.get(t));
-        }
-        System.out.println("---------------------------");
-
         if(repeatedTerms.isEmpty()) {
             System.out.println("All PLA minterms are unique!");
             mintermsNotUnique = false;
         } else {
             if (doAdjusts) {
+
+                for (Term t : repeatedTerms.keySet()) {
+                    System.out.println(t + " --> " + repeatedTerms.get(t));
+                }
                 for (Term firstTerm : repeatedTerms.keySet()) {
                     for (Term cube : repeatedTerms.get(firstTerm)) {
                         /**
@@ -188,6 +187,11 @@ public class PLA {
                 }
             }
         }
+
+        if(doAdjusts && mintermsNotUnique) {
+            this.checkAllPLATerms(doAdjusts);
+        }
+
         return mintermsNotUnique;
     }
     public HashMap<Term, ArrayList<Term>> getRepeatedTerms() {

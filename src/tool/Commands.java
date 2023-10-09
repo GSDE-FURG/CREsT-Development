@@ -2017,49 +2017,56 @@ public class Commands {
 
     public void Foo5() throws IOException, Exception {
 
-        //CellLibrary cellLib = new CellLibrary("genlibs/mylib.genlib");
-        CellLibrary cellLib = new CellLibrary("genlibs/asap.genlib");
+        /**
+         * Set CellLibrary
+         */
+        CellLibrary cellLib = new CellLibrary("genlibs/mylib.genlib");
+        //CellLibrary cellLib = new CellLibrary("genlibs/asap.genlib");
 
-        //ProbCircuit exact5xp1Verilog = new CircuitFactory(cellLib, "5xp1/C2/verilogs/00-5xp1_fromBlif").getProbCircuit();
-        //ProbCircuit exact5xp1Verilog = new CircuitFactory(cellLib, "5xp1/seeds/00-5xp1_fromBlif_optionM.v").getProbCircuit();
-        //ProbCircuit exact5xp1Verilog = new CircuitFactory(cellLib, "Circuito_conceito/verilogs/paulo_original_track_crit_04.v").getProbCircuit();
-        //ProbCircuit exact5xp1Verilog = new CircuitFactory(cellLib, "c17/manual_approx/04-vector/verilog/c17_manual_approx_04_vectors.v").getProbCircuit();
-        ProbCircuit exact5xp1Verilog = new CircuitFactory(cellLib, "c17/manual_approx/multi-dont-cares/c17_V3/verilog/c17_v3_10_vector.v").getProbCircuit();
+        String seedName = "000-5xp1_fromBlif";
+        String circuitAndApproxMethod = "";
+
+        /**
+         * Exact reference Circuit
+         */
+        ProbCircuit exactVerilog = new CircuitFactory(cellLib, String.format("5xp1/seeds/verilog/%s.v", seedName)).getProbCircuit();
 
         ArrayList<BigDecimal> exactReliability = new ArrayList<>();
 
         int counter = 0;
         int counter2 = 1;
+        String directoryVersion = "E1";
 
-        System.out.println(exact5xp1Verilog + " --> FAnouts: " + exact5xp1Verilog.getFanouts().size());
 
-
-        SPRController spr = new SPRController(exact5xp1Verilog, cellLib);
-        for (int i = 0; i < PTMOps.PowInt(2, exact5xp1Verilog.getProbInputs().size()); i++) {
-            String input = new InputVector(Integer.toString(i), exact5xp1Verilog.getProbInputs().size()).getBinaryString();
+        SPRController spr = new SPRController(exactVerilog, cellLib);
+        /*
+        for (int i = 0; i < PTMOps.PowInt(2, exactVerilog.getProbInputs().size()); i++) {
+            String input = new InputVector(Integer.toString(i), exactVerilog.getProbInputs().size()).getBinaryString();
             BigDecimal vectorReliability = spr.getReliability(Integer.toString(i), "0.99999802495", 15);
-            String output = CommonOps.getOutputVector(exact5xp1Verilog.getProbOutputs());
+            String output = CommonOps.getOutputVector(exactVerilog.getProbOutputs());
             System.out.println(String.format("%s %s", input, output));
-        }
+        } */
 
 
         ArrayList<Integer> flexVectors = new ArrayList<>();
 
 
-        Map<Integer, BigDecimal> mapp = ShellScriptOps.getOrderedCircuitReliabilities(exact5xp1Verilog, cellLib);
+        Map<Integer, BigDecimal> mapp = ShellScriptOps.getOrderedCircuitReliabilities(exactVerilog, cellLib);
         ArrayList<Integer> moreCriticals = new ArrayList<>(mapp.keySet());
         //ArrayList<Integer> moreCriticals2 = new ArrayList<>(mapp.keySet());
-        Map.Entry<Integer, BigDecimal> moreCritical = ShellScriptOps.getAboluteCriticalVector(exact5xp1Verilog, cellLib);
+        Map.Entry<Integer, BigDecimal> moreCritical = ShellScriptOps.getAboluteCriticalVector(exactVerilog, cellLib);
 
+        /*
         Map<Integer, BigDecimal> finalMapp = mapp;
         moreCriticals.forEach(crit -> {
-            InputVector inputV = new InputVector(Integer.toString(crit), exact5xp1Verilog.getProbInputs().size());
+            InputVector inputV = new InputVector(Integer.toString(crit), exactVerilog.getProbInputs().size());
             System.out.println(inputV + " --> " + finalMapp.get(crit));
-        });
-        TimeUnit.MINUTES.sleep(130);
+        }); */
+
+        //TimeUnit.MINUTES.sleep(130);
         //PLA pla = new PLAManipulator().readPLAFile("5xp1_exact_ESPRESSO.pla");
         PLA pla;
-        InputVector vector = new InputVector(Integer.toString(moreCritical.getKey()), exact5xp1Verilog.getProbInputs().size());
+        InputVector vector = new InputVector(Integer.toString(moreCritical.getKey()), exactVerilog.getProbInputs().size());
         flexVectors.add(moreCritical.getKey());
 
         // CHECANDO SE O PLAS TEM TERMOS CONTIDOS
@@ -2069,23 +2076,7 @@ public class Commands {
         //    System.out.println(pla + " --> " + pla.checkAllPLATerms());
         //}
 
-        boolean doBreakCubes = true;
-        boolean verifyPla = false;
 
-        if(verifyPla) {
-            pla = new PLAManipulator().readPLAFile("5xp1/seeds/00-5xp1_fromBlif_optionM.pla");
-            boolean checkPLA2 = true;
-            int cc = 1;
-
-            while(checkPLA2) {
-                System.out.println("Rodada " + cc);
-                checkPLA2 = pla.checkAllPLATerms(false);
-            }
-
-            System.out.println(pla.toString());
-            System.out.println("#########  CHECK FINISHED ###########");
-            TimeUnit.MINUTES.sleep(130);
-        }
 
 
         //for(Term t : pla.getTerms()) {
@@ -2104,45 +2095,72 @@ public class Commands {
 
 
         /**
-         * // JUST CRITICAL APPROX
+         * // JUST CRITICAL APPROX - MULT DONTCARE
          */
 
         moreCriticals = new ArrayList<>(mapp.keySet());
         counter = 1;
+        circuitAndApproxMethod = "5xp1_just_crit_mult_dontcare";
 
-        String directoryVersion = "C4";
 
-        for (int i = 1; i < 65; i++) {
+
+        for (int i = 1; i < 129; i++) {
 
             int termIndex = counter;
-            pla = new PLAManipulator().readPLAFile("5xp1/seeds/00-5xp1_fromBlif_optionM.pla");
-            String pattern = String.format("%02d-5xp1_crit_%02d", counter, counter);
+            pla = new PLAManipulator().readPLAFile(String.format("5xp1/seeds/pla/%s.pla", seedName));
+            String pattern = String.format("%03d-%s", counter, circuitAndApproxMethod);
             for (int w = 0; w < termIndex; w++) {
                 vector = new InputVector(Integer.toString(moreCriticals.get(w)), pla.getQtInputs());
                 pla.addDontCareTerm(vector.getBinaryString());
             }
 
-            if(doBreakCubes) {
-                boolean checkPLA = true;
-                int c = 1;
 
-                while(checkPLA) {
-                    System.out.println("Rodada " + c);
-                    checkPLA = pla.checkAllPLATerms(true);
-                }
-            }
-
-
-            ShellScriptOps.deployPLAandVerilog(pla, pattern,
-                    String.format("5xp1/%s/pla/5xp1_crit_originals", directoryVersion),
-                    String.format("5xp1/%s/verilogs", directoryVersion),
-                    String.format("5xp1/%s/pla", directoryVersion));
+            ShellScriptOps.deployPLAAigandVerilog(  pla,
+                                                    pattern,
+                                                    String.format("5xp1/%s/pla/%s/",directoryVersion, circuitAndApproxMethod),
+                                                    String.format("5xp1/%s/verilog/", directoryVersion),
+                                                    String.format("5xp1/%s/aig/%s/", directoryVersion, circuitAndApproxMethod),
+                                                    String.format("5xp1/%s/pla/%s/", directoryVersion, circuitAndApproxMethod),
+                                                    "genlibs/mylib.genlib");
 
             counter = counter + 1;
-
-            //TimeUnit.MINUTES.sleep(30);
         }
 
+
+        /**
+         * // JUST CRITICAL APPROX - PER OUTPUT DONTCARE
+         */
+
+        moreCriticals = new ArrayList<>(mapp.keySet());
+        counter = 1;
+        circuitAndApproxMethod = "5xp1_just_crit_per_output_dontcare";
+
+
+        for (int i = 1; i < 129; i++) {
+
+            int termIndex = counter;
+            pla = new PLAManipulator().readPLAFile(String.format("5xp1/seeds/pla/%s.pla", seedName));
+            String pattern = String.format("%03d-%s", counter, circuitAndApproxMethod);
+            for (int w = 0; w < termIndex; w++) {
+                vector = new InputVector(Integer.toString(moreCriticals.get(w)), pla.getQtInputs());
+                pla.addDontCareTerm(vector.getBinaryString());
+            }
+
+            pla = PLAOps.getApproxPLAWithDontCarePerOutput(pla);
+
+            ShellScriptOps.deployPLAAigandVerilog(  pla,
+                                                    pattern,
+                                                    String.format("5xp1/%s/pla/%s/",directoryVersion, circuitAndApproxMethod),
+                                                    String.format("5xp1/%s/verilog/", directoryVersion),
+                                                    String.format("5xp1/%s/aig/%s/", directoryVersion, circuitAndApproxMethod),
+                                                    String.format("5xp1/%s/pla/%s/", directoryVersion, circuitAndApproxMethod),
+                                                    "genlibs/mylib.genlib");
+
+            counter = counter + 1;
+        }
+
+
+        TimeUnit.MINUTES.sleep(30);
 
         /**
          * // GERANDO CIRCUITOS TRACK-CRITICAL
@@ -2185,17 +2203,6 @@ public class Commands {
             String outputPlaname = String.format("%02d-5xp1_track_crit_%02d", i, i);
             pla.addDontCareTerm(vector.getBinaryString());
 
-            doBreakCubes = false;
-
-            if(doBreakCubes) {
-                boolean checkPLA = true;
-                int c = 1;
-
-                while(checkPLA) {
-                    System.out.println("Rodada " + c);
-                    checkPLA = pla.checkAllPLATerms(true);
-                }
-            }
 
             ShellScriptOps.deployPLAandVerilog(pla, outputPlaname,
                     String.format("5xp1/%s/pla/5xp1_track_crit_originals", directoryVersion),
@@ -2218,16 +2225,6 @@ public class Commands {
                 pla.addDontCareTerm(vector.getBinaryString());
             }
 
-            doBreakCubes = true;
-            if(doBreakCubes) {
-                boolean checkPLA = true;
-                int c = 1;
-
-                while(checkPLA) {
-                    System.out.println("Rodada " + c);
-                    checkPLA = pla.checkAllPLATerms(true);
-                }
-            }
 
 
             ShellScriptOps.deployPLAandVerilog(pla, pattern,
@@ -2434,30 +2431,79 @@ public class Commands {
 
         //PLA pla = new PLAManipulator().readPLAFile("c17/exact/pla/c17_mapa_karnaugh_ESPRESSO.pla");
         PLA pla = new PLAManipulator().readPLAFile("5xp1/seeds/00-5xp1_fromBlif.pla");
-        //PLA pla = new PLAManipulator().readPLAFile("5xp1/C4/pla/64-5xp1_crit_64_ESPRESSO.pla");
 
-        ArrayList<PLA> oneOutPLAs = PLAOps.getOneOutputPLAs(pla);
+        pla.addDontCareTerm("0010100");
+        pla.addDontCareTerm("0110100");
+        pla.addDontCareTerm("1111110");
+        pla.addDontCareTerm("0001110");
+        pla.addDontCareTerm("1110000");
+        pla.addDontCareTerm("0011011");
+        pla.addDontCareTerm("1000110");
+        pla.addDontCareTerm("0011001");
+        pla.addDontCareTerm("1110011");
+        pla.addDontCareTerm("1010011");
+        pla.addDontCareTerm("0001011");
+        pla.addDontCareTerm("1000011");
+        pla.addDontCareTerm("0010101");
+        pla.addDontCareTerm("1010101");
+        pla.addDontCareTerm("0011110");
+        pla.addDontCareTerm("0001101");
+        pla.addDontCareTerm("1101000");
+        pla.addDontCareTerm("1100111");
+        pla.addDontCareTerm("1111011");
+        pla.addDontCareTerm("1101111");
+        pla.addDontCareTerm("1101011");
+        pla.addDontCareTerm("1101101");
+        pla.addDontCareTerm("0111000");
+        pla.addDontCareTerm("1110010");
+        pla.addDontCareTerm("1100011");
+        pla.addDontCareTerm("1011001");
+        pla.addDontCareTerm("1111010");
+        pla.addDontCareTerm("1011010");
+        pla.addDontCareTerm("1101100");
+        pla.addDontCareTerm("0101100");
+        pla.addDontCareTerm("1100101");
+        pla.addDontCareTerm("1100100");
+        pla.addDontCareTerm("0011100");
+        pla.addDontCareTerm("1001101");
+        pla.addDontCareTerm("1010100");
+        pla.addDontCareTerm("0101010");
+        pla.addDontCareTerm("0111010");
+        pla.addDontCareTerm("1111101");
+        pla.addDontCareTerm("1010110");
+        pla.addDontCareTerm("1001100");
+        pla.addDontCareTerm("0111110");
+        pla.addDontCareTerm("1111001");
+        pla.addDontCareTerm("1110001");
+        pla.addDontCareTerm("1100110");
+        pla.addDontCareTerm("1110101");
+        pla.addDontCareTerm("1101110");
+        pla.addDontCareTerm("0111001");
+        pla.addDontCareTerm("0011101");
+        pla.addDontCareTerm("1011011");
+        pla.addDontCareTerm("1001011");
+        pla.addDontCareTerm("1111000");
+        pla.addDontCareTerm("0011111");
+        pla.addDontCareTerm("1011111");
+        pla.addDontCareTerm("1011101");
+        pla.addDontCareTerm("1111100");
+        pla.addDontCareTerm("0111100");
+        pla.addDontCareTerm("0101110");
+        pla.addDontCareTerm("1110100");
+        pla.addDontCareTerm("0001111");
+        pla.addDontCareTerm("1101010");
+        pla.addDontCareTerm("1001110");
+        pla.addDontCareTerm("1001111");
+        pla.addDontCareTerm("1011100");
+        pla.addDontCareTerm("1011110");
 
-        PLA espressoPLA = PLAOps.getMinimizedPLA(oneOutPLAs.get(2));
 
-        /**
-         * Test PLA ESPRESSO object
-         */
-        //System.out.println("Mirna!");
-        //System.out.println("input " + espressoPLA.getQtInputs());
-        //System.out.println("output " + espressoPLA.getQtOutputs());
-        //System.out.println("inLabels " + espressoPLA.getInputLabels());
-        //System.out.println("outLabels " + espressoPLA.getOutputLabels());
-        //for (Term t : espressoPLA.getTerms()) {
-        //    System.out.println(t);
-        //}
-        System.out.println("**********************");
 
-        espressoPLA.checkAllPLATerms(false);
+        PLA newPLA = PLAOps.getApproxPLAWithDontCarePerOutput(pla);
 
-        PLA newPLA = PLAOps.joinPLAs(oneOutPLAs, "teste");
+        newPLA = PLAOps.getMinimizedPLA(newPLA);
 
-        PLAOps.writePLA("TEMP/teste_join.pla", newPLA);
+        PLAOps.writePLA("TEMP/5xp1_crit_approx_method_64_break_cubes.pla", newPLA);
     }
     
     public void Foo8() throws IOException, Exception {                

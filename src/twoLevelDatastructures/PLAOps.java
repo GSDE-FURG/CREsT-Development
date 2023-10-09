@@ -10,6 +10,70 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class PLAOps {
+
+    public static PLA getApproxPLAWithDontCarePerOutput(PLA originalPLA) {
+
+        /**
+         * Split the original PLA in per output PLAs
+         */
+        ArrayList<PLA> oneOutPLAs = PLAOps.getOneOutputPLAs(originalPLA);
+
+        /**
+         * Auxiliar ESPRESSO PLA list
+         */
+        ArrayList<PLA> espressoPLAs = new ArrayList<>();
+
+        /**
+         * iterate over one output PLAs
+         */
+        for(PLA p : oneOutPLAs) {
+            //System.out.println(p);
+            //for (Term t : p.getTerms()) {
+            //    System.out.println(t);
+            //}
+            //p.checkAllPLATerms(false);
+            //System.out.println("After CubeBreak");
+            //for (Term t : p.getTerms()) {
+            //    System.out.println(t);
+            //}
+
+            try {
+                //System.out.println("ESPRESSO");
+                PLA espressoPLA = PLAOps.getMinimizedPLA(p);
+                //for(Term t : espressoPLA.getTerms()) {
+                //  System.out.println(t);
+                //}
+                espressoPLAs.add(espressoPLA);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        //String newName = originalPLA.getName() + "_approx_by_per_output_method";
+        PLA resultPLA = PLAOps.joinPLAs(espressoPLAs, originalPLA.getName());
+
+        return resultPLA;
+    }
+
+    public static PLA getApproxPLAWithMultipleDontCare(PLA originalPLA, ArrayList<String> inputVectors) {
+
+        originalPLA.setName(originalPLA.getName() + "_mult_dontcare_approx");
+
+        for (String v : inputVectors) {
+            originalPLA.addDontCareTerm(v);
+        }
+
+        PLA result = null;
+
+        try {
+            result = PLAOps.getMinimizedPLA(originalPLA);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        return result;
+    }
+
     public static ArrayList<PLA> getOneOutputPLAs(PLA pla) {
         ArrayList<PLA> result = new ArrayList<>();
         String[] outLabels = null;
@@ -37,10 +101,6 @@ public class PLAOps {
 
             result.add(fooPla);
         }
-
-        System.out.println(pla.getInputLabels());
-        System.out.println(pla.getOutputLabels());
-
         /**
          * Put product term on each output pla
          */
@@ -50,9 +110,12 @@ public class PLAOps {
 
             for(int i = 0; i < termOutput.length; i++) {
                 char output = termOutput[i];
-                if(output == '1') {
-                    result.get(i).addTerm(new Term(t.getInputs(), "1"));
+                if(output != '0') {
+                    result.get(i).addTerm(new Term(t.getInputs(), Character.toString(output)));
                 }
+                //if(output == '1') {
+                //    result.get(i).addTerm(new Term(t.getInputs(), "1"));
+                //}
             }
         }
 
@@ -67,7 +130,7 @@ public class PLAOps {
         String tempPLA = tempFolder + baseName + ".pla";
         String tempEspresso = tempFolder + baseName + "-ESPRESSO.pla";
 
-        System.out.println("++++++++++++++++++++++");
+        //System.out.println("++++++++++++++++++++++");
 
         PLAOps.writePLA(tempPLA, pla);
 
@@ -77,9 +140,9 @@ public class PLAOps {
         try {
             String command = String.format("ESPRESSO %s %s", tempPLA, tempEspresso);
             ShellScriptOps.executeCommands("/media/sf_PastaUbuntuServer/ShellScripting/plaToESPRESSO.sh", command);
-            System.out.println(tempPLA);
-            System.out.println(tempEspresso);
-            System.out.println(command);
+            //System.out.println(tempPLA);
+            //System.out.println(tempEspresso);
+            //System.out.println(command);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
@@ -97,11 +160,8 @@ public class PLAOps {
 
         tempPlaFile.delete();
 
-        if(tempEspressoFile.delete()) {
-            System.out.println("arquivo deletetado");
-        } else {
-            System.out.println("arquivo não deletetado!!");
-            System.out.println(tempEspresso);
+        if(!tempEspressoFile.delete()) {
+            System.err.println("file not deleted!!");
         }
 
         return result;

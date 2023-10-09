@@ -154,6 +154,37 @@ public class ShellScriptOps {
         System.out.println("PLA: " + outputPlaname);
     }
 
+    public static void deployPLAAigandVerilog(PLA pla, String outName, String outPLADir, String verilogDir, String aigDir, String espressoDir, String libraryDir) throws IOException, InterruptedException {
+
+        //String outputPlaname = String.format("%02d-9sym_crit_%02d", i, i);
+        String outputPlaname = outName;
+
+        PLAManipulator pManipulator = new PLAManipulator();
+
+        //pManipulator.writePLA("pla/pla_c/9sym_track_crit_originals/" + outputPlaname + ".pla", pla);
+        pManipulator.writePLA(outPLADir + "/" + outputPlaname + ".pla", pla);
+
+        ShellScriptOps.executeCommands("/media/sf_PastaUbuntuServer/ShellScripting/plaToESPRESSO.sh",
+                String.format("ESPRESSO %s/%s.pla %s/%s_ESPRESSO.pla", outPLADir, outputPlaname, espressoDir, outputPlaname));
+        //String.format("ESPRESSO pla/pla_c/9sym_track_crit_originals/%s.pla pla/pla_c/%s_ESPRESSO.pla", outputPlaname, outputPlaname));
+
+        //ShellScriptOps.executeCommands("/media/sf_PastaUbuntuServer/ShellScripting/plaToESPRESSO.sh",
+        //        String.format("ABC pla/%s_ESPRESSO.pla mylib.genlib verilogs/%s.v", outputPlaname, outputPlaname));
+
+        ShellScriptOps.executeCommands("/media/sf_PastaUbuntuServer/ShellScripting/plaToESPRESSO.sh",
+                String.format("ABC_C3 %s/%s_ESPRESSO.pla %s/%s.aig %s %s/%s.v", espressoDir,
+                                                                                outputPlaname,
+                                                                                aigDir,
+                                                                                outputPlaname,
+                                                                                libraryDir,
+                                                                                verilogDir,
+                                                                                outputPlaname));
+        //String.format("ABC_C pla/pla_c/%s_ESPRESSO.pla mylib.genlib verilogsC/%s.v", outputPlaname, outputPlaname));
+
+        System.out.println("PLA: " + outputPlaname);
+    }
+
+
     public static PLA inputListApprox(PLA pla, ArrayList<Integer> inputList) {
 
         for(int input : inputList) {
