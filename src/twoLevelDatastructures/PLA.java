@@ -13,17 +13,21 @@ public class PLA {
     private String outputLabels;
     private ArrayList<Term> terms;
 
+    private ArrayList<String> commentLines;
+
     public PLA (String name, String type, int qtInputs, int qtOutputs, ArrayList<Term> terms) {
         this.name = name;
         this.type = type;
         this.qtInputs = qtInputs;
         this.qtOutputs = qtOutputs;
         this.terms = terms;
+        commentLines = new ArrayList<>();
     }
 
     public PLA (String name) {
         this.name = name;
         this.terms = new ArrayList<Term>();
+        commentLines = new ArrayList<>();
     }
 
     public String getName() {
@@ -315,6 +319,22 @@ public class PLA {
     public void addDontCareTerm(String newTermInput) {
         //this.terms.add(0, new Term(newTermInput, "~".repeat(this.qtOutputs)));
         this.terms.add(0, new Term(newTermInput, "-".repeat(this.qtOutputs)));
+    }
+
+    public ArrayList<String> getCommentLines() {
+        return commentLines;
+    }
+
+    public void setCommentLines(ArrayList<String> commentLines) {
+        this.commentLines = commentLines;
+    }
+
+    public void addCommentLine(String line) {
+        this.commentLines.add(line);
+    }
+
+    public void clearCommentLines() {
+        this.commentLines.clear();
     }
 
     public String toString() {

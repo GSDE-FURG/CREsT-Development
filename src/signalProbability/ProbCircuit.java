@@ -10,6 +10,8 @@ import datastructures.CellLibrary;
 import datastructures.Circuit;
 import datastructures.CustomMatrix;
 import datastructures.CustomMatrixLibrary;
+
+import java.math.BigInteger;
 import java.util.ArrayList;
 import datastructures.Signal;
 import datastructures.Gate;
@@ -22,6 +24,7 @@ import java.util.Map;
 import levelDatastructures.DepthGate;
 import levelDatastructures.GateLevel;
 import ops.CommonOps;
+import ops.PTMOps;
 import tool.Terminal;
 
 import static ops.CommonOps.timenow;
@@ -960,6 +963,13 @@ public class ProbCircuit extends Circuit {
         }
                     
         return cellQuantity;
+    }
+
+    public BigInteger getTotalInputVectors() {
+
+        BigInteger result = new BigInteger("2").pow(this.getProbInputs().size());
+
+        return result;
     }
     
     

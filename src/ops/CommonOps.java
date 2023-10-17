@@ -746,13 +746,20 @@ public class CommonOps {
     }
 
 
-    public static Map<Integer, BigDecimal> sortReliabilitiesMap(LinkedHashMap<Integer, BigDecimal> unordered) {
+    public static Map<Integer, BigDecimal> sortReliabilitiesMap(LinkedHashMap<Integer, BigDecimal> unordered, boolean reversed) {
         //Alternative way
         Map<Integer, BigDecimal> orderedMap = new LinkedHashMap<>();
 
-        unordered.entrySet().stream()
-                .sorted(Map.Entry.<Integer, BigDecimal>comparingByValue())
-                .forEachOrdered(x -> orderedMap.put(x.getKey(), x.getValue()));
+        if(reversed) {
+            unordered.entrySet().stream()
+                    .sorted(Map.Entry.<Integer, BigDecimal>comparingByValue().reversed())
+                    .forEachOrdered(x -> orderedMap.put(x.getKey(), x.getValue()));
+        } else {
+            unordered.entrySet().stream()
+                    .sorted(Map.Entry.<Integer, BigDecimal>comparingByValue())
+                    .forEachOrdered(x -> orderedMap.put(x.getKey(), x.getValue()));
+        }
+
 
         return orderedMap;
     }

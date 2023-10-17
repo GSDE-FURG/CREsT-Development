@@ -6,11 +6,11 @@ import manipulator.SPRController;
 import signalProbability.ProbCircuit;
 import twoLevelDatastructures.PLA;
 import twoLevelDatastructures.PLAManipulator;
+import twoLevelDatastructures.PLAOps;
 
 import java.io.*;
 import java.math.BigDecimal;
 import java.util.*;
-import java.util.concurrent.*;
 import java.util.function.Consumer;
 
 import static ops.CommonOps.getValueLinkHashMapByIndex;
@@ -96,7 +96,7 @@ public class ShellScriptOps {
             pla.addDontCareTerm(inputRandom.getBinaryString());
 
             String outputPlaname = String.format("%02d-9sym_random_%02d", counter2, counter2);
-            plaManipulator.writePLA("pla/9sym_random_originals/" + outputPlaname + ".pla", pla);
+            PLAOps.writePLA("pla/9sym_random_originals/" + outputPlaname + ".pla", pla);
 
             ShellScriptOps.executeCommands("/media/sf_PastaUbuntuServer/ShellScripting/plaToESPRESSO.sh",
                     String.format("ESPRESSO pla/9sym_random_originals/%s.pla pla/%s_ESPRESSO.pla", outputPlaname, outputPlaname));
@@ -116,7 +116,8 @@ public class ShellScriptOps {
 
         PLAManipulator pManipulator = new PLAManipulator();
 
-        pManipulator.writePLA("pla/pla_c/9sym_track_crit_originals/" + outputPlaname + ".pla", pla);
+        //pManipulator.writePLA("pla/pla_c/9sym_track_crit_originals/" + outputPlaname + ".pla", pla);
+        PLAOps.writePLA("pla/pla_c/9sym_track_crit_originals/" + outputPlaname + ".pla", pla);
 
         ShellScriptOps.executeCommands("/media/sf_PastaUbuntuServer/ShellScripting/plaToESPRESSO.sh",
                 String.format("ESPRESSO pla/pla_c/9sym_track_crit_originals/%s.pla pla/pla_c/%s_ESPRESSO.pla", outputPlaname, outputPlaname));
@@ -130,7 +131,7 @@ public class ShellScriptOps {
         System.out.println("PLA: " + outputPlaname);
     }
 
-    public static void deployPLAandVerilog(PLA pla, String outName, String outPLADir, String verilogDir, String espressoDir) throws IOException, InterruptedException {
+    public static void deployPLAEspressoVerilog(PLA pla, String outName, String outPLADir, String verilogDir, String espressoDir) throws IOException, InterruptedException {
 
         //String outputPlaname = String.format("%02d-9sym_crit_%02d", i, i);
         String outputPlaname = outName;
@@ -138,7 +139,8 @@ public class ShellScriptOps {
         PLAManipulator pManipulator = new PLAManipulator();
 
         //pManipulator.writePLA("pla/pla_c/9sym_track_crit_originals/" + outputPlaname + ".pla", pla);
-        pManipulator.writePLA(outPLADir + "/" + outputPlaname + ".pla", pla);
+        //pManipulator.writePLA(outPLADir + "/" + outputPlaname + ".pla", pla);
+        PLAOps.writePLA(outPLADir + "/" + outputPlaname + ".pla", pla);
 
         ShellScriptOps.executeCommands("/media/sf_PastaUbuntuServer/ShellScripting/plaToESPRESSO.sh",
                 String.format("ESPRESSO %s/%s.pla %s/%s_ESPRESSO.pla", outPLADir, outputPlaname, espressoDir, outputPlaname));
@@ -154,7 +156,7 @@ public class ShellScriptOps {
         System.out.println("PLA: " + outputPlaname);
     }
 
-    public static void deployPLAAigandVerilog(PLA pla, String outName, String outPLADir, String verilogDir, String aigDir, String espressoDir, String libraryDir) throws IOException, InterruptedException {
+    public static void deployPLAEspressoAigVerilog(PLA pla, String outName, String outPLADir, String verilogDir, String aigDir, String espressoDir, String libraryDir) throws IOException, InterruptedException {
 
         //String outputPlaname = String.format("%02d-9sym_crit_%02d", i, i);
         String outputPlaname = outName;
@@ -162,7 +164,8 @@ public class ShellScriptOps {
         PLAManipulator pManipulator = new PLAManipulator();
 
         //pManipulator.writePLA("pla/pla_c/9sym_track_crit_originals/" + outputPlaname + ".pla", pla);
-        pManipulator.writePLA(outPLADir + "/" + outputPlaname + ".pla", pla);
+        //pManipulator.writePLA(outPLADir + "/" + outputPlaname + ".pla", pla);
+        PLAOps.writePLA(outPLADir + "/" + outputPlaname + ".pla", pla);
 
         ShellScriptOps.executeCommands("/media/sf_PastaUbuntuServer/ShellScripting/plaToESPRESSO.sh",
                 String.format("ESPRESSO %s/%s.pla %s/%s_ESPRESSO.pla", outPLADir, outputPlaname, espressoDir, outputPlaname));
@@ -184,6 +187,63 @@ public class ShellScriptOps {
         System.out.println("PLA: " + outputPlaname);
     }
 
+    public static void makePLAMinimizationAndDeployToAigVerilog(PLA pla, String outPLADir, String verilogDir, String aigDir, String espressoDir, String libraryDir) throws IOException, InterruptedException {
+
+        PLAManipulator pManipulator = new PLAManipulator();
+
+        PLAOps.writePLA(outPLADir, pla);
+
+        //Make PLA minimization
+        ShellScriptOps.executeCommands("/media/sf_PastaUbuntuServer/ShellScripting/plaToESPRESSO.sh",
+                String.format("ESPRESSO %s %s", outPLADir, espressoDir));
+
+        //Based on ESPRESSO minimization, write aig and mapped verilog
+        ShellScriptOps.executeCommands("/media/sf_PastaUbuntuServer/ShellScripting/plaToESPRESSO.sh",
+                String.format("ABC_PLA_AIG_VERILOG %s %s %s %s", espressoDir,
+                                                                 aigDir,
+                                                                 libraryDir,
+                                                                 verilogDir));
+
+        System.out.println("PLA: " + outPLADir);
+    }
+
+    public static void deployPLAAigVerilog(String outName, String inputPLADir, String verilogDir, String aigDir, String libraryDir) throws IOException, InterruptedException {
+
+        String outputPlaname = outName;
+
+        ShellScriptOps.executeCommands("/media/sf_PastaUbuntuServer/ShellScripting/plaToESPRESSO.sh",
+                String.format("ABC_PLA_AIG_VERILOG %s %s/%s.aig %s %s/%s.v",
+                        inputPLADir,
+                        aigDir,
+                        outputPlaname,
+                        libraryDir,
+                        verilogDir,
+                        outputPlaname));
+        //String.format("ABC_C pla/pla_c/%s_ESPRESSO.pla mylib.genlib verilogsC/%s.v", outputPlaname, outputPlaname));
+
+        System.out.println("Verilog: " + outputPlaname);
+    }
+
+    public static void deployBLIFAigVerilog(String outName, String inputBlifDir, String verilogDir, String aigDir, String libraryDir) throws IOException, InterruptedException {
+
+        String outputPlaname = outName;
+
+        ShellScriptOps.executeCommands("/media/sf_PastaUbuntuServer/ShellScripting/plaToESPRESSO.sh",
+                String.format("MAPPED_BLIF_AIG_VERILOG %s %s %s/%s.aig %s/%s.v",
+                        libraryDir,
+                        inputBlifDir,
+                        aigDir,
+                        outputPlaname,
+                        verilogDir,
+                        outputPlaname));
+        //String.format("ABC_C pla/pla_c/%s_ESPRESSO.pla mylib.genlib verilogsC/%s.v", outputPlaname, outputPlaname));
+
+        System.out.println("Verilog: " + outputPlaname);
+    }
+
+    /*"MAPPED_BLIF_AIG_VERILOG")
+            ./abc -c "read_library $2; read $3; strash; resyn2; strash; resyn2; resyn2; resyn2; resyn2; resyn2; resyn2; resyn2; resyn2; resyn2; resyn2; resyn2; resyn2; write_aiger $4; map -a; w $5"
+    ;;*/
 
     public static PLA inputListApprox(PLA pla, ArrayList<Integer> inputList) {
 
@@ -215,14 +275,16 @@ public class ShellScriptOps {
 
     public static Map.Entry<Integer, BigDecimal> getAboluteCriticalVector(ProbCircuit pCircuit, CellLibrary cellLib) {
 
-        Map<Integer, BigDecimal> orderedMapper = getOrderedCircuitReliabilities(pCircuit, cellLib);
+        Map<Integer, BigDecimal> orderedMapper = getOrderedCircuitReliabilities(pCircuit, cellLib, false);
 
         Map.Entry<Integer, BigDecimal> criticalVector = getValueLinkHashMapByIndex(orderedMapper, 0);
 
         return criticalVector;
     }
 
-    public static Map<Integer, BigDecimal> getOrderedCircuitReliabilities(ProbCircuit pCircuit, CellLibrary cellLib) {
+    public static Map<Integer, BigDecimal> getOrderedCircuitReliabilities(ProbCircuit pCircuit,
+                                                                          CellLibrary cellLib,
+                                                                          boolean reversed) {
 
         LinkedHashMap<Integer, BigDecimal> mapper = new LinkedHashMap<Integer, BigDecimal>();
 
@@ -235,6 +297,38 @@ public class ShellScriptOps {
             mapper.put(i, vectorReliability);
         }
 
-        return CommonOps.sortReliabilitiesMap(mapper);
+        return CommonOps.sortReliabilitiesMap(mapper, reversed);
     }
+
+
+    public static Map<Integer, BigDecimal> getRandomInputVectorsReliabilities(ProbCircuit pCircuit,
+                                                                              CellLibrary cellLib,
+                                                                              int vectorsAmount) {
+
+        LinkedHashMap<Integer, BigDecimal> mapper = new LinkedHashMap<Integer, BigDecimal>();
+
+        long rgenseed = System.currentTimeMillis();
+
+        Random rand = new Random(rgenseed);
+
+        SPRController spr = new SPRController(pCircuit, cellLib);
+
+        //Make a integer list with the "vectorsAmount" of random vectors
+        ArrayList<Integer> randomVectors = new ArrayList<>();
+        while(randomVectors.size() != vectorsAmount) {
+            int vectorCandidate = rand.nextInt(pCircuit.getTotalInputVectors().intValue());
+            //verify if exists in list
+            if(!randomVectors.contains(vectorCandidate)) {
+                randomVectors.add(vectorCandidate);
+            }
+        }
+
+        for(int rVector : randomVectors) {
+            BigDecimal candidateReliability = spr.getReliability(Integer.toString(rVector), "0.99999802495", 15);
+            mapper.put(rVector, candidateReliability);
+        }
+        return mapper;
+    }
+
+
 }

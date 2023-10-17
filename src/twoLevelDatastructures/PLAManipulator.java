@@ -118,7 +118,7 @@ public class PLAManipulator {
         return pla;
     }
 
-    public void writePLA(String pathname, PLA pla) throws IOException {
+    /*public void writePLA(String pathname, PLA pla) throws IOException {
 
         File file = new File(pathname);
         FileWriter fileWriter = new FileWriter(file);
@@ -135,6 +135,6 @@ public class PLAManipulator {
         printWriter.print(".e");
         printWriter.close();
 
-    }
+    }*/
 
 }

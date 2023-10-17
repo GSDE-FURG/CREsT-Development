@@ -49,7 +49,6 @@ import simulation.checkFiles;
 import twoLevelDatastructures.PLA;
 import twoLevelDatastructures.PLAManipulator;
 import twoLevelDatastructures.PLAOps;
-import twoLevelDatastructures.Term;
 import writers.GenlibWriter;
 import writers.VerilogWriter;
 import writers.WriteFile;
@@ -2026,11 +2025,11 @@ public class Commands {
         String seedName = "000-5xp1_fromBlif";
         String circuitAndApproxMethod = "";
 
+
         /**
          * Exact reference Circuit
          */
         ProbCircuit exactVerilog = new CircuitFactory(cellLib, String.format("5xp1/seeds/verilog/%s.v", seedName)).getProbCircuit();
-
         ArrayList<BigDecimal> exactReliability = new ArrayList<>();
 
         int counter = 0;
@@ -2051,10 +2050,12 @@ public class Commands {
         ArrayList<Integer> flexVectors = new ArrayList<>();
 
 
-        Map<Integer, BigDecimal> mapp = ShellScriptOps.getOrderedCircuitReliabilities(exactVerilog, cellLib);
+        Map<Integer, BigDecimal> mapp = ShellScriptOps.getOrderedCircuitReliabilities(exactVerilog, cellLib, false);
         ArrayList<Integer> moreCriticals = new ArrayList<>(mapp.keySet());
+        int seedMoreCritical = moreCriticals.get(0);
+
         //ArrayList<Integer> moreCriticals2 = new ArrayList<>(mapp.keySet());
-        Map.Entry<Integer, BigDecimal> moreCritical = ShellScriptOps.getAboluteCriticalVector(exactVerilog, cellLib);
+        //Map.Entry<Integer, BigDecimal> seedMoreCritical = ShellScriptOps.getAboluteCriticalVector(exactVerilog, cellLib);
 
         /*
         Map<Integer, BigDecimal> finalMapp = mapp;
@@ -2066,31 +2067,11 @@ public class Commands {
         //TimeUnit.MINUTES.sleep(130);
         //PLA pla = new PLAManipulator().readPLAFile("5xp1_exact_ESPRESSO.pla");
         PLA pla;
-        InputVector vector = new InputVector(Integer.toString(moreCritical.getKey()), exactVerilog.getProbInputs().size());
-        flexVectors.add(moreCritical.getKey());
+        InputVector vector = new InputVector(Integer.toString(moreCriticals.get(0)), exactVerilog.getProbInputs().size());
+        flexVectors.add(seedMoreCritical);
 
-        // CHECANDO SE O PLAS TEM TERMOS CONTIDOS
-        //for (int i = 1; i < 91; i++) {
-        //    String pattern = String.format("%02d-9sym_crit_%02d", i, i);
-        //    pla = new PLAManipulator().readPLAFile(String.format("pla/pla_c/9sym_crit_originals/%s.pla", pattern));
-        //    System.out.println(pla + " --> " + pla.checkAllPLATerms());
-        //}
-
-
-
-
-        //for(Term t : pla.getTerms()) {
-        //    System.out.println(t);
-        //}
-
-        //ShellScriptOps.deployPLAandVerilog(pla, "90_9sym_crit_minterms_unique", "teste", "teste", "teste");
-        //pla.breakCubeTerm(term, fooTerm);
-
-        //TimeUnit.MINUTES.sleep(30);
-
-        //for(int i : mapp.keySet()) {
-         //   System.out.println(new InputVector(Integer.toString(i), pla.getQtInputs()) + " --> " + i + " --> " + mapp.get(i) );
-        //}
+        //InputVector vector = new InputVector(Integer.toString(seedMoreCritical.getKey()), exactVerilog.getProbInputs().size());
+        //flexVectors.add(seedMoreCritical.getKey());
 
 
 
@@ -2104,7 +2085,7 @@ public class Commands {
 
 
 
-        for (int i = 1; i < 129; i++) {
+        for (int i = 1; i < 128; i++) {
 
             int termIndex = counter;
             pla = new PLAManipulator().readPLAFile(String.format("5xp1/seeds/pla/%s.pla", seedName));
@@ -2115,13 +2096,13 @@ public class Commands {
             }
 
 
-            ShellScriptOps.deployPLAAigandVerilog(  pla,
-                                                    pattern,
-                                                    String.format("5xp1/%s/pla/%s/",directoryVersion, circuitAndApproxMethod),
-                                                    String.format("5xp1/%s/verilog/", directoryVersion),
-                                                    String.format("5xp1/%s/aig/%s/", directoryVersion, circuitAndApproxMethod),
-                                                    String.format("5xp1/%s/pla/%s/", directoryVersion, circuitAndApproxMethod),
-                                                    "genlibs/mylib.genlib");
+            ShellScriptOps.deployPLAEspressoAigVerilog(  pla,
+                                                         pattern,
+                                                         String.format("5xp1/%s/pla/%s/",directoryVersion, circuitAndApproxMethod),
+                                                         String.format("5xp1/%s/verilog/%s/", directoryVersion, circuitAndApproxMethod),
+                                                         String.format("5xp1/%s/aig/%s/", directoryVersion, circuitAndApproxMethod),
+                                                         String.format("5xp1/%s/pla/%s/", directoryVersion, circuitAndApproxMethod),
+                                                         "genlibs/mylib.genlib");
 
             counter = counter + 1;
         }
@@ -2136,7 +2117,7 @@ public class Commands {
         circuitAndApproxMethod = "5xp1_just_crit_per_output_dontcare";
 
 
-        for (int i = 1; i < 129; i++) {
+        for (int i = 1; i < 128; i++) {
 
             int termIndex = counter;
             pla = new PLAManipulator().readPLAFile(String.format("5xp1/seeds/pla/%s.pla", seedName));
@@ -2148,41 +2129,55 @@ public class Commands {
 
             pla = PLAOps.getApproxPLAWithDontCarePerOutput(pla);
 
-            ShellScriptOps.deployPLAAigandVerilog(  pla,
-                                                    pattern,
-                                                    String.format("5xp1/%s/pla/%s/",directoryVersion, circuitAndApproxMethod),
-                                                    String.format("5xp1/%s/verilog/", directoryVersion),
-                                                    String.format("5xp1/%s/aig/%s/", directoryVersion, circuitAndApproxMethod),
-                                                    String.format("5xp1/%s/pla/%s/", directoryVersion, circuitAndApproxMethod),
-                                                    "genlibs/mylib.genlib");
+            ShellScriptOps.deployPLAEspressoAigVerilog(  pla,
+                                                         pattern,
+                                                         String.format("5xp1/%s/pla/%s/",directoryVersion, circuitAndApproxMethod),
+                                                         String.format("5xp1/%s/verilog/%s/", directoryVersion, circuitAndApproxMethod),
+                                                         String.format("5xp1/%s/aig/%s/", directoryVersion, circuitAndApproxMethod),
+                                                         String.format("5xp1/%s/pla/%s/", directoryVersion, circuitAndApproxMethod),
+                                                        "genlibs/mylib.genlib");
 
             counter = counter + 1;
         }
 
 
-        TimeUnit.MINUTES.sleep(30);
-
         /**
-         * // GERANDO CIRCUITOS TRACK-CRITICAL
+         * TRACK-CRITICAL mult dontcares
          */
-        pla = new PLAManipulator().readPLAFile("5xp1/seeds/00-5xp1_fromBlif_optionM.pla");
-        for (int i = 1; i < 65; i++) {
+        circuitAndApproxMethod = "5xp1_track_crit_mult_dontcare";
+        flexVectors.clear();
+        flexVectors.add(seedMoreCritical);
 
+        pla = new PLAManipulator().readPLAFile(String.format("5xp1/seeds/pla/%s.pla", seedName));
+        for (int i = 1; i < 128; i++) {
+
+            int previous;
 
             if (i != 1) {
-                int previous = i - 1;
-                String pattern = String.format("%02d-5xp1_track_crit_%02d", previous, previous);
-                //pla = new PLAManipulator().readPLAFile(String.format("pla/9sym_track_crit_originals/%s.pla", pattern));
-                pla = new PLAManipulator().readPLAFile(String.format("5xp1/%s/pla/%s_ESPRESSO.pla", directoryVersion, pattern));
-                String previousName = String.format("5xp1/%s/verilogs/%s.v", directoryVersion, pattern);
-                ProbCircuit previousCircuit = new CircuitFactory(cellLib, previousName).getProbCircuit();
+                previous = i - 1;
+                String previousPattern = String.format("%03d-%s", previous, circuitAndApproxMethod);
 
-                moreCritical = ShellScriptOps.getAboluteCriticalVector(previousCircuit, cellLib);
-                mapp = ShellScriptOps.getOrderedCircuitReliabilities(previousCircuit, cellLib);
+                pla = new PLAManipulator().readPLAFile(String.format("5xp1/%s/pla/%s/%s_ESPRESSO.pla",
+                                                                        directoryVersion,
+                                                                        circuitAndApproxMethod,
+                                                                        previousPattern));
+                String previousVerilog = String.format("5xp1/%s/verilog/%s/%s.v",
+                                                        directoryVersion,
+                                                        circuitAndApproxMethod,
+                                                        previousPattern);
+                ProbCircuit previousCircuit = new CircuitFactory(cellLib, previousVerilog).getProbCircuit();
+
+                mapp = ShellScriptOps.getOrderedCircuitReliabilities(previousCircuit, cellLib, false);
                 moreCriticals = new ArrayList<>(mapp.keySet());
 
                 int candidateVector = moreCriticals.get(0);
+
+                /**
+                 * If the candidate has previously been added to the list,
+                 * the next vector with a higher priority will be utilized.
+                 */
                 if (flexVectors.contains(candidateVector)) {
+
                     int counter3 = 1;
                     boolean whileFlag = true;
                     while (whileFlag) {
@@ -2197,56 +2192,301 @@ public class Commands {
                     flexVectors.add(candidateVector);
                 }
 
-                vector = new InputVector(Integer.toString(candidateVector), pla.getQtInputs());
+                //vector = new InputVector(Integer.toString(candidateVector), pla.getQtInputs());
             }
 
-            String outputPlaname = String.format("%02d-5xp1_track_crit_%02d", i, i);
-            pla.addDontCareTerm(vector.getBinaryString());
+            String pattern = String.format("%03d-%s", i, circuitAndApproxMethod);
 
-
-            ShellScriptOps.deployPLAandVerilog(pla, outputPlaname,
-                    String.format("5xp1/%s/pla/5xp1_track_crit_originals", directoryVersion),
-                    String.format("5xp1/%s/verilogs", directoryVersion),
-                    String.format("5xp1/%s/pla", directoryVersion));
-        }
-
-
-        /**
-         * // TRACK CRITICAL WITH SAME PLA SEED
-         */
-        counter = 1;
-
-        for (int t : flexVectors) {
-            pla = new PLAManipulator().readPLAFile("5xp1/seeds/00-5xp1_fromBlif_optionM.pla");
-            String pattern = String.format("%02d-5xp1_track_crit_seed_pla_%02d", counter, counter);
-            int termIndex = flexVectors.indexOf(t) + 1;
-            for (int w = 0; w < termIndex; w++) {
-                vector = new InputVector(Integer.toString(flexVectors.get(w)), pla.getQtInputs());
+            for(int v : flexVectors) {
+                vector = new InputVector(Integer.toString(v), pla.getQtInputs());
                 pla.addDontCareTerm(vector.getBinaryString());
             }
 
 
 
-            ShellScriptOps.deployPLAandVerilog(pla, pattern,
-                    String.format("5xp1/%s/pla/5xp1_track_crit_seed_pla_originals", directoryVersion),
-                    String.format("5xp1/%s/verilogs", directoryVersion),
-                    String.format("5xp1/%s/pla", directoryVersion));
-            counter = counter + 1;
+            ShellScriptOps.deployPLAEspressoAigVerilog(  pla,
+                                                         pattern,
+                                                         String.format("5xp1/%s/pla/%s/",directoryVersion, circuitAndApproxMethod),
+                                                         String.format("5xp1/%s/verilog/%s/", directoryVersion, circuitAndApproxMethod),
+                                                         String.format("5xp1/%s/aig/%s/", directoryVersion, circuitAndApproxMethod),
+                                                         String.format("5xp1/%s/pla/%s/", directoryVersion, circuitAndApproxMethod),
+                                                        "genlibs/mylib.genlib");
         }
+
+        /**
+         * TRACK-CRITICAL per output dontcares
+         */
+        circuitAndApproxMethod = "5xp1_track_crit_per_output_dontcare";
+        flexVectors.clear();
+        flexVectors.add(seedMoreCritical);
+
+        pla = new PLAManipulator().readPLAFile(String.format("5xp1/seeds/pla/%s.pla", seedName));
+        for (int i = 1; i < 128; i++) {
+
+            int previous;
+
+            if (i != 1) {
+                previous = i - 1;
+                String previousPattern = String.format("%03d-%s", previous, circuitAndApproxMethod);
+
+                pla = new PLAManipulator().readPLAFile(String.format("5xp1/%s/pla/%s/%s_ESPRESSO.pla",
+                                                                        directoryVersion,
+                                                                        circuitAndApproxMethod,
+                                                                        previousPattern));
+                String previousVerilog = String.format("5xp1/%s/verilog/%s/%s.v",
+                                                        directoryVersion,
+                                                        circuitAndApproxMethod,
+                                                        previousPattern);
+                ProbCircuit previousCircuit = new CircuitFactory(cellLib, previousVerilog).getProbCircuit();
+
+                mapp = ShellScriptOps.getOrderedCircuitReliabilities(previousCircuit, cellLib, false);
+                moreCriticals = new ArrayList<>(mapp.keySet());
+
+                int candidateVector = moreCriticals.get(0);
+
+        /**
+         * If the candidate has previously been added to the list,
+         * the next vector with a higher priority will be utilized.
+         */
+                if (flexVectors.contains(candidateVector)) {
+
+                    int counter3 = 1;
+                    boolean whileFlag = true;
+                    while (whileFlag) {
+                        candidateVector = moreCriticals.get(counter3);
+                        if (!flexVectors.contains(candidateVector)) {
+                            flexVectors.add(candidateVector);
+                            whileFlag = false;
+                        }
+                        counter3 = counter3 + 1;
+                    }
+                } else {
+                    flexVectors.add(candidateVector);
+                }
+            }
+
+            String pattern = String.format("%03d-%s", i, circuitAndApproxMethod);
+
+            for(int v : flexVectors) {
+                vector = new InputVector(Integer.toString(v), pla.getQtInputs());
+                pla.addDontCareTerm(vector.getBinaryString());
+            }
+
+            pla = PLAOps.getApproxPLAWithDontCarePerOutput(pla);
+
+
+            ShellScriptOps.deployPLAEspressoAigVerilog(  pla,
+                                                         pattern,
+                                                         String.format("5xp1/%s/pla/%s/",directoryVersion, circuitAndApproxMethod),
+                                                         String.format("5xp1/%s/verilog/%s/", directoryVersion, circuitAndApproxMethod),
+                                                         String.format("5xp1/%s/aig/%s/", directoryVersion, circuitAndApproxMethod),
+                                                         String.format("5xp1/%s/pla/%s/", directoryVersion, circuitAndApproxMethod),
+                                                         "genlibs/mylib.genlib");
+        }
+
+
+        /**
+         * TRACK-CRITICAL SAME PLA multi-dontcares
+         */
+        circuitAndApproxMethod = "5xp1_track_crit_same_seed_mult_dontcare";
+
+        flexVectors.clear();
+        flexVectors.add(seedMoreCritical);
+
+        for (int i = 1; i < 128; i++) {
+
+            int previous;
+            pla = new PLAManipulator().readPLAFile(String.format("5xp1/seeds/pla/%s.pla", seedName));
+
+            if (i != 1) {
+                previous = i - 1;
+                String previousPattern = String.format("%03d-%s", previous, circuitAndApproxMethod);
+
+                //pla = new PLAManipulator().readPLAFile(String.format("5xp1/%s/pla/%s/%s_ESPRESSO.pla",
+                //        directoryVersion,
+                //        circuitAndApproxMethod,
+                //        previousPattern));
+                String previousVerilog = String.format("5xp1/%s/verilog/%s/%s.v",
+                        directoryVersion,
+                        circuitAndApproxMethod,
+                        previousPattern);
+                ProbCircuit previousCircuit = new CircuitFactory(cellLib, previousVerilog).getProbCircuit();
+
+                mapp = ShellScriptOps.getOrderedCircuitReliabilities(previousCircuit, cellLib, false);
+                moreCriticals = new ArrayList<>(mapp.keySet());
+
+                int candidateVector = moreCriticals.get(0);
+
+                /**
+                 * If the candidate has previously been added to the list,
+                 * the next vector with a higher priority will be utilized.
+                 */
+                if (flexVectors.contains(candidateVector)) {
+
+                    int counter3 = 1;
+                    boolean whileFlag = true;
+                    while (whileFlag) {
+                        candidateVector = moreCriticals.get(counter3);
+                        if (!flexVectors.contains(candidateVector)) {
+                            flexVectors.add(candidateVector);
+                            whileFlag = false;
+                        }
+                        counter3 = counter3 + 1;
+                    }
+                } else {
+                    flexVectors.add(candidateVector);
+                }
+
+            }
+
+            String pattern = String.format("%03d-%s", i, circuitAndApproxMethod);
+
+            for(int v : flexVectors) {
+                vector = new InputVector(Integer.toString(v), pla.getQtInputs());
+                pla.addDontCareTerm(vector.getBinaryString());
+            }
+
+
+
+            ShellScriptOps.deployPLAEspressoAigVerilog(  pla,
+                                                         pattern,
+                                                         String.format("5xp1/%s/pla/%s/",directoryVersion, circuitAndApproxMethod),
+                                                         String.format("5xp1/%s/verilog/%s/", directoryVersion, circuitAndApproxMethod),
+                                                         String.format("5xp1/%s/aig/%s/", directoryVersion, circuitAndApproxMethod),
+                                                         String.format("5xp1/%s/pla/%s/", directoryVersion, circuitAndApproxMethod),
+                                                        "genlibs/mylib.genlib");
+        }
+
+
+        /**
+         * TRACK-CRITICAL SAME PLA per output dontcares
+         */
+        circuitAndApproxMethod = "5xp1_track_crit_same_seed_per_output_dontcare";
+
+        flexVectors.clear();
+        flexVectors.add(seedMoreCritical);
+
+        /**
+         * Fui até o 120 pq o AIG do 121 causou "core_dump" no ABC
+         */
+        for (int i = 1; i < 121; i++) {
+
+            int previous;
+            pla = new PLAManipulator().readPLAFile(String.format("5xp1/seeds/pla/%s.pla", seedName));
+
+            if (i != 1) {
+                previous = i - 1;
+                String previousPattern = String.format("%03d-%s", previous, circuitAndApproxMethod);
+
+                String previousVerilog = String.format("5xp1/%s/verilog/%s/%s.v",
+                        directoryVersion,
+                        circuitAndApproxMethod,
+                        previousPattern);
+                ProbCircuit previousCircuit = new CircuitFactory(cellLib, previousVerilog).getProbCircuit();
+
+                mapp = ShellScriptOps.getOrderedCircuitReliabilities(previousCircuit, cellLib, false);
+                moreCriticals = new ArrayList<>(mapp.keySet());
+
+                int candidateVector = moreCriticals.get(0);
+
+                /**
+                 * If the candidate has previously been added to the list,
+                 * the next vector with a higher priority will be utilized.
+                 */
+                if (flexVectors.contains(candidateVector)) {
+
+                    int counter3 = 1;
+                    boolean whileFlag = true;
+                    while (whileFlag) {
+                        candidateVector = moreCriticals.get(counter3);
+                        if (!flexVectors.contains(candidateVector)) {
+                            flexVectors.add(candidateVector);
+                            whileFlag = false;
+                        }
+                        counter3 = counter3 + 1;
+                    }
+                } else {
+                    flexVectors.add(candidateVector);
+                }
+
+            }
+
+            String pattern = String.format("%03d-%s", i, circuitAndApproxMethod);
+
+            for(int v : flexVectors) {
+                vector = new InputVector(Integer.toString(v), pla.getQtInputs());
+                pla.addDontCareTerm(vector.getBinaryString());
+            }
+
+            pla = PLAOps.getApproxPLAWithDontCarePerOutput(pla);
+
+            ShellScriptOps.deployPLAEspressoAigVerilog(  pla,
+                                                         pattern,
+                                                         String.format("5xp1/%s/pla/%s/",directoryVersion, circuitAndApproxMethod),
+                                                         String.format("5xp1/%s/verilog/%s/", directoryVersion, circuitAndApproxMethod),
+                                                         String.format("5xp1/%s/aig/%s/", directoryVersion, circuitAndApproxMethod),
+                                                         String.format("5xp1/%s/pla/%s/", directoryVersion, circuitAndApproxMethod),
+                                                        "genlibs/mylib.genlib");
+        }
+
+
+
+
+        System.out.println("Finished!");
+        TimeUnit.MINUTES.sleep(30);
+
     }
     
     public void Foo6() throws IOException, Exception {
 
+        /**
+         * Deploy PLAs do AMMES
+         */
 
-        //TimeUnit.MINUTES.sleep(130);
+        /*ArrayList<java.nio.file.Path> paths = new ArrayList<>();
+
+        Files.list(Paths.get("5xp1_AMMES")).sorted().forEach(path -> paths.add(path));
+
+        for (Path path : paths) {
+            String fileName = path.getFileName().toString().split(".pla")[0];
+
+            ShellScriptOps.deployPLAAigVerilog( fileName,
+                                                path.toString(),
+                                       "5xp1/ammes/verilog/",
+                                                "5xp1/ammes/aig/",
+                                        "genlibs/mylib.genlib");
+        }*/
+
+        /**
+         * Deploy Alsrac
+         */
+
+        /*ArrayList<java.nio.file.Path> paths = new ArrayList<>();
+
+        Files.list(Paths.get("5xp1/alsrac/blif/")).sorted().forEach(path -> paths.add(path));
+
+        for (Path path : paths) {
+            String fileName = path.getFileName().toString().split(".blif")[0];
+
+
+            ShellScriptOps.deployBLIFAigVerilog( fileName,
+                    path.toString(),
+                    "5xp1/alsrac/verilog/",
+                    "5xp1/alsrac/aig/",
+                    "genlibs/mylib.genlib");
+        }
+
+        System.out.println("Finished!");
+        TimeUnit.MINUTES.sleep(130);*/
 
         CellLibrary cellLib = new CellLibrary("genlibs/mylib.genlib");
         ArrayList<BigDecimal> exactReliability = new ArrayList<>();
 
-        ProbCircuit goldenCircuit = new CircuitFactory(cellLib, "5xp1/seeds/00-5xp1_fromBlif_optionM.v").getProbCircuit();
+        ProbCircuit goldenCircuit = new CircuitFactory(cellLib, "5xp1/seeds/verilog/000-5xp1_fromBlif.v").getProbCircuit();
 
         //ArrayList<Path> circuits = ops.CommonOps.getAllVerilogCircuitsFromPath("approx-9sym");
-        ArrayList<Path> circuits = ops.CommonOps.getAllVerilogCircuitsFromPath("5xp1/C4/verilogs");
+        //ArrayList<Path> circuits = ops.CommonOps.getAllVerilogCircuitsFromPath("5xp1/E10/verilog/5xp1_just_crit_mult_dontcare");
+        ArrayList<Path> circuits = ops.CommonOps.getAllVerilogCircuitsFromPath("5xp1/E10/verilog/5xp1_just_crit_RELIABLE_per_output_dontcare");
 
 
         /**
@@ -2287,6 +2527,7 @@ public class Commands {
                 System.out.println(String.format("%s %s %s %s %s %s %s %s %s %s", fooName,d,d,d,d,d,d,d,d,d));
             } else {
                 ProbCircuit pCircuit = new CircuitFactory(cellLib, path.toString()).getProbCircuit();
+                pCircuit.setName(path.getFileName().toString().split(".v")[0]);
 
                 //if(path.getFileName().toString().contains("00-5xp1_exact_blif")) {
                  //   truthTable = getProbCircuitTruthTableBySPR(pCircuit, cellLib);
@@ -2506,7 +2747,59 @@ public class Commands {
         PLAOps.writePLA("TEMP/5xp1_crit_approx_method_64_break_cubes.pla", newPLA);
     }
     
-    public void Foo8() throws IOException, Exception {                
+    public void Foo8() throws IOException, Exception {
+
+        ApproxOPS.justCriticalVectorsApprox("5xp1/seeds/pla/000-5xp1_fromBlif.pla",
+                                        "5xp1/seeds/verilog/000-5xp1_fromBlif.v",
+                                        "genlibs/mylib.genlib",
+                                        "testeNewApprox/aig/5xp1_teste.aig",
+                                        "testeNewApprox/pla/5xp1_teste.pla",
+                                      "testeNewApprox/pla/5xp1_teste_ESPRESSO.pla",
+                                        "testeNewApprox/verilog/5xp1_teste.v",
+                                        "RANDOM",
+                                        false,
+                                        20);
+
+        System.out.println("Finished!!");
+
+
+        /**
+         * 2023-10-11 Experimento para tentar entender o método PGM
+         */
+
+
+        CellLibrary cellLib = new CellLibrary("genlibs/basic.genlib");
+
+        ProbCircuit goldenCircuit = new CircuitFactory(cellLib, "nand3.v").getProbCircuit();
+
+        SPRController sprGold = new SPRController(goldenCircuit, cellLib);
+
+        System.out.println(sprGold.getReliability("0.95", 4));
+        System.out.println("-------------------------");
+        matrixPrint(goldenCircuit.getProbOutputs().get(0).getProbMatrix());
+
+        System.out.println("finished");
+
+        TimeUnit.MINUTES.sleep(130);
+
+        System.out.println("Confiabilidade média (conf portas = 0.95)");
+        System.out.println(sprGold.getReliability("0.95", 4));
+        System.out.println("Análise por vetor:");
+        BigDecimal bigCounter = BigDecimal.ZERO;
+
+        for(int i = 0; i<32; i++) {
+            BigDecimal goldVectorReliability = sprGold.getReliability(Integer.toString(i), "0.95", 4);
+            System.out.println(new InputVector(Integer.toString(i), goldenCircuit.getProbInputs().size()));
+            matrixPrint(goldenCircuit.getProbOutputs().get(0).getProbMatrix());
+            matrixPrint(goldenCircuit.getProbOutputs().get(1).getProbMatrix());
+            System.out.println("Conf media do vetor: " + goldVectorReliability);
+            bigCounter = bigCounter.add(goldVectorReliability);
+            System.out.println("-----------------------------------------");
+        }
+
+        System.out.println("Conf media dos vetores: " + bigCounter.divide(new BigDecimal("32")));
+
+
         Map<String, BigDecimal[][]> schivittzCells = new HashMap<>();
         
         String[] circuits = new String[]{            
@@ -2607,223 +2900,46 @@ public class Commands {
     }
     
     
-    public void Foo9() throws ScriptException, IOException, Exception {                
-        
-        /*
-        Terminal.getInstance().getCellLibrary().setPTMCells2(Float.valueOf(reliabilities[i]));
-                        Terminal.getInstance().getCellLibrary().setPTMCells(new BigDecimal(reliabilities[i]));
+    public void Foo9() throws ScriptException, IOException, Exception {
 
-                        pCircuit.clearProbSignalsMatrix();                    
-                        pCircuit.setDefaultProbSourceSignalMatrix();
-                        pCircuit.setProbSignalStates(false);
-                        pCircuit.setPTMReliabilityMatrix();
-        */
-        String reliability = "0.999";
-        int scale = 25;
-        BigDecimal classicReliability = new BigDecimal(reliability);
-        
-        //Terminal.getInstance().executeCommand("read_verilog ISCAS\\ISCAS85\\MappedVerilog\\c432_cadence.v");
-        //Terminal.getInstance().executeCommand("read_verilog ISCAS\\ISCAS85\\MappedVerilog\\c880_cadence.v");
-        //Terminal.getInstance().executeCommand("read_verilog EPFL-COMB\\ARITHMATIC\\max_cadenceDEBUG.v");
-        //Terminal.getInstance().executeCommand("read_verilog EPFL-COMB\\ARITHMATIC\\multiplier_cadence.v");
-        //Terminal.getInstance().executeCommand("read_verilog EPFL-COMB\\RANDOM-CONTROL\\priority_encoder_candence.v");
-        //Terminal.getInstance().executeCommand("read_verilog EPFL-COMB\\RANDOM-CONTROL\\voter_candence.v");
-        //Terminal.getInstance().executeCommand("read_verilog EPFL-COMB\\RANDOM-CONTROL\\alu_controller_cadence.v");
-        
-        //Terminal.getInstance().executeCommand("read_verilog EPFL-COMB\\ARITHMATIC\\barrel_shifter_cadence.v");        
-        //Terminal.getInstance().executeCommand("read_verilog EPFL-COMB\\ARITHMATIC\\adder_cadence.v");
-        //Terminal.getInstance().executeCommand("read_verilog EPFL-COMB\\ARITHMATIC\\sine_cadence.v");
-        
-        Terminal.getInstance().executeCommand("read_verilog ITC99-COMB\\b10_C_cadence.v");
-        //Terminal.getInstance().executeCommand("read_verilog ITC99-COMB\\b03_C_cadence.v");
-        //Terminal.getInstance().executeCommand("read_verilog ITC99-COMB\\b02_C_cadence.v");
-        //Terminal.getInstance().executeCommand("read_verilog ITC99-COMB\\b01_C_cadence.v");
-        //Terminal.getInstance().executeCommand("read_verilog c17_mapped.v");
-        //Terminal.getInstance().executeCommand("read_verilog b01_C_cadenceLEVEL0-LEVEL1.v");
-        //Terminal.getInstance().executeCommand("read_verilog b01_C_PODADO.v");
-        //Terminal.getInstance().executeCommand("read_verilog 2bits-multiplex.v");
-        
-        
-        Terminal.getInstance().getCellLibrary().setPTMCells(classicReliability);
-        
-        ProbCircuit pCircuit = Terminal.getInstance().getProbCircuit();
-        
-        System.out.println(pCircuit.getName());
-        
-        pCircuit.clearProbSignalsMatrix();                    
-        pCircuit.setDefaultProbSourceSignalMatrix();
-        pCircuit.setProbSignalStates(false);
-        pCircuit.setPTMReliabilityMatrix();                 
-        
-        /*
-        
-        for (int i = 0; i < pCircuit.getProbGates().size(); i++) {
-            
-            BigDecimal[][] teste = pCircuit.getProbGates().get(i).getReliabilityMatrix();
-            
-            for (int j = 0; j < teste.length; j++) {
-                for (int k = 0; k < teste[j].length; k++) {
-                    if(!teste[j][k].equals(new BigDecimal("0.999999"))) {
-                        if(!teste[j][k].equals(new BigDecimal("0.000001"))) {
-                            System.out.println("PAPAI ===> " + teste[j][k]);
-                        }
-                    }
-                }
-            }
-            
-            //matrixPrint(teste);            
+
+
+        String seedName = "000-5xp1_fromBlif";
+
+
+        String exactVerilog = String.format("5xp1/seeds/verilog/%s.v", seedName);
+        String plaSeed = String.format("5xp1/seeds/pla/%s.pla", seedName);
+
+
+
+        String criticalVectorsMethod = "RELIABLE";
+        String circuitAndApproxMethod = "5xp1_just_crit_RELIABLE_mult_dontcare";
+        //String circuitAndApproxMethod = "5xp1_just_crit_RELIABLE_per_output_dontcare";
+        boolean multDontCare = true;
+        String rootPath = "5xp1/E10";
+        PLA pla;
+
+        for (int i = 1; i < 127; i++) {
+
+            String pattern = String.format("%03d-%s", i, circuitAndApproxMethod);
+
+            String aigOutput = String.format("%s/aig/%s/%s.aig", rootPath, circuitAndApproxMethod, pattern);
+            String verilogOutput = String.format("%s/verilog/%s/%s.v", rootPath, circuitAndApproxMethod, pattern);
+            String plaOutput = String.format("%s/pla/%s/%s.pla", rootPath, circuitAndApproxMethod, pattern);
+            String plaESPRESSOOutput = String.format("%s/pla/%s/%s_ESPRESSO.pla", rootPath, circuitAndApproxMethod, pattern);
+
+            ApproxOPS.justCriticalVectorsApprox(plaSeed,
+                    exactVerilog,
+                    "genlibs/mylib.genlib",
+                    aigOutput,
+                    plaOutput,
+                    plaESPRESSOOutput,
+                    verilogOutput,
+                    criticalVectorsMethod,
+                    multDontCare,
+                    i);
         }
 
-        */
-        
-        System.out.println("ENTRADAS: " + pCircuit.getProbInputs().size());
-        System.out.println("SAIDAS: " + pCircuit.getProbOutputs().size());
-        System.out.println("TOTAL-SINAIS: " + pCircuit.getProbSignals().size());
-        System.out.println("GATES: " + pCircuit.getProbGates().size());
-        System.out.println("GATE-LEVELS: " + pCircuit.getProbGateLevels().size());
-        
-        //for (int i = 0; i < pCircuit.getProbOutputs().size(); i++) {
-            //System.out.println(pCircuit.getProbOutputs().get(i).getProbMatrix());
-        //}
-        
-        //BigDecimal result = SPROpsChuloMedio.getSPRReliabilityDEBUGMODE(pCircuit, scale, reliability);        
-        BigDecimal result = SPROpsChuloMedio.getSPRReliabilityDEBUGMODE(pCircuit, scale);
-        System.out.println(result);
-
-        //System.out.println("===>" + SPROpsChuloMedio.getSPRReliability(pCircuit, new InputVector("8"), 20));                        
-        
-        int gLevel = 0;
-        System.out.println("TOTAL NO NIVEL NO LEVEL " + gLevel + ": " + pCircuit.getProbGateLevels().get(gLevel).getProbGates().size());
-        
-        /*
-        System.out.println("Confiabilidade Circuito: " + result);
-        System.out.println("Intrinseca: " + (new BigDecimal(reliability).pow(pCircuit.getGates().size()).setScale(scale, RoundingMode.HALF_UP)));
-        
-        System.out.println(result);
-        System.out.println((new BigDecimal(reliability).pow(pCircuit.getGates().size()).setScale(scale, RoundingMode.HALF_UP)));
-        */
-        
-        /*
-        # PARA VERIDICAR OS ERROS DE ARREDONDAMENTO
-        
-        BigDecimal x05 = new BigDecimal("0.5");
-        BigDecimal x04999995 = new BigDecimal("0.4999995");
-        
-        BigDecimal p1 = x05.multiply(x04999995).setScale(14, RoundingMode.HALF_UP);
-        BigDecimal p2 = p1.multiply(x05).setScale(14, RoundingMode.HALF_UP);
-        BigDecimal p3 = p2.multiply(x04999995).setScale(14, RoundingMode.HALF_UP);
-        
-        BigDecimal q1 = x04999995.multiply(x05).setScale(14, RoundingMode.HALF_UP);
-        BigDecimal q2 = q1.multiply(x04999995).setScale(14, RoundingMode.HALF_UP);
-        BigDecimal q3 = q2.multiply(x05).setScale(14, RoundingMode.HALF_UP);
-        
-        System.out.println("0.5 x 0.4999995 = " + p1);
-        System.out.println("0.5 x 0.4999995 x 0.5 = " + p2);
-        System.out.println("0.5 x 0.4999995 x 0.5 x 0.4999995 = " + p3);
-        
-        System.out.println("0.4999995 x 0.5 = " + q1);
-        System.out.println("0.4999995 x 0.5 x 0.4999995 = " + q2);
-        System.out.println("0.4999995 x 0.5 x 0.4999995 x 0.5 = " + q3);
-        
-        */                
-        
-        /*
-        int flag = 0;
-        
-        //for (int i = 0; i < 0; i++) {
-        for (int i = 0; i < pCircuit.getProbGateLevels().get(gLevel).getProbGates().size(); i++) {
-            
-            ProbSignal pSignal = pCircuit.getProbGateLevels().get(gLevel).getProbGates().get(i).getpOutputs().get(0);
-            
-            BigDecimal[][] matrixSignal = pSignal.getProbMatrix();
-            
-            BigDecimal counter = BigDecimal.ZERO;
-            
-            for (int j = 0; j < matrixSignal.length; j++) {
-                for (int k = 0; k < matrixSignal[j].length; k++) {
-                    counter = counter.add(matrixSignal[j][k]);
-                }
-            }                        
-            
-            if (counter.compareTo(BigDecimal.ONE) != 0) {
-                System.out.println(pSignal.getId() + " ===> " + pSignal.getPOrigin().getType() + " ===> " + pSignal.getOrigin() + " ===> " + counter);              
-                matrixPrint(matrixSignal);
-                flag = flag + 1;
-            }                                    
-        }
-        
-        for (int i = 0; i < 3; i++) {
-            for (int j = 0; j < pCircuit.getProbGateLevels().get(i).getProbGates().size(); j++) {
-                System.out.println(pCircuit.getProbGateLevels().get(i).getProbGates().get(j));
-            }
-            System.out.println("####################");
-        }
-        
-        for (ProbSignal probSignal : pCircuit.getProbSignals()) {
-            System.out.println(probSignal);            
-            matrixPrint(probSignal.getProbMatrix());
-            System.out.println("##############");
-        }
-        
-        */
-        
-        /*
-        
-        InputVector input = new InputVector(new BigInteger("13"));        
-        
-        System.out.println("13");
-        System.out.println(SPROpsChuloMedio.getSPRReliability(pCircuit, input, scale));
-        
-        System.out.println("9");
-        input = new InputVector(new BigInteger("9"));
-        System.out.println(SPROpsChuloMedio.getSPRReliability(pCircuit, input, scale));
-        
-        System.out.println("0");
-        input = new InputVector(new BigInteger("0"));
-        System.out.println(SPROpsChuloMedio.getSPRReliability(pCircuit, input, scale));
-        
-        
-        System.out.println("13");
-        input = new InputVector(new BigInteger("13"));
-        System.out.println(SPROpsChuloMedio.getSPRReliability(pCircuit, input, scale)); 
-        
-        */
-        
-        /*
-        ProbSignal pSignal = pCircuit.getProbSignal("new_n975_");
-            
-        BigDecimal[][] matrixSignal = pSignal.getProbMatrix();
-
-        BigDecimal counter = BigDecimal.ZERO;
-
-        for (int j = 0; j < matrixSignal.length; j++) {
-            for (int k = 0; k < matrixSignal[j].length; k++) {
-                counter = counter.add(matrixSignal[j][k]);
-            }
-        }            
-        System.out.println(pSignal.getId() + " ===> " + counter);
-        matrixPrint(matrixSignal);
-        */
-        
-        /*
-        System.out.println("Problemas de Arredondamento: " + flag);
-        System.out.println("####   -----------   #####");
-        ProbSignal pSignal = pCircuit.getProbSignal("\\address[1]");
-            
-        BigDecimal[][] matrixSignal = pSignal.getProbMatrix();
-
-        BigDecimal counter = BigDecimal.ZERO;
-
-        for (int j = 0; j < matrixSignal.length; j++) {
-            for (int k = 0; k < matrixSignal[j].length; k++) {
-                counter = counter.add(matrixSignal[j][k]);
-            }
-        }            
-        System.out.println(pSignal.getId() + "===> " + counter);
-        matrixPrint(matrixSignal);
-        */
-        
-        //System.out.println(SPROps.getSPRReliability(pCircuit));
     }
 
 
