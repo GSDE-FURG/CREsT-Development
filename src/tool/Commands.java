@@ -26,6 +26,7 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 
+import manipulator.PTMMController;
 import ops.*;
 
 
@@ -2463,7 +2464,7 @@ public class Commands {
 
         /*ArrayList<java.nio.file.Path> paths = new ArrayList<>();
 
-        Files.list(Paths.get("5xp1/alsrac/blif/")).sorted().forEach(path -> paths.add(path));
+        Files.list(Paths.get("CIRCUITOS-AMMES-MANSKE/results/5xp1_mapA_mylib/alsrac/blif/")).sorted().forEach(path -> paths.add(path));
 
         for (Path path : paths) {
             String fileName = path.getFileName().toString().split(".blif")[0];
@@ -2471,8 +2472,8 @@ public class Commands {
 
             ShellScriptOps.deployBLIFAigVerilog( fileName,
                     path.toString(),
-                    "5xp1/alsrac/verilog/",
-                    "5xp1/alsrac/aig/",
+                    "CIRCUITOS-AMMES-MANSKE/results/5xp1_mapA_mylib/alsrac/verilog/",
+                    "CIRCUITOS-AMMES-MANSKE/results/5xp1_mapA_mylib/alsrac/aig/",
                     "genlibs/mylib.genlib");
         }
 
@@ -2482,11 +2483,14 @@ public class Commands {
         CellLibrary cellLib = new CellLibrary("genlibs/mylib.genlib");
         ArrayList<BigDecimal> exactReliability = new ArrayList<>();
 
-        ProbCircuit goldenCircuit = new CircuitFactory(cellLib, "5xp1/seeds/verilog/000-5xp1_fromBlif.v").getProbCircuit();
+        ProbCircuit goldenCircuit = new CircuitFactory(cellLib, "CIRCUITOS-AMMES-MANSKE/results/5xp1_mapA_mylib/5xp1_mapA_mylib.v").getProbCircuit();
+
 
         //ArrayList<Path> circuits = ops.CommonOps.getAllVerilogCircuitsFromPath("approx-9sym");
         //ArrayList<Path> circuits = ops.CommonOps.getAllVerilogCircuitsFromPath("5xp1/E10/verilog/5xp1_just_crit_mult_dontcare");
-        ArrayList<Path> circuits = ops.CommonOps.getAllVerilogCircuitsFromPath("5xp1/E10/verilog/5xp1_just_crit_RELIABLE_per_output_dontcare");
+        //ArrayList<Path> circuits = ops.CommonOps.getAllVerilogCircuitsFromPath("CIRCUITOS-AMMES-MANSKE/results/verilogs");
+        ArrayList<Path> circuits = ops.CommonOps.getAllVerilogCircuitsFromPath("CIRCUITOS-AMMES-MANSKE/results/5xp1_mapA_mylib/alsrac/verilog");
+
 
 
         /**
@@ -2749,19 +2753,6 @@ public class Commands {
     
     public void Foo8() throws IOException, Exception {
 
-        ApproxOPS.justCriticalVectorsApprox("5xp1/seeds/pla/000-5xp1_fromBlif.pla",
-                                        "5xp1/seeds/verilog/000-5xp1_fromBlif.v",
-                                        "genlibs/mylib.genlib",
-                                        "testeNewApprox/aig/5xp1_teste.aig",
-                                        "testeNewApprox/pla/5xp1_teste.pla",
-                                      "testeNewApprox/pla/5xp1_teste_ESPRESSO.pla",
-                                        "testeNewApprox/verilog/5xp1_teste.v",
-                                        "RANDOM",
-                                        false,
-                                        20);
-
-        System.out.println("Finished!!");
-
 
         /**
          * 2023-10-11 Experimento para tentar entender o método PGM
@@ -2770,35 +2761,67 @@ public class Commands {
 
         CellLibrary cellLib = new CellLibrary("genlibs/basic.genlib");
 
-        ProbCircuit goldenCircuit = new CircuitFactory(cellLib, "nand3.v").getProbCircuit();
+        ProbCircuit goldenCircuit = new CircuitFactory(cellLib, "c17_six_nand.v").getProbCircuit();
 
         SPRController sprGold = new SPRController(goldenCircuit, cellLib);
 
-        System.out.println(sprGold.getReliability("0.95", 4));
+        System.out.println("Confiabilidade média pelo SPR (one pass)");
+        System.out.println(sprGold.getReliability("0.95", 8));
+        System.out.println(String.format("Matriz de sinal output %s: ", goldenCircuit.getProbOutputs().get(0)));
+        matrixPrint(goldenCircuit.getProbOutputs().get(0).getProbMatrix(), 4);
+        System.out.println(String.format("Matriz de sinal output %s: ", goldenCircuit.getProbOutputs().get(1)));
+        matrixPrint(goldenCircuit.getProbOutputs().get(1).getProbMatrix(), 4);
         System.out.println("-------------------------");
-        matrixPrint(goldenCircuit.getProbOutputs().get(0).getProbMatrix());
 
-        System.out.println("finished");
-
-        TimeUnit.MINUTES.sleep(130);
-
-        System.out.println("Confiabilidade média (conf portas = 0.95)");
-        System.out.println(sprGold.getReliability("0.95", 4));
-        System.out.println("Análise por vetor:");
+        System.out.println("ANÁLISE POR VETOR:");
         BigDecimal bigCounter = BigDecimal.ZERO;
 
         for(int i = 0; i<32; i++) {
             BigDecimal goldVectorReliability = sprGold.getReliability(Integer.toString(i), "0.95", 4);
             System.out.println(new InputVector(Integer.toString(i), goldenCircuit.getProbInputs().size()));
-            matrixPrint(goldenCircuit.getProbOutputs().get(0).getProbMatrix());
-            matrixPrint(goldenCircuit.getProbOutputs().get(1).getProbMatrix());
-            System.out.println("Conf media do vetor: " + goldVectorReliability);
+            System.out.println(String.format("Matriz de sinal output %s: ", goldenCircuit.getProbOutputs().get(0)));
+            matrixPrint(goldenCircuit.getProbOutputs().get(0).getProbMatrix(), 4);
+            System.out.println(String.format("Matriz de sinal output %s: ", goldenCircuit.getProbOutputs().get(1)));
+            matrixPrint(goldenCircuit.getProbOutputs().get(1).getProbMatrix(), 4);
             bigCounter = bigCounter.add(goldVectorReliability);
             System.out.println("-----------------------------------------");
         }
 
         System.out.println("Conf media dos vetores: " + bigCounter.divide(new BigDecimal("32")));
 
+
+        /**
+         * C17 six-nanded PTMM per input vector analysis
+         */
+        goldenCircuit = new CircuitFactory(cellLib, "c17_six_nand.v").getProbCircuit();
+
+        PTMMController ptmmC = new PTMMController(goldenCircuit, cellLib);
+
+        System.out.println("Confiabilidade média pelo PTMM ");
+        System.out.println(ptmmC.getReliability("0.95"));
+
+        System.out.println("-------------------------");
+
+        System.out.println("ANÁLISE POR VETOR:");
+        bigCounter = BigDecimal.ZERO;
+
+        for(int i = 0; i<32; i++) {
+
+            //BigDecimal goldVectorReliability = sprGold.getReliability(Integer.toString(i), "0.95", 4);
+            InputVector vector = new InputVector(Integer.toString(i), goldenCircuit.getProbInputs().size());
+
+            BigDecimal goldVectorReliability = ptmmC.getReliability(vector, "0.95");
+            System.out.println(vector + " --> " + goldVectorReliability);
+
+
+            bigCounter = bigCounter.add(goldVectorReliability);
+            //System.out.println("-----------------------------------------");
+        }
+
+        System.out.println("Conf media dos vetores: " + bigCounter.divide(new BigDecimal("32")));
+
+
+        TimeUnit.MINUTES.sleep(130);
 
         Map<String, BigDecimal[][]> schivittzCells = new HashMap<>();
         
@@ -2902,10 +2925,126 @@ public class Commands {
     
     public void Foo9() throws ScriptException, IOException, Exception {
 
+        //Parameters
+        String mainlyPath = "CIRCUITOS-AMMES-MANSKE";
+        String resultPath = String.format("%s/results", mainlyPath);
+        String genlibPath = "genlibs/mylib.genlib";
 
+        ArrayList<java.nio.file.Path> paths = new ArrayList<>();
+
+        Files.list(Paths.get(String.format("%s/seeds/verilog", mainlyPath))).sorted().forEach(path -> paths.add(path));
+
+        //Iterate over exact circuits
+        for (Path p : paths) {
+
+            //Local parameters
+            String circuitName = p.getFileName().toString().split(".v")[0];
+
+            //Creates circuits main folder
+            File mainCircuitFolder = new File(String.format("%s/%s", resultPath, circuitName));
+            String mainCircuitFolderPath = mainCircuitFolder.getAbsolutePath();
+            mainCircuitFolder.mkdir();
+
+            //Create a circuit copy inside main folder AND
+            //Create the exact PLA seed
+            Path exactCopy = Paths.get(String.format("%s/%s", mainCircuitFolderPath, p.getFileName().toString()));
+            Files.copy(p, exactCopy, StandardCopyOption.REPLACE_EXISTING);
+            String plaSeedPath = String.format("%s/%s.pla", mainCircuitFolderPath, circuitName);
+            String plaSeedEspressoPath = String.format("%s/%s_ESPRESSO.pla", mainCircuitFolderPath, circuitName);
+            ShellScriptOps.executeCommands("/media/sf_PastaUbuntuServer/ShellScripting/plaToESPRESSO.sh",
+                    String.format("MAPPED_VERILOG_TO_PLA %s %s %s %s",
+                            genlibPath,
+                            exactCopy.toString(),
+                            plaSeedPath,
+                            plaSeedEspressoPath));
+
+
+            //Make approx methods folders
+            ArrayList<String> approxMethodsFoldersNames = new ArrayList<>();
+            approxMethodsFoldersNames.add(String.format("%s/%s_just_crit_per_output",
+                    mainCircuitFolderPath, circuitName));
+            approxMethodsFoldersNames.add(String.format("%s/%s_just_crit_multi_output",
+                    mainCircuitFolderPath, circuitName));
+            approxMethodsFoldersNames.add(String.format("%s/%s_track_crit_per_output",
+                    mainCircuitFolderPath, circuitName));
+            approxMethodsFoldersNames.add(String.format("%s/%s_track_crit_multi_output",
+                    mainCircuitFolderPath, circuitName));
+            approxMethodsFoldersNames.add(String.format("%s/%s_track_crit_same_seed_per_output",
+                    mainCircuitFolderPath, circuitName));
+            approxMethodsFoldersNames.add(String.format("%s/%s_track_crit_same_seed_multi_output",
+                    mainCircuitFolderPath, circuitName));
+
+            for(String folder : approxMethodsFoldersNames) {
+                new File(folder).mkdir();
+                // make AIG, PLA and VERILOG folder
+                new File(folder + "/aig").mkdir();
+                new File(folder + "/pla").mkdir();
+                new File(folder + "/verilog").mkdir();
+            }
+
+            //Prepare to run approx methods
+
+            ProbCircuit exactCircuit = new CircuitFactory(new CellLibrary(genlibPath), p.toString()).getProbCircuit();
+            //int totalAproxVector = (int)Math.round(exactCircuit.getTotalInputVectors().intValue() * 0.82);
+            int totalAproxVector = (int)Math.round(exactCircuit.getTotalInputVectors().intValue() * 0.2);
+
+            /*String methodJustCritPerOutBasename = Paths.get(approxMethodsFoldersNames.get(0)).getFileName().toString();
+            String methodJustCritMultOutBasename = Paths.get(approxMethodsFoldersNames.get(1)).getFileName().toString();
+            String methodTrackCritPerOutBasename = Paths.get(approxMethodsFoldersNames.get(2)).getFileName().toString();
+            String methodTrackCritMultOutBasename = Paths.get(approxMethodsFoldersNames.get(3)).getFileName().toString();
+            String methodTrackCritSeedPerOutBasename = Paths.get(approxMethodsFoldersNames.get(4)).getFileName().toString();
+            String methodTrackCritSeedMultOutBasename = Paths.get(approxMethodsFoldersNames.get(5)).getFileName().toString();*/
+
+
+            for (String folder : approxMethodsFoldersNames) {
+
+                String approxCircuitSuffix = Paths.get(folder).getFileName().toString();
+
+                int length = String.valueOf(exactCircuit.getTotalInputVectors().intValue()).length();
+
+
+
+                for (int i = 1; i < totalAproxVector; i++) {
+
+                    String patternName = String.format("%0" + length + "d-%s", i, approxCircuitSuffix);
+                    String aigOutput = String.format("%s/aig/%s.aig", folder, patternName);
+                    String verilogOutput = String.format("%s/verilog/%s.v", folder, patternName);
+                    String plaOutput = String.format("%s/pla/%s.pla", folder, patternName);
+                    String plaESPRESSOOutput = String.format("%s/pla/%s_ESPRESSO.pla", folder, patternName);
+
+                    ApproxOPS.approxMethodWrapper(ApproxOPS.getApproxMethod(approxCircuitSuffix),
+                            plaSeedEspressoPath,
+                            exactCopy.toString(),
+                            genlibPath,
+                            aigOutput,
+                            plaOutput,
+                            plaESPRESSOOutput,
+                            verilogOutput,
+                            "CRITICAL",
+                            i);
+
+                    //JUST CRIT PER OUTPUT
+                    /*ApproxOPS.justCriticalVectorsApprox(plaSeedEspressoPath,
+                            exactCopy.toString(),
+                            genlibPath,
+                            aigOutput,
+                            plaOutput,
+                            plaESPRESSOOutput,
+                            verilogOutput,
+                            "CRITICAL",
+                            false,
+                            i);*/
+
+
+                }
+
+            }
+        }
+
+        System.out.println("Finished! Here!");
+        TimeUnit.MINUTES.sleep(130);
 
         String seedName = "000-5xp1_fromBlif";
-
 
         String exactVerilog = String.format("5xp1/seeds/verilog/%s.v", seedName);
         String plaSeed = String.format("5xp1/seeds/pla/%s.pla", seedName);
@@ -2919,6 +3058,7 @@ public class Commands {
         String rootPath = "5xp1/E10";
         PLA pla;
 
+        // aqui aproximar até 80% dos vetores
         for (int i = 1; i < 127; i++) {
 
             String pattern = String.format("%03d-%s", i, circuitAndApproxMethod);
@@ -2942,7 +3082,26 @@ public class Commands {
 
     }
 
+    public void Foo10() throws Exception {
+        CellLibrary cellLib = new CellLibrary("genlibs/mylib.genlib");
+        ProbCircuit exactVerilog = new CircuitFactory(cellLib, "CIRCUITOS-AMMES-MANSKE/seeds/verilog/prom1_mapA_mylib.v").getProbCircuit();
 
+        final long startTime = System.currentTimeMillis();
+        //configura o método SPR para executar os cálculos de confiabilidade
+        RunScore runScore = new ScoreBySPR(exactVerilog, cellLib, new BigDecimal("0.99999802495"));
+        //cria o algoritmo para identificação do vetor crítico
+        //passando o método de cálculo
+        WRVAlgoritm wrvalg = new WRVAlgoritm(runScore);
+        //executa o algoritmo
+        //retorna um InputVector
+        InputVector vector = wrvalg.execute();
+
+        final long endTime = System.currentTimeMillis();
+
+        String timeConsup = "## TIME CONSUPTION ## ==> " + Long.toString((endTime - startTime)/1000) + " secs";
+        System.out.println(timeConsup);
+
+    }
     public void Foo_ISCAS2021() throws Exception {
 
 

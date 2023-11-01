@@ -3,24 +3,18 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package wrv_algoritm;
+package wrv_algorithm_OLD;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
+import datastructures.InputVector;
 import signalProbability.ProbCircuit;
 import signalProbability.ProbGate;
 import signalProbability.ProbGateLevel;
 import signalProbability.ProbSignal;
 import tool.Terminal;
-import datastructures.InputVector;
+
+import java.math.BigDecimal;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -39,15 +33,7 @@ public class ScoreCount implements RunScore {
     private static int numberExecution;
 
     public ScoreCount() {
-        circuit = null;
-        inputs = circuit.getProbInputs();
-        probGateLevels = circuit.getProbGateLevels();
-        listFanouts = circuit.getFanouts();
-        countGate = new HashMap<>();
-    }
-
-    public ScoreCount(ProbCircuit pCircuit) {
-        circuit = pCircuit;
+        circuit = Terminal.getInstance().getProbCircuit();
         inputs = circuit.getProbInputs();
         probGateLevels = circuit.getProbGateLevels();
         listFanouts = circuit.getFanouts();
@@ -183,11 +169,6 @@ public class ScoreCount implements RunScore {
     @Override
     public void setImprovementGates(List<ProbGate> improvementGates, BigDecimal q) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public ProbCircuit getCircuit() {
-        return this.circuit;
     }
 
 }

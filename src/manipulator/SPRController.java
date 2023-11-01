@@ -61,6 +61,22 @@ public class SPRController {
         BigDecimal confValue = SPROpsChuloMedio.getSPRReliability(pCircuit, inVector, scale);
         return confValue;
     }
+
+    public BigDecimal getReliability(InputVector inVector, BigDecimal gatesReliability, int scale) {
+        if(!this.sprPrepared) {
+            prepareForSPR(gatesReliability);
+        }
+        BigDecimal confValue = SPROpsChuloMedio.getSPRReliability(pCircuit, inVector, scale);
+        return confValue;
+    }
+
+    public BigDecimal getReliability(InputVector inVector, BigDecimal gatesReliability) {
+        if(!this.sprPrepared) {
+            prepareForSPR(gatesReliability);
+        }
+        BigDecimal confValue = SPROpsChuloMedio.getSPRReliability(pCircuit, inVector);
+        return confValue;
+    }
     
     public BigDecimal getReliability(String decimalVector, String gateReliability, int scale) {
         if(!this.sprPrepared) {

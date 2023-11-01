@@ -54,10 +54,11 @@ TerminalWrapper {
 
             Commands cmds = new Commands();
             //cmds.Foo5();
-            cmds.Foo6();
+            //cmds.Foo6();
             //cmds.Foo7();
             //cmds.Foo8();
             //cmds.Foo9();
+            cmds.Foo10();
 
                 Options options = new Options();
 

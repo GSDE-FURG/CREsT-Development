@@ -123,6 +123,18 @@ public class Circuit {
         return gates;
     }
 
+    public ArrayList<Gate> getJustContGates() {
+        ArrayList<Gate> result = new ArrayList<>();
+
+        for (Gate g : this.getGates()) {
+            if(g.getType().getFunctions().get(0).toLowerCase().contains("const")) {
+                result.add(g);
+            }
+        }
+
+        return result;
+    }
+
     /**
      * This method set the Circuit Gates list.
      *
@@ -225,6 +237,8 @@ public class Circuit {
 
         this.setTotalArea(area);
     }
+
+
 
 
 

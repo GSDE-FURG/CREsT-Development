@@ -3,23 +3,16 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package wrv_algoritm;
+package wrv_algorithm_OLD;
 
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.Set;
+import datastructures.InputVector;
 import signalProbability.ProbCircuit;
 import signalProbability.ProbSignal;
 import tool.Terminal;
-import datastructures.InputVector;
+
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.util.*;
 
 /**
  *
@@ -67,11 +60,10 @@ public class WRVAlgoritm {
 
     public InputVector execute() {
         long initSearch = System.currentTimeMillis();
-        //ProbCircuit circuit = Terminal.getInstance().getProbCircuit();
-        ArrayList<ProbSignal> inputs = this.runScore.getCircuit().getProbInputs();
-
+        ProbCircuit circuit = Terminal.getInstance().getProbCircuit();
+        ArrayList<ProbSignal> inputs = circuit.getProbInputs();
         //define o número máximo de execuções de escores permitidas
-        int maxExecutedVector = (int) (this.runScore.getCircuit().getTotalInputVectors().intValue() * DEFAULT_SEARCH_MAX_PERCENT);
+        int maxExecutedVector = (int) (Math.pow(2, inputs.size()) * DEFAULT_SEARCH_MAX_PERCENT);
         //cria a lista de vetores candidatos
         candidateVectors = new ArrayList<>();
         //cria uma segunda lista de vetores candidatos
@@ -91,7 +83,7 @@ public class WRVAlgoritm {
         //para 10 vezes número de bits não determinados
         if (inputs.size() < 23) {
             numberRandomVectors = 10 * unDeterminedBits;
-            System.out.println("Mamae here --> " + numberRandomVectors);
+            
             if (unDeterminedBits <= bitsThreshold) {
                 wrv = runScore.execute(new InputVector(new BigInteger("0")));
             }
@@ -236,7 +228,6 @@ public class WRVAlgoritm {
                 + " - "
                 + wrv.getInputVector().getBinaryString()
                 + " - " + wrv.getScore());
-
         executeSearchSequential();
         System.out.println("WRV depois da pesquisa sequencial:");
         System.out.println(wrv.getInputVector().getHexaString()

@@ -726,6 +726,9 @@ class CommandProcessor {
             case "foo9":
                 cmd.Foo9();
                 break;
+            case "foo10":
+                cmd.Foo10();
+                break;
             case "fooiscas21":
                 cmd.Foo_ISCAS2021();
                 break;

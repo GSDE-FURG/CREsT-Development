@@ -204,7 +204,6 @@ public class ShellScriptOps {
                                                                  libraryDir,
                                                                  verilogDir));
 
-        System.out.println("PLA: " + outPLADir);
     }
 
     public static void deployPLAAigVerilog(String outName, String inputPLADir, String verilogDir, String aigDir, String libraryDir) throws IOException, InterruptedException {

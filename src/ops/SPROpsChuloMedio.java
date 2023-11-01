@@ -230,6 +230,33 @@ public class SPROpsChuloMedio {
         
         return getSPRReliability(pCircuit, scale);                
     }
+
+    public static BigDecimal getSPRReliability(ProbCircuit pCircuit, InputVector inputV) {
+
+        /*
+         * Setting the InputVector on ProbCircuit
+         */
+        inputV.setBits(pCircuit.getInputs().size());
+        String vector = inputV.getBinaryString();
+
+
+        for (int i = 0; i < vector.length(); i++) {
+            ProbSignal probSignal = pCircuit.getProbInputs().get(i);
+            if (vector.charAt(i) == '1') {
+                probSignal.setProbMatrix(new BigDecimal[][]{
+                        {BigDecimal.ZERO, BigDecimal.ZERO},
+                        {BigDecimal.ZERO, BigDecimal.ONE}
+                });
+            } else {
+                probSignal.setProbMatrix(new BigDecimal[][]{
+                        {BigDecimal.ONE, BigDecimal.ZERO},
+                        {BigDecimal.ZERO, BigDecimal.ZERO}
+                });
+            }
+        }
+
+        return getSPRReliability(pCircuit);
+    }
     
     
     

@@ -55,6 +55,13 @@ public class PTMMController {
         return confValue;
     }
 
+    public BigDecimal getReliability(String fixedGateReliability) {
+        prepareForPTMM(new BigDecimal(fixedGateReliability));
+
+        BigDecimal confValue = PTMOps2.getCircuitReliabilityByPTM(pCircuit, "-1");
+        return confValue;
+    }
+
     //public BigDecimal getReliability(int scale) {
     //    prepareForSPR(new BigDecimal("0.99999802495"));
     //    BigDecimal confValue = SPROpsChuloMedio.getSPRReliability(pCircuit, scale);
@@ -68,6 +75,13 @@ public class PTMMController {
         if(!this.ptmmPrepared) {
             prepareForPTMM(new BigDecimal("0.99999802495"));
         }
+        BigDecimal confValue = PTMOps2.getCircuitReliabilityByPTM(pCircuit, inVector.getDecimalString());
+
+        return confValue;
+    }
+
+    public BigDecimal getReliability(InputVector inVector, String fixedGateReliability) {
+        prepareForPTMM(new BigDecimal(fixedGateReliability));
         BigDecimal confValue = PTMOps2.getCircuitReliabilityByPTM(pCircuit, inVector.getDecimalString());
 
         return confValue;
