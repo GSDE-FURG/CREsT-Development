@@ -5,6 +5,8 @@
  */
 package tool;
 
+import critical_vectors.HelloWorld;
+import critical_vectors.JeneticsCriticalVectorsSPR;
 import datastructures.*;
 
 import java.io.*;
@@ -3086,7 +3088,23 @@ public class Commands {
         CellLibrary cellLib = new CellLibrary("genlibs/mylib.genlib");
         ProbCircuit exactVerilog = new CircuitFactory(cellLib, "CIRCUITOS-AMMES-MANSKE/seeds/verilog/prom1_mapA_mylib.v").getProbCircuit();
 
-        final long startTime = System.currentTimeMillis();
+        /*Map<Integer, BigDecimal> mapp = ShellScriptOps.getOrderedCircuitReliabilities(exactVerilog, cellLib, false);
+        System.out.println("DEU!");
+
+        for (Map.Entry<Integer, BigDecimal> e : mapp.entrySet()) {
+            System.out.println(new InputVector(e.getKey(), exactVerilog.getProbInputs().size()).getBinaryString() + " --> " + e.getValue());
+        }*/
+
+        //HelloWorld.main(null);
+
+        JeneticsCriticalVectorsSPR criticals = new JeneticsCriticalVectorsSPR(exactVerilog, cellLib);
+        criticals.getCriticalVectors();
+
+
+        System.out.println("OK");
+
+
+        /*final long startTime = System.currentTimeMillis();
         //configura o método SPR para executar os cálculos de confiabilidade
         RunScore runScore = new ScoreBySPR(exactVerilog, cellLib, new BigDecimal("0.99999802495"));
         //cria o algoritmo para identificação do vetor crítico
@@ -3099,7 +3117,7 @@ public class Commands {
         final long endTime = System.currentTimeMillis();
 
         String timeConsup = "## TIME CONSUPTION ## ==> " + Long.toString((endTime - startTime)/1000) + " secs";
-        System.out.println(timeConsup);
+        System.out.println(timeConsup);*/
 
     }
     public void Foo_ISCAS2021() throws Exception {

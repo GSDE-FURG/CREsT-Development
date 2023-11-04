@@ -7,15 +7,8 @@ package wrv_algoritm;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.Set;
+import java.util.*;
+
 import signalProbability.ProbCircuit;
 import signalProbability.ProbSignal;
 import tool.Terminal;
@@ -36,12 +29,12 @@ public class WRVAlgoritm {
     private int unDeterminedBits;
     private ScoreVector wrv;
     private BigDecimal consensusThreshold;
-    private static final int DEFAULT_LENGTH_CANDIDATE_VECTORS = 10;
+    private static final int DEFAULT_LENGTH_CANDIDATE_VECTORS = 20;
     private static final int DEFAULT_NUMBER_RANDOM_VECTORS = 1000;
-    private static final int DEFAULT_BITS_THRESHOLD = 17;
+    private static final int DEFAULT_BITS_THRESHOLD = 3;
     private static final String DEFAULT_CONSENSUS_TH = "0.9";
     private static final String DEFAULT_MIN_CONSENSUS_TH = "0.7";
-    private static final double DEFAULT_SEARCH_MAX_PERCENT = 0.20;
+    private static final double DEFAULT_SEARCH_MAX_PERCENT = 0.02;
     private final BigDecimal minConsensusThreshold;
     private final RunScore runScore;
     private Map<Integer, Character> determinedBits;
@@ -72,6 +65,8 @@ public class WRVAlgoritm {
 
         //define o número máximo de execuções de escores permitidas
         int maxExecutedVector = (int) (this.runScore.getCircuit().getTotalInputVectors().intValue() * DEFAULT_SEARCH_MAX_PERCENT);
+        System.out.println("maxExecuted: " + maxExecutedVector);
+
         //cria a lista de vetores candidatos
         candidateVectors = new ArrayList<>();
         //cria uma segunda lista de vetores candidatos
@@ -89,21 +84,29 @@ public class WRVAlgoritm {
         unDeterminedBits = inputs.size();
         //se o circuito possuir menos de 23 entradas, configura o número de vetores aleatórios 
         //para 10 vezes número de bits não determinados
-        if (inputs.size() < 23) {
-            numberRandomVectors = 10 * unDeterminedBits;
+        if (inputs.size() < 17) {
+            numberRandomVectors = 1 * unDeterminedBits;
             System.out.println("Mamae here --> " + numberRandomVectors);
             if (unDeterminedBits <= bitsThreshold) {
+                System.out.println("Mamae NOT here --> " + numberRandomVectors);
                 wrv = runScore.execute(new InputVector(new BigInteger("0")));
             }
         }
         //executa enquanto o limite de bits para busca sequencial não for alcançado ou
         //não ocorrer 5 iterações sem descobrir bits com th igual a 0.7
-        //ou número de vetores executados for menor que o máximo permitido        
+        //ou número de vetores executados for menor que o máximo permitido
         while (unDeterminedBits > bitsThreshold && iterWithoutAlteration < 5
                 && countVectors < maxExecutedVector) {
 
+            System.out.println("undetermined begin loop " + unDeterminedBits);
+            System.out.println("bitsThresh begin loop " + bitsThreshold);
+            System.out.println("iterWithout begin loop " + iterWithoutAlteration);
+            System.out.println("countVectors begin loop " + countVectors);
+            System.out.println("maxExecutedVector begin loop " + maxExecutedVector);
+
             //configura o número de bits determinados para comparar se houve descoberta de novos bits
             prevDeterminedBits = determinedBits.size();
+            System.out.println("prevDeterminedBits --> " + prevDeterminedBits);
             ScoreVector scoreVector;
             //configura lista de vetores candidatos para comparação se houve alteração depois da iteração
             List<ScoreVector> prevCandidateVectors = new ArrayList<>();
@@ -113,6 +116,7 @@ public class WRVAlgoritm {
             for (int i = 0; i < numberRandomVectors; i++) {
                 char[] inputVectorChars = new char[inputs.size()];
                 if (isPermittedRepeatedVectors) {
+                    System.out.println("determinedBits: " + determinedBits);
                     for (int b = 0; b < inputs.size(); b++) {
                         if (determinedBits.containsKey(b)) {
                             inputVectorChars[b] = determinedBits.get(b);
@@ -134,16 +138,21 @@ public class WRVAlgoritm {
                 }
 
                 InputVector randomInputVector = new InputVector(inputVectorChars);
+
                 scoreVector = runScore.execute(randomInputVector);
+
+
                 //adiciona vetor candidato
                 addCandidateVector(scoreVector);
-                System.out.println(i + " - " + scoreVector.getInputVector().getHexaString() + " - " + scoreVector.getScore());
+                System.out.println(i + " - " + scoreVector.getInputVector().getBinaryString() + " - " + scoreVector.getScore());
+
                 boolean flag;
                 do {
                     flag = false;
                     //obtem lista de vizinhos do vetor
                     List<InputVector> neighborsVectors = randomInputVector.getNeighbors(determinedBits.keySet());
                     for (InputVector neighbor : neighborsVectors) {
+                        System.out.println(neighbor.getBinaryString());
                         if (!isPermittedRepeatedVectors) {
                             bin = neighbor.getBinaryString();
                             if (!executedVectors.add(new BigInteger(bin))) {
@@ -154,6 +163,7 @@ public class WRVAlgoritm {
                         ScoreVector neighborScoreVector = runScore.execute(neighbor);
                         //se o escore do vizinho for melhor, substitui vetor selecionado pelo vetor vizinho
                         if (neighborScoreVector.getScore().compareTo(scoreVector.getScore()) < 0) {
+                            System.out.println(neighborScoreVector.getInputVector().getBinaryString() + " eh melhor");
                             randomInputVector = neighborScoreVector.getInputVector();
                             scoreVector = neighborScoreVector;
                             //adiciona vetor candidato
@@ -161,19 +171,30 @@ public class WRVAlgoritm {
                             flag = true;
                         }
                     }
+                    System.out.println("********************************");
                 } while (flag);
+
+                System.out.println("Saiu do " + i);
             }
+            // ====================================================
+            // Matheus 2023-11-02 -> até aqui é uma busca aleatória
+            // ====================================================
+
             //imprime a lista de vetores candidatos
             for (ScoreVector sc : candidateVectors) {
                 System.out.println("Candidatos: "
                         + sc.getInputVector().getHexaString()
                         + " - " + sc.getScore());
             }
+
             System.out.println("Consenso: " + consensusThreshold);
+
             //se não houve alteração dos vetores candidatos, não executa o consenso
             if (prevCandidateVectors.equals(candidateVectors)
                     && nextMaxConsensusThreshold.compareTo(consensusThreshold) != 0
                     && !isPermittedMoreList) {
+
+                System.out.println("Entrou aqui!");
                 //listCandidateVectorNoAlter++;            
                 //e o consenso é 0.85 ou mais
                 //e a diferença do próximo consenso para o atual for de 0,05 ou mais
@@ -186,9 +207,11 @@ public class WRVAlgoritm {
                 }
                 System.out.println("Lista não alterada " + listCandidateVectorNoAlter);
             } else {
+                System.out.println("não não, entrou aqui");
                 //listCandidateVectorNoAlter = 0;
                 runConsensus();
                 System.out.println("Próximo Consenso: " + nextMaxConsensusThreshold);
+                System.out.println("DeterminedBits after candidates " + determinedBits);
                 unDeterminedBits = inputs.size() - determinedBits.size();
                 isPermittedMoreList = false;
             }
@@ -214,6 +237,7 @@ public class WRVAlgoritm {
                     iterWithoutAlteration++;
                 }
             } else {
+                System.out.println("Entrou nesse else do iterWithout");
                 iterWithoutAlteration = 0;
             }
             if (determinedBits.size() >= 8 || consensusThreshold.compareTo(new BigDecimal("0.88")) <= 0) {
@@ -224,9 +248,12 @@ public class WRVAlgoritm {
                 }
             }
             countVectors = ScoreBySPR.getNumberExecution();
-            
-            System.out.println("Consultas: " + countVectors);
-            System.out.println("Bits determinados: " + determinedBits);
+
+            System.out.println("undetermined after loop " + unDeterminedBits);
+            System.out.println("bitsThresh after loop " + bitsThreshold);
+            System.out.println("iterWithout after loop " + iterWithoutAlteration);
+            System.out.println("countVectors after loop " + countVectors);
+            System.out.println("maxExecutedVector after loop " + maxExecutedVector);
         }
         long endSearch = System.currentTimeMillis();
         long timeSearch = endSearch - initSearch;
@@ -290,18 +317,32 @@ public class WRVAlgoritm {
 
     public void executeSearchSequential() {
         int length;
+        System.out.println("unDeterminedBits == " + unDeterminedBits);
+        System.out.println("bitsThreshold == " + bitsThreshold);
+
         if (unDeterminedBits <= bitsThreshold) {
             length = unDeterminedBits;
         } else {
             length = bitsThreshold;
         }
+
+        System.out.println("length == " + length);
+
         int searchSpace = (int) Math.pow(2, length);
+
+        System.out.println("searchSpace == " + searchSpace);
+
         int lengthInput = unDeterminedBits + determinedBits.size();
+
+        System.out.println("lengthInput == " + lengthInput);
         for (int i = 0; i < searchSpace; i++) {
+            System.out.println("Aqui o problema " + i);
             InputVector inputVector = new InputVector
-                    (new BigInteger(String.valueOf(i)));
+                    (new BigInteger(String.valueOf(i)), 9  );
             int count = determinedBits.size();
             char[] inputVectorChar = inputVector.getValueToChar();
+            System.out.println("inputVectorChar == " + Arrays.toString(inputVectorChar));
+            System.out.println("inputVectorChar size " + inputVectorChar.length);
             char[] searchInputVector = new char[lengthInput];
             for (int b = 0; b < lengthInput; b++) {
                 if (determinedBits.containsKey(b)) {

@@ -30,8 +30,18 @@ public class InputVector {
        this.value = new BigInteger(value);
     }
 
+    public InputVector(int value, int bits) {
+        this.value = new BigInteger(Integer.toString(value));
+        this.bits = bits;
+    }
+
     public InputVector(String value, int bits) {
         this.value = new BigInteger(value);
+        this.bits = bits;
+    }
+
+    public InputVector(String value, int bits, boolean isBitString) {
+        this.value = new BigInteger(value, 2);
         this.bits = bits;
     }
     
@@ -43,6 +53,10 @@ public class InputVector {
     public InputVector(char[] value) {
         String bin = String.valueOf(value);        
         this.value = new BigInteger(bin, 2);
+    }
+
+    public InputVector(List<Boolean> list, int bits) {
+        this.value = null;
     }
 
     public String getDecimalString() {
