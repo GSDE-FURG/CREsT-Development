@@ -19,6 +19,9 @@ public class InputVector {
     private final BigInteger value;
     private int bits = 0;
 
+    private BigDecimal reliability;
+    private double doubleReliability;
+
     private final BigDecimal[][] M_ZERO = new BigDecimal[][]{{BigDecimal.ONE, BigDecimal.ZERO},{BigDecimal.ZERO,BigDecimal.ZERO}};
     private final BigDecimal[][] M_ONE = new BigDecimal[][]{{BigDecimal.ZERO, BigDecimal.ZERO},{BigDecimal.ZERO,BigDecimal.ONE}};
 
@@ -137,7 +140,23 @@ public class InputVector {
     public int getBits() {
         return this.bits;
     }
-    
+
+    public BigDecimal getReliability() {
+        return reliability;
+    }
+
+    public void setReliability(BigDecimal reliability) {
+        this.reliability = reliability;
+    }
+
+    public double getDoubleReliability() {
+        return doubleReliability;
+    }
+
+    public void setDoubleReliability(double doubleReliability) {
+        this.doubleReliability = doubleReliability;
+    }
+
     @Override
     public String toString() {        
         return this.getBinaryString();

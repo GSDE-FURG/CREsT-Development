@@ -3089,13 +3089,22 @@ public class Commands {
         ProbCircuit exactVerilog = new CircuitFactory(cellLib, "CIRCUITOS-AMMES-MANSKE/seeds/verilog/prom1_mapA_mylib.v").getProbCircuit();
 
         /*Map<Integer, BigDecimal> mapp = ShellScriptOps.getOrderedCircuitReliabilities(exactVerilog, cellLib, false);
-        System.out.println("DEU!");
 
+        BigDecimal simpleMean = BigDecimal.ZERO;
         for (Map.Entry<Integer, BigDecimal> e : mapp.entrySet()) {
-            System.out.println(new InputVector(e.getKey(), exactVerilog.getProbInputs().size()).getBinaryString() + " --> " + e.getValue());
-        }*/
+            //System.out.println(new InputVector(e.getKey(), exactVerilog.getProbInputs().size()).getBinaryString() + " --> " + e.getValue());
+            simpleMean = simpleMean.add(e.getValue());
+        }
 
-        //HelloWorld.main(null);
+        System.out.println("EXACT SIMPLE MEAN == " + simpleMean.divide(new BigDecimal("512")));*/
+
+        InputVector teste = new InputVector("111001111".toCharArray());
+
+        System.out.println(teste);
+
+        System.out.println("*******************************************");
+
+        exactVerilog = new CircuitFactory(cellLib, "CIRCUITOS-AMMES-MANSKE/seeds/verilog/prom1_mapA_mylib.v").getProbCircuit();
 
         JeneticsCriticalVectorsSPR criticals = new JeneticsCriticalVectorsSPR(exactVerilog, cellLib);
         criticals.getCriticalVectors();
