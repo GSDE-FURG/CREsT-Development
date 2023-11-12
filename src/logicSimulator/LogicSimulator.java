@@ -520,7 +520,7 @@ import java.util.logging.Logger;
                     // GOLD & AS
                     sa_sum = sa_sum +  gateSensitivivity.getgateSensitiveAreaOriginal();
                     concatInformation = concatInformation + " Gate: " + gate.getGate().getId()
-                        + " destiny (" + gate.getGate().getOutputs().get(0) + ") " + gate.getGate().getOutputs().get(0).getDestiny()
+                        + " destiny (" + gate.getGate().getOutputs().get(0) + ") " + gate.getGate().getOutputs().get(0).getSignalDestiny()
                             + " (" + gateSensitivivity.getgateSensitiveAreaOriginal() + ") " + " AS_T: " +  sa_sum
                             + " [" + concat_inputs_original + "] "
                             + " [" + outputStr + "] > ";
@@ -1044,7 +1044,7 @@ import java.util.logging.Logger;
                     // GOLD & AS
                     sa_sum = sa_sum +  gateSensitivivity.getgateSensitiveAreaOriginal();
                     concatInformation = concatInformation + " Gate: " + gate.getGate().getId()
-                            + " destiny (" + gate.getGate().getOutputs().get(0) + ") " + gate.getGate().getOutputs().get(0).getDestiny()
+                            + " destiny (" + gate.getGate().getOutputs().get(0) + ") " + gate.getGate().getOutputs().get(0).getSignalDestiny()
                             + " (" + gateSensitivivity.getgateSensitiveAreaOriginal() + ") " + " AS_T: " +  sa_sum
                             + " [" + concat_inputs_original + "] "
                             + " [" + outputStr + "] > ";
@@ -1542,7 +1542,7 @@ import java.util.logging.Logger;
                        // info = info + ("> l: " + j + " p: " + k  + " G: " + gate.getGate().getId()+ " In: " + gate.getGate().getInputs() + " Outs: " + gate.getGate().getOutputs());
 
                         //if ((gate.getGate().getOutputs().get(z).getId() == gateToFind.getId()) && (gate.getGate().getId() != notsearchThisOne.getId())) {
-                        if ((gate.getGate().getOutputs().get(z).getId() == gateToFind.getId()) && (!gate.getGate().getVisited())) {
+                        if ((gate.getGate().getOutputs().get(z).getId() == gateToFind.getId()) && (!gate.getGate().getGateVisited())) {
                             info = info + gate.getGate().getId() + " <FINDED>";
                             gate.setVisited();
                             return gate;

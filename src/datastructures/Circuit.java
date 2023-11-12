@@ -178,7 +178,7 @@ public class Circuit {
         //    }
         //}
         for (Signal input1 : signals) {
-            if (input1.getOrigin() == null) {
+            if (input1.getSignalOrigin() == null) {
                 temp.add(input1);
             }
         }
@@ -193,7 +193,7 @@ public class Circuit {
     public ArrayList<Signal> getOutputs() {
         ArrayList<Signal> temp = new ArrayList<>();
         for (Signal input1 : signals) {
-            for(Gate fooGate: input1.getDestiny()) {
+            for(Gate fooGate: input1.getSignalDestiny()) {
                 if(fooGate == null) {
                     temp.add(input1);
                     break;

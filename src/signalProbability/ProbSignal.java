@@ -27,13 +27,13 @@ public class ProbSignal extends Signal {
     
     public ProbSignal(String id, Gate origin) {
         super(id);
-        this.setOrigin(origin);
+        this.setSignalOrigin(origin);
         this.setCurrentState(4);
     }
     
     public ProbSignal(String id, ArrayList<Gate> destiny) {
         super(id);
-        this.setDestiny(destiny);
+        this.setSignalDestiny(destiny);
         this.setCurrentState(4);
     }
     
@@ -46,13 +46,13 @@ public class ProbSignal extends Signal {
     
     public ProbSignal(Signal signal) {
         super(signal.getId());
-        if(signal.getOrigin() == null) {
-            this.setDestiny(signal.getDestiny());                
-        } else if(signal.getDestiny().isEmpty()) {
-            this.setOrigin(signal.getOrigin());
+        if(signal.getSignalOrigin() == null) {
+            this.setSignalDestiny(signal.getSignalDestiny());
+        } else if(signal.getSignalDestiny().isEmpty()) {
+            this.setSignalOrigin(signal.getSignalOrigin());
         } else {
-            this.setDestiny(signal.getDestiny());
-            this.setOrigin(signal.getOrigin());            
+            this.setSignalDestiny(signal.getSignalDestiny());
+            this.setSignalOrigin(signal.getSignalOrigin());
         }
         this.setCurrentState(4);
     }

@@ -6,7 +6,6 @@
 package signalProbability;
 
 import datastructures.Cell;
-import datastructures.CellLibrary;
 import datastructures.Circuit;
 import datastructures.CustomMatrix;
 import datastructures.CustomMatrixLibrary;
@@ -16,19 +15,11 @@ import java.util.ArrayList;
 import datastructures.Signal;
 import datastructures.Gate;
 import java.math.BigDecimal;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import levelDatastructures.DepthGate;
-import levelDatastructures.GateLevel;
-import ops.CommonOps;
-import ops.PTMOps;
-import tool.Terminal;
-
-import static ops.CommonOps.timenow;
-import static ops.CommonOps.timestamp;
 
 /**
  *
@@ -121,7 +112,7 @@ public class ProbCircuit extends Circuit {
         BigDecimal correctSignal = new BigDecimal("0.5");
         
         for(ProbSignal probSignal : this.probSignals) {
-            if(probSignal.getOrigin() == null) {
+            if(probSignal.getSignalOrigin() == null) {
                 probSignal.setProbMatrix(new BigDecimal[][]{
                     {correctSignal, BigDecimal.ZERO},
                     {BigDecimal.ZERO, correctSignal}
@@ -137,7 +128,7 @@ public class ProbCircuit extends Circuit {
     
     public void setSourcesProbSignalMatrix(BigDecimal[][] matrix) {
         for(ProbSignal probSignal : this.probSignals) {
-            if(probSignal.getOrigin() == null) {
+            if(probSignal.getSignalOrigin() == null) {
                 probSignal.setProbMatrix(matrix);
             }
         }
@@ -182,7 +173,7 @@ public class ProbCircuit extends Circuit {
         
         for (ProbSignal probSignal : probSignals) {
             
-            if(!probSignal.getDestiny().isEmpty()) {
+            if(!probSignal.getSignalDestiny().isEmpty()) {
                 
                   /**
                    * Antes de a ferramenta lidar com fanouts nas saídas
@@ -191,7 +182,7 @@ public class ProbCircuit extends Circuit {
 //                    probSignal.addDestiny(fooGates.get(probSignal.getDestiny().get(i).getId()));
 //                }
                 
-                for(Gate flagGate: probSignal.getDestiny()) {
+                for(Gate flagGate: probSignal.getSignalDestiny()) {
                     if(flagGate != null) {
                         probSignal.addDestiny(fooGates.get(flagGate.getId()));
                     } else {
@@ -200,8 +191,8 @@ public class ProbCircuit extends Circuit {
                 }
             }
             
-            if(probSignal.getOrigin() != null) {
-                probSignal.setPOrigin(fooGates.get(probSignal.getOrigin().getId()));
+            if(probSignal.getSignalOrigin() != null) {
+                probSignal.setPOrigin(fooGates.get(probSignal.getSignalOrigin().getId()));
             }
             
             
@@ -213,7 +204,7 @@ public class ProbCircuit extends Circuit {
         ArrayList<ProbSignal> pInputs = new ArrayList<>();
 
         for(ProbSignal pSignal : this.probSignals) {
-            if(pSignal.getOrigin() == null && !pSignal.getDestiny().isEmpty()) {
+            if(pSignal.getSignalOrigin() == null && !pSignal.getSignalDestiny().isEmpty()) {
                 pInputs.add(pSignal);
             }
         }
@@ -230,7 +221,7 @@ public class ProbCircuit extends Circuit {
 //                pOutputs.add(pSignal);
 //            }
 
-            for(Gate fooGate: pSignal.getDestiny()) {
+            for(Gate fooGate: pSignal.getSignalDestiny()) {
                 if(fooGate == null) {
                     pOutputs.add(pSignal);
                     break;
@@ -257,7 +248,7 @@ public class ProbCircuit extends Circuit {
             //}
 
             for (ProbSignal pSignal : this.probSignals) {
-                if (pSignal.getOrigin() == null) {
+                if (pSignal.getSignalOrigin() == null) {
                     this.pInputs.add(pSignal);
                 }
             }
@@ -274,7 +265,7 @@ public class ProbCircuit extends Circuit {
 
             for(ProbSignal pSignal : this.probSignals) {
 
-                for(Gate fooGate: pSignal.getDestiny()) {
+                for(Gate fooGate: pSignal.getSignalDestiny()) {
                     if(fooGate == null) {
                         this.pOutputs.add(pSignal);
                         break;
@@ -692,7 +683,7 @@ public class ProbCircuit extends Circuit {
         } else {
             for (int i = 0; i < fanouts.size(); i++) {
                 ProbSignal next = fanouts.get(i);
-                if(next.getOrigin() == null) {
+                if(next.getSignalOrigin() == null) {
                     next.setStates(sourceFanout);
                 } else {
                     next.setStates(normalFanout);
@@ -845,7 +836,7 @@ public class ProbCircuit extends Circuit {
             for (int i = 0; i < inputs.size(); i++) {
                 ProbGate fooGate = null;
                 
-                if(inputs.get(i).getOrigin() != null) {
+                if(inputs.get(i).getSignalOrigin() != null) {
                     fooGate = gateDfs(inputs.get(i).getPOrigin());
                 }
                 
@@ -874,7 +865,7 @@ public class ProbCircuit extends Circuit {
             this.probGateLevels.get(currentDepth-1).addGate(gate);
 
             for (int i = 0; i < inputs.size(); i++) {
-                if(inputs.get(i).getOrigin() != null) {
+                if(inputs.get(i).getSignalOrigin() != null) {
                     gateDfsProbGateLevel(inputs.get(i).getPOrigin(), gate.getDepth());
                 } else {
                     if(currentDepth > 1) {

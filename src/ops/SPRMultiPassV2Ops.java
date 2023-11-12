@@ -355,7 +355,7 @@ public class SPRMultiPassV2Ops {
 
         while (iterator.hasNext()) {
             ProbSignal next = iterator.next();
-            if(next.getOrigin() == null) {
+            if(next.getSignalOrigin() == null) {
                 insFan++;
             }
         }

@@ -1,5 +1,6 @@
 package ops;
 
+import critical_vectors.CriticalInputVectorComparator;
 import datastructures.CellLibrary;
 import datastructures.InputVector;
 import manipulator.SPRController;
@@ -297,6 +298,29 @@ public class ShellScriptOps {
         }
 
         return CommonOps.sortReliabilitiesMap(mapper, reversed);
+    }
+
+    public static ArrayList<InputVector> getOrderedInputVectorsReliability(ProbCircuit pCircuit,
+                                                                          CellLibrary cellLib,
+                                                                          boolean reversed) {
+
+        ArrayList<InputVector> result = new ArrayList<>();
+
+        SPRController spr = new SPRController(pCircuit, cellLib);
+
+
+        for(int i = 0; i < pCircuit.getTotalInputVectors().intValue(); i++) {
+            InputVector inputV = new InputVector(Integer.toString(i), pCircuit.getProbInputs().size());
+            BigDecimal vectorReliability = spr.getReliability(inputV, 15);
+            inputV.setDoubleReliability(vectorReliability.doubleValue());
+            result.add(inputV);
+        }
+
+        CriticalInputVectorComparator comparator = new CriticalInputVectorComparator();
+
+        Collections.sort(result, comparator);
+
+        return result;
     }
 
 

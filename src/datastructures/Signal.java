@@ -14,8 +14,8 @@ import java.util.ArrayList;
 public class Signal {
     
     private String id;
-    private Gate origin;
-    private ArrayList<Gate> destiny = new ArrayList<>();
+    private Gate signalOrigin;
+    private ArrayList<Gate> signalDestiny = new ArrayList<>();
     private int logicValue;
     private boolean logicValueBoolean;
     private int originalSignalValue;
@@ -70,13 +70,13 @@ public class Signal {
      * Signal constructor with defined "id", "origin" and "destiny".
      *
      * @param id - Signal identification
-     * @param origin - Signal origin
-     * @param destiny - Signal destinies
+     * @param signalOrigin - Signal origin
+     * @param signalDestiny - Signal destinies
      */
-    public Signal(String id, Gate origin, ArrayList<Gate> destiny) {
+    public Signal(String id, Gate signalOrigin, ArrayList<Gate> signalDestiny) {
         this.id = id;
-        this.origin = origin;
-        this.destiny = destiny;
+        this.signalOrigin = signalOrigin;
+        this.signalDestiny = signalDestiny;
     }
     
     /**
@@ -155,17 +155,17 @@ public class Signal {
      *
      * @return Gate - Origin Gate
      */
-    public Gate getOrigin() {
-        return origin;
+    public Gate getSignalOrigin() {
+        return signalOrigin;
     }
 
     /**
      *
      * This method set the Signal origin
-     * @param origin - Gate (output)
+     * @param signalOrigin - Gate (output)
      */
-    public void setOrigin(Gate origin) {
-        this.origin = origin;
+    public void setSignalOrigin(Gate signalOrigin) {
+        this.signalOrigin = signalOrigin;
     }
     
     /**
@@ -173,17 +173,17 @@ public class Signal {
      *
      * @return ArrayList - Gates ArrayList
      */
-    public ArrayList<Gate> getDestiny() {
-        return destiny;
+    public ArrayList<Gate> getSignalDestiny() {
+        return signalDestiny;
     }
     
     /**
      * This method set the Signal identification.
      *
-     * @param destiny - Gates ArrayList
+     * @param signalDestiny - Gates ArrayList
      */
-    public void setDestiny(ArrayList<Gate> destiny) {
-        this.destiny = destiny;
+    public void setSignalDestiny(ArrayList<Gate> signalDestiny) {
+        this.signalDestiny = signalDestiny;
     }
     
     /**
@@ -192,7 +192,7 @@ public class Signal {
      * @param gate Gate - Destination Gate
      */
     public void addDestiny(Gate gate) {
-        destiny.add(gate);
+        signalDestiny.add(gate);
     }
 
     /**
@@ -202,7 +202,7 @@ public class Signal {
      * @param gate Gate - Destination signal
      */
     public void removeDestiny(Gate gate) {
-        destiny.remove(gate);
+        signalDestiny.remove(gate);
     }
     
     public String toString() {

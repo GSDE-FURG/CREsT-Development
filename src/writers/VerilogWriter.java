@@ -5,7 +5,6 @@
  */
 package writers;
 
-import datastructures.Cell;
 import datastructures.Circuit;
 import datastructures.Gate;
 import datastructures.Signal;
@@ -16,7 +15,6 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.Calendar;
 import java.util.Collections;
-import java.util.Date;
 
 /**
  *
@@ -144,7 +142,7 @@ public class VerilogWriter {
             contador = 0; 
             for (int i = 0; i < circuit.getSignals().size(); i++) {
                 Signal fooSignal = circuit.getSignals().get(i);
-                if((fooSignal.getOrigin() != null) && (!fooSignal.getDestiny().isEmpty())) {
+                if((fooSignal.getSignalOrigin() != null) && (!fooSignal.getSignalDestiny().isEmpty())) {
                     
                     writer.write(fooSignal.getId());
                     

@@ -53,7 +53,7 @@ public abstract class Utils {
                 Circuit subCircuit = new Circuit();
                 //define o nome do sub-circuito igual ao circuito + id da saída
                 subCircuit.setName(circuit.getName() + "_" + output.getId().replace("\\", ""));
-                Gate gate = output.getOrigin();
+                Gate gate = output.getSignalOrigin();
                 if (gate == null) {
                     continue;
                 } else {
@@ -74,10 +74,10 @@ public abstract class Utils {
                         }
                         //lista as portas lógicas a partir dos sinais
                         for (Signal signal : listSignals) {
-                            if (signal.getOrigin() != null) {
-                                listGates.add(signal.getOrigin());
+                            if (signal.getSignalOrigin() != null) {
+                                listGates.add(signal.getSignalOrigin());
                                 //System.out.println("ListGates: " + listGates.size());
-                                setGatesSubCircuit.add(signal.getOrigin());
+                                setGatesSubCircuit.add(signal.getSignalOrigin());
                             }
                         }
                         listNextGates = listGates;
@@ -91,14 +91,14 @@ public abstract class Utils {
                 for (Signal out : subCircuit.getOutputs()) {
                     if (out != output) {
                         outsCorretion.add(out);
-                        out.getDestiny().remove(null);
+                        out.getSignalDestiny().remove(null);
                     }
                 }
                 //FIXME deixar o local pra onde vão os arquivos mais dinâmico
                 String filename = "abc/" + circuit.getName() + "/" + subCircuit.getName() + ".v";
                 VerilogWriter writer = new VerilogWriter(filename, subCircuit);                
                 for (Signal o : outsCorretion) {
-                    o.getDestiny().add(0, null);
+                    o.getSignalDestiny().add(0, null);
                 }
             }
         }

@@ -5,6 +5,14 @@
  */
 package tool;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import com.google.gson.stream.JsonWriter;
+import com.google.gson.stream.JsonReader;
+
+
+import critical_vectors.CriticalVectorsExactList;
+import critical_vectors.CriticalVectorsUtils;
 import critical_vectors.HelloWorld;
 import critical_vectors.JeneticsCriticalVectorsSPR;
 import datastructures.*;
@@ -14,6 +22,7 @@ import java.io.*;
 import datastructures.InputVector;
 import levelDatastructures.LevelCircuit;
 
+import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
@@ -60,6 +69,8 @@ import readers.CustomMatrixReader;
 import wrv_algoritm.*;
 
 import static ops.CommonOps.*;
+
+
 
 /**
  *
@@ -3085,32 +3096,80 @@ public class Commands {
     }
 
     public void Foo10() throws Exception {
-        CellLibrary cellLib = new CellLibrary("genlibs/mylib.genlib");
-        ProbCircuit exactVerilog = new CircuitFactory(cellLib, "CIRCUITOS-AMMES-MANSKE/seeds/verilog/prom1_mapA_mylib.v").getProbCircuit();
+        CellLibrary cellLib = new CellLibrary("genlibs/asap7_RVT_TT_ccs_ABC.genlib");
 
-        /*Map<Integer, BigDecimal> mapp = ShellScriptOps.getOrderedCircuitReliabilities(exactVerilog, cellLib, false);
 
-        BigDecimal simpleMean = BigDecimal.ZERO;
-        for (Map.Entry<Integer, BigDecimal> e : mapp.entrySet()) {
-            //System.out.println(new InputVector(e.getKey(), exactVerilog.getProbInputs().size()).getBinaryString() + " --> " + e.getValue());
-            simpleMean = simpleMean.add(e.getValue());
+        ArrayList<Path> circuits = ops.CommonOps.getAllVerilogCircuitsFromPath("CIRCUITOS-AMMES-MANSKE/seeds/verilog");
+
+        for(Path p : circuits) {
+            ProbCircuit exactVerilog = new CircuitFactory(cellLib, p.toString()).getProbCircuit();
+
+            final long startTime = System.currentTimeMillis();
+
+            ArrayList<InputVector> vectors = ShellScriptOps.getOrderedInputVectorsReliability(exactVerilog, cellLib, false);
+
+            final long endTime = System.currentTimeMillis();
+
+            long secondstimestamp = (endTime - startTime)/1000;
+
+            CriticalVectorsUtils.criticalVectorsExactListToJSON(vectors, String.format("CIRCUITOS-AMMES-MANSKE/seeds/criticalVectors/%s_criticalVectorsEXACTlist.json", exactVerilog.getName()), secondstimestamp);
+            System.out.println("Json " + exactVerilog.getName() + " done!");
+
+            String timeConsup = "## TIME CONSUPTION OF " + exactVerilog.getName() + " ## ==> " + secondstimestamp + " secs";
+            System.out.println(timeConsup);
         }
 
-        System.out.println("EXACT SIMPLE MEAN == " + simpleMean.divide(new BigDecimal("512")));*/
+        System.out.println("All Done!!!");
+        TimeUnit.MINUTES.sleep(660);
 
-        InputVector teste = new InputVector("111001111".toCharArray());
+        //ProbCircuit exactVerilog = new CircuitFactory(cellLib, "CIRCUITOS-AMMES-MANSKE/seeds/verilog/table5_mapA_asap7-RVT-TT-CCS.v").getProbCircuit();
 
-        System.out.println(teste);
+
+
+        // Writer
+        //CriticalVectorsUtils.criticalVectorsListToJSON(vectors, "testandoObjCriticalExactlist.json");
+        //CriticalVectorsUtils.criticalVectorsExactListToJSON(vectors, "testandoObjCriticalExactlist.json", secondstimestamp);
+
+        // Reader
+        //ArrayList<InputVector> vectors = CriticalVectorsUtils.criticalVectorsListFromJSON("testandoUtils.json");
+        CriticalVectorsExactList criticalObj = CriticalVectorsUtils.criticalVectorsExactListFromJSON("testandoObjCriticalExactlist.json");
+
+        /*Gson gson = new Gson();*/
+        /*JsonWriter jsonWriter = new JsonWriter(new FileWriter("5xp1_inputVectors.json"));*/
+        /*JsonReader jsonReader = new JsonReader(new FileReader("5xp1_inputVectors.json"));*/
+        /*Type listType = new TypeToken<ArrayList<InputVector>>(){}.getType();*/
+
+        /*gson.toJson(vectors, listType, jsonWriter);
+        jsonWriter.close();*/
+
+        /*ArrayList<InputVector> fromJsonList = gson.fromJson(jsonReader, listType);*/
+
+
+
 
         System.out.println("*******************************************");
 
-        exactVerilog = new CircuitFactory(cellLib, "CIRCUITOS-AMMES-MANSKE/seeds/verilog/prom1_mapA_mylib.v").getProbCircuit();
+        System.out.println("OK");
+
+        for(InputVector in : criticalObj.getCriticalVectors()) {
+            System.out.println(in.getBinaryString() + " -*==*-> " + in.getDoubleReliability());
+        }
+
+        System.out.println("Timestamp from criticalObj == " + criticalObj.getSecondsTimeStamp() + "secs");
+        /*System.out.println("JSON LIST");
+        System.out.println("----------------------------------------");
+
+        for(InputVector in : fromJsonList) {
+            System.out.println(in.getBinaryString() + " -x-> " + in.getDoubleReliability());
+        }
+*/
+
+        /*exactVerilog = new CircuitFactory(cellLib, "CIRCUITOS-AMMES-MANSKE/seeds/verilog/prom1_mapA_mylib.v").getProbCircuit();
 
         JeneticsCriticalVectorsSPR criticals = new JeneticsCriticalVectorsSPR(exactVerilog, cellLib);
-        criticals.getCriticalVectors();
+        criticals.getCriticalVectors();*/
 
 
-        System.out.println("OK");
 
 
         /*final long startTime = System.currentTimeMillis();

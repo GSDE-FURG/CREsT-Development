@@ -17,10 +17,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import static  ops.CommonOps.timenow;
-import static  ops.CommonOps.timestamp;
-import static  ops.CommonOps.timestampDiff;
-
 import tool.Terminal;
 
 /**
@@ -245,7 +241,7 @@ public class MappedVerilogReader {
                     if (fooGate.getType().getOutputs().contains(signal[0])) {
                         //outputs.add(fooGate.getType().getOutputs().indexOf(signal[0]), getSignalById2(signal[1]));
                         outputs[fooGate.getType().getOutputs().indexOf(signal[0])] = getSignalById2(signal[1]);
-                        getSignalById2(signal[1]).setOrigin(fooGate);
+                        getSignalById2(signal[1]).setSignalOrigin(fooGate);
                     }
                     else {
                         // TODO: criar modelo para exceções
