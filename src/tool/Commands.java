@@ -3098,29 +3098,78 @@ public class Commands {
     public void Foo10() throws Exception {
         CellLibrary cellLib = new CellLibrary("genlibs/asap7_RVT_TT_ccs_ABC.genlib");
 
+        /*for (Cell c : cellLib.getCells()) {
+            System.out.println(c.getInputs().size() + " ==> " + c);
+        }*/
+
+        ProbCircuit exactVerilog2 = new CircuitFactory(cellLib, "CIRCUITOS-AMMES-MANSKE/seeds/verilog/table5_mapA_asap7-RVT-TT-CCS.v").getProbCircuit();
+        SPRController sController = new SPRController(exactVerilog2, cellLib);
+
+        ProbCircuit exactVerilog3 = new CircuitFactory(cellLib, "CIRCUITOS-AMMES-MANSKE/seeds/verilog/table5_mapA_asap7-RVT-TT-CCS.v").getProbCircuit();
+
+
+        final long startTime = System.currentTimeMillis();
+
+        System.out.println("mamae2");
+        /*for (int i = 0; i < exactVerilog3.getTotalInputVectors().intValue(); i++) {
+            sController.getReliability(new InputVector(i, exactVerilog2.getProbInputs().size()), 15);
+            String str1 = CommonOps.getOutputVector(exactVerilog2.getProbOutputs());
+
+            ArrayList<Boolean> outputVector = exactVerilog3.propagateInputVector(new InputVector(i, exactVerilog3.getProbInputs().size()));
+            String str2 = CriticalVectorsUtils.boolArrayToBinaryString(outputVector);
+
+            if(!str1.equals(str2)) {
+                System.out.println("DEU MERDA!! " + i + " == " + str1 + " --> " + str2);
+            }
+        }*/
+        HashMap<String, String> testingJSON = new HashMap<>();
+
+        /*for (int i = 0; i < exactVerilog3.getTotalInputVectors().intValue(); i++) {
+            InputVector inputV = new InputVector(i, exactVerilog3.getProbInputs().size());
+            ArrayList<Boolean> outputVector = exactVerilog3.propagateInputVector(inputV);
+            String str2 = CriticalVectorsUtils.boolArrayToBinaryString(outputVector);
+
+            testingJSON.put(inputV.getBinaryString(), str2);
+
+        }
+
+        CriticalVectorsUtils.inputOutputcombinationtoJSON(testingJSON, "testingTable5ALLCombinations.json");*/
+
+        testingJSON = CriticalVectorsUtils.inputOutputcombinationFromJSON("testingTable5ALLCombinations.json");
+
+        for (String out : testingJSON.values()) {
+            System.out.println(out);
+        }
+
+        final long endTime = System.currentTimeMillis();
+
+        long secondstimestamp = (endTime - startTime)/1000;
+
+        String timeConsup = "## TIME CONSUPTION OF " + exactVerilog3.getName() + " ## ==> " + secondstimestamp + " secs";
+        System.out.println(timeConsup);
+
+        TimeUnit.MINUTES.sleep(660);
+
 
         ArrayList<Path> circuits = ops.CommonOps.getAllVerilogCircuitsFromPath("CIRCUITOS-AMMES-MANSKE/seeds/verilog");
 
         for(Path p : circuits) {
             ProbCircuit exactVerilog = new CircuitFactory(cellLib, p.toString()).getProbCircuit();
 
-            final long startTime = System.currentTimeMillis();
+
 
             ArrayList<InputVector> vectors = ShellScriptOps.getOrderedInputVectorsReliability(exactVerilog, cellLib, false);
 
-            final long endTime = System.currentTimeMillis();
 
-            long secondstimestamp = (endTime - startTime)/1000;
 
             CriticalVectorsUtils.criticalVectorsExactListToJSON(vectors, String.format("CIRCUITOS-AMMES-MANSKE/seeds/criticalVectors/%s_criticalVectorsEXACTlist.json", exactVerilog.getName()), secondstimestamp);
             System.out.println("Json " + exactVerilog.getName() + " done!");
 
-            String timeConsup = "## TIME CONSUPTION OF " + exactVerilog.getName() + " ## ==> " + secondstimestamp + " secs";
-            System.out.println(timeConsup);
+
         }
 
         System.out.println("All Done!!!");
-        TimeUnit.MINUTES.sleep(660);
+
 
         //ProbCircuit exactVerilog = new CircuitFactory(cellLib, "CIRCUITOS-AMMES-MANSKE/seeds/verilog/table5_mapA_asap7-RVT-TT-CCS.v").getProbCircuit();
 

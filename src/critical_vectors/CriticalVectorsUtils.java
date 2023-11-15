@@ -11,6 +11,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class CriticalVectorsUtils {
 
@@ -51,6 +52,40 @@ public class CriticalVectorsUtils {
         CriticalVectorsExactList result = gson.fromJson(jsonReader, CriticalVectorsExactList.class);
 
         return result;
+    }
+
+    public static String boolArrayToBinaryString(ArrayList<Boolean> boolArray) {
+
+        StringBuilder builder = new StringBuilder(boolArray.size());
+
+        for (boolean value : boolArray) {
+            if(value) {
+                builder.append('1');
+            } else {
+                builder.append('0');
+            }
+        }
+
+        return builder.toString();
+    }
+
+    public static void inputOutputcombinationtoJSON(HashMap<String, String> combinations, String jsonPath) throws IOException {
+        Gson gson = new Gson();
+        InOutCombList combinationsObj = new InOutCombList(combinations);
+
+        JsonWriter jsonWriter = new JsonWriter(new FileWriter(jsonPath));
+
+        gson.toJson(combinationsObj, InOutCombList.class, jsonWriter);
+        jsonWriter.close();
+    }
+
+    public static HashMap<String, String> inputOutputcombinationFromJSON(String jsonPath) throws FileNotFoundException {
+        Gson gson = new Gson();
+        JsonReader jsonReader = new JsonReader(new FileReader(jsonPath));
+
+        InOutCombList result = gson.fromJson(jsonReader, InOutCombList.class);
+
+        return result.getInOutCombination();
     }
 
 }

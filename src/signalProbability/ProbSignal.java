@@ -24,6 +24,8 @@ public class ProbSignal extends Signal {
     private int currentState;
     private int[] states;
     private ArrayList<Boolean> signalValues;
+
+    private boolean logicValue;
     
     public ProbSignal(String id, Gate origin) {
         super(id);
@@ -131,8 +133,15 @@ public class ProbSignal extends Signal {
     
     public void clearSignalValues() {
         this.signalValues.clear();
-    }        
-    
+    }
+
+    public boolean getPSLogicValue() {
+        return logicValue;
+    }
+
+    public void setLogicValue(boolean logicValue) {
+        this.logicValue = logicValue;
+    }
 }
     
     

@@ -618,6 +618,7 @@ public class CommonOps {
     }
 
     public static String getOutputVector(ArrayList<ProbSignal> outPSignals) {
+
         String result = "";
         for (ProbSignal pSignal : outPSignals) {
             if(isLogicZero(pSignal.getProbMatrix())) {

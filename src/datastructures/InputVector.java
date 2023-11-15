@@ -70,6 +70,21 @@ public class InputVector {
     public char[] getValueToChar() {
         return this.getBinaryString().toCharArray();
     }
+
+    public ArrayList<Boolean> getBooleanList() {
+
+        String binary = this.getBinaryString();
+        ArrayList<Boolean> result = new ArrayList<>();
+
+        for(char c : binary.toCharArray()) {
+            if(c == '0') {
+                result.add(false);
+            } else {
+                result.add(true);
+            }
+        }
+        return result;
+    }
     
     public String getHexaString() {
         return value.toString(16);

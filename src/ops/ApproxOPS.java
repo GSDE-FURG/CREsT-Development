@@ -18,6 +18,51 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ApproxOPS {
+
+    public static void justCriticalVectorsApprox(String plaSeed,
+                                                 String verilogSeed,
+                                                 String cellLibraryPath,
+                                                 String aigOutputPath,
+                                                 String plaOutputPath,
+                                                 String minimizedPlaPath,
+                                                 String verilogOutputPath,
+                                                 boolean multDontCare,
+                                                 ArrayList<InputVector> vectors) throws Exception {
+
+        //Setting basics parameters to read a mapped verilog with CREST tool
+        CellLibrary cellLib = new CellLibrary(cellLibraryPath);
+        ProbCircuit exactVerilog = new CircuitFactory(cellLib, verilogSeed).getProbCircuit();
+
+        int totalInputs = exactVerilog.getTotalInputVectors().intValue();
+
+        if(vectors.size() > 0 && vectors.size() < totalInputs) {
+
+            //Create a PLA obj to add critical vectors
+            //PLA pla = new PLAManipulator().readPLAFile(plaSeed);
+            PLA pla = PLAOps.readPLAFile(plaSeed);
+
+            //Add the InputVectors as dont'care
+            for (InputVector inputV : vectors) {
+                pla.addDontCareTerm(inputV.getBinaryString());
+            }
+
+            //Is the per output method option?
+            if(!multDontCare) {
+                pla = PLAOps.getApproxPLAWithDontCarePerOutput(pla);
+            }
+
+            ShellScriptOps.makePLAMinimizationAndDeployToAigVerilog(pla,
+                    plaOutputPath,
+                    verilogOutputPath,
+                    aigOutputPath,
+                    minimizedPlaPath,
+                    cellLibraryPath);
+
+
+        } else {
+            System.out.println("CHECK CRITICAL VECTORS AMOUNT " + vectors.size());
+        }
+    }
     public static void justCriticalVectorsApprox(String plaSeed,
                                                  String verilogSeed,
                                                  String cellLibraryPath,

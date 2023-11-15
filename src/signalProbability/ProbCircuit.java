@@ -5,15 +5,10 @@
  */
 package signalProbability;
 
-import datastructures.Cell;
-import datastructures.Circuit;
-import datastructures.CustomMatrix;
-import datastructures.CustomMatrixLibrary;
+import datastructures.*;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
-import datastructures.Signal;
-import datastructures.Gate;
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -809,6 +804,56 @@ public class ProbCircuit extends Circuit {
         Map<boolean[], Boolean> helpTree = new LinkedHashMap<>();
         
         helpTree.put(new boolean[]{false, false}, false);
+    }
+
+
+    public ArrayList<Boolean> propagateInputVector(InputVector inputVector) {
+
+        ArrayList<Boolean> inputStream = inputVector.getBooleanList();
+        ArrayList<Boolean> outputStream = new ArrayList<Boolean>();
+
+        for (int i = 0; i < this.getProbInputs().size(); i++) {
+            this.getProbInputs().get(i).setLogicValue(inputStream.get(i));
+        }
+
+        /**
+         * Iterar sobre os GateLevels
+         */
+        //for (int i = 0; i < 1; i++) {
+        for (int i = 0; i < this.getProbGateLevels().size(); i++) {
+            ProbGateLevel pGateLevel = this.getProbGateLevels().get(i);
+
+            /**
+             * Iterar sobre os Gates de cada Gatelevel
+             */
+            for (int j = 0; j < pGateLevel.getProbGates().size(); j++) {
+                ProbGate pGate = pGateLevel.getProbGates().get(j);
+
+
+                ArrayList<Boolean> gateInputComb = new ArrayList<>();
+                //ArrayList<ArrayList<Boolean>> pGateComb = new ArrayList<>();
+
+                /**
+                 * Iterar sobre os sinais de cada Gate
+                 * Colocar os vetores em uma nova lista
+                 */
+                for (int k = 0; k < pGate.getpInputs().size(); k++) {
+                    ProbSignal pSignal = pGate.getpInputs().get(k);
+                    gateInputComb.add(pSignal.getPSLogicValue());
+                    //pGateComb.add(pSignal.getSignalValues());
+                }
+
+
+                pGate.getpOutputs().get(0).setLogicValue(pGate.getType().getCombination(gateInputComb));
+
+            }
+        }
+
+        for (ProbSignal probSignal : this.pOutputs) {
+            outputStream.add(probSignal.getPSLogicValue());
+        }
+
+        return outputStream;
     }
     
     public void setGatesDepth() {

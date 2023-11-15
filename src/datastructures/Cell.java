@@ -7,10 +7,7 @@ package datastructures;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  *
@@ -30,6 +27,7 @@ public class Cell {
     private BigDecimal[][] ptmSOnF;
     private int[] itm;
     private Map<ArrayList<Boolean>, Boolean> comb;
+    private HashMap<String, Boolean> dictTruthTable;
     
     
     public Cell() {
@@ -196,6 +194,7 @@ public class Cell {
     public void setComb(Map<ArrayList<Boolean>, Boolean> comb) {
         this.comb = comb;
     }
+
             
     @Override
     public String toString() {
@@ -230,5 +229,19 @@ public class Cell {
     public boolean getCombination(ArrayList<Boolean> comb) {
         return this.comb.get(comb);
     }
-        
+
+    public HashMap<String, Boolean> getDictTruthTable() {
+        return dictTruthTable;
+    }
+
+    public void setDictTruthTable(HashMap<String, Boolean> dictTruthTable) {
+        this.dictTruthTable = dictTruthTable;
+    }
+
+    private void makeDictTruthTable() {
+        this.dictTruthTable = new HashMap<String, Boolean>();
+
+
+    }
+
 }
