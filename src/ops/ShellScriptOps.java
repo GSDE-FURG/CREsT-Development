@@ -33,9 +33,10 @@ public class ShellScriptOps {
         }
     }
 
-    public static ArrayList<String> executeCommands(String path, String commands) throws IOException, InterruptedException {
+    public static Object[] executeCommands(String path, String commands) throws IOException, InterruptedException {
 
-        ArrayList<String> result = new ArrayList<>();
+        ArrayList<String> messageResult = new ArrayList<>();
+        Object[] result = new Object[2];
 
         String scriptPath = path;
 
@@ -44,21 +45,31 @@ public class ShellScriptOps {
 
         int exitValue = process.exitValue();
         if (exitValue == 0) {
+            result[0] = false;
             try {
                 String line;
 
                 BufferedReader in = new BufferedReader(
                         new InputStreamReader(process.getInputStream()) );
                 while ((line = in.readLine()) != null) {
-                    result.add(line);
+                    messageResult.add(line);
                 }
                 in.close();
             }
             catch (Exception e) {
                 // ...
             }
+            result[1] = messageResult;
         } else {
-            result.add("Script failed with exit value: " + exitValue);
+            result[0] = true;
+            messageResult.add("Script failed with exit value: " + exitValue);
+
+            BufferedReader stdOut = new BufferedReader(new InputStreamReader(process.getErrorStream()));
+            String s= null;
+            while ((s = stdOut.readLine()) != null) {
+                messageResult.add(s);
+            }
+            result[1] = messageResult;
         }
 
         return result;
@@ -190,20 +201,64 @@ public class ShellScriptOps {
 
     public static void makePLAMinimizationAndDeployToAigVerilog(PLA pla, String outPLADir, String verilogDir, String aigDir, String espressoDir, String libraryDir) throws IOException, InterruptedException {
 
-        PLAManipulator pManipulator = new PLAManipulator();
+        //If its constant zero pla
+        //ESPRESSO output needs to be "fr"
+        boolean fr = false;
+        if(pla.getTerms().size() == 0) {
+            fr = true;
+        }
 
         PLAOps.writePLA(outPLADir, pla);
 
         //Make PLA minimization
-        ShellScriptOps.executeCommands("/media/sf_PastaUbuntuServer/ShellScripting/plaToESPRESSO.sh",
-                String.format("ESPRESSO %s %s", outPLADir, espressoDir));
+        Object[] plaMiniProcessResult;
+        if(fr) {
+            plaMiniProcessResult = ShellScriptOps.executeCommands("/media/sf_PastaUbuntuServer/ShellScripting/plaToESPRESSO.sh",
+                    String.format("ESPRESSO_FR %s %s", outPLADir, espressoDir));
+        } else {
+            plaMiniProcessResult = ShellScriptOps.executeCommands("/media/sf_PastaUbuntuServer/ShellScripting/plaToESPRESSO.sh",
+                    String.format("ESPRESSO %s %s", outPLADir, espressoDir));
+        }
+
+        //Verify if generated PLA has no Terms
+        PLA resultPLA = PLAOps.readPLAFile(espressoDir);
+        if(resultPLA.getTerms().size() == 0) {
+            PLAOps.writePLA(espressoDir, resultPLA);
+        }
+
+        if((boolean)plaMiniProcessResult[0]) {
+            System.out.println("DEU PROBLEMA NO PROCESSO DE MINIMIZAÇÃO ==> " + outPLADir);
+            System.out.println(plaMiniProcessResult[1]);
+        }
 
         //Based on ESPRESSO minimization, write aig and mapped verilog
-        ShellScriptOps.executeCommands("/media/sf_PastaUbuntuServer/ShellScripting/plaToESPRESSO.sh",
+        Object[] toAigVerilogProcessResult = ShellScriptOps.executeCommands("/media/sf_PastaUbuntuServer/ShellScripting/plaToESPRESSO.sh",
                 String.format("ABC_PLA_AIG_VERILOG %s %s %s %s", espressoDir,
-                                                                 aigDir,
-                                                                 libraryDir,
-                                                                 verilogDir));
+                        aigDir,
+                        libraryDir,
+                        verilogDir));
+
+        if((boolean)toAigVerilogProcessResult[0]) {
+            Object[] newToAigVerilogProcessResult = ShellScriptOps.executeCommands("/media/sf_PastaUbuntuServer/ShellScripting/plaToESPRESSO.sh",
+                    String.format("ABC_PLA_AIG_VERILOG_RESYN3 %s %s %s %s", espressoDir,
+                            aigDir,
+                            libraryDir,
+                            verilogDir));
+
+            if((boolean)newToAigVerilogProcessResult[0]) {
+
+                Object[] lastGuessToAigVerilogProcessResult = ShellScriptOps.executeCommands("/media/sf_PastaUbuntuServer/ShellScripting/plaToESPRESSO.sh",
+                        String.format("ABC_PLA_AIG_VERILOG_RESYN %s %s %s %s", espressoDir,
+                                aigDir,
+                                libraryDir,
+                                verilogDir));
+
+                if((boolean)lastGuessToAigVerilogProcessResult[0]) {
+                    System.out.println("AIG AND VERILOG GENERATION PROCESS PROBLEM ==> " + espressoDir);
+                    System.out.println(lastGuessToAigVerilogProcessResult[1]);
+                }
+            }
+        }
 
     }
 

@@ -227,6 +227,17 @@ public class Cell {
     }
     
     public boolean getCombination(ArrayList<Boolean> comb) {
+
+        /*Object obj = this.comb.get(comb);
+
+        if(obj != null) {
+            return (Boolean)obj;
+        } else {
+            System.out.println("mamae");
+            System.out.println(comb);
+            return false;
+        }*/
+
         return this.comb.get(comb);
     }
 

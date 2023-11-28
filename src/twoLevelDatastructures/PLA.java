@@ -333,10 +333,33 @@ public class PLA {
         this.commentLines.add(line);
     }
 
+    public void addConstantsZero() {
+        String input = "-".repeat(this.qtInputs);
+        String output = "0".repeat(this.qtOutputs);
+        this.terms.add(0, new Term(input, output));
+    }
+
     public void clearCommentLines() {
         this.commentLines.clear();
     }
 
+    public int[] countingAllInputLiterals() {
+        int[] result = new int[3];
+
+        result[0] = 0;
+        result[1] = 0;
+        result[2] = 0;
+
+        for(Term t : this.getTerms()) {
+            int[] count = t.countingLiterals();
+
+            result[0] = result[0] + count[0];
+            result[1] = result[1] + count[1];
+            result[2] = result[2] + count[2];
+        }
+
+        return result;
+    }
     public String toString() {
         return this.name;
     }

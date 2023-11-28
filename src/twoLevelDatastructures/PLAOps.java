@@ -219,6 +219,11 @@ public class PLAOps {
         FileWriter fileWriter = new FileWriter(file);
         PrintWriter printWriter = new PrintWriter(fileWriter);
 
+        if(pla.getTerms().size() == 0) {
+            pla.addConstantsZero();
+            pla.setType("fr");
+        }
+
         //Write comments
         for(String line : pla.getCommentLines()) {
             printWriter.printf("# %s", line);
@@ -230,6 +235,11 @@ public class PLAOps {
             printWriter.printf(".ilb %s\n", pla.getInputLabels());
             printWriter.printf(".ob %s\n", pla.getOutputLabels());
         }
+
+        if(pla.getType() != null) {
+            printWriter.printf(".type %s\n", pla.getType());
+        }
+
         printWriter.printf(".p %s\n", pla.getTotalTerms());
 
         pla.getTerms().forEach(term -> printWriter.printf("%s\n", term));

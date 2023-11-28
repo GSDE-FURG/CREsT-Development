@@ -470,6 +470,96 @@ public class ApproxOPS {
 
     }
 
+    public static void approxMethodWrapper(String approxMethodType,
+                                           String plaSeed,
+                                           String verilogSeed,
+                                           String cellLibraryPath,
+                                           String aigOutputPath,
+                                           String plaOutputPath,
+                                           String minimizedPlaPath,
+                                           String verilogOutputPath,
+                                           ArrayList<InputVector> vectors) throws Exception {
+
+
+        switch (approxMethodType) {
+            case "JUST_CRIT_PER":
+                justCriticalVectorsApprox(plaSeed,
+                        verilogSeed,
+                        cellLibraryPath,
+                        aigOutputPath,
+                        plaOutputPath,
+                        minimizedPlaPath,
+                        verilogOutputPath,
+                        false,
+                        vectors);
+                break;
+
+            case "JUST_CRIT_MULTI":
+                justCriticalVectorsApprox(plaSeed,
+                        verilogSeed,
+                        cellLibraryPath,
+                        aigOutputPath,
+                        plaOutputPath,
+                        minimizedPlaPath,
+                        verilogOutputPath,
+                        true,
+                        vectors);
+                break;
+
+            /*case "TRACK_CRIT_PER":
+                trackCriticalVectorsApprox(plaSeed,
+                        verilogSeed,
+                        cellLibraryPath,
+                        aigOutputPath,
+                        plaOutputPath,
+                        minimizedPlaPath,
+                        verilogOutputPath,
+                        false,
+                        vectorAmount);
+                break;
+
+            case "TRACK_CRIT_MULTI":
+                trackCriticalVectorsApprox(plaSeed,
+                        verilogSeed,
+                        cellLibraryPath,
+                        aigOutputPath,
+                        plaOutputPath,
+                        minimizedPlaPath,
+                        verilogOutputPath,
+                        true,
+                        vectorAmount);
+                break;
+
+            case "TRACK_CRIT_SAME_SEED_PER":
+                trackCriticalSameSeedVectorsApprox(plaSeed,
+                        verilogSeed,
+                        cellLibraryPath,
+                        aigOutputPath,
+                        plaOutputPath,
+                        minimizedPlaPath,
+                        verilogOutputPath,
+                        false,
+                        vectorAmount);
+                break;
+
+            case "TRACK_CRIT_SAME_SEED_MULTI":
+                trackCriticalSameSeedVectorsApprox(plaSeed,
+                        verilogSeed,
+                        cellLibraryPath,
+                        aigOutputPath,
+                        plaOutputPath,
+                        minimizedPlaPath,
+                        verilogOutputPath,
+                        true,
+                        vectorAmount);
+                break;*/
+            default:
+                System.out.println("NÃO DEU!! " + approxMethodType);
+        }
+
+        System.out.println("Done! " + plaOutputPath);
+
+    }
     public static String getApproxMethod(String methodCandidate) {
 
         String result = null;

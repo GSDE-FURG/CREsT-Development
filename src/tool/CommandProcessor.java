@@ -729,6 +729,12 @@ class CommandProcessor {
             case "foo10":
                 cmd.Foo10();
                 break;
+            case "makeExactJustCritApprox":
+                cmd.MakeExactJustCritApprox();
+                break;
+            case "makeExaustiveTruthTableToJSON":
+                cmd.MakeExactJustCritApprox();
+                break;
             case "fooiscas21":
                 cmd.Foo_ISCAS2021();
                 break;

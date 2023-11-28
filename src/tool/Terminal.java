@@ -25,7 +25,6 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
 
-import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.script.ScriptException;
@@ -37,7 +36,6 @@ import javax.swing.JTextArea;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import levelDatastructures.LevelCircuit;
-import ops.CommonOps;
 import ops.SPROpsChuloMedio;
 import readers.MappedVerilogReader;
 import signalProbability.ProbCircuit;
@@ -59,6 +57,10 @@ TerminalWrapper {
             //cmds.Foo8();
             //cmds.Foo9();
             cmds.Foo10();
+            //cmds.MakeExactJustCritApprox();
+            //cmds.MakeExaustiveCriticalVectorsToJSON();
+            //cmds.MakeExaustiveTruthTableToJSON();
+            //cmds.prepareForResults();
 
                 Options options = new Options();
 

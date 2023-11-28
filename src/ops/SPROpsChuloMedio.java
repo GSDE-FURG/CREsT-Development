@@ -190,10 +190,10 @@ public class SPROpsChuloMedio {
                         if (difference.compareTo(BigDecimal.ZERO) != 0) {                        
                             BigDecimal[][] original_matrix = matrix;
                             matrix = CommonOps.getSignalMatrixDistributedError(matrix, difference, scale);
-                            if(pGateLevel.getLevel() == 1) {
+                            /*if(pGateLevel.getLevel() == 1) {
                                 System.out.println(pGate.getpInputs() + " ===> " + pGate + " ===> " + pGate.getType() + " ===> " + difference);
                                 CommonOps.matrixPrint(original_matrix);
-                            }
+                            }*/
                         }
                     }                    
                     pGate.getpOutputs().get(0).setProbMatrix(matrix);

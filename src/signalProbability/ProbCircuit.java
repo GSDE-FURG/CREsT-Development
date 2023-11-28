@@ -829,23 +829,30 @@ public class ProbCircuit extends Circuit {
             for (int j = 0; j < pGateLevel.getProbGates().size(); j++) {
                 ProbGate pGate = pGateLevel.getProbGates().get(j);
 
-
-                ArrayList<Boolean> gateInputComb = new ArrayList<>();
-                //ArrayList<ArrayList<Boolean>> pGateComb = new ArrayList<>();
-
                 /**
-                 * Iterar sobre os sinais de cada Gate
-                 * Colocar os vetores em uma nova lista
+                 * Se ProbGate for uma CONSTANT...
                  */
-                for (int k = 0; k < pGate.getpInputs().size(); k++) {
-                    ProbSignal pSignal = pGate.getpInputs().get(k);
-                    gateInputComb.add(pSignal.getPSLogicValue());
-                    //pGateComb.add(pSignal.getSignalValues());
+                if(pGate.getpInputs().isEmpty()) {
+                    if(pGate.getType().getFunctions().get(0).toLowerCase().contains("const1")) {
+                        pGate.getpOutputs().get(0).setLogicValue(true);
+                    } else {
+                        pGate.getpOutputs().get(0).setLogicValue(false);
+                    }
+                } else {
+                    ArrayList<Boolean> gateInputComb = new ArrayList<>();
+                    //ArrayList<ArrayList<Boolean>> pGateComb = new ArrayList<>();
+
+                    /**
+                     * Iterar sobre os sinais de cada Gate
+                     * Colocar os vetores em uma nova lista
+                     */
+                    for (int k = 0; k < pGate.getpInputs().size(); k++) {
+                        ProbSignal pSignal = pGate.getpInputs().get(k);
+                        gateInputComb.add(pSignal.getPSLogicValue());
+                        //pGateComb.add(pSignal.getSignalValues());
+                    }
+                    pGate.getpOutputs().get(0).setLogicValue(pGate.getType().getCombination(gateInputComb));
                 }
-
-
-                pGate.getpOutputs().get(0).setLogicValue(pGate.getType().getCombination(gateInputComb));
-
             }
         }
 
@@ -1008,5 +1015,22 @@ public class ProbCircuit extends Circuit {
         return result;
     }
     
-    
+    public int[] getProbGatesAndConstAmount() {
+        int gates = 0;
+        int consts = 0;
+        int[] result = new int[2];
+
+        for (ProbGate g : this.probGates) {
+            if(g.getType().getFunctions().get(0).toLowerCase().contains("const")) {
+                consts = consts + 1;
+            } else {
+                gates = gates + 1;
+            }
+        }
+
+        result[0] = gates;
+        result[1] = consts;
+
+        return result;
+    }
 }

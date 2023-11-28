@@ -60,4 +60,29 @@ public class Term {
         }
         return true;
     }
+
+    //[<negative_literal>, <positive_literal>, <dont_cares>]
+    public int[] countingLiterals() {
+        int[] result = new int[3];
+        int neg = 0;
+        int pos = 0;
+        int dont = 0;
+
+        for(char c : this.inputs.toCharArray()) {
+            if(c == '0') {
+                neg = neg + 1;
+            } else {
+                if(c=='1') {
+                    pos = pos + 1;
+                } else {
+                    dont = dont + 1;
+                }
+            }
+        }
+        result[0] = neg;
+        result[1] = pos;
+        result[2] = dont;
+
+        return result;
+    }
 }
