@@ -3101,197 +3101,624 @@ public class Commands {
         CellLibrary cellLib = new CellLibrary(genlibPath);
         ArrayList<java.nio.file.Path> circuits = new ArrayList<>();
 
+        List<String> exceptions = Arrays.asList(
+                //"5xp1",
+                //"9sym",
+                "alu4",
+                //"apex",
+                //"b12",
+                "clip",
+                //"ex1010",
+                //"intb",
+                //"max1024",
+                "misex"
+                //"sao2",
+                //"t481"
+        );
+
+
+        Files.list(Paths.get(String.format("%s/seeds/verilog", mainlyPath))).sorted().forEach(path -> circuits.add(path));
+
+        for(Path circuit : circuits) {
+
+            //Verify if current circuit is in exception list
+            boolean flagException = false;
+            for (String ex : exceptions) {
+                if(circuit.toString().toLowerCase().contains(ex)) {
+                    flagException = true;
+                }
+            }
+            if(!flagException) {
+                String circuitName = circuit.getFileName().toString().split(".v")[0];
+
+                ProbCircuit exactSeedCircuit = new CircuitFactory(cellLib, circuit.toString()).getProbCircuit();
+
+                HashMap<String, String> truthTablesList = new HashMap<>();
+                String jsonPath = String.format("%s/seeds/truthTable/%s.json", mainlyPath, circuitName);
+                truthTablesList = CriticalVectorsUtils.inputOutputcombinationFromJSON(jsonPath);
+
+
+                String alsracMainFolder = String.format("%s/%s/alsrac", resultPath, circuitName);
+
+                ArrayList<java.nio.file.Path> verilogPaths = new ArrayList<>();
+                ArrayList<java.nio.file.Path> alsracCandidates = new ArrayList<>();
+
+                ArrayList<String> alsracSeedCircuitsNames = new ArrayList<>(Arrays.asList(
+                        "05P---t481_0.00541016_1.4_158.23",
+                        "10P---t481_0.0144336_1.47_144.67",
+                        "20P---t481_0.187754_0.8_94.09"));
+
+
+
+                Files.list(Paths.get(String.format("%s/verilog", alsracMainFolder))).sorted().forEach(path -> verilogPaths.add(path));
+
+                for (Path verilog : verilogPaths) {
+                    for(String s : alsracSeedCircuitsNames) {
+                        if(verilog.toString().contains(s)) {
+                            alsracCandidates.add(verilog);
+                        }
+                    }
+                }
+
+                for(Path candidate : alsracCandidates) {
+
+                    String approxName = candidate.getFileName().toString().replace(".v", "");
+
+                    ProbCircuit approxCircuit = new CircuitFactory(cellLib, candidate.toString()).getProbCircuit();
+
+                    //HashMap<String, String> truthTablesListSubCircuit = new HashMap<>();
+                    ArrayList<InputVector> truthTablesListSubCircuit = new ArrayList<>();
+                    ArrayList<InputVector> uncoveredVectors = new ArrayList<>();
+
+                    for (int i = 0; i < approxCircuit.getTotalInputVectors().intValue(); i++) {
+                        InputVector inputV = new InputVector(i, approxCircuit.getProbInputs().size());
+                        ArrayList<Boolean> outputVector = approxCircuit.propagateInputVector(inputV);
+                        String bString = CriticalVectorsUtils.boolArrayToBinaryString(outputVector);
+
+                        inputV.setOutputBinaryString(bString);
+
+                        //truthTablesListSubCircuit.put(inputV.getBinaryString(), bString);
+                        truthTablesListSubCircuit.add(inputV);
+
+
+                    }
+
+
+
+                    for (InputVector inputV : truthTablesListSubCircuit) {
+                        if(!truthTablesList.get(inputV.getBinaryString()).equals(inputV.getOutputBinaryString())) {
+
+                            uncoveredVectors.add(inputV);
+                        }
+                    }
+
+                    System.out.println(approxName + " ==> " + uncoveredVectors.size() + " unconvered vectors");
+
+                    boolean plaOriginalFlag;
+                    boolean withDontCare;
+
+                    String alsracXplaMainFolderPath = "CIRCUITOS-AMMES-MANSKE/results/t481_asap7_RVT_TT_ccs_ABC/alsracXpla/";
+
+                    //make folder
+
+                    File mainlyAlsracXplaFolder = new File(alsracXplaMainFolderPath + approxName);
+                    File alsracXplaAigFolder = new File(alsracXplaMainFolderPath + approxName + "/aig");
+                    File alsracXplaPLAfolder = new File(alsracXplaMainFolderPath + approxName + "/pla");
+                    File alsracXplaVerilogFolder = new File(alsracXplaMainFolderPath + approxName + "/verilog");
+
+                    mainlyAlsracXplaFolder.mkdir();
+                    alsracXplaAigFolder.mkdir();
+                    alsracXplaPLAfolder.mkdir();
+                    alsracXplaVerilogFolder.mkdir();
+
+
+                    Path plaOriginal = Paths.get("CIRCUITOS-AMMES-MANSKE/seeds/pla/t481_ESPRESSO.pla");
+                    Path plaSeedAlsrac = Paths.get(candidate.getParent().getParent().toString() + "/pla/" + approxName + "_ESPRESSO.pla");
+
+                    String plaSeedName;
+                    String approxTermsOutput;
+
+                    String newPlaName;
+
+                    Path currentPlaSeed;
+
+                    for(int o = 0; o < 2; o++) {
+                        for(int d = 0; d < 2; d++) {
+                            if(o == 0) {
+                                plaOriginalFlag = false;
+                                plaSeedName = "alsrac";
+                                currentPlaSeed = plaSeedAlsrac;
+                            } else {
+                                plaOriginalFlag = true;
+                                plaSeedName = "original";
+                                currentPlaSeed = plaOriginal;
+                            }
+
+                            if(d == 0) {
+                                withDontCare = false;
+                                approxTermsOutput = "with_approx_fixed_output";
+                            } else {
+                                withDontCare = true;
+                                approxTermsOutput = "with_dont_cares";
+                            }
+
+                            newPlaName = String.format("t481_%s_SEED_from_%s_UNCOVERED_VECTORS_%s", plaSeedName, approxName, approxTermsOutput);
+
+                            String plaOutputPath = String.format("%s/%s.pla", alsracXplaPLAfolder.getAbsolutePath(), newPlaName);
+                            String EspressoOutputPath = String.format("%s/%s_ESPRESSO.pla", alsracXplaPLAfolder.getAbsolutePath(), newPlaName);
+                            String aigOutputPath = String.format("%s/%s.aig", alsracXplaAigFolder.getAbsolutePath(), newPlaName);
+                            String verilogOutputPath = String.format("%s/%s.v", alsracXplaVerilogFolder.getAbsolutePath(), newPlaName);
+
+
+                            ApproxOPS.insertInputVectorListandOutoutsInPLADeployAigVerilog(
+                                    currentPlaSeed.toString(),
+                                    plaOutputPath,
+                                    EspressoOutputPath,
+                                    genlibPath,
+                                    aigOutputPath,
+                                    verilogOutputPath,
+                                    uncoveredVectors,
+                                    withDontCare);
+                        }
+                    }
+
+
+
+
+
+                }
+
+
+                System.out.println("Finished!");
+            }
+
+
+        }
+
+
+        final long endTime = System.currentTimeMillis();
+
+        long secondstimestamp = (endTime - startTime)/1000;
+
+        String timeConsup = "## TIME CONSUPTION ## ==> " + secondstimestamp + " secs";
+        System.out.println(timeConsup);
+
+    }
+
+
+    public void MakeALSRACBlifResults() throws Exception {
+
+        final long startTime = System.currentTimeMillis();
+
+        //Parameters
+        String mainlyPath = "CIRCUITOS-AMMES-MANSKE";
+        String resultPath = String.format("%s/results", mainlyPath);
+        String genlibPath = "genlibs/asap7_RVT_TT_ccs_ABC.genlib";
+
+        CellLibrary cellLib = new CellLibrary(genlibPath);
+        ArrayList<java.nio.file.Path> circuits = new ArrayList<>();
+
+        List<String> exceptions = Arrays.asList(
+                //"5xp1",
+                //"9sym",
+                "alu4",
+                //"apex",
+                //"b12",
+                "clip",
+                //"ex1010",
+                //"intb",
+                //"max1024",
+                "misex"
+                //"sao2",
+                //"t481"
+        );
+
+
+        Files.list(Paths.get(String.format("%s/seeds/verilog", mainlyPath))).sorted().forEach(path -> circuits.add(path));
+
+        for(Path circuit : circuits) {
+
+            //Verify if current circuit is in exception list
+            boolean flagException = false;
+            for (String ex : exceptions) {
+                if(circuit.toString().toLowerCase().contains(ex)) {
+                    flagException = true;
+                }
+            }
+            if(!flagException) {
+                String circuitName = circuit.getFileName().toString().split(".v")[0];
+
+
+
+                String alsracMainFolder = String.format("%s/%s/alsrac", resultPath, circuitName);
+
+                ArrayList<java.nio.file.Path> paths = new ArrayList<>();
+
+                // make AIG, PLA and VERILOG folder
+                new File(String.format("%s/aig", alsracMainFolder)).mkdir();
+                new File(String.format("%s/pla", alsracMainFolder)).mkdir();
+                new File(String.format("%s/verilog", alsracMainFolder)).mkdir();
+
+                Files.list(Paths.get(String.format("%s/blif", alsracMainFolder))).sorted().forEach(path -> paths.add(path));
+
+                for (Path blif : paths) {
+                    String fileName = blif.getFileName().toString().split(".blif")[0];
+                    String aigOutputPath = String.format("%s/aig/%s.aig", blif.getParent().getParent().toString(), fileName);
+                    String verilogOutputPath = String.format("%s/verilog/%s.v", blif.getParent().getParent().toString(), fileName);
+                    String plaPath = String.format("%s/pla/%s.pla", blif.getParent().getParent().toString(), fileName);
+                    String plaESPRESSOPath = String.format("%s/pla/%s_ESPRESSO.pla", blif.getParent().getParent().toString(), fileName);
+
+                    String command = String.format("ALSRAC_BLIF_AIG_PLA_ESPRESSO %s %s %s %s %s %s",
+                            genlibPath,
+                            blif.toString(),
+                            aigOutputPath,
+                            verilogOutputPath,
+                            plaPath,
+                            plaESPRESSOPath);
+
+                    Object[] result = ShellScriptOps.executeCommands("/media/sf_PastaUbuntuServer/ShellScripting/plaToESPRESSO.sh",
+                            command);
+
+                }
+
+                System.out.println("Finished!");
+            }
+
+
+        }
+
+        /*ArrayList<java.nio.file.Path> paths = new ArrayList<>();
+
+        Files.list(Paths.get("CIRCUITOS-AMMES-MANSKE/results/5xp1_mapA_mylib/alsrac/blif/")).sorted().forEach(path -> paths.add(path));
+
+        for (Path path : paths) {
+            String fileName = path.getFileName().toString().split(".blif")[0];
+
+
+            ShellScriptOps.deployBLIFAigVerilog( fileName,
+                    path.toString(),
+                    "CIRCUITOS-AMMES-MANSKE/results/5xp1_mapA_mylib/alsrac/verilog/",
+                    "CIRCUITOS-AMMES-MANSKE/results/5xp1_mapA_mylib/alsrac/aig/",
+                    "genlibs/mylib.genlib");
+        }
+
+        System.out.println("Finished!");*/
+
+
+        final long endTime = System.currentTimeMillis();
+
+        long secondstimestamp = (endTime - startTime)/1000;
+
+        String timeConsup = "## TIME CONSUPTION ## ==> " + secondstimestamp + " secs";
+        System.out.println(timeConsup);
+
+    }
+    public void AnalyseApproxVersions() throws Exception {
+
+        final long startTime = System.currentTimeMillis();
+
+        List<String> exceptions = Arrays.asList(
+                //"5xp1",
+                //"9sym",
+                "alu4",
+                //"apex",
+                //"b12",
+                "clip",
+                //"ex1010",
+                //"intb",
+                //"max1024",
+                "misex"
+                //"sao2",
+                //"t481"
+        );
+
+        //Parameters
+        String mainlyPath = "CIRCUITOS-AMMES-MANSKE";
+        String resultPath = String.format("%s/results", mainlyPath);
+        String genlibPath = "genlibs/asap7_RVT_TT_ccs_ABC.genlib";
+
+        CellLibrary cellLib = new CellLibrary(genlibPath);
+        ArrayList<java.nio.file.Path> circuits = new ArrayList<>();
+
         Files.list(Paths.get(String.format("%s/seeds/verilog", mainlyPath))).sorted().forEach(path -> circuits.add(path));
 
         for(Path p : circuits) {
-            String circuitName = p.getFileName().toString().split(".v")[0];
 
-            ProbCircuit exactSeedCircuit = new CircuitFactory(cellLib, p.toString()).getProbCircuit();
-            int[] gatesAndConstAmount = exactSeedCircuit.getProbGatesAndConstAmount();
+            //Verify if current circuit is in exception list
+            boolean flagException = false;
+            for (String ex : exceptions) {
+                if(p.toString().toLowerCase().contains(ex)) {
+                    flagException = true;
+                }
+            }
+            if(!flagException) {
+                String circuitName = p.getFileName().toString().split(".v")[0];
 
-            //System.out.println(circuitName + " ==> " + truthTablesList.keySet().size());
+                ProbCircuit exactSeedCircuit = new CircuitFactory(cellLib, p.toString()).getProbCircuit();
+                int[] gatesAndConstAmount = exactSeedCircuit.getProbGatesAndConstAmount();
+
+                //System.out.println(circuitName + " ==> " + truthTablesList.keySet().size());
 
 
-            /*SPRController sprController = new SPRController(exactSeedCircuit, cellLib);
-            BigInteger mtbf = CommonOps.getMTBFBigInt(sprController.getReliability("0.99999802495", 25));
+                SPRController sprController = new SPRController(exactSeedCircuit, cellLib);
+                BigInteger mtbf = CommonOps.getMTBFBigInt(sprController.getReliability("0.99999802495", 25));
 
 
-            // PRINT MAPPED VERILOG OLD REFERENCE
-            System.out.println(String.format("%s %d/%d %d %d %.2f **** %s %d %d",
-                    exactSeedCircuit.getName(),
-                    exactSeedCircuit.getProbInputs().size(),
-                    exactSeedCircuit.getProbOutputs().size(),
-                    gatesAndConstAmount[0],
-                    gatesAndConstAmount[1],
-                    exactSeedCircuit.getTotalArea(),
-                    mtbf.toString(),
-                    exactSeedCircuit.getProbGateLevels().size(),
-                    exactSeedCircuit.getFanouts().size()
-                    ));
+                // PRINT MAPPED VERILOG REFERENCE
+                System.out.println(String.format("%s %d/%d %d %d %s **** **** %s %d %d",
+                        exactSeedCircuit.getName(),
+                        exactSeedCircuit.getProbInputs().size(),
+                        exactSeedCircuit.getProbOutputs().size(),
+                        gatesAndConstAmount[0],
+                        gatesAndConstAmount[1],
+                        String.format("%.2f", exactSeedCircuit.getTotalArea()).replace(',', '.'),
+                        mtbf.toString(),
+                        exactSeedCircuit.getProbGateLevels().size(),
+                        exactSeedCircuit.getFanouts().size()
+                ));
 
-            String approxRefMid = String.format("%s/%s/%s", resultPath, circuitName, circuitName);
+            /*String approxRefMid = String.format("%s/%s/%s", resultPath, circuitName, circuitName);
             String aproxRefPath = String.format("%s_fromPLA.v", approxRefMid);
 
-            ProbCircuit approxRefCircuit = new CircuitFactory(cellLib, aproxRefPath).getProbCircuit();
+            ProbCircuit approxRefCircuit = new CircuitFactory(cellLib, aproxRefPath).getProbCircuit();*/
 
-            HashMap<String, String> truthTablesList = new HashMap<>();
+                HashMap<String, String> truthTablesList = new HashMap<>();
 
-            String jsonPath = String.format("%s_fromPLA_truthTable.json", approxRefMid);
-            truthTablesList = CriticalVectorsUtils.inputOutputcombinationFromJSON(jsonPath);
+                String jsonPath = String.format("%s/seeds/truthTable/%s.json", mainlyPath, circuitName);
+                truthTablesList = CriticalVectorsUtils.inputOutputcombinationFromJSON(jsonPath);
 
-            int[] gatesAndConstAmountApproxRef = approxRefCircuit.getProbGatesAndConstAmount();
+            /*int[] gatesAndConstAmountApproxRef = approxRefCircuit.getProbGatesAndConstAmount();
 
             SPRController sprControllerApproxRef = new SPRController(approxRefCircuit, cellLib);
-            BigInteger mtbfApproxRef = CommonOps.getMTBFBigInt(sprControllerApproxRef.getReliability("0.99999802495", 25));
+            BigInteger mtbfApproxRef = CommonOps.getMTBFBigInt(sprControllerApproxRef.getReliability("0.99999802495", 25));*/
 
 
 
-            // PRINT MAPPED FROM ABC PLA VERILOG REFERENCE
-            System.out.println(String.format("%s %d/%d %d %d %.2f **** %s %d %d",
+                // PRINT MAPPED FROM ABC PLA VERILOG REFERENCE
+            /*System.out.println(String.format("%s %d/%d %d %d %s **** **** %s %d %d",
                     approxRefCircuit.getName(),
                     approxRefCircuit.getProbInputs().size(),
                     approxRefCircuit.getProbOutputs().size(),
                     gatesAndConstAmountApproxRef[0],
                     gatesAndConstAmountApproxRef[1],
-                    approxRefCircuit.getTotalArea(),
+                    String.format("%.2f", approxRefCircuit.getTotalArea()).replace(',', '.'),
                     mtbfApproxRef.toString(),
                     approxRefCircuit.getProbGateLevels().size(),
                     approxRefCircuit.getFanouts().size()
             ));*/
 
 
-            /*ArrayList<java.nio.file.Path> subCircuits = new ArrayList<>();
+                ArrayList<java.nio.file.Path> subCircuits = new ArrayList<>();
 
-            //Multi-output
-            Files.list(Paths.get(String.format("%s/%s/%s_just_crit_multi_output/verilog", resultPath, circuitName, circuitName))).sorted().forEach(path -> subCircuits.add(path));
+                /*//Multi-output
+                Files.list(Paths.get(String.format("%s/%s/%s_just_crit_multi_output/verilog", resultPath, circuitName, circuitName))).sorted().forEach(path -> subCircuits.add(path));
 
-            //Per-output
-            Files.list(Paths.get(String.format("%s/%s/%s_just_crit_per_output/verilog", resultPath, circuitName, circuitName))).sorted().forEach(path -> subCircuits.add(path));
+                //Per-output
+                Files.list(Paths.get(String.format("%s/%s/%s_just_crit_per_output/verilog", resultPath, circuitName, circuitName))).sorted().forEach(path -> subCircuits.add(path));
 
+                //ALSRAC
+                Files.list(Paths.get(String.format("%s/%s/alsrac/verilog", resultPath, circuitName))).sorted().forEach(path -> subCircuits.add(path));
 
-            for (Path pt : subCircuits) {
-                ProbCircuit approxCircuit = new CircuitFactory(cellLib, pt.toString()).getProbCircuit();
+                //ALSRAC-x-PLA--05P
+                Files.list(Paths.get(String.format("%s/%s/alsracXpla/05P---t481_0.00541016_1.4_158.23/verilog", resultPath, circuitName))).sorted().forEach(path -> subCircuits.add(path));
 
-                HashMap<String, String> truthTablesListSubCircuit = new HashMap<>();
+                //ALSRAC-x-PLA--10P
+                Files.list(Paths.get(String.format("%s/%s/alsracXpla/10P---t481_0.0144336_1.47_144.67/verilog", resultPath, circuitName))).sorted().forEach(path -> subCircuits.add(path));*/
 
-                for (int i = 0; i < approxCircuit.getTotalInputVectors().intValue(); i++) {
-                    InputVector inputV = new InputVector(i, approxCircuit.getProbInputs().size());
-                    ArrayList<Boolean> outputVector = approxCircuit.propagateInputVector(inputV);
-                    String bString = CriticalVectorsUtils.boolArrayToBinaryString(outputVector);
+                //ALSRAC-x-PLA--20P
+                Files.list(Paths.get(String.format("%s/%s/alsracXpla/20P---t481_0.187754_0.8_94.09/verilog", resultPath, circuitName))).sorted().forEach(path -> subCircuits.add(path));
 
-                    truthTablesListSubCircuit.put(inputV.getBinaryString(), bString);
-                }
+                for (Path pt : subCircuits) {
 
-                int counter = 0;
+                    String approxName = pt.getFileName().toString().replace(".v", "");
 
-                for (String keyApprox : truthTablesListSubCircuit.keySet()) {
-                    if(!truthTablesList.get(keyApprox).equals(truthTablesListSubCircuit.get(keyApprox))) {
-                        counter = counter + 1;
+                    ProbCircuit approxCircuit = new CircuitFactory(cellLib, pt.toString()).getProbCircuit();
+
+                    HashMap<String, String> truthTablesListSubCircuit = new HashMap<>();
+
+                    for (int i = 0; i < approxCircuit.getTotalInputVectors().intValue(); i++) {
+                        InputVector inputV = new InputVector(i, approxCircuit.getProbInputs().size());
+                        ArrayList<Boolean> outputVector = approxCircuit.propagateInputVector(inputV);
+                        String bString = CriticalVectorsUtils.boolArrayToBinaryString(outputVector);
+
+                        truthTablesListSubCircuit.put(inputV.getBinaryString(), bString);
                     }
+
+                    int counter = 0;
+
+                    for (String keyApprox : truthTablesListSubCircuit.keySet()) {
+                        if(!truthTablesList.get(keyApprox).equals(truthTablesListSubCircuit.get(keyApprox))) {
+
+                            counter = counter + 1;
+
+                            //if(pt.getFileName().toString().toLowerCase().contains("00263672_1.84")) {
+                            if(pt.getFileName().toString().toLowerCase().contains("0.210811_0.68")) {
+                                System.out.println(String.format("%s %s", keyApprox, truthTablesList.get(keyApprox)));
+                            }
+                        }
+                    }
+                    //System.out.println("SubCircuit " + approxCircuit.getName() + " has " + counter + " uncovered Vectors of " + exactSeedCircuit.getTotalInputVectors());
+                    int[] gatesAmount2 = approxCircuit.getProbGatesAndConstAmount();
+
+                    String mtbf2;
+
+                    if(gatesAmount2[0] == 0) {
+                        mtbf2 = "infinity";
+                    } else {
+                        SPRController sprController2 = new SPRController(approxCircuit, cellLib);
+                        mtbf2 = CommonOps.getMTBFBigInt(sprController2.getReliability("0.99999802495", 25)).toString();
+                    }
+
+                    BigDecimal test = new BigDecimal(Integer.toString(counter));
+                    test = test.divide(new BigDecimal(approxCircuit.getTotalInputVectors()));
+                    test = test.multiply(new BigDecimal("100")).setScale(2, RoundingMode.CEILING);
+
+
+                    System.out.println(String.format("%s %d/%d %d %d %s %s %d %s %d %d",
+                            approxName,
+                            approxCircuit.getProbInputs().size(),
+                            approxCircuit.getProbOutputs().size(),
+                            gatesAmount2[0],
+                            gatesAmount2[1],
+                            String.format("%.2f", approxCircuit.getTotalArea()).replace(',', '.'),
+                            test.toString(),
+                            counter,
+                            mtbf2.toString(),
+                            approxCircuit.getProbGateLevels().size(),
+                            approxCircuit.getFanouts().size()
+                    ));
+
                 }
-                //System.out.println("SubCircuit " + approxCircuit.getName() + " has " + counter + " uncovered Vectors of " + exactSeedCircuit.getTotalInputVectors());
-                int[] gatesAmount2 = approxCircuit.getProbGatesAndConstAmount();
 
-                String mtbf2;
+                System.out.println("####################################################################");
 
-                if(gatesAmount2[0] == 0) {
-                    mtbf2 = "infinity";
-                } else {
-                    SPRController sprController2 = new SPRController(approxCircuit, cellLib);
-                    mtbf2 = CommonOps.getMTBFBigInt(sprController2.getReliability("0.99999802495", 25)).toString();
+
+
+                ArrayList<java.nio.file.Path> subCircuitsPLA = new ArrayList<>();
+
+                //Seed
+                //subCircuitsPLA.add(Paths.get(String.format("%s/%s/%s_ESPRESSO.pla", resultPath, circuitName, circuitName)));
+                subCircuitsPLA.add(Paths.get(String.format("%s/seeds/pla/%s_ESPRESSO.pla", mainlyPath, circuitName.split("_")[0])));
+
+                //Multi-output
+                /*Files.list(Paths.get(String.format("%s/%s/%s_just_crit_multi_output/pla", resultPath, circuitName, circuitName))).sorted().forEach(path -> {
+                    if(path.toString().toLowerCase().contains("espresso")) {
+                        subCircuitsPLA.add(path);
+                    }
+                });
+
+                //Per-output
+                Files.list(Paths.get(String.format("%s/%s/%s_just_crit_per_output/pla", resultPath, circuitName, circuitName))).sorted().forEach(path -> {
+                    if(path.toString().toLowerCase().contains("espresso")) {
+                        subCircuitsPLA.add(path);
+                    }
+                });
+
+                //ALSRAC
+                Files.list(Paths.get(String.format("%s/%s/alsrac/pla", resultPath, circuitName))).sorted().forEach(path -> {
+                    if(path.toString().toLowerCase().contains("espresso")) {
+                        subCircuitsPLA.add(path);
+                    }
+                });
+
+                //ALSRAC-x-PLA---05P
+                Files.list(Paths.get(String.format("%s/%s/alsracXpla/05P---t481_0.00541016_1.4_158.23/pla", resultPath, circuitName))).sorted().forEach(path -> {
+                    if(path.toString().toLowerCase().contains("espresso")) {
+                        subCircuitsPLA.add(path);
+                    }
+                });
+
+                //ALSRAC-x-PLA---10P
+                Files.list(Paths.get(String.format("%s/%s/alsracXpla/10P---t481_0.0144336_1.47_144.67/pla", resultPath, circuitName))).sorted().forEach(path -> {
+                    if(path.toString().toLowerCase().contains("espresso")) {
+                        subCircuitsPLA.add(path);
+                    }
+                }); */
+
+                //ALSRAC-x-PLA---20P
+                Files.list(Paths.get(String.format("%s/%s/alsracXpla/20P---t481_0.187754_0.8_94.09/pla", resultPath, circuitName))).sorted().forEach(path -> {
+                    if(path.toString().toLowerCase().contains("espresso")) {
+                        subCircuitsPLA.add(path);
+                    }
+                });
+
+                for(Path plaPath : subCircuitsPLA) {
+                    PLA currentPLA = PLAOps.readPLAFile(plaPath.toString());
+                    int[] literals = currentPLA.countingAllInputLiterals();
+
+                    String plaInOUt = String.format("%d/%d", currentPLA.getQtInputs(), currentPLA.getQtOutputs());
+
+                    String plaTableLine = String.format("%s %s %d %d %d %d",
+                            plaPath.getFileName().toString(),
+                            plaInOUt,
+                            literals[0],
+                            literals[1],
+                            literals[2],
+                            currentPLA.getTerms().size());
+
+                    System.out.println(plaTableLine);
                 }
 
+                System.out.println("####################################################################");
 
-                System.out.println(String.format("%s %d/%d %d %d %.2f %d %s %d %d",
-                        approxCircuit.getName(),
-                        approxCircuit.getProbInputs().size(),
-                        approxCircuit.getProbOutputs().size(),
-                        gatesAmount2[0],
-                        gatesAmount2[1],
-                        approxCircuit.getTotalArea(),
-                        counter,
-                        mtbf2.toString(),
-                        approxCircuit.getProbGateLevels().size(),
-                        approxCircuit.getFanouts().size()
-                ));
+                ArrayList<java.nio.file.Path> subCircuitsAIG = new ArrayList<>();
 
+                //Seed
+                subCircuitsAIG.add(Paths.get(String.format("%s/seeds/aig/%s.aig", mainlyPath, circuitName.split("_")[0])));
+
+                //Multi-output
+                /*Files.list(Paths.get(String.format("%s/%s/%s_just_crit_multi_output/aig", resultPath, circuitName, circuitName))).sorted().forEach(path -> {
+                    if(!path.toString().toLowerCase().contains("stats")) {
+                        subCircuitsAIG.add(path);
+                    }
+                });
+
+                //Per-output
+                Files.list(Paths.get(String.format("%s/%s/%s_just_crit_per_output/aig", resultPath, circuitName, circuitName))).sorted().forEach(path -> {
+                    if(!path.toString().toLowerCase().contains("stats")) {
+                        subCircuitsAIG.add(path);
+                    }
+                });
+
+                //ALSRAC
+                Files.list(Paths.get(String.format("%s/%s/alsrac/aig", resultPath, circuitName))).sorted().forEach(path -> {
+                    if(!path.toString().toLowerCase().contains("stats")) {
+                        subCircuitsAIG.add(path);
+                    }
+                });
+
+                //ALSRAC-x-PLA---05P
+                Files.list(Paths.get(String.format("%s/%s/alsracXpla/05P---t481_0.00541016_1.4_158.23/aig", resultPath, circuitName))).sorted().forEach(path -> {
+                    if(!path.toString().toLowerCase().contains("stats")) {
+                        subCircuitsAIG.add(path);
+                    }
+                });
+
+                //ALSRAC-x-PLA---10P
+                Files.list(Paths.get(String.format("%s/%s/alsracXpla/10P---t481_0.0144336_1.47_144.67/aig", resultPath, circuitName))).sorted().forEach(path -> {
+                    if(!path.toString().toLowerCase().contains("stats")) {
+                        subCircuitsAIG.add(path);
+                    }
+                }); */
+
+                //ALSRAC-x-PLA---20P
+                Files.list(Paths.get(String.format("%s/%s/alsracXpla/20P---t481_0.187754_0.8_94.09/aig", resultPath, circuitName))).sorted().forEach(path -> {
+                    if(!path.toString().toLowerCase().contains("stats")) {
+                        subCircuitsAIG.add(path);
+                    }
+                });
+
+                for (Path aig : subCircuitsAIG) {
+
+
+                    //Writting AIG Stats
+                    String parentFolder = aig.getParent().toString();
+                    String aigName = aig.getFileName().toString().replace(".aig", "");
+                    String aigJsonPath = String.format("%s/%s_STATS.json", parentFolder, aigName);
+                    ShellScriptOps.aigABCStatsToJSON(aig.toString(), aigJsonPath);
+
+
+                    //Reading JSON AIG Stats
+                    FileReader reader = new FileReader(aigJsonPath);
+                    JSONTokener tokener = new JSONTokener(reader);
+                    JSONObject jsonData = new JSONObject(tokener);
+
+                    String aigStatsLine = String.format("%s %d/%d %d %d",
+                            aig.getFileName().toString(),
+                            jsonData.getInt("input"),
+                            jsonData.getInt("output"),
+                            jsonData.getInt("and"),
+                            jsonData.getInt("level"));
+
+                    System.out.println(aigStatsLine);
+
+                }
+                System.out.println("############################################################");
+
+
+                //TimeUnit.MINUTES.sleep(660);
             }
 
-            System.out.println("####################################################################");*/
-
-
-
-            ArrayList<java.nio.file.Path> subCircuitsPLA = new ArrayList<>();
-
-            //Original Seed
-
-
-            //Seed
-            subCircuitsPLA.add(Paths.get(String.format("%s/%s/%s_ESPRESSO.pla", resultPath, circuitName, circuitName)));
-
-            //Multi-output
-            Files.list(Paths.get(String.format("%s/%s/%s_just_crit_multi_output/pla", resultPath, circuitName, circuitName))).sorted().forEach(path -> {
-                if(path.toString().toLowerCase().contains("espresso")) {
-                    subCircuitsPLA.add(path);
-                }
-            });
-
-            //Per-output
-            Files.list(Paths.get(String.format("%s/%s/%s_just_crit_per_output/pla", resultPath, circuitName, circuitName))).sorted().forEach(path -> {
-                if(path.toString().toLowerCase().contains("espresso")) {
-                    subCircuitsPLA.add(path);
-                }
-            });
-
-            for(Path plaPath : subCircuitsPLA) {
-                PLA currentPLA = PLAOps.readPLAFile(plaPath.toString());
-                int[] literals = currentPLA.countingAllInputLiterals();
-
-                String plaInOUt = String.format("%d/%d", currentPLA.getQtInputs(), currentPLA.getQtOutputs());
-
-                String plaTableLine = String.format("%s %s %d %d %d %d",
-                        plaPath.getFileName().toString(),
-                        plaInOUt,
-                        literals[0],
-                        literals[1],
-                        literals[2],
-                        currentPLA.getTerms().size());
-
-                System.out.println(plaTableLine);
-            }
-
-            System.out.println("####################################################################");
-
-            ArrayList<java.nio.file.Path> subCircuitsAIG = new ArrayList<>();
-
-            //Seed from Blif
-            subCircuitsAIG.add(Paths.get(String.format("%s/seeds/aig/%s_fromBlif.aig", mainlyPath, circuitName.split("_")[0])));
-
-            //Seed from PLA
-            subCircuitsAIG.add(Paths.get(String.format("%s/%s/%s_fromPLA.aig", resultPath, circuitName, circuitName)));
-
-            //Multi-output
-            Files.list(Paths.get(String.format("%s/%s/%s_just_crit_multi_output/aig", resultPath, circuitName, circuitName))).sorted().forEach(path -> subCircuitsAIG.add(path));
-
-            //Per-output
-            Files.list(Paths.get(String.format("%s/%s/%s_just_crit_per_output/aig", resultPath, circuitName, circuitName))).sorted().forEach(path -> subCircuitsAIG.add(path));
-
-            for (Path aig : subCircuitsAIG) {
-
-                String aigName = aig.getFileName().toString();
-                String parentFolder = aig.getParent().toString();
-
-                System.out.println("------------------------------------------");
-
-                /*FileReader reader = new FileReader("TEMP/test_ps.json");
-                JSONTokener tokener = new JSONTokener(reader);
-                JSONObject jsonData = new JSONObject(tokener);
-
-                System.out.println(jsonData.get("and"));*/
-
-            }
-
-            TimeUnit.MINUTES.sleep(660);
 
         }
 
@@ -3375,7 +3802,8 @@ public class Commands {
             final long endTime = System.currentTimeMillis();
             long secondstimestamp = (endTime - startTime2)/1000;
             // Writer
-            CriticalVectorsUtils.criticalVectorsExactListToJSON(list, "CIRCUITOS-AMMES-MANSKE/seeds/criticalVectors/apex4_mapA_asap7-RVT-TT-CCS_criticalVectorsEXACTlist.json", secondstimestamp);
+            //CriticalVectorsUtils.criticalVectorsExactListToJSON(list, "CIRCUITOS-AMMES-MANSKE/seeds/criticalVectors/apex4_mapA_asap7-RVT-TT-CCS_criticalVectorsEXACTlist.json", secondstimestamp);
+            CriticalVectorsUtils.criticalVectorsExactListToJSON(list, String.format("%s/seeds/criticalVectors/%s_criticalVectors.json", mainlyPath, circuitName), (System.currentTimeMillis() - startTime2)/1000);
             String timeConsup = "## TIME CONSUPTION ## ==> " + secondstimestamp + " secs";
             System.out.println(timeConsup);
         }
@@ -3386,7 +3814,7 @@ public class Commands {
         System.out.println(timeConsup);
     }
 
-    public void prepareForResults() throws Exception {
+    public void prepareForResultsMappedVerilogAsSeed() throws Exception {
 
         final long startTime = System.currentTimeMillis();
 
@@ -3464,6 +3892,86 @@ public class Commands {
 
     }
 
+    public void prepareForResultsPLAAsSeed() throws Exception {
+
+        final long startTime = System.currentTimeMillis();
+
+        //Parameters
+        String mainlyPath = "CIRCUITOS-AMMES-MANSKE";
+        String resultPath = String.format("%s/results", mainlyPath);
+        Path gentlibPath = Paths.get("genlibs/asap7_RVT_TT_ccs_ABC.genlib");
+
+
+        //flags
+        boolean makeEspressoAigBlifVerilog = false;
+
+        CellLibrary cellLib = new CellLibrary(gentlibPath.toString());
+        ArrayList<java.nio.file.Path> plas = new ArrayList<>();
+
+        Files.list(Paths.get(String.format("%s/seeds/pla", mainlyPath))).sorted().forEach(path -> {
+            if(!path.toString().toLowerCase().contains("espresso")) {
+                plas.add(path);
+            }
+        });
+
+        for(Path p : plas) {
+
+            long startTime2 = System.currentTimeMillis();
+
+            //Local parameters
+            String plaName = p.getFileName().toString().split(".pla")[0];
+            String espressoPLAName = String.format("%s_ESPRESSO.pla", plaName);
+
+            String verilogName = String.format("%s_%s.v", plaName, gentlibPath.getFileName().toString().replace(".genlib", ""));
+
+
+            if(makeEspressoAigBlifVerilog) {
+                //Original PLA to ESPRESSO
+                ShellScriptOps.executeCommands("/media/sf_PastaUbuntuServer/ShellScripting/plaToESPRESSO.sh",
+                        String.format("ESPRESSO %s %s", p.toString(), p.getParent().toString()+"/"+espressoPLAName));
+
+                //Generate AIG
+                ShellScriptOps.executeCommands("/media/sf_PastaUbuntuServer/ShellScripting/plaToESPRESSO.sh",
+                        String.format("ABC_PLA_TO_AIG %s %s", p.getParent().toString()+"/"+espressoPLAName,
+                                String.format("%s/aig/%s.aig", p.getParent().getParent().toString(), plaName)));
+
+                //Generate BLIF
+                ShellScriptOps.executeCommands("/media/sf_PastaUbuntuServer/ShellScripting/plaToESPRESSO.sh",
+                        String.format("ABC_AIG_TO_BLIF %s %s", String.format("%s/aig/%s.aig", p.getParent().getParent().toString(), plaName),
+                                String.format("%s/blif/%s.blif", p.getParent().getParent().toString(), plaName)));
+
+                //Generatate VERILOG
+                ShellScriptOps.executeCommands("/media/sf_PastaUbuntuServer/ShellScripting/plaToESPRESSO.sh",
+                        String.format("ABC_AIG_TO_VERILOG %s %s %s", String.format("%s/aig/%s.aig", p.getParent().getParent().toString(), plaName),
+                                gentlibPath.toString(),
+                                String.format("%s/verilog/%s", p.getParent().getParent().toString(), verilogName)));
+
+                //Creates circuits main folder
+                File mainCircuitFolder = new File(String.format("%s/%s", resultPath, verilogName.replace(".v", "")));
+                String mainCircuitFolderPath = mainCircuitFolder.getAbsolutePath();
+                mainCircuitFolder.mkdir();
+            }
+
+            System.out.println(plaName + " done!!");
+
+        }
+
+        final long endTime = System.currentTimeMillis();
+
+        long secondstimestamp = (endTime - startTime)/1000;
+
+        String timeConsup = "## TIME CONSUPTION ## ==> " + secondstimestamp + " secs";
+        System.out.println(timeConsup);
+
+        if(makeEspressoAigBlifVerilog) {
+            this.MakeExaustiveTruthTableToJSON();
+            this.MakeExaustiveCriticalVectorsToJSON();
+        }
+
+        this.MakeExactJustCritApprox();
+
+    }
+
     public void MakeExactJustCritApprox() throws Exception {
 
         final long startTime = System.currentTimeMillis();
@@ -3510,24 +4018,35 @@ public class Commands {
 
                 //Local parameters
                 String circuitName = p.getFileName().toString().split(".v")[0];
+                String benchName = circuitName.split("_")[0];
+
                 String mainCircuitFolderPath = String.format("%s/%s", resultPath, circuitName);
-                String exactSeedCircuitPath = String.format("%s/%s_fromPLA.v", mainCircuitFolderPath, circuitName);
-                String critVectorsPath = String.format("%s/%s_fromPLA_criticalVectors.json",
-                        mainCircuitFolderPath, circuitName);
+                //String exactSeedCircuitPath = String.format("%s/%s_fromPLA.v", mainCircuitFolderPath, circuitName);
+                String critVectorsPath = String.format("%s/seeds/criticalVectors/%s_criticalVectors.json",
+                        mainlyPath, circuitName);
 
 
                 ArrayList<InputVector> criticals = CriticalVectorsUtils.criticalVectorsExactListFromJSON(critVectorsPath).getCriticalVectors();
-                ProbCircuit exactSeedCircuit = new CircuitFactory(cellLib, exactSeedCircuitPath).getProbCircuit();
+                ProbCircuit exactSeedCircuit = new CircuitFactory(cellLib, p.toString()).getProbCircuit();
+
+                ArrayList<Double> percentuals = new ArrayList<>(Arrays.asList(0.05, 0.1, 0.2, 0.4, 0.8, 0.95));
 
 
-                ArrayList<Integer> percentuals = new ArrayList<>();
 
-                percentuals.add((int)(exactSeedCircuit.getTotalInputVectors().intValue() * 0.05));
-                percentuals.add((int)(exactSeedCircuit.getTotalInputVectors().intValue() * 0.1));
-                percentuals.add((int)(exactSeedCircuit.getTotalInputVectors().intValue() * 0.2));
-                percentuals.add((int)(exactSeedCircuit.getTotalInputVectors().intValue() * 0.4));
-                percentuals.add((int)(exactSeedCircuit.getTotalInputVectors().intValue() * 0.8));
-                percentuals.add((int)(exactSeedCircuit.getTotalInputVectors().intValue() * 0.95));
+
+
+                ArrayList<Integer> percentualsVectors = new ArrayList<>();
+
+                for(double percentual : percentuals) {
+                    percentualsVectors.add((int)(exactSeedCircuit.getTotalInputVectors().intValue() * percentual));
+                }
+
+                /*percentualsVectors.add((int)(exactSeedCircuit.getTotalInputVectors().intValue() * 0.05));
+                percentualsVectors.add((int)(exactSeedCircuit.getTotalInputVectors().intValue() * 0.1));
+                percentualsVectors.add((int)(exactSeedCircuit.getTotalInputVectors().intValue() * 0.2));
+                percentualsVectors.add((int)(exactSeedCircuit.getTotalInputVectors().intValue() * 0.4));
+                percentualsVectors.add((int)(exactSeedCircuit.getTotalInputVectors().intValue() * 0.8));
+                percentualsVectors.add((int)(exactSeedCircuit.getTotalInputVectors().intValue() * 0.95));*/
 
                 //Make approx methods folders
                 ArrayList<String> approxMethodsFoldersNames = new ArrayList<>();
@@ -3554,26 +4073,30 @@ public class Commands {
                         multiOutput = true;
                     }
 
-                    for(int crit : percentuals) {
+                    for(int j = 0; j < percentuals.size(); j++) {
                         ArrayList<InputVector> vectorsToApprox = new ArrayList<>();
 
-                        for (int i = 0; i < crit; i++) {
+                        for (int i = 0; i < percentualsVectors.get(j); i++) {
                             vectorsToApprox.add(criticals.get(i));
                         }
 
                         int length = String.valueOf(exactSeedCircuit.getTotalInputVectors().intValue()).length();
+                        //String percentualStr = Double.toString(percentuals.get(j)).split(",")[1];
+                        String percentualStr = String.format("%.2f", percentuals.get(j)).split(",")[1];
 
-                        String plaSeedEspressoPath = String.format("%s/%s_ESPRESSO.pla", mainCircuitFolderPath, circuitName);
-                        String patternName = String.format("%0" + length + "d-%s", vectorsToApprox.size(), approxCircuitSuffix);
+
+
+                        String plaSeedEspressoPath = String.format("%s/seeds/pla/%s_ESPRESSO.pla", mainlyPath, benchName);
+                        String patternName = String.format("%sP---%0" + length + "d-%s", percentualStr, vectorsToApprox.size(), approxCircuitSuffix);
                         String aigOutput = String.format("%s/aig/%s.aig", folder, patternName);
                         String verilogOutput = String.format("%s/verilog/%s.v", folder, patternName);
                         String plaOutput = String.format("%s/pla/%s.pla", folder, patternName);
                         String plaESPRESSOOutput = String.format("%s/pla/%s_ESPRESSO.pla", folder, patternName);
-                        String verilogFromPLACircuit = String.format("%s/%s", mainCircuitFolderPath, circuitName+"_fromPLA.v");
+                        //String verilogFromPLACircuit = String.format("%s/%s", mainCircuitFolderPath, circuitName+"_fromPLA.v");
 
                         ApproxOPS.approxMethodWrapper(ApproxOPS.getApproxMethod(approxCircuitSuffix),
                                 plaSeedEspressoPath,
-                                verilogFromPLACircuit,
+                                p.toString(),
                                 genlibPath,
                                 aigOutput,
                                 plaOutput,
@@ -3581,9 +4104,6 @@ public class Commands {
                                 verilogOutput,
                                 vectorsToApprox);
                     }
-
-
-
                 }
                 System.out.println("-------------");
                 //System.out.println("MAMMAE");
@@ -3598,7 +4118,8 @@ public class Commands {
         String timeConsup = "## TIME CONSUPTION ## ==> " + secondstimestamp + " secs";
         System.out.println(timeConsup);
 
-        TimeUnit.MINUTES.sleep(660);
+        System.out.println("DONE!");
+        //TimeUnit.MINUTES.sleep(660);
 
 
 

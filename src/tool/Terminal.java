@@ -56,11 +56,13 @@ TerminalWrapper {
             //cmds.Foo7();
             //cmds.Foo8();
             //cmds.Foo9();
-            cmds.Foo10();
+            //cmds.Foo10();
             //cmds.MakeExactJustCritApprox();
             //cmds.MakeExaustiveCriticalVectorsToJSON();
             //cmds.MakeExaustiveTruthTableToJSON();
-            //cmds.prepareForResults();
+            //cmds.prepareForResultsMappedVerilogAsSeed();
+            //cmds.prepareForResultsPLAAsSeed();
+            cmds.AnalyseApproxVersions();
 
                 Options options = new Options();
 

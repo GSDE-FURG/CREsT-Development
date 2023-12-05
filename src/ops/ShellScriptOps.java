@@ -17,6 +17,8 @@ import java.util.function.Consumer;
 import static ops.CommonOps.getValueLinkHashMapByIndex;
 
 public class ShellScriptOps {
+
+
     private static class StreamGobbler implements Runnable {
         private InputStream inputStream;
         private Consumer<String> consumer;
@@ -75,6 +77,16 @@ public class ShellScriptOps {
         return result;
     }
 
+    public static void aigABCStatsToJSON(String aigPath, String outJSON) throws IOException, InterruptedException {
+
+        Object[] result = ShellScriptOps.executeCommands("/media/sf_PastaUbuntuServer/ShellScripting/plaToESPRESSO.sh",
+                String.format("ABC_AIG_STATS %s %s", aigPath, outJSON));
+
+        if((boolean)result[0]) {
+            System.out.println("PROBLEM!! " + result[1]);
+        }
+
+    }
     public static void randomInputApprox() throws IOException, InterruptedException {
 
         LinkedHashMap<Integer, BigDecimal> mapper = new LinkedHashMap<Integer, BigDecimal>();

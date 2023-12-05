@@ -1,5 +1,7 @@
 package twoLevelDatastructures;
 
+import datastructures.InputVector;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -319,6 +321,18 @@ public class PLA {
     public void addDontCareTerm(String newTermInput) {
         //this.terms.add(0, new Term(newTermInput, "~".repeat(this.qtOutputs)));
         this.terms.add(0, new Term(newTermInput, "-".repeat(this.qtOutputs)));
+    }
+
+    public void addInputVectorList(ArrayList<InputVector> inputList, boolean asDontCare) {
+        if(asDontCare) {
+            for(InputVector inputV : inputList) {
+                this.addDontCareTerm(inputV.getBinaryString());
+            }
+        } else {
+            for(InputVector inputV : inputList) {
+                this.addTerm(new Term(inputV.getBinaryString(), inputV.getOutputBinaryString()));
+            }
+        }
     }
 
     public ArrayList<String> getCommentLines() {

@@ -18,6 +18,7 @@ public class InputVector {
     private static final char CHAR_ZERO = '0';
     private final BigInteger value;
     private int bits = 0;
+    private String outputBinaryString;
 
     private BigDecimal reliability;
     private double doubleReliability;
@@ -175,5 +176,17 @@ public class InputVector {
     @Override
     public String toString() {        
         return this.getBinaryString();
-    }    
+    }
+
+    public BigInteger getValue() {
+        return this.value;
+    }
+
+    public String getOutputBinaryString() {
+        return outputBinaryString;
+    }
+
+    public void setOutputBinaryString(String outputBinaryString) {
+        this.outputBinaryString = outputBinaryString;
+    }
 }

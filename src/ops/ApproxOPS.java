@@ -17,6 +17,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import static ops.ShellScriptOps.makePLAMinimizationAndDeployToAigVerilog;
+
 public class ApproxOPS {
 
     public static void justCriticalVectorsApprox(String plaSeed,
@@ -51,7 +53,7 @@ public class ApproxOPS {
                 pla = PLAOps.getApproxPLAWithDontCarePerOutput(pla);
             }
 
-            ShellScriptOps.makePLAMinimizationAndDeployToAigVerilog(pla,
+            makePLAMinimizationAndDeployToAigVerilog(pla,
                     plaOutputPath,
                     verilogOutputPath,
                     aigOutputPath,
@@ -122,7 +124,7 @@ public class ApproxOPS {
                 pla = PLAOps.getApproxPLAWithDontCarePerOutput(pla);
             }
 
-            ShellScriptOps.makePLAMinimizationAndDeployToAigVerilog(pla,
+            makePLAMinimizationAndDeployToAigVerilog(pla,
                                                                     plaOutputPath,
                                                                     verilogOutputPath,
                                                                     aigOutputPath,
@@ -223,7 +225,7 @@ public class ApproxOPS {
 
                 if(w != vectorAmount) {
                     //Deploy temp
-                    ShellScriptOps.makePLAMinimizationAndDeployToAigVerilog(pla,
+                    makePLAMinimizationAndDeployToAigVerilog(pla,
                             String.format("tEmP/pla/%s.pla", pattern),
                             String.format("tEmP/verilog/%s.v", pattern),
                             String.format("tEmP/aig/%s.aig", pattern),
@@ -235,7 +237,7 @@ public class ApproxOPS {
 
                 } else {
                     //Deploy true approx
-                    ShellScriptOps.makePLAMinimizationAndDeployToAigVerilog(pla,
+                    makePLAMinimizationAndDeployToAigVerilog(pla,
                             plaOutputPath,
                             verilogOutputPath,
                             aigOutputPath,
@@ -338,7 +340,7 @@ public class ApproxOPS {
 
                 if(w != vectorAmount) {
                     //Deploy temp
-                    ShellScriptOps.makePLAMinimizationAndDeployToAigVerilog(pla,
+                    makePLAMinimizationAndDeployToAigVerilog(pla,
                             String.format("tEmP/pla/%s.pla", pattern),
                             String.format("tEmP/verilog/%s.v", pattern),
                             String.format("tEmP/aig/%s.aig", pattern),
@@ -363,7 +365,7 @@ public class ApproxOPS {
                     }
 
                     //Deploy true approx
-                    ShellScriptOps.makePLAMinimizationAndDeployToAigVerilog(pla,
+                    makePLAMinimizationAndDeployToAigVerilog(pla,
                             plaOutputPath,
                             verilogOutputPath,
                             aigOutputPath,
@@ -589,5 +591,29 @@ public class ApproxOPS {
         }
 
         return result;
+    }
+
+    public static void insertInputVectorListandOutoutsInPLADeployAigVerilog(String plaSeedPath,
+                                                                            String plaOutputPath,
+                                                                            String plaESPRESSOPath,
+                                                                            String genlib,
+                                                                            String aigOutputPath,
+                                                                            String verilogOutputPath,
+                                                                            ArrayList<InputVector> inputList,
+                                                                            boolean asDontCare) throws IOException, InterruptedException {
+
+
+        PLA pla = pla = PLAOps.readPLAFile(plaSeedPath);
+
+        pla.addInputVectorList(inputList, asDontCare);
+
+        makePLAMinimizationAndDeployToAigVerilog(
+                pla,
+                plaOutputPath,
+                verilogOutputPath,
+                aigOutputPath,
+                plaESPRESSOPath,
+                genlib);
+
     }
 }
