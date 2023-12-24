@@ -1,6 +1,7 @@
 package ops;
 
 import critical_vectors.CriticalInputVectorComparator;
+import critical_vectors.CriticalVectorsUtils;
 import datastructures.CellLibrary;
 import datastructures.InputVector;
 import manipulator.SPRController;
@@ -243,14 +244,23 @@ public class ShellScriptOps {
             System.out.println(plaMiniProcessResult[1]);
         }
 
-        //Based on ESPRESSO minimization, write aig and mapped verilog
+        //PLA to AIG
+        ShellScriptOps.executeCommands("/media/sf_PastaUbuntuServer/ShellScripting/plaToESPRESSO.sh",
+                String.format("ABC_PLA_TO_AIG %s %s", espressoDir,
+                                                      aigDir));
+        //Optimize AIG
+        ShellScriptOps.executeCommands("/media/sf_PastaUbuntuServer/ShellScripting/plaToESPRESSO.sh",
+                String.format("OPTIMIZE_AIG %s", aigDir));
+
+        //AIG to Verilog ABC_AIG_TO_VERILOG
         Object[] toAigVerilogProcessResult = ShellScriptOps.executeCommands("/media/sf_PastaUbuntuServer/ShellScripting/plaToESPRESSO.sh",
-                String.format("ABC_PLA_AIG_VERILOG %s %s %s %s", espressoDir,
-                        aigDir,
-                        libraryDir,
-                        verilogDir));
+                String.format("ABC_AIG_TO_VERILOG %s %s %s",
+                                                    aigDir,
+                                                    libraryDir,
+                                                    verilogDir));
 
         if((boolean)toAigVerilogProcessResult[0]) {
+            System.out.println("PROBLEMA NA CONVERSAO AIG PARA VERILOG");
             Object[] newToAigVerilogProcessResult = ShellScriptOps.executeCommands("/media/sf_PastaUbuntuServer/ShellScripting/plaToESPRESSO.sh",
                     String.format("ABC_PLA_AIG_VERILOG_RESYN3 %s %s %s %s", espressoDir,
                             aigDir,
@@ -380,6 +390,11 @@ public class ShellScriptOps {
             InputVector inputV = new InputVector(Integer.toString(i), pCircuit.getProbInputs().size());
             BigDecimal vectorReliability = spr.getReliability(inputV, 15);
             inputV.setDoubleReliability(vectorReliability.doubleValue());
+
+            ArrayList<Boolean> outputVector = pCircuit.propagateInputVector(inputV);
+            String bString = CriticalVectorsUtils.boolArrayToBinaryString(outputVector);
+            inputV.setOutputBinaryString(bString);
+
             result.add(inputV);
         }
 

@@ -62,7 +62,9 @@ TerminalWrapper {
             //cmds.MakeExaustiveTruthTableToJSON();
             //cmds.prepareForResultsMappedVerilogAsSeed();
             //cmds.prepareForResultsPLAAsSeed();
-            cmds.AnalyseApproxVersions();
+            //cmds.AnalyseApproxVersions();
+            cmds.AnalyseSingleOutputApproxVersions();
+            //cmds.MakeALSRACBlifResults();
 
                 Options options = new Options();
 

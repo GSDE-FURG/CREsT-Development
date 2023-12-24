@@ -134,14 +134,14 @@ public class PLA {
         ArrayList<Term> removeList = new ArrayList<>();
 
         if(repeatedTerms.isEmpty()) {
-            System.out.println("All PLA minterms are unique!");
+            //System.out.println("All PLA minterms are unique!");
             mintermsNotUnique = false;
         } else {
             if (doAdjusts) {
 
-                for (Term t : repeatedTerms.keySet()) {
+                /*for (Term t : repeatedTerms.keySet()) {
                     System.out.println(t + " --> " + repeatedTerms.get(t));
-                }
+                }*/
                 for (Term firstTerm : repeatedTerms.keySet()) {
                     for (Term cube : repeatedTerms.get(firstTerm)) {
                         /**

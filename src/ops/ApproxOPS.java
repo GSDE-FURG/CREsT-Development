@@ -5,9 +5,11 @@ import datastructures.InputVector;
 import manipulator.CircuitFactory;
 import manipulator.SPRController;
 import signalProbability.ProbCircuit;
+import tool.Commands;
 import twoLevelDatastructures.PLA;
 import twoLevelDatastructures.PLAManipulator;
 import twoLevelDatastructures.PLAOps;
+import twoLevelDatastructures.Term;
 
 import javax.script.ScriptException;
 import java.io.File;
@@ -16,6 +18,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import static ops.ShellScriptOps.makePLAMinimizationAndDeployToAigVerilog;
 
@@ -29,6 +32,7 @@ public class ApproxOPS {
                                                  String minimizedPlaPath,
                                                  String verilogOutputPath,
                                                  boolean multDontCare,
+                                                 boolean bitflip,
                                                  ArrayList<InputVector> vectors) throws Exception {
 
         //Setting basics parameters to read a mapped verilog with CREST tool
@@ -43,15 +47,35 @@ public class ApproxOPS {
             //PLA pla = new PLAManipulator().readPLAFile(plaSeed);
             PLA pla = PLAOps.readPLAFile(plaSeed);
 
-            //Add the InputVectors as dont'care
-            for (InputVector inputV : vectors) {
-                pla.addDontCareTerm(inputV.getBinaryString());
+            if(bitflip) {
+                //Add the InputVectors as dont'care
+                for (InputVector inputV : vectors) {
+                    String bitflipOut;
+                    if(inputV.getOutputBinaryString().equals("0")) {
+                        pla.addTerm(new Term(inputV.getBinaryString(), "1"));
+                    } else {
+                        Term newTerm = new Term(inputV.getBinaryString(), "0");
+                        //System.out.println(newTerm);
+                        //System.out.println(pla.checkAllPLATerms(false));
+                        //System.out.println("mamae");
+                        //TimeUnit.MINUTES.sleep(660);
+                        pla.addTerm(newTerm);
+                        pla.checkAllPLATerms(true);
+                    }
+
+                }
+            } else {
+                //Add the InputVectors as dont'care
+                for (InputVector inputV : vectors) {
+                    pla.addDontCareTerm(inputV.getBinaryString());
+                }
             }
 
             //Is the per output method option?
             if(!multDontCare) {
                 pla = PLAOps.getApproxPLAWithDontCarePerOutput(pla);
             }
+
 
             makePLAMinimizationAndDeployToAigVerilog(pla,
                     plaOutputPath,
@@ -480,10 +504,15 @@ public class ApproxOPS {
                                            String plaOutputPath,
                                            String minimizedPlaPath,
                                            String verilogOutputPath,
+                                           boolean bitflip,
                                            ArrayList<InputVector> vectors) throws Exception {
 
 
-        switch (approxMethodType) {
+        String approxType = approxMethodType;
+        approxType = approxType.replace("_ZERO", "");
+        approxType = approxType.replace("_ONE", "");
+
+        switch (approxType) {
             case "JUST_CRIT_PER":
                 justCriticalVectorsApprox(plaSeed,
                         verilogSeed,
@@ -493,6 +522,7 @@ public class ApproxOPS {
                         minimizedPlaPath,
                         verilogOutputPath,
                         false,
+                        bitflip,
                         vectors);
                 break;
 
@@ -505,6 +535,7 @@ public class ApproxOPS {
                         minimizedPlaPath,
                         verilogOutputPath,
                         true,
+                        bitflip,
                         vectors);
                 break;
 
@@ -556,7 +587,7 @@ public class ApproxOPS {
                         vectorAmount);
                 break;*/
             default:
-                System.out.println("NÃO DEU!! " + approxMethodType);
+                System.out.println("NÃO DEU!! " + approxType);
         }
 
         System.out.println("Done! " + plaOutputPath);
@@ -568,9 +599,21 @@ public class ApproxOPS {
 
         if(methodCandidate.contains("just_crit")) {
             if(methodCandidate.contains("per")) {
-                result = "JUST_CRIT_PER";
-            } else {
-                result = "JUST_CRIT_MULTI";
+                if(methodCandidate.contains("zero")) {
+                    result = "JUST_CRIT_PER_ZERO";
+                } else if (methodCandidate.contains("one")) {
+                    result = "JUST_CRIT_PER_ONE";
+                } else {
+                    result = "JUST_CRIT_PER";
+                }
+            } else if(methodCandidate.contains("multi")){
+                if(methodCandidate.contains("zero")) {
+                    result = "JUST_CRIT_MULTI_ZERO";
+                } else if (methodCandidate.contains("one")) {
+                    result = "JUST_CRIT_MULTI_ONE";
+                } else {
+                    result = result = "JUST_CRIT_MULTI";;
+                }
             }
         } else {
             if (methodCandidate.contains("track_crit")) {
