@@ -4318,7 +4318,17 @@ public class Commands {
         SPRController spr = new SPRController(pCircuit,
                 cellLib, cMatrixLib);
 
-        System.out.println(CommonOps.getMTBFBigInt(spr.getReliabilityCustomLib()));
+        BigDecimal result = spr.getReliabilityCustomLib();
+        //System.out.println(CommonOps.getMTBFBigInt(result));
+        System.out.println("MTBFs: " + CommonOps.getMTBF(result));
+        System.out.println("Primary output reliabily matrices:");
+        System.out.println("----------------------------------");
+        for(ProbSignal pSignal : pCircuit.getProbOutputs()) {
+            System.out.println(pSignal.getId());
+            matrixPrint(pSignal.getProbMatrix());
+            System.out.println("######################");
+        }
+
     }
 
 
