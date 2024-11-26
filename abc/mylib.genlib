@@ -1,0 +1,41 @@
+# 180 nm Generic Library
+# Download from http://crete.cadence.com
+# Copyright 2003, Cadence Design Systems - All Rights Reserved
+# (Single-output logic gates converted to GENLIB by Alan Mishchenko.)
+GATE ZERO       0  Y=CONST0;
+GATE ONE        0  Y=CONST1;
+GATE BUFFER	0  Y=A;                         PIN * NONINV 1 999 1 0 1 0
+GATE BUFFERgate	0  Y=A;                         PIN * NONINV 1 999 1 0 1 0
+GATE INV        2  Y=!A;                        PIN * INV 1 999 1 0 1 0
+GATE NO2        4  Y=!(A+B);                    PIN * INV 1 999 1 0 1 0
+GATE NO3        6  Y=!(A+B+C);                  PIN * INV 1 999 1 0 1 0
+GATE NO4        8  Y=!(A+B+C+D);                PIN * INV 1 999 1 0 1 0
+GATE NA2        4  Y=!(A*B);                    PIN * INV 1 999 1 0 1 0
+GATE NA3        6  Y=!(A*B*C);                  PIN * INV 1 999 1 0 1 0
+GATE NA4        8  Y=!(A*B*C*D);                PIN * INV 1 999 1 0 1 0
+GATE OAI210     6  Y=!((A0+A1)*B0);             PIN * INV 1 999 1 0 1 0
+GATE OAI220     8  Y=!((A0+A1)*(B0+B1));        PIN * INV 1 999 1 0 1 0
+GATE AOI210     6  Y=!(A0*A1+B0);               PIN * INV 1 999 1 0 1 0
+GATE AOI220     8  Y=!((A0*A1)+(B0*B1));        PIN * INV 1 999 1 0 1 0
+GATE XO2        12  Y=(A*!B)+(!A*B);            PIN * UNKNOWN 1 999 1 0 1 0
+GATE XN2        12  Y=!((A*!B)+(!A*B));         PIN * UNKNOWN 1 999 1 0 1 0
+GATE OR2        6  Y=(A+B);                     PIN * NONINV 1 999 1 0 1 0
+GATE OR3        8  Y=(A+B+C);                   PIN * NONINV 1 999 1 0 1 0
+GATE OR4        10 Y=(A+B+C+D);                 PIN * NONINV 1 999 1 0 1 0
+GATE AN2        6  Y=(A*B);                     PIN * NONINV 1 999 1 0 1 0
+GATE AN3        8  Y=(A*B*C);                   PIN * NONINV 1 999 1 0 1 0
+GATE AN4        10 Y=(A*B*C*D);                 PIN * NONINV 1 999 1 0 1 0
+GATE OA210      8  Y=(A0+A1)*B0;                PIN * NONINV 1 999 1 0 1 0
+GATE OA220      10 Y=(A0+A1)*(B0+B1);           PIN * NONINV 1 999 1 0 1 0
+GATE AO210      8  Y=(A0*A1+B0);                PIN * NONINV 1 999 1 0 1 0
+GATE AO220      10 Y=(A0*A1+B0*B1);             PIN * NONINV 1 999 1 0 1 0
+GATE NAi21      6  Y=!(!An*B);                  PIN * INV 1 999 1 0 1 0
+GATE NAi31      8  Y=!(!An*B*C);                PIN * INV 1 999 1 0 1 0
+GATE NAi32      10 Y=!(!An*!Bn*C);              PIN * INV 1 999 1 0 1 0
+GATE NAi41      10 Y=!(!An*B*C*D);              PIN * INV 1 999 1 0 1 0
+GATE NOi21      6  Y=!(!An+B);                  PIN * INV 1 999 1 0 1 0
+GATE NOi31      8  Y=!(!An+B+C);                PIN * INV 1 999 1 0 1 0
+GATE NOi32      10 Y=!(!An+!Bn+C);              PIN * INV 1 999 1 0 1 0
+GATE NOi41      10 Y=!(!An+B+C+D);              PIN * INV 1 999 1 0 1 0
+GATE MUX2       12 Y=(!S*A)+(S*B);              PIN * UNKNOWN 1 999 1 0 1 0
+GATE VOTADOR	1  Y=(A*B)+(A*C)+(B*C);		PIN * UNKNOWN 1 999 1 0 1 0

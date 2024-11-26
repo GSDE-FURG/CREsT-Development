@@ -1,0 +1,147 @@
+*Library xor's CMOS
+
+.subckt inv4 in out vccbloco vssbloco vdd ground 
+
+ Mp8 vccbloco in out vdd PMOS w=256n l=16n
+                                      
+ Mn8 out in vssbloco ground NMOS w=128n l=16n
+
+.ends inv4
+
+
+
+.subckt inv in out vccbloco vssbloco vdd ground 
+
+ Mp7 vccbloco in out vdd PMOS w=64n l=16n
+                                      
+ Mn7 out in vssbloco ground NMOS w=32n l=16n
+
+.ends inv
+
+
+
+.subckt xor_8_min a b xor vccbloco vssbloco vdd ground 
+Mp1 vccbloco na nodo1 vdd                PMOS w=wp l=length
+Mp2 nodo1 b xor vdd                      PMOS w=wp l=length
+Mp3 vccbloco a nodo2 vdd                 PMOS w=wp l=length
+Mp4 nodo2 nb xor vdd                     PMOS w=wp l=length
+Mn1 xor nb nodo3 ground                  NMOS w=wn l=length
+Mn2 nodo3 na vssbloco ground             NMOS w=wn l=length
+Mn3 xor b nodo4 ground                   NMOS w=wn l=length
+Mn4 nodo4 a vssbloco ground              NMOS w=wn l=length
+Mpinv_a vccbloco a na vdd                PMOS w=wp l=length
+Mninv_a na a vssbloco ground             NMOS w=wn l=length   
+Mpinv_b vccbloco b nb vdd                PMOS w=wp l=length
+Mninv_b nb b vssbloco ground             NMOS w=wn l=length  
+.ends xor_8_min
+
+.subckt xor_9_min a b xor vccbloco vssbloco vdd ground 
+Mp1 vccbloco b nodo1 vdd                PMOS w=wp l=length
+Mp2 vccbloco a nodo1 vdd                PMOS w=wp l=length
+Mp3 vccbloco nodo1 nodo2 vdd            PMOS w=wp l=length
+Mp4 vccbloco a nodo3 vdd                PMOS w=wp l=length
+Mp5 nodo3 b nodo2 vdd                   PMOS w=wp l=length
+Mp6 vccbloco nodo2 xor vdd              PMOS w=wp l=length
+Mn1 nodo1 b nodo4 ground                NMOS w=wn l=length
+Mn2 nodo4 a vssbloco ground             NMOS w=wn l=length
+Mn3 nodo2 nodo1 nodo5 ground            NMOS w=wn l=length
+Mn4 nodo5 a vssbloco ground             NMOS w=wn l=length
+Mn5 nodo5 b vssbloco ground             NMOS w=wn l=length
+Mn6 xor nodo2 vssbloco ground           NMOS w=wn l=length
+.ends xor_9_min
+
+.subckt xor_21_min a b xor vccbloco vssbloco vdd ground 
+Mp1 vccbloco a nodo1 vdd               PMOS w=wp l=length
+Mp2 nodo1 nodo2 xor vdd                PMOS w=wp l=length
+Mp3 vccbloco b nodo2 vdd               PMOS w=wp l=length
+Mp4 nodo2 nodo1 xor vdd                PMOS w=wp l=length
+Mn1 nodo1 a vssbloco ground            NMOS w=wn l=length
+Mn2 xor b nodo1 ground                 NMOS w=wn l=length
+Mn3 xor a nodo2 ground                 NMOS w=wn l=length
+Mn4 nodo2 b vssbloco ground            NMOS w=wn l=length
+Mn5 xor nodo2 nodo3 ground             NMOS w=wn l=length
+Mn6 nodo3 nodo1 vssbloco ground        NMOS w=wn l=length
+.ends xor_21_min
+
+.subckt xor_22_min a b xor vccbloco vssbloco vdd ground 
+Mp1 vccbloco a nodo1 vdd               PMOS w=wp l=length
+Mp2 nodo1 nodo2 xor vdd                PMOS w=wp l=length
+Mp3 vccbloco b nodo2 vdd               PMOS w=wp l=length
+Mp4 nodo2 nodo1 xor vdd                PMOS w=wp l=length
+Mn1 nodo1 a vssbloco ground            NMOS w=wn l=length
+Mn2 xor b nodo1 ground                 NMOS w=wn l=length
+Mn3 xor nodo2 nodo3 ground             NMOS w=wn l=length
+Mn4 nodo3 nodo1 vssbloco ground        NMOS w=wn l=length
+Mn5 nodo2 b vssbloco ground            NMOS w=wn l=length
+.ends xor_22_min
+
+.subckt xor_1_min a b xor vccbloco vssbloco vdd ground 
+Mp1 a b xor vdd               			PMOS w=wp l=length
+Mp2 na nb xor vdd            			PMOS w=wp l=length
+Mn1 a nb xor ground           			NMOS w=wn l=length
+Mn2 na b xor ground          			NMOS w=wn l=length
+Mpinv_a vccbloco a na vdd          		PMOS w=wp l=length
+Mninv_a na a vssbloco ground    		NMOS w=wn l=length   
+Mpinv_b vccbloco b nb vdd          		PMOS w=wp l=length
+Mninv_b nb b vssbloco ground    		NMOS w=wn l=length   
+.ends xor_1_min
+
+.subckt xor_2_min a b xor vccbloco vssbloco vdd ground 
+Mp1 a nb nodo1 vdd            			PMOS w=wp l=length
+Mp2 na b nodo1 vdd            			PMOS w=wp l=length
+Mp3 vccbloco nodo1 xor vdd         		PMOS w=wp l=length
+Mn1 a b nodo1 ground          			NMOS w=wn l=length
+Mn2 na nb nodo1 ground        			NMOS w=wn l=length
+Mn3 xor nodo1 vssbloco ground      		NMOS w=wn l=length
+Mpinv_a vccbloco a na vdd          		PMOS w=wp l=length
+Mninv_a na a vssbloco ground    		NMOS w=wn l=length   
+Mpinv_b vccbloco b nb vdd          		PMOS w=wp l=length
+Mninv_b nb b vssbloco ground    		NMOS w=wn l=length   
+.ends xor_2_min
+
+.subckt xor_14_min a b xor vccbloco vssbloco vdd ground 
+Mp1 b na nodo1 vdd                      PMOS w=wp l=length
+Mp2 nb a nodo1 vdd                      PMOS w=wp l=length
+Mn1 a b nodo1 ground                    NMOS w=wn l=length
+Mn2 na nb nodo1 ground                  NMOS w=wn l=length
+Mpinv_a vccbloco a na vdd               PMOS w=wp l=length
+Mninv_a na a vssbloco ground            NMOS w=wn l=length   
+Mpinv_b vccbloco b nb vdd               PMOS w=wp l=length
+Mninv_b nb b vssbloco ground            NMOS w=wn l=length
+Mpinv_nodo1 vccbloco nodo1 xor vdd      PMOS w=wp l=length
+Mninv_nodo1 xor nodo1 vssbloco ground   NMOS w=wn l=length    
+.ends xor_14_min
+
+.subckt xor_25_min a b xor vccbloco vssbloco vdd ground 
+Mp1 vccbloco b nodo1 vdd               PMOS w=wp l=length
+Mp2 a b xor vdd                        PMOS w=wp l=length
+Mp3 b a xor vdd                        PMOS w=wp l=length
+Mn1 nodo1 b vssbloco ground            NMOS w=wn l=length
+Mn2 a nodo1 xor ground                 NMOS w=wn l=length
+Mn3 nodo1 a xor ground                 NMOS w=wn l=length
+.ends xor_25_min
+
+.subckt xor_30_min a b xor vccbloco vssbloco vdd ground
+Mp1 a nb nodo1 vdd                     PMOS w=wp l=length
+Mp2 nb a nodo1 vdd                     PMOS w=wp l=length
+Mp3 vccbloco nodo1 xor vdd             PMOS w=wp l=length
+Mn1 a b nodo1 ground                   NMOS w=wn l=length
+Mn2 b a nodo1 ground                   NMOS w=wn l=length
+Mn3 xor nodo1 vssbloco ground          NMOS w=wn l=length
+Mpinv_b vccbloco b nb vdd              PMOS w=wp l=length
+Mninv_b nb b vssbloco ground           NMOS w=wn l=length
+.ends xor_30_min
+
+.subckt xor_31_min a b xor vccbloco vssbloco vdd ground
+Mp1 a b xor vdd                         PMOS w=wp l=length
+Mp2 b a xor vdd                         PMOS w=wp l=length
+Mn1 a nb xor ground                     NMOS w=wn l=length
+Mn2 xor b nodo1 ground                  NMOS w=wn l=length
+Mn3 nodo1 a vssbloco ground             NMOS w=wn l=length
+Mpinv_b vccbloco b nb vdd               PMOS w=wp l=length
+Mninv_b nb b vssbloco ground            NMOS w=wn l=length
+.ends xor_31_min
+
+
+*Fim do Arquivo SPICE
+.end

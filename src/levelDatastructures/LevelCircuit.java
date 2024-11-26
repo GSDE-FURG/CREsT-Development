@@ -24,19 +24,31 @@ public class LevelCircuit extends Circuit {
     
     public LevelCircuit(Circuit circuit) {                
         
-        super(circuit.getName(), circuit.getSignals(), circuit.getGates());
+        super(circuit.getName(), circuit.getSignals(), circuit.getGates());        
                 
         depthGates = new ArrayList<>();
         gateLevels = new ArrayList<>();
         interLevels = new ArrayList<>();
+
+        long gatesDEPTH;
+        long gateLEVELS;
+        long interLEVELS;
         
         for (int i = 0; i < circuit.getGates().size(); i++) {            
             depthGates.add(new DepthGate(circuit.getGates().get(i)));
         }        
-        
+
+        //gatesDEPTH = timenow();
         setGatesDepth();
+        //timestamp(gatesDEPTH, "Gates Depth DFS");
+
+        //gateLEVELS = timenow();
         setGateLevels();
+        //timestamp(gateLEVELS, "Gate Levels setting");
+
+        //interLEVELS = timenow();
         setInterLevels();
+        //timestamp(interLEVELS, "Inter Levels setting");
         
     }
     
@@ -108,8 +120,8 @@ public class LevelCircuit extends Circuit {
     
     public void setGatesDepth() {
                 
-        for (int i = 0; i < this.getOutputs().size(); i++) {            
-            gateDfs(getDepthGate(this.getOutputs().get(i).getOrigin()));
+        for (int i = 0; i < this.getOutputs().size(); i++) {
+            gateDfs(getDepthGate(this.getOutputs().get(i).getSignalOrigin()));
         }
                 
     }
@@ -157,8 +169,8 @@ public class LevelCircuit extends Circuit {
             for (int i = 0; i < inputs.size(); i++) {
                 DepthGate fooGate = null;
                 
-                if(inputs.get(i).getOrigin() != null) {
-                    fooGate = gateDfs(getDepthGate(inputs.get(i).getOrigin()));
+                if(inputs.get(i).getSignalOrigin() != null) {
+                    fooGate = gateDfs(getDepthGate(inputs.get(i).getSignalOrigin()));
                 }
                 
                 if (fooGate != null) {
@@ -204,7 +216,7 @@ public class LevelCircuit extends Circuit {
         ArrayList<Object> foo = new ArrayList<>();
         
         for (int i = 0; i < getOutputs().size(); i++) {
-            foo.add(getDepthGate(getOutputs().get(i).getOrigin()));
+            foo.add(getDepthGate(getOutputs().get(i).getSignalOrigin()));
         }
         
         for (int i = 0; i < foo.size(); i++) {    
@@ -335,7 +347,7 @@ public class LevelCircuit extends Circuit {
                     DepthGate fooGate = (DepthGate)gate;
                     for (int i = 0; i < fooGate.getGate().getInputs().size(); i++) {
                         Signal fooSignal = fooGate.getGate().getInputs().get(i);                    
-                        DepthGate originGate = getDepthGate(fooSignal.getOrigin());
+                        DepthGate originGate = getDepthGate(fooSignal.getSignalOrigin());
                         if (originGate != null) {
                             if (originGate.getDepth() != currentLevelNumber) {                            
                                 currentLevel.addGate(fooSignal);
@@ -356,7 +368,7 @@ public class LevelCircuit extends Circuit {
                     }
                 } else if(gate instanceof Signal) {
                     Signal fooSignal = (Signal)gate;
-                    DepthGate originGate = getDepthGate(fooSignal.getOrigin());
+                    DepthGate originGate = getDepthGate(fooSignal.getSignalOrigin());
 
                     if(originGate != null) {
                         if (originGate.getDepth() != currentLevelNumber) {

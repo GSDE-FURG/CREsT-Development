@@ -6,13 +6,16 @@ package datastructures;
  * @author Matheus Ferreira Pontes
  */
 
-import java.util.ArrayList;
+import java.util.*;
 
 public class Circuit {
         
     private String name;
     private ArrayList<Signal> signals;
     private ArrayList<Gate> gates;
+    private Map<String, Signal> hashSignals;
+
+    private float totalArea;
     
     /**
      * Simple Circuit constructor.
@@ -21,6 +24,7 @@ public class Circuit {
     public Circuit() {
         signals = new ArrayList<>();
         gates = new ArrayList<>();
+        hashSignals = new HashMap<String, Signal>();
     }
     
     /**
@@ -46,6 +50,14 @@ public class Circuit {
         this.name = name;
         this.signals = signals;
         this.gates = gates;
+    }
+
+    public Circuit(String name, ArrayList<Signal> signals,
+                   ArrayList<Gate> gates, float totalArea) {
+        this.name = name;
+        this.signals = signals;
+        this.gates = gates;
+        this.totalArea = totalArea;
     }
 
     /**
@@ -111,6 +123,18 @@ public class Circuit {
         return gates;
     }
 
+    public ArrayList<Gate> getJustContGates() {
+        ArrayList<Gate> result = new ArrayList<>();
+
+        for (Gate g : this.getGates()) {
+            if(g.getType().getFunctions().get(0).toLowerCase().contains("const")) {
+                result.add(g);
+            }
+        }
+
+        return result;
+    }
+
     /**
      * This method set the Circuit Gates list.
      *
@@ -145,8 +169,16 @@ public class Circuit {
      */
     public ArrayList<Signal> getInputs() {
         ArrayList<Signal> temp = new ArrayList<>();
+        /**
+         * 2023-03-03 - OLD - Antes eu desconsiderava sinais de entrada que não iam para nenhuma gate ou saída
+         */
+        //for (Signal input1 : signals) {
+        //    if (input1.getOrigin() == null && !input1.getDestiny().isEmpty()) {
+        //        temp.add(input1);
+        //    }
+        //}
         for (Signal input1 : signals) {
-            if (input1.getOrigin() == null && !input1.getDestiny().isEmpty()) {
+            if (input1.getSignalOrigin() == null) {
                 temp.add(input1);
             }
         }
@@ -161,7 +193,7 @@ public class Circuit {
     public ArrayList<Signal> getOutputs() {
         ArrayList<Signal> temp = new ArrayList<>();
         for (Signal input1 : signals) {
-            for(Gate fooGate: input1.getDestiny()) {
+            for(Gate fooGate: input1.getSignalDestiny()) {
                 if(fooGate == null) {
                     temp.add(input1);
                     break;
@@ -170,6 +202,42 @@ public class Circuit {
         }
         return temp;
     }
-    
-    
+
+    /**
+     * Hashmap test performance
+     */
+    public void setHashSignals(ArrayList<Signal> signals) {
+        for (Signal signal : signals) {
+            this.hashSignals.put(signal.getId(), signal);
+        }
+    }
+
+    public Signal getHashSignalById(String key) {
+        return this.hashSignals.get(key);
+    }
+
+    public void addHashSignal(String key, Signal signal) {
+        this.hashSignals.put(key, signal);
+    }
+
+    public float getTotalArea() {
+        return totalArea;
+    }
+
+    public void setTotalArea(float area) {
+        this.totalArea = area;
+    }
+
+    public void calculateTotalArea() {
+        float area = 0;
+
+        for(Gate gate : this.gates) {
+            area = area + gate.getType().getArea();
+        }
+
+        this.setTotalArea(area);
+    }
+
+
+
 }

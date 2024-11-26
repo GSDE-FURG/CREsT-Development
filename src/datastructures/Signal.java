@@ -14,19 +14,40 @@ import java.util.ArrayList;
 public class Signal {
     
     private String id;
-    private Gate origin;
-    private ArrayList<Gate> destiny = new ArrayList<>();
-    //valor lógico esperado
-    private boolean logicValue;
+    private Gate signalOrigin;
+    private ArrayList<Gate> signalDestiny = new ArrayList<>();
+    private int logicValue;
+    private boolean logicValueBoolean;
+    private int originalSignalValue;
+
+    /*Marcio*/
     //valor lógico incorreto
     private boolean fol;
+    //valor lógico esperado
+    private boolean logicValue2;
+
+    /*clayton*/
+    private boolean signalVisited;
+    private ArrayList <Object> signalOutputPath = new ArrayList<>();
     
     /**
      * Simple Signal constructor.
      *
      */
+    
+    /*Clayton*/
     public Signal() {
-
+        
+            this.logicValue = -2;
+            this.originalSignalValue = -2;
+            this.signalVisited = false;
+        
+    }
+    /*Clayton*/
+    public Signal(int logicvalue, int originalValue, boolean signalVisited) {
+            this.logicValue = -2;
+            this.originalSignalValue = -2;
+            this.signalVisited = false;
     }
     
     /**
@@ -37,34 +58,25 @@ public class Signal {
     public Signal(String id) {
         this.id = id;
     }
-    
+    /*Clayton*/
+    public void setOutputPath(ArrayList gate) {
+       this.signalOutputPath.add(gate);
+    }
+    /*Clayton*/
+     public Object getOutputPath() {
+       return this.signalOutputPath;
+    }
     /**
      * Signal constructor with defined "id", "origin" and "destiny".
      *
      * @param id - Signal identification
-     * @param origin - Signal origin
-     * @param destiny - Signal destinies
+     * @param signalOrigin - Signal origin
+     * @param signalDestiny - Signal destinies
      */
-    public Signal(String id, Gate origin, ArrayList<Gate> destiny) {
+    public Signal(String id, Gate signalOrigin, ArrayList<Gate> signalDestiny) {
         this.id = id;
-        this.origin = origin;
-        this.destiny = destiny;
-    }
-    
-    public boolean getLogicValue() {
-        return logicValue;
-    }
-
-    public void setLogicValue(boolean logicValue) {
-        this.logicValue = logicValue;
-    }
-
-    public boolean getFol() {
-        return fol;
-    }
-
-    public void setFol(boolean fol) {
-        this.fol = fol;
+        this.signalOrigin = signalOrigin;
+        this.signalDestiny = signalDestiny;
     }
     
     /**
@@ -72,8 +84,27 @@ public class Signal {
      *
      * @return String - Signal ID
      */
-    public String getId() {
+    public synchronized String getId() {
         return id;
+    }
+
+    public synchronized String getSignalOriginalAndNewValue() {
+
+        return "O(" + this.originalSignalValue + ") - N(" + this.getLogicValue() + ") - Boolean: " + this.getLogicValueBoolean();
+        //return id;
+    }
+    public synchronized String getSignalBitflip() {
+
+        return "(" + this.originalSignalValue + " to " + this.logicValue + ") ";
+        //return id;
+    }
+
+    public synchronized void setVisited(){
+        this.signalVisited = true;
+    }
+
+    public synchronized boolean getVisited(){
+        return this.signalVisited;
     }
     
     /**
@@ -85,22 +116,56 @@ public class Signal {
         this.id = id;
     }
     
+    /*Clayton Farias - Setting Logic value */
+    public synchronized void setLogicValueBoolean(Boolean logicValue){
+        this.logicValueBoolean = logicValue;
+    }
+
+    public synchronized void setLogicValue(int logicValue){
+        this.logicValue = logicValue;
+
+        //this.setVisited();
+    }
+
+    public synchronized void setOriginalLogicValue(int logicValue){
+        this.originalSignalValue = logicValue;
+
+
+    }
+
+    public synchronized int getOriginalLogicValue(){
+        return this.originalSignalValue;
+    }
+
+    public synchronized int getLogicValue(){
+        return this.logicValue;
+    }
+    
+    public Character getLogicValueChar(){
+        Character r = (Character.highSurrogate(this.logicValue));// this.logicValue;
+        return r;
+    }
+    
+    public boolean getLogicValueBoolean(){
+        return this.logicValueBoolean;
+    }
+    
     /**
      * This method return the Signal Origin (Gate's Output).
      *
      * @return Gate - Origin Gate
      */
-    public Gate getOrigin() {
-        return origin;
+    public Gate getSignalOrigin() {
+        return signalOrigin;
     }
 
     /**
      *
      * This method set the Signal origin
-     * @param origin - Gate (output)
+     * @param signalOrigin - Gate (output)
      */
-    public void setOrigin(Gate origin) {
-        this.origin = origin;
+    public void setSignalOrigin(Gate signalOrigin) {
+        this.signalOrigin = signalOrigin;
     }
     
     /**
@@ -108,17 +173,17 @@ public class Signal {
      *
      * @return ArrayList - Gates ArrayList
      */
-    public ArrayList<Gate> getDestiny() {
-        return destiny;
+    public ArrayList<Gate> getSignalDestiny() {
+        return signalDestiny;
     }
     
     /**
      * This method set the Signal identification.
      *
-     * @param destiny - Gates ArrayList
+     * @param signalDestiny - Gates ArrayList
      */
-    public void setDestiny(ArrayList<Gate> destiny) {
-        this.destiny = destiny;
+    public void setSignalDestiny(ArrayList<Gate> signalDestiny) {
+        this.signalDestiny = signalDestiny;
     }
     
     /**
@@ -127,7 +192,7 @@ public class Signal {
      * @param gate Gate - Destination Gate
      */
     public void addDestiny(Gate gate) {
-        destiny.add(gate);
+        signalDestiny.add(gate);
     }
 
     /**
@@ -137,10 +202,27 @@ public class Signal {
      * @param gate Gate - Destination signal
      */
     public void removeDestiny(Gate gate) {
-        destiny.remove(gate);
+        signalDestiny.remove(gate);
     }
     
     public String toString() {
         return this.id;
+    }
+
+    /*Marcio*/
+    public boolean getLogicValue2() {
+        return logicValue2;
+    }
+
+    public void setLogicValue2(boolean logicValue2) {
+        this.logicValue2 = logicValue2;
+    }
+
+    public boolean getFol() {
+        return fol;
+    }
+
+    public void setFol(boolean fol) {
+        this.fol = fol;
     }
 }

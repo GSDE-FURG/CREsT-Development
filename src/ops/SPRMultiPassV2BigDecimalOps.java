@@ -5,7 +5,6 @@
  */
 package ops;
 
-import com.sun.xml.internal.bind.v2.TODO;
 import datastructures.CellLibrary;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -13,7 +12,6 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Locale;
 
@@ -365,7 +363,7 @@ public class SPRMultiPassV2BigDecimalOps {
 
         while (iterator.hasNext()) {
             ProbSignal next = iterator.next();
-            if(next.getOrigin() == null) {
+            if(next.getSignalOrigin() == null) {
                 insFan++;
             }
         }

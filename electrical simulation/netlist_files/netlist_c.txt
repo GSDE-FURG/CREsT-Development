@@ -1,0 +1,60 @@
+
+* Função Transiente
+.include 45nm_HP.pm
+.include Library.txt
+
+* Definindo a temperatura de operação
+   .TEMP 25
+
+* Declarando parâmetros que serão utilizados nas simulações
+   .param supply = 1.0
+
+* Declaração das fontes
+	Vvdd vdd 0 1.0
+	Vvss vss 0 0
+ * Fontes de Tensão
+vG1gat G1gat 0 PULSE (0 1.0 32n 1p 1p 32n 64n)
+vG2gat G2gat 0 PULSE (0 1.0 16n 1p 1p 16n 32n)
+vG3gat G3gat 0 PULSE (0 1.0 8n 1p 1p 8n 16n)
+vG4gat G4gat 0 PULSE (0 1.0 4n 1p 1p 4n 8n)
+vG5gat G5gat 0 PULSE (0 1.0 2n 1p 1p 2n 4n)
+
+ * Portas Logicas
+X1 G5gat G1gat vdd vss w2 NAND2X1
+
+X2 G5gat G2gat vdd vss w1 NAND2X1
+
+X3 w1 G4gat vdd vss w3 NAND2X1
+
+X4 w1 G3gat vdd vss w4 NAND2X1
+
+X5 w2 w3 vdd vss G6gat NAND2X1
+
+X6 w4 w3 vdd vss G7gat NAND2X1
+
+* SET no nodo 'Inv1'
+		Iexp 0 G1gat exp(1 190u 1n 10p 1.00001n 320p) 
+	*transicao 0-1-0
+
+* Declarando uma capacitância de saída que pode ser usada para emular uma carga
+*Cload out 0 1f
+ * Cload G6gat 0 1f
+* Cload G7gat 0 1f
+
+
+.control
+run				
+						set color0=white
+			            set xbrushwidth = 3
+		 *plot i(Vfonte)
+	     *plot v(A)+8 V(B)+6 V(C)+4 V(out)+2
+plot v(G1gat)+5 v(G2gat)+10 v(G3gat)+15 v(G4gat)+20 v(G5gat)+25  v(G6gat)+30 v(G7gat)+50 
+plot  v(G6gat)+30 v(G7gat)+50 
+.endc	     
+
+* Declarando o tipo de simulação *Precisa mudar para 15 (0 - 15 = 16 unidades de tempo) pois senão nao exitira descida para entrada A
+.tran 0.1n 64n 
+
+* Definindo comandos measure para fazer medidas
+
+.end

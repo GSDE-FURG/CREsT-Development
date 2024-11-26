@@ -51,7 +51,7 @@ public class FanoutOps {
         
 
         for (ProbSignal pSignal : fanouts) {
-            if(pSignal.getOrigin() == null && !pSignal.getDestiny().isEmpty()) {
+            if(pSignal.getSignalOrigin() == null && !pSignal.getSignalDestiny().isEmpty()) {
                 inFanouts.add(pSignal);
             } else {
                 notFanouts.add(pSignal);

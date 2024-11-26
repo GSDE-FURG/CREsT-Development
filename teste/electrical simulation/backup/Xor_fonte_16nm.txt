@@ -1,0 +1,167 @@
+﻿*	Simulacao CMOS 16nm xor_x_min   xV       ###### FONTE ######
+* (Clayton Farias) 
+
+        .include 16nm_LP.pm
+        .include LIBRARY_CMOS_16nm.cir.txt
+        .param supply  = 0.765
+        .param tp = 0.382
+        .param ruido_s = 0.535
+        .param ruido_i = 0.229
+        .param wp = 64n
+        .param wn = 32n
+        .param length = 16n
+		.param time = 1n
+        .global gnd supply wp wn length tp 
+
+
+*Declaração de Fontes de Tensão
+
+  
+ 
+  Vvdd1 vdd1 gnd DC supply
+
+  Vvdd2 vdd2 gnd DC supply
+
+  
+  *XOR2
+
+  Vvdd3 vdd3 gnd DC supply
+  
+  *SAIDA (out)
+  
+  Vvdd4 vdd4 gnd DC supply 
+
+
+*	Fontes
+
+             Va a gnd PWL ( 0n 0 '2*time' 0 '2*time+0.01n' supply '5*time' supply '5*time+0.01n' 0 '7*time' 0 '7*time+0.01n' supply '8*time' supply '8*time+0.01n' 0)
+             
+			 Vb b gnd PWL ( 0n 0 '1*time' 0 '1*time+0.01n' supply '3*time' supply '3*time+0.01n' 0 '4*time' 0 '4*time+0.01n' supply '6*time' supply '6*time+0.01n' 0)
+
+   
+           
+
+*Transistor
+   
+   *Primeiro Inversor o Vdd1(a) saida = inversor1
+      
+       X_inv1_a a inversor1 vdd1 gnd vdd1 gnd inv
+
+   
+   *Primeiro Inversor o Vdd1(b) saida = inversor2
+
+       X_inv1_b b inversor2 vdd1 gnd vdd1 gnd inv
+
+
+       *Segundo Inversor o Vvvd2(a) entrada = inversor1(!a) saida = inversor 3   
+                  
+                  X_inv2_a inversor1 inversor3 vdd2 gnd vdd2 gnd inv
+
+                *Segundo Inversor o Vvvd2(b) entrada = inversor2(!b) saida = inversor4   
+
+                   X_inv2_b inversor2 inversor4 vdd2 gnd vdd2 gnd inv
+                              
+                          *XOR 2 entradas VA = inversor3 , VB = inversor4 vccbloco(vdd3) Construção do Pull-Up e Pull-Down A != B == 1  A == B  0 
+                                          
+                                         
+                                          X1v inversor3 inversor4 xor vdd3 gnd vdd3 gnd xor_21_min
+
+                                        
+                                        *Quarto inversor o Vvdd4(out)  entrada = xor saida = out
+
+                                          X_inv4_xor xor out vdd4 gnd vdd4 gnd inv4
+
+
+
+
+
+                                                
+
+.control
+
+run
+
+*Medidas dos atrasos 
+
+
+  
+  *medida de atraso da propagação de A(inversor3)
+     
+	 
+	 
+      meas tran tphl_ab1 trig v(inversor3) val = 0.344   rise = 1 targ v(xor) val = 0.344 fall = 1 
+      meas tran tplh_ab1 trig v(inversor3) val = 0.344   fall = 1 targ v(xor) val =0.344 rise = 3 
+      meas tran tplh_ab0 trig v(inversor3) val = 0.344   rise = 2  targ v(xor) val=0.344 rise = 4 
+      meas tran tphl_ab0 trig v(inversor3) val = 0.344   fall = 2  targ v(xor) val= 0.344 fall = 4 
+	 
+	 
+	 
+
+
+
+
+
+
+  *medida de atraso da propagação de B(inversor4)  
+          
+        
+       
+	   
+    
+	
+	
+     meas tran tplh_a0b trig v(inversor4) val = 0.344  rise = 1  targ v(xor) val=0.344 rise = 1 
+     meas tran tphl_a0b trig v(inversor4) val=0.344   fall = 2  targ v(xor) val=0.344 fall = 3  
+     meas tran tphl_a1b trig v(inversor4) val=0.344 fall = 1  targ v(xor) val=0.344 rise = 2   
+     meas tran tplh_a1b trig v(inversor4) val=0.344  rise = 2  targ v(xor) val=0.344 fall = 2 
+	   
+	   
+	 meas tran energia2 Integ i(Vvdd2) from = 0 to = '9*time'
+	 meas tran energia3 Integ i(Vvdd3) from = 0 to = '9*time'
+	
+	*echos
+
+       echo	vdd       0.765      >> Resultado_xor_21_min_CMOS_16nm.txt 
+	   echo time      1n         >> Resultado_xor_21_min_CMOS_16nm.txt
+	   echo tempo_de_simulacao 9n >> Resultado_xor_21_min_CMOS_16nm.txt
+	   echo tphl_ab1  $&tphl_ab1  >> Resultado_xor_21_min_CMOS_16nm.txt 
+	   echo tplh_ab1  $&tplh_ab1  >> Resultado_xor_21_min_CMOS_16nm.txt 
+	   echo tplh_ab0  $&tplh_ab0  >> Resultado_xor_21_min_CMOS_16nm.txt 
+	   echo tphl_ab0  $&tphl_ab0  >> Resultado_xor_21_min_CMOS_16nm.txt 
+
+	   echo tplh_a0b  $&tplh_a0b  >> Resultado_xor_21_min_CMOS_16nm.txt 
+	   echo tphl_a0b  $&tphl_a0b  >> Resultado_xor_21_min_CMOS_16nm.txt 
+	   echo tphl_a1b  $&tphl_a1b  >> Resultado_xor_21_min_CMOS_16nm.txt 
+	   echo tplh_a1b  $&tplh_a1b  >> Resultado_xor_21_min_CMOS_16nm.txt
+       echo energia2  $&energia2  >> Resultado_xor_21_min_CMOS_16nm.txt 
+	   echo energia3  $&energia3  >> Resultado_xor_21_min_CMOS_16nm.txt 
+	   
+	  
+	  
+	  
+	  
+	  
+	  
+	  
+	  
+	  
+	  
+	  
+	  
+	  
+	 
+      
+
+  	   set noaskquit
+
+       quit
+
+.endc
+
+*Simulação transiente de 10ns
+
+.tran 0.001n '9*time'
+
+
+.end
+ 

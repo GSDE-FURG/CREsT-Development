@@ -16,7 +16,10 @@ public class Gate {
     private String id;
     private ArrayList<Signal> inputs;
     private ArrayList<Signal> outputs;    
-    private Cell type;    
+    private Cell type;
+
+    private  ArrayList <Integer> sensitiveSignalsIndex;
+    private Boolean gateVisited;
     
     /**
      * Simple Gate constructor.
@@ -27,6 +30,8 @@ public class Gate {
         this.outputs = new ArrayList<>();
         inputs = new ArrayList<>();
         outputs = new ArrayList<>();
+
+        this.sensitiveSignalsIndex = new ArrayList<>();
     }
     
     /**
@@ -38,6 +43,9 @@ public class Gate {
         this.inputs = new ArrayList<>();
         this.outputs = new ArrayList<>();
         this.id = id;
+        this. sensitiveSignalsIndex = new ArrayList<>();
+
+        this.gateVisited = Boolean.FALSE;
     }
     
     /**
@@ -51,6 +59,10 @@ public class Gate {
         this.inputs = new ArrayList<>();
         this.outputs = new ArrayList<>();
         this.type = type;
+
+        this.sensitiveSignalsIndex = new ArrayList<>();
+
+        this.gateVisited = Boolean.FALSE;
     }
     
     /**
@@ -67,6 +79,8 @@ public class Gate {
         this.inputs = new ArrayList<>();
         this.outputs = new ArrayList<>();
         this.type = type;
+
+        this.gateVisited = Boolean.FALSE;
     }
     
     /**
@@ -177,10 +191,62 @@ public class Gate {
      */
     public void setType(Cell type) {
         this.type = type;
-    }   
+    }
+
+    public void setIndexArraylist(Integer index){
+        this.sensitiveSignalsIndex.add(index);
+    }
+    public Integer getIndexArraylist(Integer index){
+        return this.sensitiveSignalsIndex.get(index);
+    }
+
+    public ArrayList<Integer> sensitiveSignalsIndex(){
+        return  this.sensitiveSignalsIndex;
+    }
+
+    public void setVisited(){
+        this.gateVisited = Boolean.TRUE;
+    }
+
+    public Boolean getGateVisited(){
+        return this.gateVisited;
+    }
 
     @Override
     public String toString() {
         return this.id;
-    }        
+    }
+
+
+
+
+
+    /*Clayton*/
+    public String getInputsValuesToString() {
+        String o = "";
+        for (int i = 0; i < this.getInputs().size(); i++) {
+            o = o + this.getInputs().get(i).getLogicValue() + "";
+        }
+        return o;
+    }
+
+
+
+    /*Clayton*/
+    public String getOutputsValuesToString() {
+        String o = "";
+        for (int i = 0; i < this.getOutputs().size(); i++) {
+            o = o + this.getOutputs().get(i).getLogicValue() + " ";
+        }
+        return o;
+    }
+
+    /*Clayton*/
+    public String getOutputsOriginalValuesToString() {
+        String o = "";
+        for (int i = 0; i < this.getOutputs().size(); i++) {
+            o = o + this.getOutputs().get(i).getOriginalLogicValue() + "";
+        }
+        return o;
+    }
 }

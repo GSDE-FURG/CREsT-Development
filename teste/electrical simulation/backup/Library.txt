@@ -1,0 +1,200 @@
+.subckt INVX1 A vdd vss out_INVX1
+MPx vdd A out_INVX1 vdd  PMOS L=45n W=90n
+MNy out_INVX1 A vss vss  NMOS L=45n W=90n
+.ends
+
+
+.subckt BUFFX1 A vdd vss out_BUFFX1 
+MP1 vdd A x vdd  PMOS L=45n W=90n
+MP2 vdd x out_BUFFX1 vdd  PMOS L=45n W=90n
+
+MN1 x A vss vss  NMOS L=45n W=90n
+MN2 out_BUFFX1 x vss vss  NMOS L=45n W=90n
+.ends
+
+.subckt NOR2X1 A B vdd vss out_nor
+MP1 vdd A n1 vdd PMOS L=45n W=90n
+MP2 n1  B out_nor vdd  PMOS L=45n W=90n
+
+MN1 out_nor A vss vss  NMOS L=45n W=90n
+MN2 out_nor B vss vss  NMOS L=45n W=90n
+.ends
+
+.subckt NOR3X1 A3 A2 A1 vdd vss out_nor
+MP1 vdd A3 n1 vdd PMOS L=45n W=90n
+MP2 n1  A2 n2 vdd  PMOS L=45n W=90n
+MP3 n2  A1 out_nor vdd  PMOS L=45n W=90n
+
+MN1 out_nor A1 vss vss  NMOS L=45n W=90n
+MN2 out_nor A2 vss vss  NMOS L=45n W=90n
+MN3 out_nor A3 vss vss  NMOS L=45n W=90n
+.ends
+
+.subckt NOR4X1 A4 A3 A2 A1 vdd vss out_nor
+MP1 vdd A4 n1 vdd PMOS L=45n W=90n
+MP2 n1  A2 n2 vdd  PMOS L=45n W=90n
+MP3 n2  A3 n3 vdd  PMOS L=45n W=90n
+MP4 n3  A1 out_nor vdd  PMOS L=45n W=90n
+
+MN1 out_nor A1 vss vss  NMOS L=45n W=90n
+MN2 out_nor A2 vss vss  NMOS L=45n W=90n
+MN3 out_nor A3 vss vss  NMOS L=45n W=90n
+MN4 out_nor A4 vss vss  NMOS L=45n W=90n
+.ends
+
+
+.subckt NAND2X1 A B vdd vss out_nand 
+MP1 vdd A out_nand vdd  PMOS L=45n W=90n
+MP2 vdd B out_nand vdd  PMOS L=45n W=90n
+
+MN1 out_nand A n1  vss  NMOS L=45n W=90n
+MN2 n1       B vss vss  NMOS L=45n W=90n
+.ends
+
+
+.subckt NAND3X1 A B C vdd vss out_nand 
+MP1 vdd A out_nand vdd  PMOS L=45n W=90n
+MP2 vdd B out_nand vdd  PMOS L=45n W=90n
+MP3 vdd C out_nand vdd  PMOS L=45n W=90n
+
+MN1 out_nand A n1  vss  NMOS L=45n W=90n
+MN2 n1  B n2 vss  NMOS L=45n W=90n
+MN3 n2  C vss vss  NMOS L=45n W=90n
+.ends
+
+.subckt NAND4X1 A B C D vdd vss out_nand 
+MP1 vdd A out_nand vdd  PMOS L=45n W=90n
+MP2 vdd B out_nand vdd  PMOS L=45n W=90n
+MP3 vdd C out_nand vdd  PMOS L=45n W=90n
+MP4 vdd D out_nand vdd  PMOS L=45n W=90n
+
+MN1 out_nand A n1 vss  NMOS L=45n W=90n
+MN2 n1  B n2 vss   NMOS L=45n W=90n
+MN3 n2  C n3 vss   NMOS L=45n W=90n
+MN4 n3  D vss vss  NMOS L=45n W=90n
+.ends
+
+.subckt OAI21X1 A B C vdd vss out_oai
+MP1 vdd C n1 vdd  PMOS L=45n W=90n
+MP2 n1 B out_oai vdd  PMOS L=45n W=90n
+MP3 out_oai A vdd vdd  PMOS L=45n W=90n
+
+MN1 out_oai C n2 vss  NMOS L=45n W=90n
+MN2 out_oai B n2 vss  NMOS L=45n W=90n
+MN3 n2 A vss vss  NMOS L=45n W=90n
+.ends
+
+* ----------------------------------------------------
+.subckt OAI211X1 C2 C1 A B vdd vss out_oai
+MP1 vdd C2 n1 vdd  PMOS L=45n W=90n
+MP2 n1 C1 out_oai vdd  PMOS L=45n W=90n
+MP3 out_oai A vdd vdd  PMOS L=45n W=90n
+MP4 vdd B out_oai vdd  PMOS L=45n W=90n
+
+MN1 n2 C2 out_oai vss  NMOS L=45n W=90n
+MN2 out_oai C1 n2 vss  NMOS L=45n W=90n
+MN3 n2 A n3 vss  NMOS L=45n W=90n
+MN4 n3 B vss vss  NMOS L=45n W=90n
+.ends
+
+* ----------------------------------------------------
+
+.subckt OAI22X1 B2 B1 A1 A2 vdd vss out_oai
+MP1 vdd B2 n1 vdd  PMOS L=45n W=90n
+MP2 n1 B1 out_oai vdd  PMOS L=45n W=90n
+MP3 out_oai A1 n2 vdd  PMOS L=45n W=90n
+MP4 n2 A2 vdd vdd  PMOS L=45n W=90n
+
+MN1 n3 B2 vss vss  NMOS L=45n W=90n
+MN2 vss B1 n3 vss  NMOS L=45n W=90n
+MN3 n3 A1 out_oai vss  NMOS L=45n W=90n
+MN4 out_oai A2 n3 vss  NMOS L=45n W=90n
+.ends
+
+* ----------------------------------------------------
+
+.subckt OAI221X1 B2 B1 A C2 C1 vdd vss out_oai
+MP1 vdd B2 n1 vdd  PMOS L=45n W=90n
+MP2 n1 B1 out_oai vdd  PMOS L=45n W=90n
+MP3 out_oai A vdd vdd  PMOS L=45n W=90n
+MP4 vdd C2 n2 vdd  PMOS L=45n W=90n
+MP5 n2 C1 out_oai vdd  PMOS L=45n W=90n
+
+MN1 n3 B2 vss vss  NMOS L=45n W=90n
+MN2 vss B1 n3 vss  NMOS L=45n W=90n
+MN3 n3 A n4 vss  NMOS L=45n W=90n
+MN4 n4 C2 out_oai vss  NMOS L=45n W=90n
+MN5 out_oai C1 n4 vss  NMOS L=45n W=90n
+.ends
+
+* ----------------------------------------------------
+
+.subckt AOI21X1 B2 B1 A vdd vss out_AOI
+MP1 n1 B2 out_AOI vdd  PMOS L=45n W=90n
+MP2 out_AOI B1 n1 vdd  PMOS L=45n W=90n
+MP3 n1 A vdd vdd  PMOS L=45n W=90n
+
+MN1 vss B2 n2 vss  NMOS L=45n W=90n
+MN2 n2 B1 out_AOI vss  NMOS L=45n W=90n
+MN3 out_AOI A vss vss  NMOS L=45n W=90n
+.ends
+
+* ----------------------------------------------------
+
+.subckt AOI211X1 C2 C1 B A vdd vss out_AOI
+MP1 n1 C2 out_AOI  vdd  PMOS L=45n W=90n
+MP2 out_AOI C1 n1 vdd  PMOS L=45n W=90n
+MP3 n1 B n2 vdd  PMOS L=45n W=90n
+MP4 n2 A vdd vdd  PMOS L=45n W=90n
+
+MN1 vss C2 n3 vss  NMOS L=45n W=90n
+MN2 n3 C1 out_AOI vss  NMOS L=45n W=90n
+MN3 out_AOI B vss vss  NMOS L=45n W=90n
+MN4 vss A n3 vss  NMOS L=45n W=90n
+.ends
+
+* ----------------------------------------------------
+
+.subckt AOI22X1 B2 B1 A1 A2 vdd vss out_AOI
+MP1 n1 B2 vdd vdd  PMOS L=45n W=90n
+MP2 vdd B1 n1 vdd  PMOS L=45n W=90n
+MP3 n1 A1 out_AOI vdd  PMOS L=45n W=90n
+MP4 out_AOI A2 n1 vdd  PMOS L=45n W=90n
+
+MN1 vss B2 n2 vss  NMOS L=45n W=90n
+MN2 n2 B1 out_AOI vss  NMOS L=45n W=90n
+MN3 out_AOI A1 n3 vss  NMOS L=45n W=90n
+MN4 n3 A2 vss vss  NMOS L=45n W=90n
+.ends
+
+* ----------------------------------------------------
+
+.subckt AOI221X1 B2 B1 A C2 C1 vdd vss out_AOI
+MP1 n1 B2 vdd vdd  PMOS L=45n W=90n
+MP2 vdd B1 n1 vdd  PMOS L=45n W=90n
+MP3 n1 A n2 vdd  PMOS L=45n W=90n
+MP4 n2 C2 out_AOI vdd  PMOS L=45n W=90n
+MP5 out_AOI C1 n2 vdd  PMOS L=45n W=90n
+
+MN1 vss B2 n3 vss  NMOS L=45n W=90n
+MN2 n3 B1 out_AOI vss  NMOS L=45n W=90n
+MN3 out_AOI A vss vss  NMOS L=45n W=90n
+MN4 vss C2 n4 vss  NMOS L=45n W=90n
+MN5 n4 C1 out_AOI vss  NMOS L=45n W=90n
+.ends
+
+* ----------------------------------------------------
+.subckt XOR2X1 A B vdd vss out_xor
+MP1 nc1x A n1 vdd  PMOS L=45n W=90n
+MP2 n1 B vdd vdd  PMOS L=45n W=90n
+MP3 vdd nc1x n2 vdd  PMOS L=45n W=90n
+MP4 n2 A out_xor vdd  PMOS L=45n W=90n
+MP5 out_xor B n2 vdd  PMOS L=45n W=90n
+
+
+MN1 vss A nc1x vss  NMOS L=45n W=90n
+MN2 nc1x B vss vss  NMOS L=45n W=90n
+MN3 vss nc1x out_xor vss  NMOS L=45n W=90n
+MN4 out_xor A n3 vss  NMOS L=45n W=90n
+MN5 n3 B vss vss  NMOS L=45n W=90n
+.ends

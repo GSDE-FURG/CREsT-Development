@@ -8,11 +8,15 @@ package wrv_algoritm;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+
+import datastructures.CellLibrary;
+import manipulator.SPRController;
 import ops.SPROps;
 import signalProbability.ProbCircuit;
 import signalProbability.ProbGate;
 import signalProbability.ProbSignal;
 import tool.Terminal;
+import datastructures.InputVector;
 
 /**
  *
@@ -24,14 +28,24 @@ public class ScoreBySPR implements RunScore {
     private final BigDecimal q;
     private final ProbCircuit circuit;
     private final ArrayList<ProbSignal> inputs;
+    private final SPRController spr;
     private static int numberExecution;
+
 
     public ScoreBySPR(BigDecimal q) {
         this.q = q;
         Terminal.getInstance().getCellLibrary().setPTMCells(q);
         circuit = Terminal.getInstance().getProbCircuit();
         circuit.setPTMReliabilityMatrix();
-        inputs = circuit.getProbInputs(); 
+        inputs = circuit.getProbInputs();
+        spr = null;
+    }
+
+    public ScoreBySPR(ProbCircuit pCircuit, CellLibrary cellLib, BigDecimal q) {
+        this.q = q;
+        circuit = pCircuit;
+        spr = new SPRController(pCircuit, cellLib);
+        inputs = circuit.getProbInputs();
     }
 
     public void setImprovementGates(List<ProbGate> improvementGates, BigDecimal q) {
@@ -49,6 +63,19 @@ public class ScoreBySPR implements RunScore {
     
     @Override
     public ScoreVector execute(InputVector inputVector) {
+
+        BigDecimal score = spr.getReliability(inputVector, q);
+        ScoreVector scoreVector = new ScoreVector(inputVector, score);
+        numberExecution++;
+        return scoreVector;
+    }
+
+    public ProbCircuit getCircuit() {
+        return this.circuit;
+    }
+
+    /*@Override
+    public ScoreVector execute(InputVector inputVector) {
         String vector = inputVector.getBinaryString();
         //System.out.println("Sinais de entrada: " + inputs);
         //percorre os bits do vetor de entrada para configurar a entrada
@@ -56,13 +83,13 @@ public class ScoreBySPR implements RunScore {
             ProbSignal probSignal = inputs.get(i);
             if (vector.charAt(i) == CHAR_ONE) {
                 probSignal.setProbMatrix(new BigDecimal[][]{
-                    {BigDecimal.ZERO, BigDecimal.ZERO},
-                    {BigDecimal.ZERO, BigDecimal.ONE}
+                        {BigDecimal.ZERO, BigDecimal.ZERO},
+                        {BigDecimal.ZERO, BigDecimal.ONE}
                 });
             } else {
                 probSignal.setProbMatrix(new BigDecimal[][]{
-                    {BigDecimal.ONE, BigDecimal.ZERO},
-                    {BigDecimal.ZERO, BigDecimal.ZERO}
+                        {BigDecimal.ONE, BigDecimal.ZERO},
+                        {BigDecimal.ZERO, BigDecimal.ZERO}
                 });
             }
         }
@@ -70,5 +97,5 @@ public class ScoreBySPR implements RunScore {
         ScoreVector scoreVector = new ScoreVector(inputVector, score);
         numberExecution++;
         return scoreVector;
-    }
+    }*/
 }

@@ -1,0 +1,46 @@
+
+* Função Transiente
+.include 45nm_HP.pm
+.include Library.txt
+
+* Definindo a temperatura de operação
+   .TEMP 25
+
+* Declarando parâmetros que serão utilizados nas simulações
+   .param supply = 1.0
+
+* Declaração das fontes
+	Vvdd vdd 0 1.0
+	Vvss vss 0 0
+ * Fontes de Tensão
+vG1gat G1gat 0 PULSE (0 1.0 2n 1p 1p 2n 4n)
+vG2gat G2gat 0 PULSE (0 1.0 1n 1p 1p 1n 2n)
+
+ * Portas Logicas
+X1 G1gat G2gat vdd vss G6gat NAND2X1
+
+* SET no nodo 'Inv1'
+		Iexp 0 G1gat exp(1 190u 1n 10p 1.00001n 320p) 
+	*transicao 0-1-0
+
+* Declarando uma capacitância de saída que pode ser usada para emular uma carga
+*Cload out 0 1f
+ * Cload G6gat 0 1f
+
+
+.control
+run				
+						set color0=white
+			            set xbrushwidth = 3
+		 *plot i(Vfonte)
+	     *plot v(A)+8 V(B)+6 V(C)+4 V(out)+2
+plot v(G1gat)+5 v(G2gat)+10  v(G6gat)+15 
+plot  v(G6gat)+15 
+.endc	     
+
+* Declarando o tipo de simulação *Precisa mudar para 15 (0 - 15 = 16 unidades de tempo) pois senão nao exitira descida para entrada A
+.tran 0.1n 4n 
+
+* Definindo comandos measure para fazer medidas
+
+.end

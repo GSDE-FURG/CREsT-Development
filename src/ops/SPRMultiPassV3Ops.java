@@ -5,7 +5,6 @@
  */
 package ops;
 
-import com.sun.xml.internal.bind.v2.TODO;
 import datastructures.CellLibrary;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -14,7 +13,6 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Locale;
 
@@ -242,16 +240,22 @@ public class SPRMultiPassV3Ops {
         ArrayList<ProbSignal> fanouts = pCircuit.getFanouts();
         ArrayList<ProbSignal> newFanouts = new ArrayList<>();
         
-        for (int i = 0; i < (fanouts.size()); i++) {
-            newFanouts.add(fanouts.get(i));            
+        if(fanouts.isEmpty()) {
+            return SPROpsChuloMedio.getSPRReliability(pCircuit);
+        } else {
+            for (int i = 0; i < (fanouts.size()); i++) {
+                newFanouts.add(fanouts.get(i));            
+            }
+
+            ProbSignal pSignal = newFanouts.get(0);
+
+            value = getMultiPass(pCircuit, newFanouts, pSignal, 0);
+
+
+            return value;
         }
-                
-        ProbSignal pSignal = newFanouts.get(0);
-        
-        value = getMultiPass(pCircuit, newFanouts, pSignal, 0);
         
         
-        return value;
     }
     
     /**
@@ -397,7 +401,7 @@ public class SPRMultiPassV3Ops {
 
         while (iterator.hasNext()) {
             ProbSignal next = iterator.next();
-            if(next.getOrigin() == null) {
+            if(next.getSignalOrigin() == null) {
                 insFan++;
             }
         }
@@ -423,4 +427,15 @@ public class SPRMultiPassV3Ops {
         
         return passes;
     }
+    
+    public static String getSPRMPPerState(ProbCircuit pCircuit) {
+        
+        pCircuit.getFanouts().get(0).setCurrentState(2);
+        System.out.println("--> " + pCircuit.getFanouts().get(0).getCurrentState());
+        
+        System.out.println(getSPRReliability(pCircuit, pCircuit.getFanouts()));
+        return "";
+    }
+    
+    //private ArrayList<ProbSignal> 
 }
